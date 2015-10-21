@@ -2,6 +2,9 @@
 
 Integration, Verification and Certification Tool for HLA Federates
 
-# License
+LICENSE
+------------
 
-Apache 2.0
+Copyright 2015 NATO MSG-134.
+
+Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
