@@ -1,0 +1,8 @@
+dependencies {
+	// emtpy
+}
+
+javadoc {
+			options.addStringOption('XDoclint:none', '-quiet')
+			failOnError = false
+		}

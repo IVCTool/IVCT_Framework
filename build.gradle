@@ -1,0 +1,5 @@
+apply from: "./.shared/libraries.gradle"
+
+project.group = 'msg134-ivct-framework'
+project.version = "${ivctVersion}"
+apply from: "./.shared/commons.gradle"

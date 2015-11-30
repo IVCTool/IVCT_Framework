@@ -1,0 +1,13 @@
+include 'LogSink'
+include 'IEEE1516e'
+include 'TC'
+include 'MessagingHelpers'
+
+rootProject.children.each { project ->
+    project.buildFileName = "${project.name}.gradle"
+    assert project.projectDir.isDirectory()
+    assert project.buildFile.isFile()
+}
+
+// By default the name of our Gradle project is the name of the directory the project is created in.
+// Note that the name field is only mutable in the settings.gradle file.

@@ -1,0 +1,171 @@
+/*
+ * Common configuration used by all msg-134 subprojects.
+ */
+ 
+// -----------------------------------------------------------------------------
+// allprojects
+// -----------------------------------------------------------------------------
+
+allprojects {
+	//http://www.gradle.org/docs/nightly/userguide/dependency_management.html#sub:dynamic_versions_and_changing_modules
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+	}
+
+    repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+    
+    ext {
+        // may be feed from bamboo, see also https://confluence.atlassian.com/display/BAMBOO/Using+global,+plan+or+build-specific+variables
+        // -Dbuild=${bamboo.build} -DbuildTimestamp=${bamboo.buildTimeStamp} -DbuildKey=${bamboo.buildKey} -DbuildNumber=${bamboo.buildNumber} -DrepositoryBranchName=${bamboo.repository.branch.name} -DrevisionNumber=${bamboo.custom.svn.revision.number}
+        buildTimestmap = System.getProperty("buildTimestamp", java.util.Calendar.getInstance().getTime().toString())
+        // build = System.getProperty("build", "SNAPSHOT")
+        buildKey = System.getProperty("buildKey", "UNKNOWN")
+        buildNumber = System.getProperty("buildNumber", "SNAPSHOT")
+        repositoryBranchName = System.getProperty("repositoryBranchName", "UNKNOWN")
+        revisionNumber = System.getProperty("revisionNumber", "SNAPSHOT")
+    }
+}
+
+
+
+
+
+// -----------------------------------------------------------------------------
+// subprojects
+// -----------------------------------------------------------------------------
+
+subprojects { subProject ->
+    defaultTasks 'build'
+
+	group = subProject.parent.group
+	if (subProject.version == 'unspecified') {
+		version = subProject.parent.version
+	}
+	description = subProject.parent.description
+    ext {
+        specificationVersion = version
+    }
+        
+    if ( ! subProject.name.startsWith( 'misc' )  && ! subProject.name.startsWith( 'documentation' ) ) {
+        apply plugin: 'java'
+        compileJava {
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+            
+            options.compilerArgs << '-Xlint:unchecked'
+			//options.warnings = true	// defaults to true
+			options.warnings = false
+			
+            options.encoding = 'UTF-8'
+            
+            //options.bootClasspath = bootClasspath
+            options.debug(debugLevel : 'lines,vars,source')
+            options.deprecation = true
+        }
+		
+		javadoc {
+			options.encoding = "UTF-8"
+		}
+
+
+        apply plugin: 'maven' // for install task as well as deploy dependencies
+
+       
+
+        // custom tasks for creating source/javadoc jars
+        // TODO: check if this can be removed
+        task sourcesJar(type: Jar) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        task javadocJar(type: Jar, dependsOn:javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        // add javadoc/source jar tasks as artifacts
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
+        }      
+    }
+}
+	
+
+
+// -----------------------------------------------------------------------------
+// Eclipse
+// -----------------------------------------------------------------------------
+
+// This is a cool example of the power of gradle.  Eclipse can't handle hierarchical projects.
+// so this is a clever way to use gradle to filter out which projects we want to apply the eclipse
+// plugin too. Suggestion comes from
+// http://gradle.1045684.n5.nabble.com/Best-practice-to-exclude-directories-from-generating-project-classpath-files-td4288890.html
+def leafProjects = subprojects.findAll {
+    it.childProjects.size() == 0
+}
+configure(leafProjects) {
+    apply plugin: 'eclipse'
+    eclipse {
+        //want parts of paths in resulting .classpath file to be replaced by variables
+        //pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
+		
+		classpath {
+			//default settings for downloading sources and Javadoc:
+			downloadSources = true
+			downloadJavadoc = false
+		}
+    }
+// experimental: (use different folders for test and main)
+//	eclipse.classpath {
+//		defaultOutputDir = file('bin')
+//		file.withXml { n -> 
+//		n.asNode().classpathentry.findAll { it.@path.startsWith('src/test')}
+//				.each { it.@output = 'bin-test' }
+//		}
+//	}
+	
+	eclipse.classpath.file {
+		def projectEntries
+	    beforeMerged { classpath ->
+			//classpath.entries.findAll { entry -> println entry }
+			//classpath.entries.removeAll { entry -> entry.kind == 'lib' || entry.kind == 'var' }
+			//classpath.entries.removeAll { entry -> entry.path.startsWith("/") }
+			projectEntries = classpath.entries.findAll { entry -> entry.path.startsWith("/") }
+			//classpath.entries.findAll { entry -> println entry }
+		}	
+		whenMerged { classpath ->
+			//classpath.entries.findAll { entry -> entry.kind == 'lib' }*.exported = false
+			//classpath.entries.findAll { ['con', 'lib'].contains(it.kind) }*.exported = false
+			
+			//keep only those that are not already added by gradle 
+			projectEntries.removeAll { projectEntry -> classpath.entries.find{ entry -> entry.path == projectEntry.path }}	
+			
+			//try to remove lib dependencies that match additionally included projects (experimental)
+			classpath.entries.removeAll { entry -> projectEntries.find{ projectEntry -> entry.path.contains(projectEntry.path) }}
+			
+			// re-add additionally included projects
+			classpath.entries += projectEntries
+		}		
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+// Wrapper
+// -----------------------------------------------------------------------------
+
+// This is a task that generates the gradlew scripts, allowing users to run gradle without having gradle installed
+// on their system.
+// This task should be run by "build master" and the resulting output committed to source control.  Its outputs include:
+//  1) /gradlew which is the *NIX shell script for executing builds
+//  2) /gradlew.bat which is the windows bat script for for executing builds
+//  3) /wrapper which is a directory named by the "jarPath" config which contains other needed files.
+task wrapper(type: Wrapper) {
+    description = 'Generates the Gradle wrapper stuff, e.g. gradlew.'
+    gradleVersion = gradleWrapperVersion
+}
