@@ -2,7 +2,7 @@
 
 Integration, Verification and Certification Tool for HLA Federates
 
-The documentation is located inside the [[Wiki|https://github.com/MSG134/IVCT_Framework/wiki]]
+The documentation is located inside the Wiki (https://github.com/MSG134/IVCT_Framework/wiki)
 
 LICENSE
 ------------
