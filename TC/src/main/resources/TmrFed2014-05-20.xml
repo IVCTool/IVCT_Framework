@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Reinhard Herzog (Fraunhofer Institut IITB) -->
+<GERTICO xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="GERTICO.xsd">
+	<federateNameReq>TmrFed</federateNameReq>
+  <federateNameResp>TmrFed1</federateNameResp>
+  <attributeNames>
+    <attributeName>DamageState</attributeName>
+    <attributeName>Immobilized</attributeName>
+    <attributeName>FirePowerDisabled</attributeName>
+  </attributeNames>
+  <objectNamesReq>
+    <objectName>iosb11</objectName>
+    <objectName>iosb7</objectName>
+  </objectNamesReq>
+  <objectNamesResp>
+    <objectName>iosb17</objectName>
+    <objectName>iosb16</objectName>
+  </objectNamesResp>
+</GERTICO>
