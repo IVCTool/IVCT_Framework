@@ -156,7 +156,7 @@ import org.slf4j.Logger;
  *
  * @author Johannes Mulder
  */
-public class IVCT_RTIambassador {
+public class IVCT_RTIambassador implements RTIambassador {
     private RTIambassador      _rtiAmbassador;
     private EncoderFactory     encoderFactory;
     private Logger             LOGGER;

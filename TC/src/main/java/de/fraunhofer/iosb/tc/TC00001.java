@@ -3,7 +3,6 @@ package de.fraunhofer.iosb.tc;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
-import de.fraunhofer.iosb.tc_lib.TcBaseModelFactory;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import hla.rti1516e.CallbackModel;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 public class TC00001 {
     // Test case parameters
     private static Logger                   logger             = LoggerFactory.getLogger(TC00001.class);
-    private static final TcBaseModelFactory tcBaseModelFactory = new TcBaseModelFactory();
 
 
     public static void main(final String[] args) {
@@ -50,7 +48,7 @@ public class TC00001 {
     public static void execute(final TcParamTmr tcParam) {
         // Get logging-IVCT-RTI using tc_param federation name, host
         final IVCT_RTIambassador ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(logger);
-        final TcBaseModel tcBaseModel = (TcBaseModel) tcBaseModelFactory.getLocalCache(ivct_rti, logger, tcParam);
+        final TcBaseModel tcBaseModel =  new TcBaseModel(logger, ivct_rti);
         final TcFederateAmbassador tcFederateAmbassador = new TcFederateAmbassador(tcBaseModel, logger);
 
         // Test case phase

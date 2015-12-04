@@ -4,7 +4,6 @@ import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
-import de.fraunhofer.iosb.tc_lib.TcBaseModelFactory;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import org.slf4j.Logger;
@@ -53,9 +52,8 @@ public class TestRunner {
             // initialize LOGGER, localcache, federeateAmbassador and tcparam
             final TcParamTmr tcParam = new TcParamTmr();
             final Logger testLogger = LoggerFactory.getLogger(testCase.getClass());
-            final TcBaseModelFactory tcBaseModelFactory = new TcBaseModelFactory();
             final IVCT_RTIambassador ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(testLogger);
-            final TcBaseModel tcBaseModel = (TcBaseModel) tcBaseModelFactory.getLocalCache(ivct_rti, testLogger, tcParam);
+            final TcBaseModel tcBaseModel = new TcBaseModel(testLogger, ivct_rti);
             final TcFederateAmbassador tcFederateAmbassador = new TcFederateAmbassador(tcBaseModel, testLogger);
             testCase.execute(tcParam, tcBaseModel, testLogger);
         }
