@@ -70,7 +70,13 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
     @Override
     public void reportFederationExecutions(final FederationExecutionInformationSet theFederationExecutionInformationSet) throws FederateInternalError {
         this.logger.info("reportFederationExecutions " + theFederationExecutionInformationSet.toString());
-        this.myFederateAmbassador.reportFederationExecutions(theFederationExecutionInformationSet);
+        try {
+			this.myFederateAmbassador.reportFederationExecutions(theFederationExecutionInformationSet);
+		} catch (FederateInternalError e) {
+			// TODO Auto-generated catch block
+			throw e;
+			
+		}
     }
 
 
