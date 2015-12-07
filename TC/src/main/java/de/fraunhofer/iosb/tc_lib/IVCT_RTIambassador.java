@@ -203,31 +203,29 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
             this.connect(theFederateAmbassador, CallbackModel.HLA_IMMEDIATE, tcParam.getSettingsDesignator());
         }
-        catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e3) {
-            // TODO Auto-generated catch block
-            e3.printStackTrace();
+        catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("connect exception" + e.getMessage());
+            return null;
         }
 
         // Create federation execution using tc_param foms
         try {
             this.createFederationExecution(tcParam.getFederationName(), tcParam.getUrls(), "HLAfloat64Time");
         }
-        catch (final FederationExecutionAlreadyExists e3) {
-            this.LOGGER.info("initiateRti: FederationExecutionAlreadyExists (ignored)");
+        catch (final FederationExecutionAlreadyExists e) {
+            this.LOGGER.warn("createFederationExecution: FederationExecutionAlreadyExists (ignored)");
         }
-        catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e3) {
-            // TODO Auto-generated catch block
-            e3.printStackTrace();
+        catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("createFederationExecution exception" + e.getMessage());
+            return null;
         }
 
         // Join federation execution
         try {
-            //            return this.joinFederationExecution("TmrObserver", tcParam.getFederationName(), tcParam.getUrls());
             return this.joinFederationExecution(federateName, tcParam.getFederationName(), tcParam.getUrls());
         }
-        catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e3) {
-            // TODO Auto-generated catch block
-            e3.printStackTrace();
+        catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("joinFederationExecution exception" + e.getMessage());
         }
 
         return null;
@@ -244,9 +242,8 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
             this.resignFederationExecution(ResignAction.DELETE_OBJECTS_THEN_DIVEST);
         }
-        catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e3) {
-            // TODO Auto-generated catch block
-            e3.printStackTrace();
+        catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.warn("resignFederationExecution exception" + e.getMessage());
         }
 
         // Destroy federation execution
@@ -254,20 +251,18 @@ public class IVCT_RTIambassador implements RTIambassador {
             this.destroyFederationExecution(tcParam.getFederationName());
         }
         catch (final FederatesCurrentlyJoined e1) {
-            this.LOGGER.info("terminateRti: FederatesCurrentlyJoined (ignored)");
+            this.LOGGER.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
         }
-        catch (FederationExecutionDoesNotExist | NotConnected | RTIinternalError e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        catch (FederationExecutionDoesNotExist | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("destroyFederationExecution exception" + e.getMessage());
         }
 
         // Disconnect from rti
         try {
             this.disconnect();
         }
-        catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("disconnect exception" + e.getMessage());
         }
     }
 
@@ -279,9 +274,15 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @param localSettingsDesignator the settings for the rti
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel, final String localSettingsDesignator) throws ConnectionFailed, InvalidLocalSettingsDesignator, UnsupportedCallbackModel, AlreadyConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.LOGGER.info("connect " + federateReference.toString() + " " + callbackModel.toString() + " " + localSettingsDesignator);
-        this._fedAmbassador = federateReference;
-        this._rtiAmbassador.connect(federateReference, callbackModel, localSettingsDesignator);
+		this.LOGGER.info("connect " + federateReference.toString() + " " + callbackModel.toString() + " "
+				+ localSettingsDesignator);
+		this._fedAmbassador = federateReference;
+		try {
+			this._rtiAmbassador.connect(federateReference, callbackModel, localSettingsDesignator);
+		} catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+			this.LOGGER.error("connect exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
@@ -292,7 +293,12 @@ public class IVCT_RTIambassador implements RTIambassador {
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel) throws ConnectionFailed, InvalidLocalSettingsDesignator, UnsupportedCallbackModel, AlreadyConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
         this.LOGGER.info("connect " + federateReference.toString() + " " + callbackModel.toString());
+    	try {
         this._rtiAmbassador.connect(federateReference, callbackModel);
+		} catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+			this.LOGGER.error("connect exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
@@ -304,7 +310,12 @@ public class IVCT_RTIambassador implements RTIambassador {
      */
     public void disconnect() throws FederateIsExecutionMember, CallNotAllowedFromWithinCallback, RTIinternalError {
         this.LOGGER.info("disconnect");
+    	try {
         this._rtiAmbassador.disconnect();
+		} catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+			this.LOGGER.error("disconnect exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
@@ -327,7 +338,12 @@ public class IVCT_RTIambassador implements RTIambassador {
      */
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
         this.LOGGER.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules) + " " + mimModule.toString() + " " + logicalTimeImplementationName);
+    	try {
         this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule, logicalTimeImplementationName);
+		} catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+			this.LOGGER.error("createFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
@@ -346,197 +362,332 @@ public class IVCT_RTIambassador implements RTIambassador {
      */
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
         this.LOGGER.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules) + " " + logicalTimeImplementationName);
+    	try {
         this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, logicalTimeImplementationName);
+		} catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+			this.LOGGER.error("createFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     //4.5
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
         this.LOGGER.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules) + " " + mimModule.toString());
+    	try {
         this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule);
+		} catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+			this.LOGGER.error("createFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     //4.5
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
         this.LOGGER.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules));
+    	try {
         this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules);
+		} catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+			this.LOGGER.error("createFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     //4.5
     public void createFederationExecution(final String federationExecutionName, final URL fomModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
         this.LOGGER.info("createFederationExecution " + federationExecutionName + " " + fomModule.toString());
+    	try {
         this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModule);
+		} catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+			this.LOGGER.error("createFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     //4.6
     public void destroyFederationExecution(final String federationExecutionName) throws FederatesCurrentlyJoined, FederationExecutionDoesNotExist, NotConnected, RTIinternalError {
         this.LOGGER.info("destroyFederationExecution " + federationExecutionName);
+    	try {
         this._rtiAmbassador.destroyFederationExecution(federationExecutionName);
+		} catch (FederatesCurrentlyJoined | FederationExecutionDoesNotExist | NotConnected | RTIinternalError e) {
+			this.LOGGER.error("destroyFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     // 4.7
     public void listFederationExecutions() throws NotConnected, RTIinternalError {
         this.LOGGER.info("listFederationExecutions");
+    	try {
         this._rtiAmbassador.listFederationExecutions();
+		} catch (NotConnected | RTIinternalError e) {
+			this.LOGGER.error("listFederationExecutions exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateName, final String federateType, final String federationExecutionName, final URL[] additionalFomModules) throws CouldNotCreateLogicalTimeFactory, FederateNameAlreadyInUse, FederationExecutionDoesNotExist, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
         this.LOGGER.info("joinFederationExecution " + federateName + " " + federateType + " " + federationExecutionName + " " + Arrays.toString(additionalFomModules));
+    	try {
         this.myFederateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName, additionalFomModules);
         this.LOGGER.info("joinFederationExecution return " + this.myFederateHandle.toString());
         return this.myFederateHandle;
+		} catch (CouldNotCreateLogicalTimeFactory | FederateNameAlreadyInUse | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+			this.LOGGER.error("joinFederationExecution exception" + e.getMessage());
+			throw e;
+		}
     }
 
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateType, final String federationExecutionName, final URL[] additionalFomModules) throws CouldNotCreateLogicalTimeFactory, FederationExecutionDoesNotExist, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.LOGGER.info("joinFederationExecution " + federateType + " " + federationExecutionName + " " + Arrays.toString(additionalFomModules));
-        final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateType, federationExecutionName, additionalFomModules);
-        this.LOGGER.info("joinFederationExecution return " + federateHandle.toString());
-        return federateHandle;
+    	this.LOGGER.info("joinFederationExecution " + federateType + " " + federationExecutionName + " " + Arrays.toString(additionalFomModules));
+    	try {
+    		final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateType, federationExecutionName, additionalFomModules);
+    		this.LOGGER.info("joinFederationExecution return " + federateHandle.toString());
+    		return federateHandle;
+    	} catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("joinFederationExecution exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateName, final String federateType, final String federationExecutionName) throws CouldNotCreateLogicalTimeFactory, FederateNameAlreadyInUse, FederationExecutionDoesNotExist, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.LOGGER.info("joinFederationExecution " + federateName + " " + federateType + " " + federationExecutionName);
-        final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName);
-        this.LOGGER.info("joinFederationExecution return " + federateHandle.toString());
-        return federateHandle;
+    	this.LOGGER.info("joinFederationExecution " + federateName + " " + federateType + " " + federationExecutionName);
+    	try {
+    		final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName);
+    		this.LOGGER.info("joinFederationExecution return " + federateHandle.toString());
+    		return federateHandle;
+    	} catch (CouldNotCreateLogicalTimeFactory | FederateNameAlreadyInUse | FederationExecutionDoesNotExist | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("joinFederationExecution exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateType, final String federationExecutionName) throws CouldNotCreateLogicalTimeFactory, FederationExecutionDoesNotExist, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.LOGGER.info("joinFederationExecution " + federateType + " " + federationExecutionName);
-        final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateType, federationExecutionName);
-        this.LOGGER.info("joinFederationExecution return " + federateHandle.toString());
-        return federateHandle;
+    	this.LOGGER.info("joinFederationExecution " + federateType + " " + federationExecutionName);
+    	try {
+    		final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateType, federationExecutionName);
+    		this.LOGGER.info("joinFederationExecution return " + federateHandle.toString());
+    		return federateHandle;
+    	} catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("joinFederationExecution exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.10
     public void resignFederationExecution(final ResignAction resignAction) throws InvalidResignAction, OwnershipAcquisitionPending, FederateOwnsAttributes, FederateNotExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
         this.LOGGER.info("resignFederationExecution " + resignAction.toString());
+    	try {
         this._rtiAmbassador.resignFederationExecution(resignAction);
+    	} catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.LOGGER.error("resignFederationExecution exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.11
     public void registerFederationSynchronizationPoint(final String synchronizationPointLabel, final byte[] userSuppliedTag) throws SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("registerFederationSynchronizationPoint " + synchronizationPointLabel + " " + Arrays.toString(userSuppliedTag));
+    	try {
         this._rtiAmbassador.registerFederationSynchronizationPoint(synchronizationPointLabel, userSuppliedTag);
+    	} catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("registerFederationSynchronizationPoint exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.11
     public void registerFederationSynchronizationPoint(final String synchronizationPointLabel, final byte[] userSuppliedTag, final FederateHandleSet synchronizationSet) throws InvalidFederateHandle, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("registerFederationSynchronizationPoint " + synchronizationPointLabel + " " + Arrays.toString(userSuppliedTag) + " " + synchronizationSet.toString());
+    	try {
         this._rtiAmbassador.registerFederationSynchronizationPoint(synchronizationPointLabel, userSuppliedTag, synchronizationSet);
+    	} catch (InvalidFederateHandle | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected |  RTIinternalError e) {
+    		this.LOGGER.error("registerFederationSynchronizationPoint exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.14
     public void synchronizationPointAchieved(final String synchronizationPointLabel) throws SynchronizationPointLabelNotAnnounced, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("synchronizationPointAchieved " + synchronizationPointLabel);
+    	try {
         this._rtiAmbassador.synchronizationPointAchieved(synchronizationPointLabel);
+    	} catch (SynchronizationPointLabelNotAnnounced | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("synchronizationPointAchieved exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     //4.14
     public void synchronizationPointAchieved(final String synchronizationPointLabel, final boolean successIndicator) throws SynchronizationPointLabelNotAnnounced, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("synchronizationPointAchieved " + synchronizationPointLabel + " " + successIndicator);
+    	try {
         this._rtiAmbassador.synchronizationPointAchieved(synchronizationPointLabel, successIndicator);
+    	} catch (SynchronizationPointLabelNotAnnounced | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("synchronizationPointAchieved exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.16
     public void requestFederationSave(final String label) throws SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("requestFederationSave " + label);
+    	try {
         this._rtiAmbassador.requestFederationSave(label);
+    	} catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("requestFederationSave exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.16
     public void requestFederationSave(final String label, final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, FederateUnableToUseTime, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("requestFederationSave " + label + " " + theTime.toString());
+    	try {
         this._rtiAmbassador.requestFederationSave(label, theTime);
+    	} catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | FederateUnableToUseTime | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("requestFederationSave exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.18
     public void federateSaveBegun() throws SaveNotInitiated, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("federateSaveBegun");
+    	try {
         this._rtiAmbassador.federateSaveBegun();
+    	} catch (SaveNotInitiated | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("federateSaveBegun exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.19
     public void federateSaveComplete() throws FederateHasNotBegunSave, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("federateSaveComplete");
+    	try {
         this._rtiAmbassador.federateSaveComplete();
+    	} catch (FederateHasNotBegunSave | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("federateSaveComplete exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.19
     public void federateSaveNotComplete() throws FederateHasNotBegunSave, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("federateSaveNotComplete");
+    	try {
         this._rtiAmbassador.federateSaveNotComplete();
+    	} catch (FederateHasNotBegunSave | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("federateSaveNotComplete exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.21
     public void abortFederationSave() throws SaveNotInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("abortFederationSave");
+    	try {
         this._rtiAmbassador.abortFederationSave();
+    	} catch (SaveNotInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("abortFederationSave exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.22
     public void queryFederationSaveStatus() throws RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("queryFederationSaveStatus");
+    	try {
         this._rtiAmbassador.queryFederationSaveStatus();
+    	} catch (RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("queryFederationSaveStatus exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.24
     public void requestFederationRestore(final String label) throws SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("requestFederationRestore " + label);
+    	try {
         this._rtiAmbassador.requestFederationRestore(label);
+    	} catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("requestFederationRestore exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.28
     public void federateRestoreComplete() throws RestoreNotRequested, SaveInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("federateRestoreComplete");
+    	try {
         this._rtiAmbassador.federateRestoreComplete();
+    	} catch (RestoreNotRequested | SaveInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("federateRestoreComplete exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.28
     public void federateRestoreNotComplete() throws RestoreNotRequested, SaveInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("federateRestoreNotComplete");
+    	try {
         this._rtiAmbassador.federateRestoreNotComplete();
+    	} catch (RestoreNotRequested | SaveInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("federateRestoreNotComplete exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.30
     public void abortFederationRestore() throws RestoreNotInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("abortFederationRestore");
+    	try {
         this._rtiAmbassador.abortFederationRestore();
+    	} catch (RestoreNotInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("abortFederationRestore exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
 
     // 4.31
     public void queryFederationRestoreStatus() throws SaveInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
         this.LOGGER.info("queryFederationRestoreStatus");
+    	try {
         this._rtiAmbassador.queryFederationRestoreStatus();
+    	} catch (SaveInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
+    		this.LOGGER.error("queryFederationRestoreStatus exception" + e.getMessage());
+    		throw e;
+    	}
     }
 
     /////////////////////////////////////
