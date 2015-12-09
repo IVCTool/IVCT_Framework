@@ -15,8 +15,8 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
 
     /**
-     * @param ivct_rti
-     * @param logger
+     * @param ivct_rti ivct rti
+     * @param logger logger
      */
     public IVCT_BaseModel(final IVCT_RTIambassador ivct_rti, final Logger logger) {
         super(logger);
@@ -34,7 +34,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
     /**
      * @param federateName federate name
-     * @param federateReference
+     * @param federateReference federate reference
      * @param tcParam test case parameters
      * @return federate handle
      */

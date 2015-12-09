@@ -51,7 +51,7 @@ public class TcBaseModel extends IVCT_BaseModel {
 
     /**
      * @param logger reference to the logger
-     * @param ivct_rti
+     * @param ivct_rti ivct rti
      */
     public TcBaseModel(final Logger logger, final IVCT_RTIambassador ivct_rti) {
         super(ivct_rti, logger);
@@ -61,9 +61,9 @@ public class TcBaseModel extends IVCT_BaseModel {
 
 
     /**
-     * @param federateReference
-     * @param callbackModel
-     * @param localSettingsDesignator
+     * @param federateReference federate reference
+     * @param callbackModel callback model
+     * @param localSettingsDesignator local settings designator
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel, final String localSettingsDesignator) {
         try {
@@ -116,9 +116,9 @@ public class TcBaseModel extends IVCT_BaseModel {
 
 
     /**
-     * @param theObject
-     * @param theObjectClass
-     * @param objectName
+     * @param theObject the object
+     * @param theObjectClass the object class
+     * @param objectName object name
      */
     @Override
     public void discoverObjectInstance(final ObjectInstanceHandle theObject, final ObjectClassHandle theObjectClass, final String objectName) {
@@ -193,9 +193,9 @@ public class TcBaseModel extends IVCT_BaseModel {
 
 
     /**
-     * @param theObject
-     * @param theAttributes
-     * @param userSuppliedTag
+     * @param theObject the object
+     * @param theAttributes the attributes
+     * @param userSuppliedTag user supplied tag
      */
     @Override
     public void provideAttributeValueUpdate(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes, final byte[] userSuppliedTag) {
@@ -212,12 +212,12 @@ public class TcBaseModel extends IVCT_BaseModel {
 
 
     /**
-     * @param interactionClass
-     * @param theParameters
-     * @param userSuppliedTag
-     * @param sentOrdering
-     * @param theTransport
-     * @param receiveInfo
+     * @param interactionClass interaction class
+     * @param theParameters the parameters
+     * @param userSuppliedTag user supplied tag
+     * @param sentOrdering sent ordering
+     * @param theTransport the transport
+     * @param receiveInfo receive info
      */
     @Override
     public void receiveInteraction(final InteractionClassHandle interactionClass, final ParameterHandleValueMap theParameters, final byte[] userSuppliedTag, final OrderType sentOrdering, final TransportationTypeHandle theTransport, final FederateAmbassador.SupplementalReceiveInfo receiveInfo) {
@@ -248,12 +248,12 @@ public class TcBaseModel extends IVCT_BaseModel {
 
 
     /**
-     * @param theObject
-     * @param theAttributes
-     * @param userSuppliedTag
-     * @param sentOrdering
-     * @param theTransport
-     * @param reflectInfo
+     * @param theObject the object
+     * @param theAttributes the attributes
+     * @param userSuppliedTag user supplied tag
+     * @param sentOrdering sent ordering
+     * @param theTransport the transport
+     * @param reflectInfo reflect info
      */
     @Override
     public void reflectAttributeValues(final ObjectInstanceHandle theObject, final AttributeHandleValueMap theAttributes, final byte[] userSuppliedTag, final OrderType sentOrdering, final TransportationTypeHandle theTransport, final FederateAmbassador.SupplementalReflectInfo reflectInfo) {
@@ -282,10 +282,10 @@ public class TcBaseModel extends IVCT_BaseModel {
 
 
     /**
-     * @param theObject
-     * @param userSuppliedTag
-     * @param sentOrdering
-     * @param removeInfo
+     * @param theObject the object
+     * @param userSuppliedTag user supplied tag
+     * @param sentOrdering sent ordering
+     * @param removeInfo remove info
      */
     @Override
     public void removeObjectInstance(final ObjectInstanceHandle theObject, final byte[] userSuppliedTag, final OrderType sentOrdering, final FederateAmbassador.SupplementalRemoveInfo removeInfo) {
