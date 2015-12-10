@@ -1,7 +1,32 @@
 package de.fraunhofer.iosb.tc_lib;
 
+import hla.rti1516e.CallbackModel;
 import hla.rti1516e.FederateAmbassador;
 import hla.rti1516e.FederateHandle;
+import hla.rti1516e.ResignAction;
+import hla.rti1516e.exceptions.AlreadyConnected;
+import hla.rti1516e.exceptions.CallNotAllowedFromWithinCallback;
+import hla.rti1516e.exceptions.ConnectionFailed;
+import hla.rti1516e.exceptions.CouldNotCreateLogicalTimeFactory;
+import hla.rti1516e.exceptions.CouldNotOpenFDD;
+import hla.rti1516e.exceptions.ErrorReadingFDD;
+import hla.rti1516e.exceptions.FederateAlreadyExecutionMember;
+import hla.rti1516e.exceptions.FederateIsExecutionMember;
+import hla.rti1516e.exceptions.FederateNotExecutionMember;
+import hla.rti1516e.exceptions.FederateOwnsAttributes;
+import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
+import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
+import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
+import hla.rti1516e.exceptions.InconsistentFDD;
+import hla.rti1516e.exceptions.InvalidLocalSettingsDesignator;
+import hla.rti1516e.exceptions.InvalidResignAction;
+import hla.rti1516e.exceptions.NotConnected;
+import hla.rti1516e.exceptions.OwnershipAcquisitionPending;
+import hla.rti1516e.exceptions.RTIinternalError;
+import hla.rti1516e.exceptions.RestoreInProgress;
+import hla.rti1516e.exceptions.SaveInProgress;
+import hla.rti1516e.exceptions.UnsupportedCallbackModel;
+
 import org.slf4j.Logger;
 
 
@@ -10,8 +35,8 @@ import org.slf4j.Logger;
  */
 public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
-    private FederateHandle     federateHandle;
     private IVCT_RTIambassador ivct_rti;
+    private Logger logger;
 
 
     /**
@@ -21,14 +46,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     public IVCT_BaseModel(final IVCT_RTIambassador ivct_rti, final Logger logger) {
         super(logger);
         this.ivct_rti = ivct_rti;
-    }
-
-
-    /**
-     * @return the federate handle for this federate
-     */
-    public FederateHandle getFederateHandle() {
-        return this.federateHandle;
+        this.logger = logger;
     }
 
 
@@ -39,8 +57,36 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
      * @return federate handle
      */
     public FederateHandle initiateRti(final String federateName, final FederateAmbassador federateReference, final IVCT_TcParam tcParam) {
-        this.federateHandle = this.ivct_rti.initiateRti(tcParam, federateReference, federateName);
-        return this.federateHandle;
+    	
+        // Connect to rti
+        try {
+        	ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, tcParam.getSettingsDesignator());
+        }
+        catch (AlreadyConnected e) {
+            this.logger.warn("initiateRti: AlreadyConnected (ignored)");
+        }
+        catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+            return null;
+        }
+
+        // Create federation execution using tc_param foms
+        try {
+        	ivct_rti.createFederationExecution(tcParam.getFederationName(), tcParam.getUrls(), "HLAfloat64Time");
+        }
+        catch (final FederationExecutionAlreadyExists e) {
+            this.logger.warn("initiateRti: FederationExecutionAlreadyExists (ignored)");
+        }
+        catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
+            return null;
+        }
+
+        // Join federation execution
+        try {
+            return ivct_rti.joinFederationExecution(federateName, tcParam.getFederationName(), tcParam.getUrls());
+        }
+        catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+            return null;
+        }
     }
 
 
@@ -48,6 +94,38 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
      * @param tcParam the test case parameters
      */
     public void terminateRti(final IVCT_TcParam tcParam) {
-        this.ivct_rti.terminateRti(tcParam);
+    	
+        // Resign federation execution
+        try {
+        	ivct_rti.resignFederationExecution(ResignAction.DELETE_OBJECTS_THEN_DIVEST);
+        }
+        catch (NotConnected e) {
+    		return;
+        }
+        catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.logger.warn("resignFederationExecution exception=" + e.getMessage());
+        }
+
+        // Destroy federation execution
+        try {
+        	ivct_rti.destroyFederationExecution(tcParam.getFederationName());
+        }
+        catch (final FederatesCurrentlyJoined e1) {
+            this.logger.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
+        }
+        catch (NotConnected e) {
+    		return;
+        }
+        catch (FederationExecutionDoesNotExist | RTIinternalError e) {
+    		this.logger.error("destroyFederationExecution exception=" + e.getMessage());
+        }
+
+        // Disconnect from rti
+        try {
+        	ivct_rti.disconnect();
+        }
+        catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+    		this.logger.error("disconnect exception=" + e.getMessage());
+        }
     }
 }

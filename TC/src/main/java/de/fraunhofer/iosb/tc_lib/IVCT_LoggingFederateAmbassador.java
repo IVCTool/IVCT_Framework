@@ -62,7 +62,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.connectionLost(faultDescription);
 		} catch (FederateInternalError e) {
-			this.logger.info("connectionLost exception=" + e.getMessage());
+			this.logger.error("connectionLost exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -78,7 +78,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.reportFederationExecutions(theFederationExecutionInformationSet);
 		} catch (FederateInternalError e) {
-			this.logger.info("reportFederationExecutions exception=" + e.getMessage());
+			this.logger.error("reportFederationExecutions exception=" + e.getMessage());
 			throw e;			
 		}
 	}
@@ -94,7 +94,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.synchronizationPointRegistrationSucceeded(synchronizationPointLabel);
 		} catch (FederateInternalError e) {
-			this.logger.info("synchronizationPointRegistrationSucceeded exception=" + e.getMessage());
+			this.logger.error("synchronizationPointRegistrationSucceeded exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -110,7 +110,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.synchronizationPointRegistrationFailed(synchronizationPointLabel, reason);
 		} catch (FederateInternalError e) {
-			this.logger.info("synchronizationPointRegistrationFailed exception=" + e.getMessage());
+			this.logger.error("synchronizationPointRegistrationFailed exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -126,7 +126,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.announceSynchronizationPoint(synchronizationPointLabel, userSuppliedTag);
 		} catch (FederateInternalError e) {
-			this.logger.info("announceSynchronizationPoint exception=" + e.getMessage());
+			this.logger.error("announceSynchronizationPoint exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -142,7 +142,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationSynchronized(synchronizationPointLabel, failedToSyncSet);
 		} catch (FederateInternalError e) {
-			this.logger.info("federationSynchronized exception=" + e.getMessage());
+			this.logger.error("federationSynchronized exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -158,7 +158,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.initiateFederateSave(label);
 		} catch (FederateInternalError e) {
-			this.logger.info("initiateFederateSave exception=" + e.getMessage());
+			this.logger.error("initiateFederateSave exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -174,7 +174,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.initiateFederateSave(label, time);
 		} catch (FederateInternalError e) {
-			this.logger.info("initiateFederateSave exception=" + e.getMessage());
+			this.logger.error("initiateFederateSave exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -190,7 +190,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationSaved();
 		} catch (FederateInternalError e) {
-			this.logger.info("federationSaved exception=" + e.getMessage());
+			this.logger.error("federationSaved exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -206,7 +206,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationNotSaved(reason);
 		} catch (FederateInternalError e) {
-			this.logger.info("federationNotSaved exception=" + e.getMessage());
+			this.logger.error("federationNotSaved exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -222,7 +222,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationSaveStatusResponse(response);
 		} catch (FederateInternalError e) {
-			this.logger.info("federationSaveStatusResponse exception=" + e.getMessage());
+			this.logger.error("federationSaveStatusResponse exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -238,7 +238,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.requestFederationRestoreSucceeded(label);
 		} catch (FederateInternalError e) {
-			this.logger.info("requestFederationRestoreSucceeded exception=" + e.getMessage());
+			this.logger.error("requestFederationRestoreSucceeded exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -254,7 +254,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.requestFederationRestoreFailed(label);
 		} catch (FederateInternalError e) {
-			this.logger.info("requestFederationRestoreFailed exception=" + e.getMessage());
+			this.logger.error("requestFederationRestoreFailed exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -270,7 +270,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationRestoreBegun();
 		} catch (FederateInternalError e) {
-			this.logger.info("federationRestoreBegun exception=" + e.getMessage());
+			this.logger.error("federationRestoreBegun exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -286,7 +286,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.initiateFederateRestore(label, federateName, federateHandle);
 		} catch (FederateInternalError e) {
-			this.logger.info("initiateFederateRestore exception=" + e.getMessage());
+			this.logger.error("initiateFederateRestore exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -302,7 +302,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationRestored();
 		} catch (FederateInternalError e) {
-			this.logger.info("federationRestored exception=" + e.getMessage());
+			this.logger.error("federationRestored exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -318,7 +318,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationNotRestored(reason);
 		} catch (FederateInternalError e) {
-			this.logger.info("federationNotRestored exception=" + e.getMessage());
+			this.logger.error("federationNotRestored exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -334,7 +334,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.federationRestoreStatusResponse(response);
 		} catch (FederateInternalError e) {
-			this.logger.info("federationRestoreStatusResponse exception=" + e.getMessage());
+			this.logger.error("federationRestoreStatusResponse exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -354,7 +354,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.startRegistrationForObjectClass(theClass);
 		} catch (FederateInternalError e) {
-			this.logger.info("startRegistrationForObjectClass exception=" + e.getMessage());
+			this.logger.error("startRegistrationForObjectClass exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -370,7 +370,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.stopRegistrationForObjectClass(theClass);
 		} catch (FederateInternalError e) {
-			this.logger.info("stopRegistrationForObjectClass exception=" + e.getMessage());
+			this.logger.error("stopRegistrationForObjectClass exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -386,7 +386,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.turnInteractionsOn(theHandle);
 		} catch (FederateInternalError e) {
-			this.logger.info("turnInteractionsOn exception=" + e.getMessage());
+			this.logger.error("turnInteractionsOn exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -402,7 +402,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.turnInteractionsOff(theHandle);
 		} catch (FederateInternalError e) {
-			this.logger.info("turnInteractionsOff exception=" + e.getMessage());
+			this.logger.error("turnInteractionsOff exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -422,7 +422,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.objectInstanceNameReservationSucceeded(objectName);
 		} catch (FederateInternalError e) {
-			this.logger.info("objectInstanceNameReservationSucceeded exception=" + e.getMessage());
+			this.logger.error("objectInstanceNameReservationSucceeded exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -438,7 +438,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.objectInstanceNameReservationFailed(objectName);
 		} catch (FederateInternalError e) {
-			this.logger.info("objectInstanceNameReservationFailed exception=" + e.getMessage());
+			this.logger.error("objectInstanceNameReservationFailed exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -454,7 +454,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.multipleObjectInstanceNameReservationSucceeded(objectNames);
 		} catch (FederateInternalError e) {
-			this.logger.info("multipleObjectInstanceNameReservationSucceeded exception=" + e.getMessage());
+			this.logger.error("multipleObjectInstanceNameReservationSucceeded exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -470,7 +470,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.multipleObjectInstanceNameReservationFailed(objectNames);
 		} catch (FederateInternalError e) {
-			this.logger.info("multipleObjectInstanceNameReservationFailed exception=" + e.getMessage());
+			this.logger.error("multipleObjectInstanceNameReservationFailed exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -486,7 +486,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.discoverObjectInstance(theObject, theObjectClass, objectName);
 		} catch (FederateInternalError e) {
-			this.logger.info("discoverObjectInstance exception=" + e.getMessage());
+			this.logger.error("discoverObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -502,7 +502,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.discoverObjectInstance(theObject, theObjectClass, objectName, producingFederate);
 		} catch (FederateInternalError e) {
-			this.logger.info("discoverObjectInstance exception=" + e.getMessage());
+			this.logger.error("discoverObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -528,7 +528,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.reflectAttributeValues(theObject, theAttributes, userSuppliedTag, sentOrdering, theTransport, reflectInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("reflectAttributeValues exception=" + e.getMessage());
+			this.logger.error("reflectAttributeValues exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -545,7 +545,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.reflectAttributeValues(theObject, theAttributes, userSuppliedTag, sentOrdering, theTransport, theTime, receivedOrdering, reflectInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("reflectAttributeValues exception=" + e.getMessage());
+			this.logger.error("reflectAttributeValues exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -562,7 +562,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.reflectAttributeValues(theObject, theAttributes, userSuppliedTag, sentOrdering, theTransport, theTime, receivedOrdering, retractionHandle, reflectInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("reflectAttributeValues exception=" + e.getMessage());
+			this.logger.error("reflectAttributeValues exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -588,7 +588,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, receiveInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("receiveInteraction exception=" + e.getMessage());
+			this.logger.error("receiveInteraction exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -605,7 +605,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, theTime, receivedOrdering, receiveInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("receiveInteraction exception=" + e.getMessage());
+			this.logger.error("receiveInteraction exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -622,7 +622,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, theTime, receivedOrdering, retractionHandle, receiveInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("receiveInteraction exception=" + e.getMessage());
+			this.logger.error("receiveInteraction exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -638,7 +638,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.removeObjectInstance(theObject, userSuppliedTag, sentOrdering, removeInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("removeObjectInstance exception=" + e.getMessage());
+			this.logger.error("removeObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -654,7 +654,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.removeObjectInstance(theObject, userSuppliedTag, sentOrdering, theTime, receivedOrdering, removeInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("removeObjectInstance exception=" + e.getMessage());
+			this.logger.error("removeObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -670,7 +670,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.removeObjectInstance(theObject, userSuppliedTag, sentOrdering, theTime, receivedOrdering, retractionHandle, removeInfo);
 		} catch (FederateInternalError e) {
-			this.logger.info("removeObjectInstance exception=" + e.getMessage());
+			this.logger.error("removeObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -686,7 +686,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.attributesInScope(theObject, theAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("attributesInScope exception=" + e.getMessage());
+			this.logger.error("attributesInScope exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -702,7 +702,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.attributesOutOfScope(theObject, theAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("attributesOutOfScope exception=" + e.getMessage());
+			this.logger.error("attributesOutOfScope exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -718,7 +718,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.provideAttributeValueUpdate(theObject, theAttributes, userSuppliedTag);
 		} catch (FederateInternalError e) {
-			this.logger.info("provideAttributeValueUpdate exception=" + e.getMessage());
+			this.logger.error("provideAttributeValueUpdate exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -734,7 +734,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.turnUpdatesOnForObjectInstance(theObject, theAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("turnUpdatesOnForObjectInstance exception=" + e.getMessage());
+			this.logger.error("turnUpdatesOnForObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -750,7 +750,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.turnUpdatesOnForObjectInstance(theObject, theAttributes, updateRateDesignator);
 		} catch (FederateInternalError e) {
-			this.logger.info("turnUpdatesOnForObjectInstance exception=" + e.getMessage());
+			this.logger.error("turnUpdatesOnForObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -766,7 +766,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.turnUpdatesOffForObjectInstance(theObject, theAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("turnUpdatesOffForObjectInstance exception=" + e.getMessage());
+			this.logger.error("turnUpdatesOffForObjectInstance exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -782,7 +782,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.confirmAttributeTransportationTypeChange(theObject, theAttributes, theTransportation);
 		} catch (FederateInternalError e) {
-			this.logger.info("confirmAttributeTransportationTypeChange exception=" + e.getMessage());
+			this.logger.error("confirmAttributeTransportationTypeChange exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -798,7 +798,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.reportAttributeTransportationType(theObject, theAttribute, theTransportation);
 		} catch (FederateInternalError e) {
-			this.logger.info("reportAttributeTransportationType exception=" + e.getMessage());
+			this.logger.error("reportAttributeTransportationType exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -814,7 +814,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.confirmInteractionTransportationTypeChange(theInteraction, theTransportation);
 		} catch (FederateInternalError e) {
-			this.logger.info("confirmInteractionTransportationTypeChange exception=" + e.getMessage());
+			this.logger.error("confirmInteractionTransportationTypeChange exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -830,7 +830,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.reportInteractionTransportationType(theFederate, theInteraction, theTransportation);
 		} catch (FederateInternalError e) {
-			this.logger.info("reportInteractionTransportationType exception=" + e.getMessage());
+			this.logger.error("reportInteractionTransportationType exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -850,7 +850,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.requestAttributeOwnershipAssumption(theObject, offeredAttributes, userSuppliedTag);
 		} catch (FederateInternalError e) {
-			this.logger.info("requestAttributeOwnershipAssumption exception=" + e.getMessage());
+			this.logger.error("requestAttributeOwnershipAssumption exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -866,7 +866,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.requestDivestitureConfirmation(theObject, offeredAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("requestDivestitureConfirmation exception=" + e.getMessage());
+			this.logger.error("requestDivestitureConfirmation exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -882,7 +882,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.attributeOwnershipAcquisitionNotification(theObject, securedAttributes, userSuppliedTag);
 		} catch (FederateInternalError e) {
-			this.logger.info("attributeOwnershipAcquisitionNotification exception=" + e.getMessage());
+			this.logger.error("attributeOwnershipAcquisitionNotification exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -898,7 +898,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.attributeOwnershipUnavailable(theObject, theAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("attributeOwnershipUnavailable exception=" + e.getMessage());
+			this.logger.error("attributeOwnershipUnavailable exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -914,7 +914,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.requestAttributeOwnershipRelease(theObject, candidateAttributes, userSuppliedTag);
 		} catch (FederateInternalError e) {
-			this.logger.info("requestAttributeOwnershipRelease exception=" + e.getMessage());
+			this.logger.error("requestAttributeOwnershipRelease exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -930,7 +930,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.confirmAttributeOwnershipAcquisitionCancellation(theObject, theAttributes);
 		} catch (FederateInternalError e) {
-			this.logger.info("confirmAttributeOwnershipAcquisitionCancellation exception=" + e.getMessage());
+			this.logger.error("confirmAttributeOwnershipAcquisitionCancellation exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -946,7 +946,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.informAttributeOwnership(theObject, theAttribute, theOwner);
 		} catch (FederateInternalError e) {
-			this.logger.info("informAttributeOwnership exception=" + e.getMessage());
+			this.logger.error("informAttributeOwnership exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -962,7 +962,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.attributeIsNotOwned(theObject, theAttribute);
 		} catch (FederateInternalError e) {
-			this.logger.info("attributeIsNotOwned exception=" + e.getMessage());
+			this.logger.error("attributeIsNotOwned exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -978,7 +978,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.attributeIsOwnedByRTI(theObject, theAttribute);
 		} catch (FederateInternalError e) {
-			this.logger.info("attributeIsOwnedByRTI exception=" + e.getMessage());
+			this.logger.error("attributeIsOwnedByRTI exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -998,7 +998,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.timeRegulationEnabled(time);
 		} catch (FederateInternalError e) {
-			this.logger.info("timeRegulationEnabled exception=" + e.getMessage());
+			this.logger.error("timeRegulationEnabled exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -1014,7 +1014,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.timeConstrainedEnabled(time);
 		} catch (FederateInternalError e) {
-			this.logger.info("timeConstrainedEnabled exception=" + e.getMessage());
+			this.logger.error("timeConstrainedEnabled exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -1030,7 +1030,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.timeAdvanceGrant(theTime);
 		} catch (FederateInternalError e) {
-			this.logger.info("timeAdvanceGrant exception=" + e.getMessage());
+			this.logger.error("timeAdvanceGrant exception=" + e.getMessage());
 			throw e;
 		}
 	}
@@ -1046,7 +1046,7 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 		try {
 			this.myFederateAmbassador.requestRetraction(theHandle);
 		} catch (FederateInternalError e) {
-			this.logger.info("requestRetraction requestRetraction=" + e.getMessage());
+			this.logger.error("requestRetraction requestRetraction=" + e.getMessage());
 			throw e;
 		}
 	}

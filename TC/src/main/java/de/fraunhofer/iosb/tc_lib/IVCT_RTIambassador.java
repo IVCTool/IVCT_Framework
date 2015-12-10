@@ -160,7 +160,6 @@ public class IVCT_RTIambassador implements RTIambassador {
     private RTIambassador      _rtiAmbassador;
     private EncoderFactory     encoderFactory;
     private Logger             logger;
-    private FederateHandle     myFederateHandle;
 
 
     /**
@@ -172,7 +171,6 @@ public class IVCT_RTIambassador implements RTIambassador {
         this._rtiAmbassador = theRTIAmbassador;
         this.encoderFactory = encoderFactory;
         this.logger = logger;
-        this.myFederateHandle = null;
     }
 
 
@@ -181,94 +179,6 @@ public class IVCT_RTIambassador implements RTIambassador {
      */
     public EncoderFactory getEncoderFactory() {
         return this.encoderFactory;
-    }
-
-
-    /**
-     * @return value of the federate handle
-     */
-    public FederateHandle getMyFederateHandle() {
-        return this.myFederateHandle;
-    }
-
-
-    /**
-     * @param tcParam test parameters applying to the SuT
-     * @param theFederateAmbassador the implementation of the federate
-     * @param federateName the federate name
-     * @return the federate handle
-     */
-    public FederateHandle initiateRti(final IVCT_TcParam tcParam, final FederateAmbassador theFederateAmbassador, final String federateName) {
-        // Connect to rti
-        try {
-            this.connect(theFederateAmbassador, CallbackModel.HLA_IMMEDIATE, tcParam.getSettingsDesignator());
-        }
-        catch (AlreadyConnected e) {
-            this.logger.warn("initiateRti: AlreadyConnected (ignored)");
-        }
-        catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-            return null;
-        }
-
-        // Create federation execution using tc_param foms
-        try {
-            this.createFederationExecution(tcParam.getFederationName(), tcParam.getUrls(), "HLAfloat64Time");
-        }
-        catch (final FederationExecutionAlreadyExists e) {
-            this.logger.warn("initiateRti: FederationExecutionAlreadyExists (ignored)");
-        }
-        catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
-            return null;
-        }
-
-        // Join federation execution
-        try {
-            return this.joinFederationExecution(federateName, tcParam.getFederationName(), tcParam.getUrls());
-        }
-        catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-            return null;
-        }
-    }
-
-
-    /**
-     * Terminate connection to rti
-     *
-     * @param tcParam test parameters applying to the SuT
-     */
-    public void terminateRti(final IVCT_TcParam tcParam) {
-        // Resign federation execution
-        try {
-            this.resignFederationExecution(ResignAction.DELETE_OBJECTS_THEN_DIVEST);
-        }
-        catch (NotConnected e) {
-    		return;
-        }
-        catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.warn("resignFederationExecution exception=" + e.getMessage());
-        }
-
-        // Destroy federation execution
-        try {
-            this.destroyFederationExecution(tcParam.getFederationName());
-        }
-        catch (final FederatesCurrentlyJoined e1) {
-            this.logger.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
-        }
-        catch (NotConnected e) {
-    		return;
-        }
-        catch (FederationExecutionDoesNotExist | RTIinternalError e) {
-    		this.logger.error("destroyFederationExecution exception=" + e.getMessage());
-        }
-
-        // Disconnect from rti
-        try {
-            this.disconnect();
-        }
-        catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("disconnect exception=" + e.getMessage());
-        }
     }
 
 
@@ -308,7 +218,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     // 4.3
     /**
      * @throws FederateIsExecutionMember federate is still joined
-     * @throws CallNotAllowedFromWithinCallback a callbach is in process
+     * @throws CallNotAllowedFromWithinCallback a callback is in process
      * @throws RTIinternalError some rti internal error
      */
     public void disconnect() throws FederateIsExecutionMember, CallNotAllowedFromWithinCallback, RTIinternalError {
@@ -438,9 +348,10 @@ public class IVCT_RTIambassador implements RTIambassador {
     public FederateHandle joinFederationExecution(final String federateName, final String federateType, final String federationExecutionName, final URL[] additionalFomModules) throws CouldNotCreateLogicalTimeFactory, FederateNameAlreadyInUse, FederationExecutionDoesNotExist, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
         this.logger.info("joinFederationExecution " + federateName + " " + federateType + " " + federationExecutionName + " " + Arrays.toString(additionalFomModules));
         try {
-        	this.myFederateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName, additionalFomModules);
-        	this.logger.info("joinFederationExecution return " + this.myFederateHandle.toString());
-        	return this.myFederateHandle;
+            FederateHandle myFederateHandle;
+        	myFederateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName, additionalFomModules);
+        	this.logger.info("joinFederationExecution return " + myFederateHandle.toString());
+        	return myFederateHandle;
         } catch (CouldNotCreateLogicalTimeFactory | FederateNameAlreadyInUse | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
         	this.logger.error("joinFederationExecution exception=" + e.getMessage());
         	throw e;

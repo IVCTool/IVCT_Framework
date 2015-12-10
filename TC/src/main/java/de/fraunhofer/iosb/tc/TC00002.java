@@ -50,6 +50,6 @@ public class TC00002 {
         logger.info("TEST CASE POSTAMBLE");
 
         // Terminate rti
-        ivct_FederateAmbassador.terminateRti(tcParam);
+        baseModelTc.terminateRti(tcParam);
     }
 }
