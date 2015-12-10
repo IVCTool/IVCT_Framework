@@ -6,7 +6,7 @@ import java.net.URL;
 public interface IVCT_TcParam {
 
     /**
-     * @return
+     * @return the federate name
      */
     public String getFederationName();
 
@@ -18,7 +18,7 @@ public interface IVCT_TcParam {
 
 
     /**
-     * @return
+     * @return urls
      */
     public URL[] getUrls();
 
