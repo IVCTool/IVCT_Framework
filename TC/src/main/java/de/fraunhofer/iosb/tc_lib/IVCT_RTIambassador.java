@@ -189,7 +189,7 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @param localSettingsDesignator the settings for the rti
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel, final String localSettingsDesignator) throws ConnectionFailed, InvalidLocalSettingsDesignator, UnsupportedCallbackModel, AlreadyConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-		this.logger.info("connect " + federateReference.toString() + " " + callbackModel.toString() + " " + localSettingsDesignator);
+		this.logger.info("connect federateReference=" + federateReference.toString() + ", callbackModel=" + callbackModel.toString() + ", localSettingsDesignator=" + localSettingsDesignator);
 		try {
 			this._rtiAmbassador.connect(federateReference, callbackModel, localSettingsDesignator);
 		} catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
@@ -205,7 +205,7 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @param callbackModel the type of callback
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel) throws ConnectionFailed, InvalidLocalSettingsDesignator, UnsupportedCallbackModel, AlreadyConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-    	this.logger.info("connect " + federateReference.toString() + " " + callbackModel.toString());
+    	this.logger.info("connect federateReference=" + federateReference.toString() + ", callbackModel=" + callbackModel.toString());
     	try {
     		this._rtiAmbassador.connect(federateReference, callbackModel);
     	} catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
@@ -250,7 +250,7 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @throws RTIinternalError rti internal error
      */
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
-        this.logger.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules) + " " + mimModule.toString() + " " + logicalTimeImplementationName);
+        this.logger.info("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", mimModule=" + mimModule.toString() + ", logicalTimeImplementationName=" + logicalTimeImplementationName);
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule, logicalTimeImplementationName);
         } catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
@@ -274,7 +274,7 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @throws RTIinternalError rti internal error
      */
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
-        this.logger.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules) + " " + logicalTimeImplementationName);
+        this.logger.info("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", logicalTimeImplementationName=" + logicalTimeImplementationName);
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, logicalTimeImplementationName);
         } catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
@@ -286,7 +286,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.5
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
-        this.logger.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules) + " " + mimModule.toString());
+        this.logger.info("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", mimModule=" + mimModule.toString());
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule);
         } catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
@@ -298,7 +298,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.5
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
-        this.logger.info("createFederationExecution " + federationExecutionName + " " + Arrays.toString(fomModules));
+        this.logger.info("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules));
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules);
         } catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
@@ -310,7 +310,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.5
     public void createFederationExecution(final String federationExecutionName, final URL fomModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
-        this.logger.info("createFederationExecution " + federationExecutionName + " " + fomModule.toString());
+        this.logger.info("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModule=" + fomModule.toString());
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModule);
         } catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
@@ -322,7 +322,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.6
     public void destroyFederationExecution(final String federationExecutionName) throws FederatesCurrentlyJoined, FederationExecutionDoesNotExist, NotConnected, RTIinternalError {
-        this.logger.info("destroyFederationExecution " + federationExecutionName);
+        this.logger.info("destroyFederationExecution federationExecutionName=" + federationExecutionName);
         try {
         	this._rtiAmbassador.destroyFederationExecution(federationExecutionName);
         } catch (FederatesCurrentlyJoined | FederationExecutionDoesNotExist | NotConnected | RTIinternalError e) {
@@ -346,7 +346,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateName, final String federateType, final String federationExecutionName, final URL[] additionalFomModules) throws CouldNotCreateLogicalTimeFactory, FederateNameAlreadyInUse, FederationExecutionDoesNotExist, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.logger.info("joinFederationExecution " + federateName + " " + federateType + " " + federationExecutionName + " " + Arrays.toString(additionalFomModules));
+        this.logger.info("joinFederationExecution federateName=" + federateName + ", federateType=" + federateType + ", federationExecutionName=" + federationExecutionName + ", additionalFomModules=" + Arrays.toString(additionalFomModules));
         try {
             FederateHandle myFederateHandle;
         	myFederateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName, additionalFomModules);
@@ -361,7 +361,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateType, final String federationExecutionName, final URL[] additionalFomModules) throws CouldNotCreateLogicalTimeFactory, FederationExecutionDoesNotExist, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-    	this.logger.info("joinFederationExecution " + federateType + " " + federationExecutionName + " " + Arrays.toString(additionalFomModules));
+    	this.logger.info("joinFederationExecution federateType=" + federateType + ", federationExecutionName=" + federationExecutionName + ", additionalFomModules=" + Arrays.toString(additionalFomModules));
     	try {
     		final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateType, federationExecutionName, additionalFomModules);
     		this.logger.info("joinFederationExecution return " + federateHandle.toString());
@@ -375,7 +375,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateName, final String federateType, final String federationExecutionName) throws CouldNotCreateLogicalTimeFactory, FederateNameAlreadyInUse, FederationExecutionDoesNotExist, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-    	this.logger.info("joinFederationExecution " + federateName + " " + federateType + " " + federationExecutionName);
+    	this.logger.info("joinFederationExecution federateName=" + federateName + ", federateType=" + federateType + ", federationExecutionName=" + federationExecutionName);
     	try {
     		final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateName, federateType, federationExecutionName);
     		this.logger.info("joinFederationExecution return " + federateHandle.toString());
@@ -389,7 +389,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.9
     public FederateHandle joinFederationExecution(final String federateType, final String federationExecutionName) throws CouldNotCreateLogicalTimeFactory, FederationExecutionDoesNotExist, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-    	this.logger.info("joinFederationExecution " + federateType + " " + federationExecutionName);
+    	this.logger.info("joinFederationExecution federateType=" + federateType + ", federationExecutionName=" + federationExecutionName);
     	try {
     		final FederateHandle federateHandle = this._rtiAmbassador.joinFederationExecution(federateType, federationExecutionName);
     		this.logger.info("joinFederationExecution return " + federateHandle.toString());
@@ -403,7 +403,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.10
     public void resignFederationExecution(final ResignAction resignAction) throws InvalidResignAction, OwnershipAcquisitionPending, FederateOwnsAttributes, FederateNotExecutionMember, NotConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.logger.info("resignFederationExecution " + resignAction.toString());
+        this.logger.info("resignFederationExecution resignAction=" + resignAction.toString());
         try {
         	this._rtiAmbassador.resignFederationExecution(resignAction);
         } catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
@@ -415,7 +415,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.11
     public void registerFederationSynchronizationPoint(final String synchronizationPointLabel, final byte[] userSuppliedTag) throws SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("registerFederationSynchronizationPoint " + synchronizationPointLabel + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("registerFederationSynchronizationPoint synchronizationPointLabel=" + synchronizationPointLabel + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.registerFederationSynchronizationPoint(synchronizationPointLabel, userSuppliedTag);
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -427,7 +427,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.11
     public void registerFederationSynchronizationPoint(final String synchronizationPointLabel, final byte[] userSuppliedTag, final FederateHandleSet synchronizationSet) throws InvalidFederateHandle, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("registerFederationSynchronizationPoint " + synchronizationPointLabel + " " + Arrays.toString(userSuppliedTag) + " " + synchronizationSet.toString());
+        this.logger.info("registerFederationSynchronizationPoint synchronizationPointLabel=" + synchronizationPointLabel + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag) + ", synchronizationSet=" + synchronizationSet.toString());
         try {
         	this._rtiAmbassador.registerFederationSynchronizationPoint(synchronizationPointLabel, userSuppliedTag, synchronizationSet);
         } catch (InvalidFederateHandle | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected |  RTIinternalError e) {
@@ -439,7 +439,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.14
     public void synchronizationPointAchieved(final String synchronizationPointLabel) throws SynchronizationPointLabelNotAnnounced, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("synchronizationPointAchieved " + synchronizationPointLabel);
+        this.logger.info("synchronizationPointAchieved synchronizationPointLabel=" + synchronizationPointLabel);
         try {
         	this._rtiAmbassador.synchronizationPointAchieved(synchronizationPointLabel);
         } catch (SynchronizationPointLabelNotAnnounced | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -451,7 +451,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.14
     public void synchronizationPointAchieved(final String synchronizationPointLabel, final boolean successIndicator) throws SynchronizationPointLabelNotAnnounced, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("synchronizationPointAchieved " + synchronizationPointLabel + " " + successIndicator);
+        this.logger.info("synchronizationPointAchieved synchronizationPointLabel=" + synchronizationPointLabel + ", successIndicator= " + successIndicator);
         try {
         	this._rtiAmbassador.synchronizationPointAchieved(synchronizationPointLabel, successIndicator);
         } catch (SynchronizationPointLabelNotAnnounced | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -463,7 +463,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 4.16
     public void requestFederationSave(final String label) throws SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestFederationSave " + label);
+        this.logger.info("requestFederationSave label=" + label);
         try {
         	this._rtiAmbassador.requestFederationSave(label);
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -475,7 +475,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 4.16
     public void requestFederationSave(final String label, final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, FederateUnableToUseTime, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestFederationSave " + label + " " + theTime.toString());
+        this.logger.info("requestFederationSave label=" + label + ", theTime=" + theTime.toString());
         try {
         	this._rtiAmbassador.requestFederationSave(label, theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | FederateUnableToUseTime | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -547,7 +547,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 4.24
     public void requestFederationRestore(final String label) throws SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestFederationRestore " + label);
+        this.logger.info("requestFederationRestore label=" + label);
         try {
         	this._rtiAmbassador.requestFederationRestore(label);
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -611,7 +611,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.2
     public void publishObjectClassAttributes(final ObjectClassHandle theClass, final AttributeHandleSet attributeList) throws AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("publishObjectClassAttributes " + theClass.toString() + " " + attributeList.toString());
+        this.logger.info("publishObjectClassAttributes theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString());
         try {
         	this._rtiAmbassador.publishObjectClassAttributes(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -623,7 +623,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.3
     public void unpublishObjectClass(final ObjectClassHandle theClass) throws OwnershipAcquisitionPending, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unpublishObjectClass " + theClass.toString());
+        this.logger.info("unpublishObjectClass theClass=" + theClass.toString());
         try {
         	this._rtiAmbassador.unpublishObjectClass(theClass);
         } catch (OwnershipAcquisitionPending | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -635,7 +635,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.3
     public void unpublishObjectClassAttributes(final ObjectClassHandle theClass, final AttributeHandleSet attributeList) throws OwnershipAcquisitionPending, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unpublishObjectClassAttributes " + theClass.toString() + " " + attributeList.toString());
+        this.logger.info("unpublishObjectClassAttributes theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString());
         try {
         	this._rtiAmbassador.unpublishObjectClassAttributes(theClass, attributeList);
         } catch (OwnershipAcquisitionPending | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -647,7 +647,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.4
     public void publishInteractionClass(final InteractionClassHandle theInteraction) throws InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("publishInteractionClass " + theInteraction.toString());
+        this.logger.info("publishInteractionClass theInteraction=" + theInteraction.toString());
         try {
         	this._rtiAmbassador.publishInteractionClass(theInteraction);
         } catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -659,7 +659,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.5
     public void unpublishInteractionClass(final InteractionClassHandle theInteraction) throws InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unpublishInteractionClass " + " " + theInteraction.toString());
+        this.logger.info("unpublishInteractionClass theInteraction=" + theInteraction.toString());
         try {
         	this._rtiAmbassador.unpublishInteractionClass(theInteraction);
         } catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -671,7 +671,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.6
     public void subscribeObjectClassAttributes(final ObjectClassHandle theClass, final AttributeHandleSet attributeList) throws AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributes " + theClass.toString() + attributeList.toString());
+        this.logger.info("subscribeObjectClassAttributes theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString());
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributes(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -683,7 +683,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.6
     public void subscribeObjectClassAttributes(final ObjectClassHandle theClass, final AttributeHandleSet attributeList, final String updateRateDesignator) throws AttributeNotDefined, ObjectClassNotDefined, InvalidUpdateRateDesignator, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributes " + theClass.toString() + attributeList.toString() + " " + updateRateDesignator);
+        this.logger.info("subscribeObjectClassAttributes theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString() + ", updateRateDesignator=" + updateRateDesignator);
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributes(theClass, attributeList, updateRateDesignator);
         } catch (AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -695,7 +695,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.6
     public void subscribeObjectClassAttributesPassively(final ObjectClassHandle theClass, final AttributeHandleSet attributeList) throws AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributesPassively " + theClass.toString() + attributeList.toString());
+        this.logger.info("subscribeObjectClassAttributesPassively theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString());
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesPassively(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -707,7 +707,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.6
     public void subscribeObjectClassAttributesPassively(final ObjectClassHandle theClass, final AttributeHandleSet attributeList, final String updateRateDesignator) throws AttributeNotDefined, ObjectClassNotDefined, InvalidUpdateRateDesignator, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("subscribeObjectClassAttributesPassively " + theClass.toString() + attributeList.toString() + " " + updateRateDesignator);
+    	this.logger.info("subscribeObjectClassAttributesPassively theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString() + ", updateRateDesignator=" + updateRateDesignator);
     	try {
     		this._rtiAmbassador.subscribeObjectClassAttributesPassively(theClass, attributeList, updateRateDesignator);
     	} catch (AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -719,7 +719,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.7
     public void unsubscribeObjectClass(final ObjectClassHandle theClass) throws ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unsubscribeObjectClass " + theClass.toString());
+        this.logger.info("unsubscribeObjectClass theClass=" + theClass.toString());
         try {
         	this._rtiAmbassador.unsubscribeObjectClass(theClass);
         } catch (ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -731,7 +731,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.7
     public void unsubscribeObjectClassAttributes(final ObjectClassHandle theClass, final AttributeHandleSet attributeList) throws AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unsubscribeObjectClassAttributes " + theClass.toString() + " " + attributeList.toString());
+        this.logger.info("unsubscribeObjectClassAttributes theClass=" + theClass.toString() + ", attributeList=" + attributeList.toString());
         try {
         	this._rtiAmbassador.unsubscribeObjectClassAttributes(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -743,7 +743,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.8
     public void subscribeInteractionClass(final InteractionClassHandle theClass) throws FederateServiceInvocationsAreBeingReportedViaMOM, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("subscribeInteractionClass " + theClass.toString());
+    	this.logger.info("subscribeInteractionClass theClass=" + theClass.toString());
     	try {
     		this._rtiAmbassador.subscribeInteractionClass(theClass);
     	} catch (FederateServiceInvocationsAreBeingReportedViaMOM | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -755,7 +755,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.8
     public void subscribeInteractionClassPassively(final InteractionClassHandle theClass) throws FederateServiceInvocationsAreBeingReportedViaMOM, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("subscribeInteractionClassPassively " + theClass.toString());
+    	this.logger.info("subscribeInteractionClassPassively theClass=" + theClass.toString());
     	try {
     		this._rtiAmbassador.subscribeInteractionClassPassively(theClass);
     	} catch (FederateServiceInvocationsAreBeingReportedViaMOM | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -767,7 +767,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 5.9
     public void unsubscribeInteractionClass(final InteractionClassHandle theClass) throws InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("unsubscribeInteractionClass " + theClass.toString());
+    	this.logger.info("unsubscribeInteractionClass theClass=" + theClass.toString());
     	try {
     		this._rtiAmbassador.unsubscribeInteractionClass(theClass);
     	} catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -783,7 +783,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.2
     public void reserveObjectInstanceName(final String theObjectName) throws IllegalName, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("reserveObjectInstanceName " + theObjectName);
+        this.logger.info("reserveObjectInstanceName theObjectName=" + theObjectName);
         try {
         	this._rtiAmbassador.reserveObjectInstanceName(theObjectName);
         } catch (IllegalName | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -795,7 +795,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.4
     public void releaseObjectInstanceName(final String theObjectInstanceName) throws ObjectInstanceNameNotReserved, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("releaseObjectInstanceName " + theObjectInstanceName);
+        this.logger.info("releaseObjectInstanceName theObjectInstanceName=" + theObjectInstanceName);
         try {
         	this._rtiAmbassador.releaseObjectInstanceName(theObjectInstanceName);
         } catch (ObjectInstanceNameNotReserved | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -807,7 +807,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.5
     public void reserveMultipleObjectInstanceName(final Set<String> theObjectNames) throws IllegalName, NameSetWasEmpty, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("reserveMultipleObjectInstanceName " + theObjectNames.toString());
+        this.logger.info("reserveMultipleObjectInstanceName theObjectNames=" + theObjectNames.toString());
         try {
         	this._rtiAmbassador.reserveMultipleObjectInstanceName(theObjectNames);
         } catch (IllegalName | NameSetWasEmpty | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -819,7 +819,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.7
     public void releaseMultipleObjectInstanceName(final Set<String> theObjectNames) throws ObjectInstanceNameNotReserved, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("releaseMultipleObjectInstanceName " + theObjectNames.toString());
+        this.logger.info("releaseMultipleObjectInstanceName theObjectNames=" + theObjectNames.toString());
         try {
         	this._rtiAmbassador.releaseMultipleObjectInstanceName(theObjectNames);
         } catch (ObjectInstanceNameNotReserved | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -831,7 +831,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.8
     public ObjectInstanceHandle registerObjectInstance(final ObjectClassHandle theClass) throws ObjectClassNotPublished, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("registerObjectInstance " + theClass.toString());
+    	this.logger.info("registerObjectInstance theClass=" + theClass.toString());
     	try {
     		final ObjectInstanceHandle objectInstanceHandle = this._rtiAmbassador.registerObjectInstance(theClass);
     		this.logger.info("registerObjectInstance return " + objectInstanceHandle.toString());
@@ -845,7 +845,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.8
     public ObjectInstanceHandle registerObjectInstance(final ObjectClassHandle theClass, final String theObjectName) throws ObjectInstanceNameInUse, ObjectInstanceNameNotReserved, ObjectClassNotPublished, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("registerObjectInstance " + theClass.toString() + " " + theObjectName);
+        this.logger.info("registerObjectInstance theClass=" + theClass.toString() + ", theObjectName=" + theObjectName);
         try {
         	final ObjectInstanceHandle objectInstanceHandle = this._rtiAmbassador.registerObjectInstance(theClass, theObjectName);
         	this.logger.info("registerObjectInstance return " + objectInstanceHandle.toString());
@@ -859,7 +859,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.10
     public void updateAttributeValues(final ObjectInstanceHandle theObject, final AttributeHandleValueMap theAttributes, final byte[] userSuppliedTag) throws AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("updateAttributeValues " + theObject.toString() + " " + theAttributes.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("updateAttributeValues theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.updateAttributeValues(theObject, theAttributes, userSuppliedTag);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -871,7 +871,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.10
     public MessageRetractionReturn updateAttributeValues(final ObjectInstanceHandle theObject, final AttributeHandleValueMap theAttributes, final byte[] userSuppliedTag, final LogicalTime theTime) throws InvalidLogicalTime, AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("updateAttributeValues " + theObject.toString() + " " + theAttributes.toString() + " " + Arrays.toString(userSuppliedTag) + " " + theTime.toString());
+        this.logger.info("updateAttributeValues theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag) + ", theTime=" + theTime.toString());
         try {
         	final MessageRetractionReturn messageRetractionReturn = this._rtiAmbassador.updateAttributeValues(theObject, theAttributes, userSuppliedTag, theTime);
         	this.logger.info("updateAttributeValues return " + messageRetractionReturn.toString());
@@ -885,7 +885,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.12
     public void sendInteraction(final InteractionClassHandle theInteraction, final ParameterHandleValueMap theParameters, final byte[] userSuppliedTag) throws InteractionClassNotPublished, InteractionParameterNotDefined, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("sendInteraction " + theInteraction.toString() + " " + theParameters.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("sendInteraction theInteraction=" + theInteraction.toString() + ", theParameters=" + theParameters.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.sendInteraction(theInteraction, theParameters, userSuppliedTag);
         } catch (InteractionClassNotPublished | InteractionParameterNotDefined | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -897,7 +897,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.12
     public MessageRetractionReturn sendInteraction(final InteractionClassHandle theInteraction, final ParameterHandleValueMap theParameters, final byte[] userSuppliedTag, final LogicalTime theTime) throws InvalidLogicalTime, InteractionClassNotPublished, InteractionParameterNotDefined, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("sendInteraction " + theInteraction.toString() + " " + theParameters.toString() + " " + Arrays.toString(userSuppliedTag) + " " + theTime.toString());
+        this.logger.info("sendInteraction theInteraction=" + theInteraction.toString() + ", theParameters=" + theParameters.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag) + ", theTime=" + theTime.toString());
         try {
         	final MessageRetractionReturn messageRetractionReturn = this._rtiAmbassador.sendInteraction(theInteraction, theParameters, userSuppliedTag, theTime);
         	this.logger.info("sendInteraction return " + messageRetractionReturn.toString());
@@ -911,7 +911,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.14
     public void deleteObjectInstance(final ObjectInstanceHandle objectHandle, final byte[] userSuppliedTag) throws DeletePrivilegeNotHeld, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("deleteObjectInstance " + objectHandle.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("deleteObjectInstance objectHandle=" + objectHandle.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.deleteObjectInstance(objectHandle, userSuppliedTag);
         } catch (DeletePrivilegeNotHeld | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -923,7 +923,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.14
     public MessageRetractionReturn deleteObjectInstance(final ObjectInstanceHandle objectHandle, final byte[] userSuppliedTag, final LogicalTime theTime) throws InvalidLogicalTime, DeletePrivilegeNotHeld, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("deleteObjectInstance " + objectHandle.toString() + " " + Arrays.toString(userSuppliedTag) + " " + theTime.toString());
+        this.logger.info("deleteObjectInstance objectHandle=" + objectHandle.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag) + ", theTime=" + theTime.toString());
         try {
         	final MessageRetractionReturn messageRetractionReturn = this._rtiAmbassador.deleteObjectInstance(objectHandle, userSuppliedTag, theTime);
         	this.logger.info("deleteObjectInstance return " + messageRetractionReturn.toString());
@@ -937,7 +937,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.16
     public void localDeleteObjectInstance(final ObjectInstanceHandle objectHandle) throws OwnershipAcquisitionPending, FederateOwnsAttributes, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("localDeleteObjectInstance " + objectHandle.toString());
+        this.logger.info("localDeleteObjectInstance objectHandle=" + objectHandle.toString());
         try {
         	this._rtiAmbassador.localDeleteObjectInstance(objectHandle);
         } catch (OwnershipAcquisitionPending | FederateOwnsAttributes | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -949,7 +949,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.19
     public void requestAttributeValueUpdate(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes, final byte[] userSuppliedTag) throws AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestAttributeValueUpdate " + theObject.toString() + " " + theAttributes.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("requestAttributeValueUpdate theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.requestAttributeValueUpdate(theObject, theAttributes, userSuppliedTag);
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -961,7 +961,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.19
     public void requestAttributeValueUpdate(final ObjectClassHandle theClass, final AttributeHandleSet theAttributes, final byte[] userSuppliedTag) throws AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestAttributeValueUpdate " + theClass.toString() + " " + theAttributes.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("requestAttributeValueUpdate theClass=" + theClass.toString() + ", theAttributes=" + theAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.requestAttributeValueUpdate(theClass, theAttributes, userSuppliedTag);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -973,7 +973,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.23
     public void requestAttributeTransportationTypeChange(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes, final TransportationTypeHandle theType) throws AttributeAlreadyBeingChanged, AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, InvalidTransportationType, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestAttributeTransportationTypeChange " + theObject.toString() + " " + theAttributes.toString() + " " + theType.toString());
+        this.logger.info("requestAttributeTransportationTypeChange theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", theType=" + theType.toString());
         try {
         	this._rtiAmbassador.requestAttributeTransportationTypeChange(theObject, theAttributes, theType);
         } catch (AttributeAlreadyBeingChanged | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | InvalidTransportationType | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -985,7 +985,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.25
     public void queryAttributeTransportationType(final ObjectInstanceHandle theObject, final AttributeHandle theAttribute) throws AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("queryAttributeTransportationType " + theObject.toString() + " " + theAttribute.toString());
+        this.logger.info("queryAttributeTransportationType theObject=" + theObject.toString() + ", theAttribute=" + theAttribute.toString());
         try {
         	this._rtiAmbassador.queryAttributeTransportationType(theObject, theAttribute);
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -997,7 +997,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.27
     public void requestInteractionTransportationTypeChange(final InteractionClassHandle theClass, final TransportationTypeHandle theType) throws InteractionClassAlreadyBeingChanged, InteractionClassNotPublished, InteractionClassNotDefined, InvalidTransportationType, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestInteractionTransportationTypeChange " + theClass.toString() + " " + theType.toString());
+        this.logger.info("requestInteractionTransportationTypeChange theClass=" + theClass.toString() + ", theType=" + theType.toString());
         try {
         	this._rtiAmbassador.requestInteractionTransportationTypeChange(theClass, theType);
         } catch (InteractionClassAlreadyBeingChanged | InteractionClassNotPublished | InteractionClassNotDefined | InvalidTransportationType | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1009,7 +1009,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 6.29
     public void queryInteractionTransportationType(final FederateHandle theFederate, final InteractionClassHandle theInteraction) throws InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("queryInteractionTransportationType " + theFederate.toString() + " " + theInteraction.toString());
+        this.logger.info("queryInteractionTransportationType theFederate=" + theFederate.toString() + ", theInteraction=" + theInteraction.toString());
         try {
         	this._rtiAmbassador.queryInteractionTransportationType(theFederate, theInteraction);
         } catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1025,7 +1025,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.2
     public void unconditionalAttributeOwnershipDivestiture(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes) throws AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unconditionalAttributeOwnershipDivestiture " + theObject.toString() + " " + theAttributes.toString());
+        this.logger.info("unconditionalAttributeOwnershipDivestiture theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString());
         try {
         	this._rtiAmbassador.unconditionalAttributeOwnershipDivestiture(theObject, theAttributes);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1037,7 +1037,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.3
     public void negotiatedAttributeOwnershipDivestiture(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes, final byte[] userSuppliedTag) throws AttributeAlreadyBeingDivested, AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("negotiatedAttributeOwnershipDivestiture " + theObject.toString() + " " + theAttributes.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("negotiatedAttributeOwnershipDivestiture theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.negotiatedAttributeOwnershipDivestiture(theObject, theAttributes, userSuppliedTag);
         } catch (AttributeAlreadyBeingDivested | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1049,7 +1049,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.6
     public void confirmDivestiture(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes, final byte[] userSuppliedTag) throws NoAcquisitionPending, AttributeDivestitureWasNotRequested, AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("confirmDivestiture " + theObject.toString() + " " + theAttributes.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("confirmDivestiture theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.confirmDivestiture(theObject, theAttributes, userSuppliedTag);
         } catch (NoAcquisitionPending | AttributeDivestitureWasNotRequested | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1061,7 +1061,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.8
     public void attributeOwnershipAcquisition(final ObjectInstanceHandle theObject, final AttributeHandleSet desiredAttributes, final byte[] userSuppliedTag) throws AttributeNotPublished, ObjectClassNotPublished, FederateOwnsAttributes, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("attributeOwnershipAcquisition " + theObject.toString() + " " + desiredAttributes.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("attributeOwnershipAcquisition theObject=" + theObject.toString() + ", desiredAttributes=" + desiredAttributes.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.attributeOwnershipAcquisition(theObject, desiredAttributes, userSuppliedTag);
         } catch (AttributeNotPublished | ObjectClassNotPublished | FederateOwnsAttributes | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1073,7 +1073,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.9
     public void attributeOwnershipAcquisitionIfAvailable(final ObjectInstanceHandle theObject, final AttributeHandleSet desiredAttributes) throws AttributeAlreadyBeingAcquired, AttributeNotPublished, ObjectClassNotPublished, FederateOwnsAttributes, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("attributeOwnershipAcquisitionIfAvailable " + theObject.toString() + " " + desiredAttributes.toString());
+        this.logger.info("attributeOwnershipAcquisitionIfAvailable theObject=" + theObject.toString() + ", desiredAttributes=" + desiredAttributes.toString());
         try {
         	this._rtiAmbassador.attributeOwnershipAcquisitionIfAvailable(theObject, desiredAttributes);
         } catch (AttributeAlreadyBeingAcquired | AttributeNotPublished | ObjectClassNotPublished | FederateOwnsAttributes | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1085,7 +1085,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.12
     public void attributeOwnershipReleaseDenied(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes) throws AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("attributeOwnershipReleaseDenied " + theObject.toString() + " " + theAttributes.toString());
+        this.logger.info("attributeOwnershipReleaseDenied theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString());
         try {
         	this._rtiAmbassador.attributeOwnershipReleaseDenied(theObject, theAttributes);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1097,7 +1097,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.13
     public AttributeHandleSet attributeOwnershipDivestitureIfWanted(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes) throws AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("attributeOwnershipDivestitureIfWanted " + theObject.toString() + " " + theAttributes.toString());
+        this.logger.info("attributeOwnershipDivestitureIfWanted theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString());
         try {
         	final AttributeHandleSet attributeHandleSet = this._rtiAmbassador.attributeOwnershipDivestitureIfWanted(theObject, theAttributes);
         	this.logger.info("attributeOwnershipDivestitureIfWanted return " + attributeHandleSet.toString());
@@ -1111,7 +1111,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.14
     public void cancelNegotiatedAttributeOwnershipDivestiture(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes) throws AttributeDivestitureWasNotRequested, AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("cancelNegotiatedAttributeOwnershipDivestiture " + theObject.toString() + " " + theAttributes.toString());
+        this.logger.info("cancelNegotiatedAttributeOwnershipDivestiture theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString());
         try {
         	this._rtiAmbassador.cancelNegotiatedAttributeOwnershipDivestiture(theObject, theAttributes);
         } catch (AttributeDivestitureWasNotRequested | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1123,7 +1123,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.15
     public void cancelAttributeOwnershipAcquisition(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes) throws AttributeAcquisitionWasNotRequested, AttributeAlreadyOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("cancelAttributeOwnershipAcquisition " + theObject.toString() + " " + theAttributes.toString());
+        this.logger.info("cancelAttributeOwnershipAcquisition theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString());
         try {
         	this._rtiAmbassador.cancelAttributeOwnershipAcquisition(theObject, theAttributes);
         } catch (AttributeAcquisitionWasNotRequested | AttributeAlreadyOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1135,7 +1135,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.17
     public void queryAttributeOwnership(final ObjectInstanceHandle theObject, final AttributeHandle theAttribute) throws AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("queryAttributeOwnership " + theObject.toString() + " " + theAttribute.toString());
+        this.logger.info("queryAttributeOwnership theObject=" + theObject.toString() + ", theAttribute=" + theAttribute.toString());
         try {
         	this._rtiAmbassador.queryAttributeOwnership(theObject, theAttribute);
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1147,7 +1147,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 7.19
     public boolean isAttributeOwnedByFederate(final ObjectInstanceHandle theObject, final AttributeHandle theAttribute) throws AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("isAttributeOwnedByFederate " + theObject.toString() + " " + theAttribute.toString());
+        this.logger.info("isAttributeOwnedByFederate theObject=" + theObject.toString() + ", theAttribute=" + theAttribute.toString());
         try {
         	final boolean bool = this._rtiAmbassador.isAttributeOwnedByFederate(theObject, theAttribute);
         	this.logger.info("isAttributeOwnedByFederate return " + bool);
@@ -1165,7 +1165,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.2
     public void enableTimeRegulation(final LogicalTimeInterval theLookahead) throws InvalidLookahead, InTimeAdvancingState, RequestForTimeRegulationPending, TimeRegulationAlreadyEnabled, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("enableTimeRegulation " + theLookahead.toString());
+        this.logger.info("enableTimeRegulation theLookahead=" + theLookahead.toString());
         try {
         	this._rtiAmbassador.enableTimeRegulation(theLookahead);
         } catch (InvalidLookahead | InTimeAdvancingState | RequestForTimeRegulationPending | TimeRegulationAlreadyEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1213,7 +1213,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.8
     public void timeAdvanceRequest(final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, InTimeAdvancingState, RequestForTimeRegulationPending, RequestForTimeConstrainedPending, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("timeAdvanceRequest " + theTime.toString());
+        this.logger.info("timeAdvanceRequest theTime=" + theTime.toString());
         try {
         	this._rtiAmbassador.timeAdvanceRequest(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1225,7 +1225,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.9
     public void timeAdvanceRequestAvailable(final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, InTimeAdvancingState, RequestForTimeRegulationPending, RequestForTimeConstrainedPending, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("timeAdvanceRequestAvailable " + theTime.toString());
+        this.logger.info("timeAdvanceRequestAvailable theTime=" + theTime.toString());
         try {
         	this._rtiAmbassador.timeAdvanceRequestAvailable(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1237,7 +1237,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.10
     public void nextMessageRequest(final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, InTimeAdvancingState, RequestForTimeRegulationPending, RequestForTimeConstrainedPending, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("nextMessageRequest " + theTime.toString());
+        this.logger.info("nextMessageRequest theTime=" + theTime.toString());
         try {
         	this._rtiAmbassador.nextMessageRequest(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1249,7 +1249,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.11
     public void nextMessageRequestAvailable(final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, InTimeAdvancingState, RequestForTimeRegulationPending, RequestForTimeConstrainedPending, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("nextMessageRequestAvailable " + theTime.toString());
+        this.logger.info("nextMessageRequestAvailable theTime=" + theTime.toString());
         try {
         	this._rtiAmbassador.nextMessageRequestAvailable(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1261,7 +1261,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.12
     public void flushQueueRequest(final LogicalTime theTime) throws LogicalTimeAlreadyPassed, InvalidLogicalTime, InTimeAdvancingState, RequestForTimeRegulationPending, RequestForTimeConstrainedPending, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("flushQueueRequest " + theTime.toString());
+        this.logger.info("flushQueueRequest theTime=" + theTime.toString());
         try {
         	this._rtiAmbassador.flushQueueRequest(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1339,7 +1339,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.19
     public void modifyLookahead(final LogicalTimeInterval theLookahead) throws InvalidLookahead, InTimeAdvancingState, TimeRegulationIsNotEnabled, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("modifyLookahead " + theLookahead.toString());
+        this.logger.info("modifyLookahead theLookahead=" + theLookahead.toString());
         try {
         	this._rtiAmbassador.modifyLookahead(theLookahead);
         } catch (InvalidLookahead | InTimeAdvancingState | TimeRegulationIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1365,7 +1365,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.21
     public void retract(final MessageRetractionHandle theHandle) throws MessageCanNoLongerBeRetracted, InvalidMessageRetractionHandle, TimeRegulationIsNotEnabled, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("retract " + theHandle.toString());
+        this.logger.info("retract theHandle=" + theHandle.toString());
         try {
         	this._rtiAmbassador.retract(theHandle);
         } catch (MessageCanNoLongerBeRetracted | InvalidMessageRetractionHandle | TimeRegulationIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1377,7 +1377,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.23
     public void changeAttributeOrderType(final ObjectInstanceHandle theObject, final AttributeHandleSet theAttributes, final OrderType theType) throws AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("changeAttributeOrderType " + theObject.toString() + " " + theAttributes.toString() + " " + theType.toString());
+        this.logger.info("changeAttributeOrderType theObject=" + theObject.toString() + ", theAttributes=" + theAttributes.toString() + ", theType=" + theType.toString());
         try {
         	this._rtiAmbassador.changeAttributeOrderType(theObject, theAttributes, theType);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1389,7 +1389,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 8.24
     public void changeInteractionOrderType(final InteractionClassHandle theClass, final OrderType theType) throws InteractionClassNotPublished, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("changeInteractionOrderType " + theClass.toString() + " " + theType.toString());
+        this.logger.info("changeInteractionOrderType theClass=" + theClass.toString() + ", theType=" + theType.toString());
         try {
         	this._rtiAmbassador.changeInteractionOrderType(theClass, theType);
         } catch (InteractionClassNotPublished | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1405,7 +1405,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.2
     public RegionHandle createRegion(final DimensionHandleSet dimensions) throws InvalidDimensionHandle, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("createRegion " + dimensions.toString());
+        this.logger.info("createRegion dimensions=" + dimensions.toString());
         try {
         	final RegionHandle regionHandle = this._rtiAmbassador.createRegion(dimensions);
         	this.logger.info("createRegion return " + regionHandle.toString());
@@ -1419,7 +1419,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.3
     public void commitRegionModifications(final RegionHandleSet regions) throws RegionNotCreatedByThisFederate, InvalidRegion, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("commitRegionModifications " + regions.toString());
+        this.logger.info("commitRegionModifications regions=" + regions.toString());
         try {
         	this._rtiAmbassador.commitRegionModifications(regions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1431,7 +1431,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.4
     public void deleteRegion(final RegionHandle theRegion) throws RegionInUseForUpdateOrSubscription, RegionNotCreatedByThisFederate, InvalidRegion, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("deleteRegion " + theRegion.toString());
+        this.logger.info("deleteRegion theRegion=" + theRegion.toString());
         try {
         	this._rtiAmbassador.deleteRegion(theRegion);
         } catch (RegionInUseForUpdateOrSubscription | RegionNotCreatedByThisFederate | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1443,7 +1443,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //9.5
     public ObjectInstanceHandle registerObjectInstanceWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotPublished, ObjectClassNotPublished, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("registerObjectInstanceWithRegions " + theClass.toString() + " " + attributesAndRegions.toString());
+        this.logger.info("registerObjectInstanceWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString());
         try {
         	final ObjectInstanceHandle objectInstanceHandle = this._rtiAmbassador.registerObjectInstanceWithRegions(theClass, attributesAndRegions);
         	this.logger.info("registerObjectInstanceWithRegions return " + objectInstanceHandle.toString());
@@ -1457,7 +1457,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //9.5
     public ObjectInstanceHandle registerObjectInstanceWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions, final String theObject) throws ObjectInstanceNameInUse, ObjectInstanceNameNotReserved, InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotPublished, ObjectClassNotPublished, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("registerObjectInstanceWithRegions " + theClass.toString() + " " + attributesAndRegions.toString() + " " + theObject.toString());
+        this.logger.info("registerObjectInstanceWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString() + ", theObject=" + theObject.toString());
         try {
         	final ObjectInstanceHandle objectInstanceHandle = this._rtiAmbassador.registerObjectInstanceWithRegions(theClass, attributesAndRegions, theObject);
         	this.logger.info("registerObjectInstanceWithRegions return " + objectInstanceHandle.toString());
@@ -1471,7 +1471,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.6
     public void associateRegionsForUpdates(final ObjectInstanceHandle theObject, final AttributeSetRegionSetPairList attributesAndRegions) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("associateRegionsForUpdates " + theObject.toString() + " " + attributesAndRegions.toString());
+        this.logger.info("associateRegionsForUpdates theObject=" + theObject.toString() + ", attributesAndRegions=" + attributesAndRegions.toString());
         try {
         	this._rtiAmbassador.associateRegionsForUpdates(theObject, attributesAndRegions);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1483,7 +1483,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.7
     public void unassociateRegionsForUpdates(final ObjectInstanceHandle theObject, final AttributeSetRegionSetPairList attributesAndRegions) throws RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unassociateRegionsForUpdates " + theObject.toString() + " " + attributesAndRegions.toString());
+        this.logger.info("unassociateRegionsForUpdates theObject=" + theObject.toString() + ", attributesAndRegions=" + attributesAndRegions.toString());
         try {
         	this._rtiAmbassador.unassociateRegionsForUpdates(theObject, attributesAndRegions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1495,7 +1495,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.8
     public void subscribeObjectClassAttributesWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributesWithRegions " + theClass.toString() + " " + attributesAndRegions.toString());
+        this.logger.info("subscribeObjectClassAttributesWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString());
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesWithRegions(theClass, attributesAndRegions);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1507,7 +1507,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.8
     public void subscribeObjectClassAttributesWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions, final String updateRateDesignator) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectClassNotDefined, InvalidUpdateRateDesignator, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributesWithRegions " + theClass.toString() + " " + attributesAndRegions.toString() + " " + updateRateDesignator);
+        this.logger.info("subscribeObjectClassAttributesWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString() + ", updateRateDesignator=" + updateRateDesignator);
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesWithRegions(theClass, attributesAndRegions, updateRateDesignator);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1519,7 +1519,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.8
     public void subscribeObjectClassAttributesPassivelyWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributesPassivelyWithRegions " + theClass.toString() + " " + attributesAndRegions.toString());
+        this.logger.info("subscribeObjectClassAttributesPassivelyWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString());
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesPassivelyWithRegions(theClass, attributesAndRegions);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1531,7 +1531,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.8
     public void subscribeObjectClassAttributesPassivelyWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions, final String updateRateDesignator) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectClassNotDefined, InvalidUpdateRateDesignator, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeObjectClassAttributesPassivelyWithRegions " + theClass.toString() + " " + attributesAndRegions.toString() + " " + updateRateDesignator);
+        this.logger.info("subscribeObjectClassAttributesPassivelyWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString() + ", updateRateDesignator=" + updateRateDesignator);
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesPassivelyWithRegions(theClass, attributesAndRegions, updateRateDesignator);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1543,7 +1543,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.9
     public void unsubscribeObjectClassAttributesWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions) throws RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unsubscribeObjectClassAttributesWithRegions " + theClass.toString() + " " + attributesAndRegions.toString());
+        this.logger.info("unsubscribeObjectClassAttributesWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString());
         try {
         	this._rtiAmbassador.unsubscribeObjectClassAttributesWithRegions(theClass, attributesAndRegions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1555,7 +1555,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.10
     public void subscribeInteractionClassWithRegions(final InteractionClassHandle theClass, final RegionHandleSet regions) throws FederateServiceInvocationsAreBeingReportedViaMOM, InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeInteractionClassWithRegions " + theClass.toString() + " " + regions.toString());
+        this.logger.info("subscribeInteractionClassWithRegions theClass=" + theClass.toString() + ", regions=" + regions.toString());
         try {
         	this._rtiAmbassador.subscribeInteractionClassWithRegions(theClass, regions);
         } catch (FederateServiceInvocationsAreBeingReportedViaMOM | InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1567,7 +1567,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.10
     public void subscribeInteractionClassPassivelyWithRegions(final InteractionClassHandle theClass, final RegionHandleSet regions) throws FederateServiceInvocationsAreBeingReportedViaMOM, InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("subscribeInteractionClassPassivelyWithRegions " + theClass.toString() + " " + regions.toString());
+        this.logger.info("subscribeInteractionClassPassivelyWithRegions theClass=" + theClass.toString() + ", regions=" + regions.toString());
         try {
         	this._rtiAmbassador.subscribeInteractionClassPassivelyWithRegions(theClass, regions);
         } catch (FederateServiceInvocationsAreBeingReportedViaMOM | InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1579,7 +1579,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.11
     public void unsubscribeInteractionClassWithRegions(final InteractionClassHandle theClass, final RegionHandleSet regions) throws RegionNotCreatedByThisFederate, InvalidRegion, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("unsubscribeInteractionClassWithRegions " + theClass.toString() + " " + regions.toString());
+        this.logger.info("unsubscribeInteractionClassWithRegions theClass=" + theClass.toString() + ", regions=" + regions.toString());
         try {
         	this._rtiAmbassador.unsubscribeInteractionClassWithRegions(theClass, regions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1591,7 +1591,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //9.12
     public void sendInteractionWithRegions(final InteractionClassHandle theInteraction, final ParameterHandleValueMap theParameters, final RegionHandleSet regions, final byte[] userSuppliedTag) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, InteractionClassNotPublished, InteractionParameterNotDefined, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("sendInteractionWithRegions " + theInteraction.toString() + " " + theParameters.toString() + " " + regions.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("sendInteractionWithRegions theInteraction=" + theInteraction.toString() + ", theParameters=" + theParameters.toString() + ", regions=" + regions.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.sendInteractionWithRegions(theInteraction, theParameters, regions, userSuppliedTag);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotPublished | InteractionParameterNotDefined | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1603,7 +1603,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //9.12
     public MessageRetractionReturn sendInteractionWithRegions(final InteractionClassHandle theInteraction, final ParameterHandleValueMap theParameters, final RegionHandleSet regions, final byte[] userSuppliedTag, final LogicalTime theTime) throws InvalidLogicalTime, InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, InteractionClassNotPublished, InteractionParameterNotDefined, InteractionClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("sendInteractionWithRegions " + theInteraction.toString() + " " + theParameters.toString() + " " + regions.toString() + " " + Arrays.toString(userSuppliedTag) + " " + theTime.toString());
+        this.logger.info("sendInteractionWithRegions theInteraction=" + theInteraction.toString() + ", theParameters=" + theParameters.toString() + ", regions=" + regions.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag) + ", theTime=" + theTime.toString());
         try {
         	final MessageRetractionReturn messageRetractionReturn = this._rtiAmbassador.sendInteractionWithRegions(theInteraction, theParameters, regions, userSuppliedTag, theTime);
         	this.logger.info("sendInteractionWithRegions return " + messageRetractionReturn.toString());
@@ -1617,7 +1617,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 9.13
     public void requestAttributeValueUpdateWithRegions(final ObjectClassHandle theClass, final AttributeSetRegionSetPairList attributesAndRegions, final byte[] userSuppliedTag) throws InvalidRegionContext, RegionNotCreatedByThisFederate, InvalidRegion, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("requestAttributeValueUpdateWithRegions " + theClass.toString() + " " + attributesAndRegions.toString() + " " + Arrays.toString(userSuppliedTag));
+        this.logger.info("requestAttributeValueUpdateWithRegions theClass=" + theClass.toString() + ", attributesAndRegions=" + attributesAndRegions.toString() + ", userSuppliedTag=" + Arrays.toString(userSuppliedTag));
         try {
         	this._rtiAmbassador.requestAttributeValueUpdateWithRegions(theClass, attributesAndRegions, userSuppliedTag);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1647,7 +1647,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.3
     public void setAutomaticResignDirective(final ResignAction resignAction) throws InvalidResignAction, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("setAutomaticResignDirective " + resignAction.toString());
+        this.logger.info("setAutomaticResignDirective resignAction=" + resignAction.toString());
         try {
         	this._rtiAmbassador.setAutomaticResignDirective(resignAction);
         } catch (InvalidResignAction | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -1659,7 +1659,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.4
     public FederateHandle getFederateHandle(final String theName) throws NameNotFound, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getFederateHandle " + theName);
+        this.logger.info("getFederateHandle theName=" + theName);
         try {
         	final FederateHandle federateHandle = this._rtiAmbassador.getFederateHandle(theName);
         	this.logger.info("getFederateHandle return " + federateHandle.toString());
@@ -1673,7 +1673,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.5
     public String getFederateName(final FederateHandle theHandle) throws InvalidFederateHandle, FederateHandleNotKnown, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getFederateName " + theHandle.toString());
+        this.logger.info("getFederateName theHandle=" + theHandle.toString());
         try {
         	final String str = this._rtiAmbassador.getFederateName(theHandle);
         	this.logger.info("getFederateName return " + str);
@@ -1687,7 +1687,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.6
     public ObjectClassHandle getObjectClassHandle(final String theName) throws NameNotFound, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getObjectClassHandle " + theName);
+        this.logger.info("getObjectClassHandle theName=" + theName);
         try {
         	final ObjectClassHandle objectClassHandle = this._rtiAmbassador.getObjectClassHandle(theName);
         	this.logger.info("getObjectClassHandle return " + objectClassHandle.toString());
@@ -1701,7 +1701,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.7
     public String getObjectClassName(final ObjectClassHandle theHandle) throws InvalidObjectClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getObjectClassName " + theHandle.toString());
+        this.logger.info("getObjectClassName theHandle=" + theHandle.toString());
         try {
         	final String str = this._rtiAmbassador.getObjectClassName(theHandle);
         	this.logger.info("getObjectClassName return " + str);
@@ -1715,7 +1715,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.8
     public ObjectClassHandle getKnownObjectClassHandle(final ObjectInstanceHandle theObject) throws ObjectInstanceNotKnown, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getKnownObjectClassHandle " + theObject.toString());
+        this.logger.info("getKnownObjectClassHandle theObject=" + theObject.toString());
         try {
         	final ObjectClassHandle objectClassHandle = this._rtiAmbassador.getKnownObjectClassHandle(theObject);
         	this.logger.info("getKnownObjectClassHandle return " + objectClassHandle.toString());
@@ -1729,7 +1729,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.9
     public ObjectInstanceHandle getObjectInstanceHandle(final String theName) throws ObjectInstanceNotKnown, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getObjectInstanceHandle " + theName);
+        this.logger.info("getObjectInstanceHandle theName=" + theName);
         try {
         	final ObjectInstanceHandle objectInstanceHandle = this._rtiAmbassador.getObjectInstanceHandle(theName);
         	this.logger.info("getObjectInstanceHandle return " + objectInstanceHandle.toString());
@@ -1743,7 +1743,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.10
     public String getObjectInstanceName(final ObjectInstanceHandle theHandle) throws ObjectInstanceNotKnown, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getObjectInstanceName " + theHandle.toString());
+        this.logger.info("getObjectInstanceName theHandle=" + theHandle.toString());
         try {
         	final String str = this._rtiAmbassador.getObjectInstanceName(theHandle);
         	this.logger.info("getObjectInstanceName return " + str);
@@ -1757,7 +1757,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.11
     public AttributeHandle getAttributeHandle(final ObjectClassHandle whichClass, final String theName) throws NameNotFound, InvalidObjectClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getAttributeHandle " + whichClass.toString() + " " + theName);
+    	this.logger.info("getAttributeHandle whichClass=" + whichClass.toString() + ", theName=" + theName);
     	try {
     		final AttributeHandle attributeHandle = this._rtiAmbassador.getAttributeHandle(whichClass, theName);
     		this.logger.info("getAttributeHandle return " + attributeHandle.toString());
@@ -1771,7 +1771,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.12
     public String getAttributeName(final ObjectClassHandle whichClass, final AttributeHandle theHandle) throws AttributeNotDefined, InvalidAttributeHandle, InvalidObjectClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getAttributeName " + theHandle.toString());
+        this.logger.info("getAttributeName whichClass=" + whichClass.toString() + ", theHandle=" + theHandle.toString());
         try {
         	final String str = this._rtiAmbassador.getAttributeName(whichClass, theHandle);
         	this.logger.info("getAttributeName return " + str);
@@ -1785,7 +1785,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.13
     public double getUpdateRateValue(final String updateRateDesignator) throws InvalidUpdateRateDesignator, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getUpdateRateValue " + updateRateDesignator);
+        this.logger.info("getUpdateRateValue updateRateDesignator=" + updateRateDesignator);
         try {
         	final double d = this._rtiAmbassador.getUpdateRateValue(updateRateDesignator);
         	this.logger.info("getUpdateRateValue return " + d);
@@ -1799,7 +1799,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.14
     public double getUpdateRateValueForAttribute(final ObjectInstanceHandle theObject, final AttributeHandle theAttribute) throws ObjectInstanceNotKnown, AttributeNotDefined, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getUpdateRateValueForAttribute " + theObject.toString() + " " + theAttribute.toString());
+        this.logger.info("getUpdateRateValueForAttribute theObject=" + theObject.toString() + ", theAttribute=" + theAttribute.toString());
         try {
         	final double d = this._rtiAmbassador.getUpdateRateValueForAttribute(theObject, theAttribute);
         	this.logger.info("getUpdateRateValueForAttribute return " + d);
@@ -1813,7 +1813,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.15
     public InteractionClassHandle getInteractionClassHandle(final String theName) throws NameNotFound, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getInteractionClassHandle " + theName);
+        this.logger.info("getInteractionClassHandle theName=" + theName);
         try {
         	final InteractionClassHandle interactionClassHandle = this._rtiAmbassador.getInteractionClassHandle(theName);
         	this.logger.info("getInteractionClassHandle return " + interactionClassHandle.toString());
@@ -1827,7 +1827,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.16
     public String getInteractionClassName(final InteractionClassHandle theHandle) throws InvalidInteractionClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getInteractionClassName " + theHandle.toString());
+    	this.logger.info("getInteractionClassName theHandle=" + theHandle.toString());
     	try {
     		final String str = this._rtiAmbassador.getInteractionClassName(theHandle);
     		this.logger.info("getInteractionClassName return " + str);
@@ -1841,7 +1841,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.17
     public ParameterHandle getParameterHandle(final InteractionClassHandle whichClass, final String theName) throws NameNotFound, InvalidInteractionClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getParameterHandle " + whichClass.toString() + " " + theName);
+    	this.logger.info("getParameterHandle whichClass=" + whichClass.toString() + ", theName=" + theName);
     	try {
     		final ParameterHandle parameterHandle = this._rtiAmbassador.getParameterHandle(whichClass, theName);
     		this.logger.info("getParameterHandle return " + parameterHandle.toString());
@@ -1855,7 +1855,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.18
     public String getParameterName(final InteractionClassHandle whichClass, final ParameterHandle theHandle) throws InteractionParameterNotDefined, InvalidParameterHandle, InvalidInteractionClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-        this.logger.info("getParameterName " + whichClass.toString() + " " + theHandle.toString());
+        this.logger.info("getParameterName whichClass=" + whichClass.toString() + ", theHandle=" + theHandle.toString());
     	try {
     		String str = this._rtiAmbassador.getParameterName(whichClass, theHandle);
     		this.logger.info("getParameterName return " + str);
@@ -1869,7 +1869,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.19
     public OrderType getOrderType(final String theName) throws InvalidOrderName, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getOrderType " + theName);
+    	this.logger.info("getOrderType theName=" + theName);
     	try {
     		OrderType orderType = this._rtiAmbassador.getOrderType(theName);
     		this.logger.info("getOrderType return " + orderType.toString());
@@ -1883,7 +1883,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.20
     public String getOrderName(final OrderType theType) throws InvalidOrderType, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getOrderName " + theType.toString());
+    	this.logger.info("getOrderName theType=" + theType.toString());
     	try {
     		String str =  this._rtiAmbassador.getOrderName(theType);
     		this.logger.info("getOrderName return " + str);
@@ -1897,7 +1897,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.21
     public TransportationTypeHandle getTransportationTypeHandle(final String theName) throws InvalidTransportationName, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getTransportationTypeHandle " + theName);
+    	this.logger.info("getTransportationTypeHandle theName=" + theName);
     	try {
     		TransportationTypeHandle transportationTypeHandle = this._rtiAmbassador.getTransportationTypeHandle(theName);
     		this.logger.info("getTransportationTypeHandle return " + transportationTypeHandle.toString());
@@ -1911,7 +1911,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.22
     public String getTransportationTypeName(final TransportationTypeHandle theHandle) throws InvalidTransportationType, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getTransportationTypeName " + theHandle.toString());
+    	this.logger.info("getTransportationTypeName theHandle=" + theHandle.toString());
     	try {
     		String str =  this._rtiAmbassador.getTransportationTypeName(theHandle);
     		this.logger.info("getTransportationTypeName return " + str);
@@ -1925,7 +1925,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.23
     public DimensionHandleSet getAvailableDimensionsForClassAttribute(final ObjectClassHandle whichClass, final AttributeHandle theHandle) throws AttributeNotDefined, InvalidAttributeHandle, InvalidObjectClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getAvailableDimensionsForClassAttribute " + whichClass.toString() + " " + theHandle.toString());
+    	this.logger.info("getAvailableDimensionsForClassAttribute whichClass=" + whichClass.toString() + ", theHandle=" + theHandle.toString());
     	try {
     		DimensionHandleSet dimensionHandleSet =  this._rtiAmbassador.getAvailableDimensionsForClassAttribute(whichClass, theHandle);
     		this.logger.info("getAvailableDimensionsForClassAttribute return " + dimensionHandleSet.toString());
@@ -1939,7 +1939,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.24
     public DimensionHandleSet getAvailableDimensionsForInteractionClass(final InteractionClassHandle theHandle) throws InvalidInteractionClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getAvailableDimensionsForInteractionClass " + theHandle.toString());
+    	this.logger.info("getAvailableDimensionsForInteractionClass theHandle=" + theHandle.toString());
     	try {
     		DimensionHandleSet dimensionHandleSet = this._rtiAmbassador.getAvailableDimensionsForInteractionClass(theHandle);
     		this.logger.info("getAvailableDimensionsForInteractionClass return " + dimensionHandleSet.toString());
@@ -1953,7 +1953,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.25
     public DimensionHandle getDimensionHandle(final String theName) throws NameNotFound, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getDimensionHandle " + theName);
+    	this.logger.info("getDimensionHandle theName=" + theName);
     	try {
     		DimensionHandle dimensionHandle = this._rtiAmbassador.getDimensionHandle(theName);
     		this.logger.info("getDimensionHandle return " + dimensionHandle.toString());
@@ -1967,7 +1967,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.26
     public String getDimensionName(final DimensionHandle theHandle) throws InvalidDimensionHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getDimensionName " + theHandle.toString());
+    	this.logger.info("getDimensionName theHandle=" + theHandle.toString());
     	try {
     		String str = this._rtiAmbassador.getDimensionName(theHandle);
     		this.logger.info("getDimensionName return " + str);
@@ -1981,7 +1981,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.27
     public long getDimensionUpperBound(final DimensionHandle theHandle) throws InvalidDimensionHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getDimensionUpperBound " + theHandle.toString());
+    	this.logger.info("getDimensionUpperBound theHandle=" + theHandle.toString());
     	try {
     		long upperBound = this._rtiAmbassador.getDimensionUpperBound(theHandle);
     		this.logger.info("getDimensionUpperBound return " + upperBound);
@@ -1995,7 +1995,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.28
     public DimensionHandleSet getDimensionHandleSet(final RegionHandle region) throws InvalidRegion, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getDimensionHandleSet " + region.toString());
+    	this.logger.info("getDimensionHandleSet region=" + region.toString());
     	try {
     		DimensionHandleSet dimensionHandleSet = this._rtiAmbassador.getDimensionHandleSet(region);
     		this.logger.info("getDimensionHandleSet return " + dimensionHandleSet.toString());
@@ -2009,7 +2009,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.29
     public RangeBounds getRangeBounds(final RegionHandle region, final DimensionHandle dimension) throws RegionDoesNotContainSpecifiedDimension, InvalidRegion, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("getRangeBounds " + region.toString() + " " + dimension.toString());
+    	this.logger.info("getRangeBounds region=" + region.toString() + ", dimension=" + dimension.toString());
     	try {
     		RangeBounds rangeBounds = this._rtiAmbassador.getRangeBounds(region, dimension);
     		this.logger.info("getRangeBounds return " + rangeBounds.toString());
@@ -2023,7 +2023,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.30
     public void setRangeBounds(final RegionHandle region, final DimensionHandle dimension, final RangeBounds bounds) throws InvalidRangeBound, RegionDoesNotContainSpecifiedDimension, RegionNotCreatedByThisFederate, InvalidRegion, SaveInProgress, RestoreInProgress, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("setRangeBounds " + region.toString() + " " + dimension.toString() + " " + bounds.toString());
+    	this.logger.info("setRangeBounds region=" + region.toString() + ", dimension=" + dimension.toString() + ", bounds=" + bounds.toString());
     	try {
     		this._rtiAmbassador.setRangeBounds(region, dimension, bounds);
     	} catch (InvalidRangeBound | RegionDoesNotContainSpecifiedDimension | RegionNotCreatedByThisFederate | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
@@ -2035,7 +2035,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.31
     public long normalizeFederateHandle(final FederateHandle federateHandle) throws InvalidFederateHandle, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("normalizeFederateHandle " + federateHandle.toString());
+    	this.logger.info("normalizeFederateHandle federateHandle=" + federateHandle.toString());
     	try {
     		long normalizedFederateHandle = this._rtiAmbassador.normalizeFederateHandle(federateHandle);
     		this.logger.info("normalizeFederateHandle return " + normalizedFederateHandle);
@@ -2049,7 +2049,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.32
     public long normalizeServiceGroup(final ServiceGroup group) throws InvalidServiceGroup, FederateNotExecutionMember, NotConnected, RTIinternalError {
-    	this.logger.info("normalizeServiceGroup " + group.toString());
+    	this.logger.info("normalizeServiceGroup group=" + group.toString());
     	try {
     		long normalizedServiceGroup = this._rtiAmbassador.normalizeServiceGroup(group);
     		this.logger.info("normalizeServiceGroup return " + normalizedServiceGroup);
@@ -2159,7 +2159,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.41
     public boolean evokeCallback(final double approximateMinimumTimeInSeconds) throws CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.logger.info("evokeCallback " + approximateMinimumTimeInSeconds);
+        this.logger.info("evokeCallback approximateMinimumTimeInSeconds=" + approximateMinimumTimeInSeconds);
     	try {
     		boolean b = this._rtiAmbassador.evokeCallback(approximateMinimumTimeInSeconds);
     		this.logger.info("evokeCallback return " + b);
@@ -2173,7 +2173,7 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     // 10.42
     public boolean evokeMultipleCallbacks(final double approximateMinimumTimeInSeconds, final double approximateMaximumTimeInSeconds) throws CallNotAllowedFromWithinCallback, RTIinternalError {
-        this.logger.info("evokeMultipleCallbacks " + approximateMinimumTimeInSeconds + " " + approximateMaximumTimeInSeconds);
+        this.logger.info("evokeMultipleCallbacks approximateMinimumTimeInSeconds=" + approximateMinimumTimeInSeconds + ", approximateMaximumTimeInSeconds=" + approximateMaximumTimeInSeconds);
     	try {
     		boolean b = this._rtiAmbassador.evokeMultipleCallbacks(approximateMinimumTimeInSeconds, approximateMaximumTimeInSeconds);
     		this.logger.info("evokeMultipleCallbacks return " + b);
