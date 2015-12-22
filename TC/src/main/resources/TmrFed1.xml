@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Reinhard Herzog (Fraunhofer Institut IITB) -->
+<GERTICO xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="GERTICO.xsd">
+	<federateName>TmrFed1</federateName>
+  <attributeNames>
+    <attributeName>EngineSmokeOn</attributeName>
+    <attributeName>FlamesPresent</attributeName>
+    <attributeName>PowerPlantOn</attributeName>
+  </attributeNames>
+  <objectPrefix>b</objectPrefix>
+  <objectNames>
+    <objectName>b</objectName>
+    <objectName>btwo</objectName>
+  </objectNames>
+</GERTICO>

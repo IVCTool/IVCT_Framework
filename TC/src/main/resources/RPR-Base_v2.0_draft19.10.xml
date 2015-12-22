@@ -1,0 +1,1328 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>Real-time Platform Reference Base FOM Module</name>
+        <type>FOM</type>
+        <version>2.0 draft19.10</version>
+        <modificationDate>2013-04-10</modificationDate>
+        <securityClassification>Unclassified</securityClassification>
+        <purpose>The RPR FOM supports interoperability for real-time, platform oriented defense simulation.</purpose>
+        <applicationDomain>All domains</applicationDomain>
+        <description>This module provides a common base for RPR based FOM Modules. It contains common data types and the BaseEntity and EmbeddedSystem object class definitions.</description>
+        <useLimitation></useLimitation>
+        <useHistory>draft19.0 Release Notes
+- The RPR Base FOM Module was derived from the RPR-FOM v2.0 D17, based on NETN RPR2 Base FOM Module v1.0.1r4.
+</useHistory>
+        <useHistory>draft 19.2 Release Notes
+- Renamed data type Time_Second_UnsignedInteger32 to Time_Second_Integer32 (matching representation).
+- Deleted data types FundamentalParameterDataStruct and LengthlessArrayOfFundamentalParameterDataStruct (moved to module DER).
+- Removed note from data type LinearSegmentStruct.
+- Deleted fixed record data type SpatialStruct, renamed SpatialStruct-DeadReckoningAlgorithm to SpatialStruct.
+- Deleted fixed record data type ParameterValueStruct, renamed ParameterValueStruct-ArticulatedParameterType to ParameterValueStruct.
+- Changed data type ArrayOfOctet encoding from HLAlengthlessVarArray to HLAvariableArray.
+- Changed data type ArrayOfOctet, ArrayOfUnsignedInteger16, ArrayOfUnsignedInteger64, and ArrayOfFloat32 encoding from HLAlengthlessVarArray to HLAvariableArray, and cardinality from Dynamic to [1..2147483647] (equivalent to 1+).
+- Added new data type ArrayOfOctet1Plus.
+- Changed semantics for fields AngularVelocityVectorStruct.XAngularVelocity and AngularVelocityVectorStruct.YAngularVelocity.
+- Changed occurrences of "N/A" to "NA".
+- Deleted unused data type ArrayOfMetres.
+- Spelling corrections (US English).
+</useHistory>
+        <useHistory>draft 19.3 Release Notes
+- Apply data type RPR-FOM Naming Convention.
+</useHistory>
+        <useHistory>draft 19.4 Release Notes
+- Added UnsignedInteger32LengthlessArray (for the SilentEntityStruct, Aggregate module).
+- Changed representation for all enumerations ...Enum16 to RPRunsignedInteger16BE and ...Enum32 to RPRunsignedInteger32BE.
+</useHistory>
+        <useHistory>draft 19.5 Release Notes
+- Deleted data types Length_Float64, Velocity_Float64, AngularVelocity_Float64, Acceleration_Float64, Mass_Float64, Time_Second_Float64, Angle_Degree_Float64, Angle_Radian_Float64, Area_Float32, Area_Float64, Power_Watt_Float32, Volume_Float32, Volume_Float64, Frequency_Hertz_Float64, Temperature_Celsius_Float64, Quantity_Integer32..
+- Deleted notes rpr2base_2, rpr2base_3, rpr2base_4, rpr2base_5, todo_1.
+- Added array data types OctetArray2, OctetArray4, OctetArray8, OctetPadding32Array, OctetPadding64Array, OctetPaddingArray3.
+- Changed encoding RPRunpaddedLengthlessArray into RPRlengthlessArray for array ArticulatedParameterStruct.
+- Removed fixed record PerimeterPointStruct, moved to the Minefield module.
+</useHistory>
+        <useHistory>draft 19.6 Release Notes:
+- Alphabetical sort of the datatypes.
+</useHistory>
+        <useHistory>draft 19.7 Release Notes:
+- Move all Enumerated data types either to the SISO-REF-010 Enumerations FOM module or to the RPR Enumerations FOM module.
+- Deleted simple data type Integer64.
+</useHistory>
+        <useHistory>draft 19.8 Release Notes:
+- Moved basic datatypes (unsigned integers), RPRboolean, and RTIobjectId and RTIobjectIdArray to new Foundation module.
+- Updated dependencies to depend (only) on the SISO-REF-010 Enumerations module.
+</useHistory>
+        <useHistory>draft 19.9 Release Notes:
+- Removed switches.
+- Removed note rpr2base_10.
+</useHistory>
+        <useHistory>draft 19.10 Release Notes:
+- Updated model identification, including purpose, application domain, POC, and references.
+- Updated semantics, starting with reverting to semantics from v2D17.
+- Corrected encoding of UnsignedInteger32LengthlessArray to RPRlengthlessArray (was RPRlenghtlessArray).
+- Renamed field StationName-A-Alternatives in NamedLocationStruct to StationName.
+- Renamed OctetPaddingArray3 to OctetArray3.
+- Renamed StationNameVariantStruct to StationNameLocationVariantStruct.
+- Removed notes sdt_1 and rpr2base_8.
+- Updated note labels according to RPR-FOM Naming Convention.
+</useHistory>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>RPR FOM Product Development Group</pocName>
+            <pocOrg>SISO - Simulation Interoperability Standards Organization</pocOrg>
+            <pocTelephone>+1 (407) 882-1348</pocTelephone>
+            <pocEmail>siso-help@sisostds.org</pocEmail>
+        </poc>
+        <reference>
+            <type>Dependency</type>
+            <identification>Real-time Platform Reference Enumerations FOM Module</identification>
+        </reference>
+        <reference>
+            <type>Text Document</type>
+            <identification>Guidance, Rationale, and Interoperability Manual for the Real-time Platform Reference
+Federation Object Model (RPR FOM)
+SISO-STD-001.1-2013
+(ToDo: list official GRIM date)</identification>
+        </reference>
+        <reference>
+            <type>Text Document</type>
+            <identification>IEEE Standard for Distributed Interactive Simulation - Application Protocols
+IEEE Std 1278.1-1995
+September 21, 1995</identification>
+        </reference>
+        <reference>
+            <type>Text Document</type>
+            <identification>IEEE Standard for Distributed Interactive Simulation - Application Protocols
+IEEE Std 1278.1a-1998
+19 March 1998</identification>
+        </reference>
+        <other></other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass notes="RPRnoteBase1">
+                <name>BaseEntity</name>
+                <sharing>Neither</sharing>
+                <semantics>A base class of aggregate and discrete scenario domain participants. The BaseEntity class is characterized by being located at a particular location in space and independently movable, if capable of movement at all. It specifically excludes elements normally considered to be a component of another element. The BaseEntity class is intended to be a container for common attributes for entities of this type. Since it lacks sufficient class specific attributes that are required for simulation purposes it is not expected that any federate shall publish objects of this class. Certain simulation management federates, e.g. viewers, may subscribe to this class. Simulation federates will normally subscribe to one of the subclasses, to gain the extra information required to properly simulate the entity.</semantics>
+                <attribute notes="RPRnoteBase2">
+                    <name>EntityType</name>
+                    <dataType>EntityTypeStruct</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>The category of the entity.</semantics>
+                </attribute>
+                <attribute notes="RPRnoteBase2">
+                    <name>EntityIdentifier</name>
+                    <dataType>EntityIdentifierStruct</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>The unique identifier for the entity instance.</semantics>
+                </attribute>
+                <attribute notes="RPRnoteBase3">
+                    <name>IsPartOf</name>
+                    <dataType>IsPartOfStruct</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>Defines if the entity if a constituent part of another entity (denoted the host entity). If the entity is a constituent part of another entity then the HostEntityIdentifier shall be set to the EntityIdentifier of the host entity and the HostRTIObjectIdentifier shall be set to the RTI object instance ID of the host entity. If the entity is not a constituent part of another entity then the HostEntityIdentifier shall be set to 0.0.0 and the HostRTIObjectIdentifier shall be set to the empty string.</semantics>
+                </attribute>
+                <attribute notes="RPRnoteBase2">
+                    <name>Spatial</name>
+                    <dataType>SpatialVariantStruct</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>Spatial state stored in one variant record attribute.</semantics>
+                </attribute>
+                <attribute notes="RPRnoteBase3">
+                    <name>RelativeSpatial</name>
+                    <dataType>SpatialVariantStruct</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>Relative spatial state stored in one variant record attribute.</semantics>
+                </attribute>
+            </objectClass>
+            <objectClass>
+                <name>EmbeddedSystem</name>
+                <sharing>Neither</sharing>
+                <semantics>A base class used to associate components such as sensor and emitting systems with their parent entity object.</semantics>
+                <attribute notes="RPRnoteBase2">
+                    <name>EntityIdentifier</name>
+                    <dataType>EntityIdentifierStruct</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>The EntityIdentifier of the object which this embedded system is a part of.</semantics>
+                </attribute>
+                <attribute notes="RPRnoteBase2">
+                    <name>HostObjectIdentifier</name>
+                    <dataType>RTIobjectId</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>The RTI object instance ID of the object of which this embedded system is part of.</semantics>
+                </attribute>
+                <attribute notes="RPRnoteBase2">
+                    <name>RelativePosition</name>
+                    <dataType>RelativePositionStruct</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics>The position of the embedded system, relative to the host object's position.</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <dataTypes>
+        <simpleDataTypes>
+            <simpleData>
+                <name>AccelerationMeterPerSecondSquaredFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>meter per second squared (m/(s^2))</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Linear acceleration vector composed of SI base units. Based on the Linear Acceleration Vector record as specified in IEEE 1278.1-1995 section 5.2.33b.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>AngleDegreeFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>degree (deg)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity angle, based on unit degree (of arc), unit symbol °.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>AngleRadianFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>radian (rad)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity angle, based on SI derived unit radian, unit symbol rad.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>AngularVelocityRadianPerSecondFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>radian per second (rad/s)</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Angular velocity vector composed of SI base units. Based on the Angular Velocity Vector record as specified in IEEE 1278.1-1995 section 5.2.2.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>ClockTimeHourInteger32</name>
+                <representation>HLAinteger32BE</representation>
+                <units>hour</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Time past on the clock in full hours since a specified point in time.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Float32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>NA</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Single-precision floating point number.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Float64</name>
+                <representation>HLAfloat64BE</representation>
+                <units>NA</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Double-precision floating point number.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>FrequencyHertzFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>hertz (Hz)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity frequency, based on SI derived unit hertz, unit symbol Hz.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Integer16</name>
+                <representation>HLAinteger16BE</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Integer in the range [-2^15, 2^15-1].</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Integer32</name>
+                <representation>HLAinteger32BE</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Integer in the range [-2^31, 2^31-1].</semantics>
+            </simpleData>
+            <simpleData>
+                <name>InterrogationsPerSecondFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>interrogations/second</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Number of interrogations per second.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>LengthMeterFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>meter (m)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity length, based on SI base unit meter, unit symbol m.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>MassKilogramFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>kilogram (kg)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity mass, based on SI base unit kilogram, unit symbol kg.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>MeterFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>meter (m)</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Datatype based on SI base unit meter, unit symbol m.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>MeterFloat64</name>
+                <representation>HLAfloat64BE</representation>
+                <units>meter (m)</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Datatype based on SI base unit meter, unit symbol m.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Octet</name>
+                <representation>HLAoctet</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Uninterpreted 8-bit value.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>PercentFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>percent (%)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Percentage</semantics>
+            </simpleData>
+            <simpleData>
+                <name>PercentUnsignedInteger32</name>
+                <representation>RPRunsignedInteger32BE</representation>
+                <units>percent (%)</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Percentage</semantics>
+            </simpleData>
+            <simpleData>
+                <name>PowerRatioDecibelMilliwattFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>decibel milliwatt (dBm)</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Abbreviation for the power ratio in decibels (dB) of a measured power referenced to 1 milliwatt (mW).</semantics>
+            </simpleData>
+            <simpleData>
+                <name>RevolutionsPerMinuteInteger16</name>
+                <representation>HLAinteger16BE</representation>
+                <units>revolutions per minute (RPM)</units>
+                <resolution>1</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Frequency of rotation, expressed in revolutions per minute.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>TemperatureDegreeCelsiusFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>degree Celsius (C)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity temperature, based on SI derived unit degree Celsius, unit symbol °C.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>TimeMicrosecondFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>microsecond</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity time, based on SI base unit second, expressed in microsecond, unit symbol μs.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>TimeMillisecondUnsignedInteger32</name>
+                <representation>RPRunsignedInteger32BE</representation>
+                <units>millisecond (ms)</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>Datatype for quantity time, based on SI base unit second, expressed in millisecond, unit symbol ms.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>TimeSecondInteger32</name>
+                <representation>HLAinteger32BE</representation>
+                <units>second (s)</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Datatype for quantity time, based on SI base unit second, unit symbol s.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>TimestampUnsignedInteger32</name>
+                <representation>RPRunsignedInteger32BE</representation>
+                <units>1.676 microsecond</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>The scale of the time value contained in the most significant 31 bits of the timestamp shall be determined by setting one hour equal to (2^31-1), thereby resulting in each time unit representing 3600 s/(2^31-1) = 1.676 microsecond.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>UnsignedInteger16</name>
+                <representation>RPRunsignedInteger16BE</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Integer in the range [0, 2^16].</semantics>
+            </simpleData>
+            <simpleData>
+                <name>UnsignedInteger32</name>
+                <representation>RPRunsignedInteger32BE</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Integer in the range [0, 2^32].</semantics>
+            </simpleData>
+            <simpleData>
+                <name>UnsignedInteger64</name>
+                <representation>RPRunsignedInteger64BE</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Integer in the range [0, 2^64].</semantics>
+            </simpleData>
+            <simpleData>
+                <name>UnsignedInteger8</name>
+                <representation>RPRunsignedInteger8BE</representation>
+                <units>NA</units>
+                <resolution>1</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Integer in the range [0, 2^8].</semantics>
+            </simpleData>
+            <simpleData>
+                <name>VelocityMeterPerSecondFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>meter per second (m/s)</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Speed/Velocity in meter per second.</semantics>
+            </simpleData>
+            <simpleData>
+                <name>WavelengthMicronFloat32</name>
+                <representation>HLAfloat32BE</representation>
+                <units>micron</units>
+                <resolution>NA</resolution>
+                <accuracy>perfect</accuracy>
+                <semantics>Wavelength expressed in micrometer.</semantics>
+            </simpleData>
+        </simpleDataTypes>
+        <arrayDataTypes>
+            <arrayData>
+                <name>ArticulatedParameterStructLengthlessArray</name>
+                <dataType>ArticulatedParameterStruct</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Dynamic array of ArticulatedParameterStruct elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>ClockTimeStructLengthlessArray</name>
+                <dataType>ClockTimeStruct</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Dynamic array of ClockTimeStruct elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>EntityTypeStructLengthlessArray</name>
+                <dataType>EntityTypeStruct</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Dynamic array of EntityTypeStruct elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>Float32Array1Plus</name>
+                <dataType>Float32</dataType>
+                <cardinality>[1..2147483647]</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Generic dynamic array of Float32 elements, containing at least one element.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>Integer16Array</name>
+                <dataType>Integer16</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Generic dynamic array of Integer16 elements, may also contain no elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>NullTerminatedASCIIString</name>
+                <dataType>HLAASCIIchar</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRnullTerminatedArray</encoding>
+                <semantics>A null terminated string with no length field.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetArray</name>
+                <dataType>Octet</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Generic dynamic array of Octet elements, may also contain no elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetArray1Plus</name>
+                <dataType>Octet</dataType>
+                <cardinality>[1..2147483647]</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Generic dynamic array of Octet elements, containing at least one element.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetArray2</name>
+                <dataType>Octet</dataType>
+                <cardinality>2</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>Generic array of two Octet elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetArray3</name>
+                <dataType>Octet</dataType>
+                <cardinality>3</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>Generic array of three Octet elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetArray4</name>
+                <dataType>Octet</dataType>
+                <cardinality>4</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>Generic array of four Octet elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetArray8</name>
+                <dataType>Octet</dataType>
+                <cardinality>8</cardinality>
+                <encoding>HLAfixedArray</encoding>
+                <semantics>Generic array of eight Octet elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetPadding32Array</name>
+                <dataType>Octet</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRpaddingTo32Array</encoding>
+                <semantics>Generic dynamic array of meaningless Octet elements, to align the subsequent data structure to the next 32 bit octet boundary value (OBV). The array is encoded without array length, containing zero to three elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OctetPadding64Array</name>
+                <dataType>Octet</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRpaddingTo64Array</encoding>
+                <semantics>Generic dynamic array of meaningless Octet elements, to align the subsequent data structure to the next 64 bit octet boundary value (OBV). The array is encoded without array length, containing zero to seven elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>OrientationStructLengthlessArray</name>
+                <dataType>OrientationStruct</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Dynamic array of OrientationStruct elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>UnsignedInteger16Array1Plus</name>
+                <dataType>UnsignedInteger16</dataType>
+                <cardinality>[1..2147483647]</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Generic dynamic array of UnsignedInteger16 elements, containing at least one element.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>UnsignedInteger32LengthlessArray</name>
+                <dataType>UnsignedInteger32</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Generic dynamic array of UnsignedInteger32 elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>UnsignedInteger64Array1Plus</name>
+                <dataType>UnsignedInteger64</dataType>
+                <cardinality>[1..2147483647]</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Generic dynamic array of UnsignedInteger64 elements, containing at least one element.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>UnsignedInteger8LengthlessArray</name>
+                <dataType>UnsignedInteger8</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Generic dynamic array of UnsignedInteger8 elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+            <arrayData>
+                <name>WorldLocationStructLengthlessArray</name>
+                <dataType>WorldLocationStruct</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>RPRlengthlessArray</encoding>
+                <semantics>Dynamic array of WorldLocationStruct elements, may also contain no elements. The array is encoded without array length, containing only the elements.</semantics>
+            </arrayData>
+        </arrayDataTypes>
+        <fixedRecordDataTypes>
+            <fixedRecordData>
+                <name>AccelerationVectorStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The magnitude of the change in linear velocity over time.</semantics>
+                <field>
+                    <name>XAcceleration</name>
+                    <dataType>AccelerationMeterPerSecondSquaredFloat32</dataType>
+                    <semantics>Acceleration component along the X axis.</semantics>
+                </field>
+                <field>
+                    <name>YAcceleration</name>
+                    <dataType>AccelerationMeterPerSecondSquaredFloat32</dataType>
+                    <semantics>Acceleration component along the Y axis.</semantics>
+                </field>
+                <field>
+                    <name>ZAcceleration</name>
+                    <dataType>AccelerationMeterPerSecondSquaredFloat32</dataType>
+                    <semantics>Acceleration component along the Z axis.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>AngularVelocityVectorStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The rate at which the orientation is changing over time, in body coordinates.</semantics>
+                <field>
+                    <name>XAngularVelocity</name>
+                    <dataType>AngularVelocityRadianPerSecondFloat32</dataType>
+                    <semantics>Acceleration component about the X axis.</semantics>
+                </field>
+                <field>
+                    <name>YAngularVelocity</name>
+                    <dataType>AngularVelocityRadianPerSecondFloat32</dataType>
+                    <semantics>Acceleration component about the Y axis.</semantics>
+                </field>
+                <field>
+                    <name>ZAngularVelocity</name>
+                    <dataType>AngularVelocityRadianPerSecondFloat32</dataType>
+                    <semantics>Acceleration component about the Z axis.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>ArticulatedParameterStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Structure to specify a movable or attached part of an entity. Based on the Articulation Parameter record as specified in IEEE 1278.1-1995 section 5.2.5. 
+ 
+Note that usage of this datatype for the PhyscialEntity object class attribute ArticulatedParametersArray and MunitionDetonation interaction class parameter ArticulatedPartData shall be in accordance with IEEE 1278.1-1995 Annex A.</semantics>
+                <field>
+                    <name>ArticulatedParameterChange</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Indicator of a change to the part. This field shall be set to zero for each exercise and sequentially incremented by one for each change in articulation parameters. In the case where all possible values are exhausted, the numbers shall be reused beginning at zero.</semantics>
+                </field>
+                <field>
+                    <name>PartAttachedTo</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Identification of the articulated part to which this articulation parameter is attached. This field shall contain the value zero if the articulated part is attached directly to the entity.</semantics>
+                </field>
+                <field>
+                    <name>ParameterValue</name>
+                    <dataType>ParameterValueVariantStruct</dataType>
+                    <semantics>Details of the parameter: whether it is an articulated or an attached part, and its type and value.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>ArticulatedPartsStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Structure to represent the state of a movable part of an entity.</semantics>
+                <field>
+                    <name>Class</name>
+                    <dataType>ArticulatedPartsTypeEnum32</dataType>
+                    <semantics>The type class uniquely identifies a particular articulated part on a given entity type. Guidance for uniquely assigning type classes to an entity's articulated parts is given in section 4.8 of the enumerations document.</semantics>
+                </field>
+                <field>
+                    <name>TypeMetric</name>
+                    <dataType>ArticulatedTypeMetricEnum32</dataType>
+                    <semantics>The type metric uniquely identifies the transformation to be applied to the articulated part.</semantics>
+                </field>
+                <field>
+                    <name>Value</name>
+                    <dataType>Float32</dataType>
+                    <semantics>Value of the transformation to be applied to the articulated part.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>AttachedPartsStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Structure to represent removable parts that may be attached to an entity.</semantics>
+                <field>
+                    <name>Station</name>
+                    <dataType>StationEnum32</dataType>
+                    <semantics>Identification of the location (or station) to which the part is attached.</semantics>
+                </field>
+                <field>
+                    <name>StoreType</name>
+                    <dataType>EntityTypeStruct</dataType>
+                    <semantics>The entity type of the attached part.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>ClockTimeStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Specification of the point in time of an occurrence. Based on the Clock Time record as specified in IEEE 1278.1-1995 section 5.2.8.</semantics>
+                <field>
+                    <name>Hours</name>
+                    <dataType>ClockTimeHourInteger32</dataType>
+                    <semantics>The number of hours since 0000 hours, January 1, 1970 UTC.</semantics>
+                </field>
+                <field>
+                    <name>TimePastTheHour</name>
+                    <dataType>TimestampUnsignedInteger32</dataType>
+                    <semantics>The time past the hour indicated in the Hours field.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>ConstituentPartRelationshipStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The relationship of the constituent part object to its host object. Based on the Relationship record as specified in IEEE 1278.1a-1998 section 5.2.56.</semantics>
+                <field>
+                    <name>Nature</name>
+                    <dataType>ConstituentPartNatureEnum16</dataType>
+                    <semantics>The nature or purpose for the joining of the constituent part object to the host object.</semantics>
+                </field>
+                <field>
+                    <name>Position</name>
+                    <dataType>ConstituentPartPositionEnum16</dataType>
+                    <semantics>The position of the constituent part object with respect to the host object.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>DimensionStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Bounding box in X,Y,Z axis.</semantics>
+                <field>
+                    <name>XAxisLength</name>
+                    <dataType>MeterFloat32</dataType>
+                    <semantics>Length in meters along X axis.</semantics>
+                </field>
+                <field>
+                    <name>YAxisLength</name>
+                    <dataType>MeterFloat32</dataType>
+                    <semantics>Length in meters along Y axis.</semantics>
+                </field>
+                <field>
+                    <name>ZAxisLength</name>
+                    <dataType>MeterFloat32</dataType>
+                    <semantics>Length in meters along Z axis.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>EntityIdentifierStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Unique, exercise-wide identification of the entity, or a symbolic group address referencing multiple entities or a simulation application. Based on the Entity Identifier record as specified in IEEE 1278.1-1995 section 5.2.14.</semantics>
+                <field>
+                    <name>FederateIdentifier</name>
+                    <dataType>FederateIdentifierStruct</dataType>
+                    <semantics>Simulation application (federate) identifier.</semantics>
+                </field>
+                <field>
+                    <name>EntityNumber</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Each entity in a given simulation application shall be given an entity identifier number unique to all other entities in that application. This identifier number is valid for the duration of the exercise; however, entity identifier numbers may be reused when all possible numbers have been exhausted. No entity shall have an entity identifier number of NO_ENTITY (0), ALL_ENTITIES (0xFFFF), or RQST_ASSIGN_ID (0xFFFE). The entity identifier number need not be registered or retained for future exercises. An entity identifier number equal to zero with valid site and application identification shall address a simulation application. An entity identifier number equal to ALL_ENTITIES shall mean all entities within the specified site and application. An entity identifier number equal to RQST_ASSIGN_ID allows the receiver of the CreateEntity interaction to define the entity identifier number of the new entity. The new entity will specify its entity identifier number in the Acknowledge interaction.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData notes="RPRnoteBase5 RPRnoteBase4">
+                <name>EntityTypeStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Type of entity. Based on the Entity Type record as specified in IEEE 1278.1-1995 section 5.2.16.</semantics>
+                <field>
+                    <name>EntityKind</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Kind of entity.</semantics>
+                </field>
+                <field>
+                    <name>Domain</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Domain in which the entity operates.</semantics>
+                </field>
+                <field>
+                    <name>CountryCode</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Country to which the design of the entity is attributed.</semantics>
+                </field>
+                <field>
+                    <name>Category</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Main category that describes the entity.</semantics>
+                </field>
+                <field>
+                    <name>Subcategory</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Subcategory to which an entity belongs based on the Category field.</semantics>
+                </field>
+                <field>
+                    <name>Specific</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Specific information about an entity based on the Subcategory field.</semantics>
+                </field>
+                <field>
+                    <name>Extra</name>
+                    <dataType>Octet</dataType>
+                    <semantics>Extra information required to describe a particular entity.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>EventIdentifierStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Identification of an event. Based on the Event Identifier record as specified in IEEE 1278.1-1995 section 5.2.18.</semantics>
+                <field>
+                    <name>EventCount</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>The event number. Uniquely assigned by the simulation application (federate) that initiates the sequence of events. It shall be set to one for each exercise and incremented by one for each event. In the case where all possible values are exhausted, the numbers may be reused beginning again at one.</semantics>
+                </field>
+                <field>
+                    <name>IssuingObjectIdentifier</name>
+                    <dataType>RTIobjectId</dataType>
+                    <semantics>Identification of the object issuing the event.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>FederateIdentifierStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Unique identification of the simulation application (federate) in an exercise, or a symbolic group address referencing multiple simulation applications. Based on the Simulation Address record as specified in IEEE 1278.1-1995 section 5.2.14.1.</semantics>
+                <field>
+                    <name>SiteID</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Each site shall be assigned a unique site identification. No individual site shall be assigned an identification number containing NO_SITE (0) or ALL_SITES (0xFFFF). An identification number equal to ALL_SITES (0xFFFF) shall mean all sites; this may be used to initialize or start all sites. The mechanism by which Site Identification numbers are assigned is part of federation agreements.</semantics>
+                </field>
+                <field>
+                    <name>ApplicationID</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Each simulation application (federate) at a site shall be assigned an identification number unique within that site. No simulation application shall be assigned an identification number containing NO_APPLIC (0) or ALL_APPLIC (0xFFFF). An application identification number equal to ALL_APPLIC (0xFFFF) shall mean all applications; this may be used to start all applications within a site. One or more simulation applications may reside in a single host computer. The mechanism by which application identification numbers are assigned is part of federation agreements.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>IsPartOfStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Defines the hierarchical relationship between two objects.</semantics>
+                <field>
+                    <name>HostEntityIdentifier</name>
+                    <dataType>EntityIdentifierStruct</dataType>
+                    <semantics>The identifier of the entity of which the object is a constituent part.</semantics>
+                </field>
+                <field>
+                    <name>HostRTIObjectIdentifier</name>
+                    <dataType>RTIobjectId</dataType>
+                    <semantics>The RTI instance identifier of the object of which this object is a constituent part.</semantics>
+                </field>
+                <field>
+                    <name>Relationship</name>
+                    <dataType>ConstituentPartRelationshipStruct</dataType>
+                    <semantics>The relationship of the constituent part object to its host object.</semantics>
+                </field>
+                <field>
+                    <name>NamedLocation</name>
+                    <dataType>NamedLocationStruct</dataType>
+                    <semantics>The discrete positional relationship of the constituent part object with respect to its host object.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>LinearSegmentStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Specifies linear object segment characteristics.</semantics>
+                <field>
+                    <name>SegmentNumber</name>
+                    <dataType>UnsignedInteger32</dataType>
+                    <semantics>Identifies the individual segment.</semantics>
+                </field>
+                <field>
+                    <name>PercentComplete</name>
+                    <dataType>PercentUnsignedInteger32</dataType>
+                    <semantics>Specifies the percent completion of the segment.</semantics>
+                </field>
+                <field>
+                    <name>Location</name>
+                    <dataType>WorldLocationStruct</dataType>
+                    <semantics>Specifies the location of the segment.</semantics>
+                </field>
+                <field>
+                    <name>Orientation</name>
+                    <dataType>OrientationStruct</dataType>
+                    <semantics>Specifies the orientation of the segment.</semantics>
+                </field>
+                <field>
+                    <name>Length</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Specifies the length of the segment, in meters, extending in the positive X direction.</semantics>
+                </field>
+                <field>
+                    <name>Width</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Specifies the total width of the segment, in meters; one-half of the width shall extend in the positive Y direction, and one-half of the width shall extend in the negative Y direction.</semantics>
+                </field>
+                <field>
+                    <name>Height</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Specifies the height of the segment, in meters, above ground.</semantics>
+                </field>
+                <field>
+                    <name>Depth</name>
+                    <dataType>UnsignedInteger16</dataType>
+                    <semantics>Specifies the depth of the segment, in meters, below ground level.</semantics>
+                </field>
+                <field>
+                    <name>DamagedState</name>
+                    <dataType>DamageStatusEnum32</dataType>
+                    <semantics>Specifies the damaged appearance of the segment.</semantics>
+                </field>
+                <field>
+                    <name>Deactivated</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Specifies whether or not the segment has been deactivated (it has ceased to exist in the synthetic environment).</semantics>
+                </field>
+                <field>
+                    <name>Flaming</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Specifies whether or not the segment is aflame.</semantics>
+                </field>
+                <field>
+                    <name>ObjectPreDistributed</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Specifies whether or not the segment was created before the start of the exercise.</semantics>
+                </field>
+                <field>
+                    <name>Smoking</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Specifies whether or not the segment is smoking (creating a smoke plume).</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>NamedLocationStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The discrete positional relationship of the constituent part object with respect to its host object. Based on the specifications in IEEE 1278.1a-1998 of the IsPartOf PDU 'Location of Part' (paragraph 5.3.9.4e) and 'Named Location' (paragraph 5.3.9.4f) fields.</semantics>
+                <field>
+                    <name>StationNumber</name>
+                    <dataType>Integer16</dataType>
+                    <semantics>The number of the particular station at which the constituent part is attached.</semantics>
+                </field>
+                <field>
+                    <name>StationName</name>
+                    <dataType>StationNameLocationVariantStruct</dataType>
+                    <semantics>The name of the station where the constituent part is located.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>OrientationStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The orientation of an object in the world coordinate system, as specified in IEEE Std 1278.1-1995 section 1.3.2.</semantics>
+                <field>
+                    <name>Psi</name>
+                    <dataType>AngleRadianFloat32</dataType>
+                    <semantics>Rotation about the Z axis.</semantics>
+                </field>
+                <field>
+                    <name>Theta</name>
+                    <dataType>AngleRadianFloat32</dataType>
+                    <semantics>Rotation about the Y axis.</semantics>
+                </field>
+                <field>
+                    <name>Phi</name>
+                    <dataType>AngleRadianFloat32</dataType>
+                    <semantics>Rotation about the X axis.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>RelativePositionStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Relative position in right-handed Cartesian coordinates.</semantics>
+                <field>
+                    <name>BodyXDistance</name>
+                    <dataType>MeterFloat32</dataType>
+                    <semantics>The distance from the reference location along the X axis.</semantics>
+                </field>
+                <field>
+                    <name>BodyYDistance</name>
+                    <dataType>MeterFloat32</dataType>
+                    <semantics>The distance from the reference location along the Y axis.</semantics>
+                </field>
+                <field>
+                    <name>BodyZDistance</name>
+                    <dataType>MeterFloat32</dataType>
+                    <semantics>The distance from the reference location along the Z axis.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>RelativeRangeBearingStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Relative position in polar coordinates.</semantics>
+                <field>
+                    <name>Range</name>
+                    <dataType>LengthMeterFloat32</dataType>
+                    <semantics>The range from the reference location.</semantics>
+                </field>
+                <field>
+                    <name>Bearing</name>
+                    <dataType>AngleRadianFloat32</dataType>
+                    <semantics>The bearing from the reference location.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>SpatialFPStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Spatial structure for Dead Reckoning Algorithm FPW (2) and FPB (6).</semantics>
+                <field>
+                    <name>WorldLocation</name>
+                    <dataType>WorldLocationStruct</dataType>
+                    <semantics>Location of the object.</semantics>
+                </field>
+                <field>
+                    <name>IsFrozen</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Whether the object is frozen or not.</semantics>
+                </field>
+                <field>
+                    <name>Orientation</name>
+                    <dataType>OrientationStruct</dataType>
+                    <semantics>The angles of rotation around the coordinate axes between the object's attitude and the reference coordinate system axes (calculated as the Tait-Bryan Euler angles specifying the successive rotations needed to transform from the world coordinate system to the entity coordinate system).</semantics>
+                </field>
+                <field>
+                    <name>VelocityVector</name>
+                    <dataType>VelocityVectorStruct</dataType>
+                    <semantics>The rate at which an object's position is changing over time.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>SpatialFVStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Spatial structure for Dead Reckoning Algorithm FVW (5) and RVB (9).</semantics>
+                <field>
+                    <name>WorldLocation</name>
+                    <dataType>WorldLocationStruct</dataType>
+                    <semantics>Location of the object.</semantics>
+                </field>
+                <field>
+                    <name>IsFrozen</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Whether the object is frozen or not.</semantics>
+                </field>
+                <field>
+                    <name>Orientation</name>
+                    <dataType>OrientationStruct</dataType>
+                    <semantics>The angles of rotation around the coordinate axes between the object's attitude and the reference coordinate system axes (calculated as the Tait-Bryan Euler angles specifying the successive rotations needed to transform from the world coordinate system to the entity coordinate system).</semantics>
+                </field>
+                <field>
+                    <name>VelocityVector</name>
+                    <dataType>VelocityVectorStruct</dataType>
+                    <semantics>The rate at which an object's position is changing over time.</semantics>
+                </field>
+                <field>
+                    <name>AccelerationVector</name>
+                    <dataType>AccelerationVectorStruct</dataType>
+                    <semantics>The magnitude of the change in linear velocity of an object over time.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>SpatialRPStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Spatial structure for Dead Reckoning Algorithm RPW (3) and RPB (7).</semantics>
+                <field>
+                    <name>WorldLocation</name>
+                    <dataType>WorldLocationStruct</dataType>
+                    <semantics>Location of the object.</semantics>
+                </field>
+                <field>
+                    <name>IsFrozen</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Whether the object is frozen or not.</semantics>
+                </field>
+                <field>
+                    <name>Orientation</name>
+                    <dataType>OrientationStruct</dataType>
+                    <semantics>The angles of rotation around the coordinate axes between the object's attitude and the reference coordinate system axes (calculated as the Tait-Bryan Euler angles specifying the successive rotations needed to transform from the world coordinate system to the entity coordinate system).</semantics>
+                </field>
+                <field>
+                    <name>VelocityVector</name>
+                    <dataType>VelocityVectorStruct</dataType>
+                    <semantics>The rate at which an object's position is changing over time.</semantics>
+                </field>
+                <field>
+                    <name>AngularVelocity</name>
+                    <dataType>AngularVelocityVectorStruct</dataType>
+                    <semantics>The rate at which an object's orientation is changing over time.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>SpatialRVStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Spatial structure for Dead Reckoning Algorithm RVW (4) and RVB (8).</semantics>
+                <field>
+                    <name>WorldLocation</name>
+                    <dataType>WorldLocationStruct</dataType>
+                    <semantics>Location of the object.</semantics>
+                </field>
+                <field>
+                    <name>IsFrozen</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Whether the object is frozen or not.</semantics>
+                </field>
+                <field>
+                    <name>Orientation</name>
+                    <dataType>OrientationStruct</dataType>
+                    <semantics>The angles of rotation around the coordinate axes between the object's attitude and the reference coordinate system axes (calculated as the Tait-Bryan Euler angles specifying the successive rotations needed to transform from the world coordinate system to the entity coordinate system).</semantics>
+                </field>
+                <field>
+                    <name>VelocityVector</name>
+                    <dataType>VelocityVectorStruct</dataType>
+                    <semantics>The rate at which an object's position is changing over time.</semantics>
+                </field>
+                <field>
+                    <name>AccelerationVector</name>
+                    <dataType>AccelerationVectorStruct</dataType>
+                    <semantics>The magnitude of the change in linear velocity of an object over time.</semantics>
+                </field>
+                <field>
+                    <name>AngularVelocity</name>
+                    <dataType>AngularVelocityVectorStruct</dataType>
+                    <semantics>The rate at which an object's orientation is changing over time.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>SpatialStaticStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>Spatial structure for Dead Reckoning Algorithm Static (1).</semantics>
+                <field>
+                    <name>WorldLocation</name>
+                    <dataType>WorldLocationStruct</dataType>
+                    <semantics>Location of the object.</semantics>
+                </field>
+                <field>
+                    <name>IsFrozen</name>
+                    <dataType>RPRboolean</dataType>
+                    <semantics>Whether the object is frozen or not.</semantics>
+                </field>
+                <field>
+                    <name>Orientation</name>
+                    <dataType>OrientationStruct</dataType>
+                    <semantics>The angles of rotation around the coordinate axes between the object's attitude and the reference coordinate system axes (calculated as the Tait-Bryan Euler angles specifying the successive rotations needed to transform from the world coordinate system to the entity coordinate system).</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>VariableDatumStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>These fields shall specify the types of variable datum, their length, and their value.</semantics>
+                <field>
+                    <name>DatumID</name>
+                    <dataType>DatumIdentifierEnum32</dataType>
+                    <semantics>The fixed datum id represented by a 32-bit enumeration</semantics>
+                </field>
+                <field>
+                    <name>DatumLength</name>
+                    <dataType>UnsignedInteger32</dataType>
+                    <semantics>This field shall specify the length of the variable datum in bits.</semantics>
+                </field>
+                <field>
+                    <name>DatumValue</name>
+                    <dataType>UnsignedInteger64Array1Plus</dataType>
+                    <semantics>Value of the variable datum defined by the Variable Datum ID and Variable Datum length. This field shall be padded at the end to make the length a multiple of 64-bits.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>VelocityVectorStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The rate at which the position is changing over time.</semantics>
+                <field>
+                    <name>XVelocity</name>
+                    <dataType>VelocityMeterPerSecondFloat32</dataType>
+                    <semantics>Velocity component along the X axis.</semantics>
+                </field>
+                <field>
+                    <name>YVelocity</name>
+                    <dataType>VelocityMeterPerSecondFloat32</dataType>
+                    <semantics>Velocity component along the Y axis.</semantics>
+                </field>
+                <field>
+                    <name>ZVelocity</name>
+                    <dataType>VelocityMeterPerSecondFloat32</dataType>
+                    <semantics>Velocity component along the Z axis.</semantics>
+                </field>
+            </fixedRecordData>
+            <fixedRecordData>
+                <name>WorldLocationStruct</name>
+                <encoding>HLAfixedRecord</encoding>
+                <semantics>The location of an object in the world coordinate system, as specified in IEEE Std 1278.1-1995 section 1.3.2.</semantics>
+                <field>
+                    <name>X</name>
+                    <dataType>MeterFloat64</dataType>
+                    <semantics>Distance from the origin along the X axis.</semantics>
+                </field>
+                <field>
+                    <name>Y</name>
+                    <dataType>MeterFloat64</dataType>
+                    <semantics>Distance from the origin along the Y axis.</semantics>
+                </field>
+                <field>
+                    <name>Z</name>
+                    <dataType>MeterFloat64</dataType>
+                    <semantics>Distance from the origin along the Z axis.</semantics>
+                </field>
+            </fixedRecordData>
+        </fixedRecordDataTypes>
+        <variantRecordDataTypes>
+            <variantRecordData>
+                <name>ParameterValueVariantStruct</name>
+                <discriminant>ArticulatedParameterType</discriminant>
+                <dataType>ParameterTypeEnum32</dataType>
+                <alternative>
+                    <enumerator>ArticulatedPart</enumerator>
+                    <name>ArticulatedParts</name>
+                    <dataType>ArticulatedPartsStruct</dataType>
+                    <semantics>Alternative for an articulated part.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>AttachedPart</enumerator>
+                    <name>AttachedParts</name>
+                    <dataType>AttachedPartsStruct</dataType>
+                    <semantics>Alternative for an attached part.</semantics>
+                </alternative>
+                <encoding>HLAvariantRecord</encoding>
+                <semantics>Variant record specifying the type of articulation parameter (articulated or attached part), and its type and value.</semantics>
+            </variantRecordData>
+            <variantRecordData>
+                <name>SpatialVariantStruct</name>
+                <discriminant>DeadReckoningAlgorithm</discriminant>
+                <dataType>DeadReckoningAlgorithmEnum8</dataType>
+                <alternative>
+                    <enumerator>Static</enumerator>
+                    <name>SpatialStatic</name>
+                    <dataType>SpatialStaticStruct</dataType>
+                    <semantics>Variant for representing a static object.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_FPW</enumerator>
+                    <name>SpatialFPW</name>
+                    <dataType>SpatialFPStruct</dataType>
+                    <semantics>Variant for representing an object with a constant velocity (or low acceleration) linear motion in world coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_RPW</enumerator>
+                    <name>SpatialRPW</name>
+                    <dataType>SpatialRPStruct</dataType>
+                    <semantics>Variant for representing an object with a constant velocity (or low acceleration) linear motion, including rotation information, in world coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_RVW</enumerator>
+                    <name>SpatialRVW</name>
+                    <dataType>SpatialRVStruct</dataType>
+                    <semantics>Variant for representing an object with high speed or maneuvering at any speed, including rotation information, in world coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_FVW</enumerator>
+                    <name>SpatialFVW</name>
+                    <dataType>SpatialFVStruct</dataType>
+                    <semantics>Variant for representing an object with high speed or maneuvering at any speed in world coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_FPB</enumerator>
+                    <name>SpatialFPB</name>
+                    <dataType>SpatialFPStruct</dataType>
+                    <semantics>Variant for representing an object with a constant velocity (or low acceleration) linear motion in body axis coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_RPB</enumerator>
+                    <name>SpatialRPB</name>
+                    <dataType>SpatialRPStruct</dataType>
+                    <semantics>Variant for representing an object with a constant velocity (or low acceleration) linear motion, including rotation information, in body axis coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_RVB</enumerator>
+                    <name>SpatialRVB</name>
+                    <dataType>SpatialRVStruct</dataType>
+                    <semantics>Variant for representing an object with high speed or maneuvering at any speed, including rotation information, in body axis coordinates.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>DRM_FVB</enumerator>
+                    <name>SpatialFVB</name>
+                    <dataType>SpatialFVStruct</dataType>
+                    <semantics>Variant for representing an object with high speed or maneuvering at any speed in body axis coordinates.</semantics>
+                </alternative>
+                <encoding>HLAvariantRecord</encoding>
+                <semantics>Variant Record for a single spatial attribute.</semantics>
+            </variantRecordData>
+            <variantRecordData notes="RPRnoteBase6">
+                <name>StationNameLocationVariantStruct</name>
+                <discriminant>StationName</discriminant>
+                <dataType>ConstituentPartStationNameEnum16</dataType>
+                <alternative>
+                    <enumerator>OnStationXYZ</enumerator>
+                    <name>RelativeLocation</name>
+                    <dataType>RelativePositionStruct</dataType>
+                    <semantics>The location of the constituent part object relative to the host object entity coordinate system.</semantics>
+                </alternative>
+                <alternative>
+                    <enumerator>OnStationRangeBearing</enumerator>
+                    <name>RelativeRangeAndBearing</name>
+                    <dataType>RelativeRangeBearingStruct</dataType>
+                    <semantics>The location of the constituent part object relative to the host object in polar coordinates.</semantics>
+                </alternative>
+                <encoding>HLAvariantRecord</encoding>
+                <semantics>The station name at which the constituent part is located. In case of 'On Station', the alternative specifies its location relative to the host object.</semantics>
+            </variantRecordData>
+        </variantRecordDataTypes>
+    </dataTypes>
+    <notes>
+        <note>
+            <label>RPRnoteBase1</label>
+            <semantics>Federates shall send the time at which the data is valid in the user defined tag with every attribute values update and interaction. The time shall be in the first 8 bytes (octets) of the user defined tag, using the DIS timestamp field format (see section 5.2.31 of IEEE 1278.1-1995) converted into hexadecimal ASCII character representation (0-9 and A-F). The ordering of the characters shall be in accordance with section 5.1.1 of IEEE 1278.1-1995, that is most significant octet first, with the most significant bits first (i.e. the character for bits 4-7 precedes the character for bits 0-3). 
+ 
+All federates shall transmit this field, even if they do not use it themselves, so that other federates can use its value to compensate for network transport delays.</semantics>
+        </note>
+        <note>
+            <label>RPRnoteBase2</label>
+            <semantics>Not optional</semantics>
+        </note>
+        <note>
+            <label>RPRnoteBase3</label>
+            <semantics>Default value: all zeros</semantics>
+        </note>
+        <note>
+            <label>RPRnoteBase4</label>
+            <semantics>Currently the entity type record is a variant record as in DIS (the meaning of the enumerations in each field depends on the enumerations in the fields preceding it). In the future it is intended to flatten the structure so that there is a single set of enumerations for each field. This may be achieved by offsetting the start of each block of enumerations, using different offsets for each block.</semantics>
+        </note>
+        <note>
+            <label>RPRnoteBase5</label>
+            <semantics>All fields in the entity type struct are enumerations. The values for the individual fields are defined in section for of "Enumeration and Bit-Encoded Values for use with IEEE 1278.1-1995" (EBV-DOC). The values used in this structure should comply with the requirements specified in section 5.2.16 of IEEE 1278.1-1995 (for platform and environmental entities) and section 5.2.39 of IEEE 1278.1a-1998 (for aggregate entities).</semantics>
+        </note>
+        <note>
+            <label>RPRnoteBase6</label>
+            <semantics>This note applies when this datatype is used within the BaseEntity.IsPartOf attribute. 
+ 
+The following StationName enumerations - On station RNG/BRG (15) and On station - x,y,z (16), are optional to transmit along with associated RelativeLocation or RelativeRangeAndBearing information. If these enumeration values (15) and (16) are received, they shall be ignored. The RelativeSpatial attribute shall be used in all cases. (Note: Although the RelativeLocation field uses the same WorldLocation contained in the RelativeSpatial attribute, in both these cases, the values do not represent a location in world coordinates, but, rather, the relative location of a part entity to the host entity in the referenced entity coordinate system. The RelativeRangeAndBearing field does not provide full relative spatial data and, therefore, cannot be substituted for the RelativeSpatial attribute.)</semantics>
+        </note>
+    </notes>
+</objectModel>
