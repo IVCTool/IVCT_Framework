@@ -1,5 +1,5 @@
 /*
-Copyright 2015, [name of copyright owner, Johannes Mulder (Fraunhofer IOSB)"]
+Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractTestCase {
 
+    protected abstract void logTestPurpose();
+    
+
     protected abstract void performTest() throws TcInconclusive, TcFailed;
 
 
@@ -44,6 +47,8 @@ public abstract class AbstractTestCase {
      * @param logger The {@link Logger} to use
      */
     public void execute(final IVCT_TcParam tcParam, final IVCT_BaseModel ivct_BaseModel, final Logger logger) {
+    	
+    	logTestPurpose();
 
         // Print out test case parameters
         // logger.info(tcParam.toString());
