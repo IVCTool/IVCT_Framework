@@ -1,5 +1,5 @@
 /*
-Copyright 2015, [name of copyright owner, Johannes Mulder (Fraunhofer IOSB)"]
+Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -45,6 +45,18 @@ public class TC00003 extends AbstractTestCase {
         new TC00003().execute(tcParam, tcBaseModel, logger);
     }
 
+    @Override
+    protected void logTestPurpose() {
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\n");
+        stringBuilder.append("---------------------------------------------------------------------\n");
+        stringBuilder.append("TEST PURPOSE\n");
+        stringBuilder.append("Test initiateRti and terminateRti calls\n");
+        stringBuilder.append("---------------------------------------------------------------------\n");
+        final String testPurpose = stringBuilder.toString();
+
+        logger.info(testPurpose);
+    }
 
     @Override
     protected void preambleAction() {
