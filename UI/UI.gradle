@@ -1,0 +1,19 @@
+apply plugin: 'application'
+
+mainClassName = 'de.fraunhofer.iosb.ivct.cmdLineTool'
+
+dependencies {
+	compile     project(':IEEE1516e')
+	compile     project(':MessagingHelpers')
+	compile     libraries.slf4j_api
+	compile 'commons-cli:commons-cli:1.3'
+
+	runtime		libraries.actimemqClient
+	runtime		libraries.logback_classic
+	runtime		libraries.logback_core
+	
+	runtime     libraries.slf4j_jcl_over_slf4j
+	runtime     libraries.slf4j_jul_to_slf4j
+	runtime     libraries.slf4j_log4j_over_slf4j
+}
+
