@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/*
- * This class holds variables to use as out parameters.
- */
 package de.fraunhofer.iosb.ivct;
 
-import java.util.List;
-import java.util.Map;
+public class AddSUT implements Command {
+	final String sutName;
+	
+	AddSUT (final String sutName) {
+		  this.sutName = sutName;
+		  }
 
-public class RuntimeParameters {
-	public List<String> ls = null;
-	public List<String> suts = null;
-	public Map <String, List<String>> testsuiteTestcases = null;
+	  public void execute() {
+      	IVCTcommander.addSUT(this.sutName);
+	  }
 }

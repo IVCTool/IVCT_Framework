@@ -14,16 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/*
- * This class holds variables to use as out parameters.
- */
 package de.fraunhofer.iosb.ivct;
 
-import java.util.List;
-import java.util.Map;
+public class ListSUT implements Command {
+	final IVCTcommander ivctCommander;
+	RuntimeParameters rtp;
+	boolean displayList;
 
-public class RuntimeParameters {
-	public List<String> ls = null;
-	public List<String> suts = null;
-	public Map <String, List<String>> testsuiteTestcases = null;
+	ListSUT (IVCTcommander ivctCommander, RuntimeParameters rtp, final boolean displayList) {
+		this.ivctCommander = ivctCommander;
+		this.rtp = rtp;
+		this.displayList = displayList;
+	}
+
+	public void execute() {
+		this.rtp.suts = IVCTcommander.listSUT();
+		if (displayList) {
+			for (String entry : this.rtp.suts)
+			{
+				System.out.println(entry);
+			}
+		}
+	}
 }

@@ -104,7 +104,19 @@ public class IVCTcommander implements MessageListener {
         domConfig = parseXmlFile(ivct_path + "\\IVCTconfig.xml");
         if (domConfig != null) {
         	configParameters = parseConfig(domConfig);
-            System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
+            File f = new File(configParameters.pathSutDir);
+            if (f.isDirectory() == false) {
+                System.out.println ("PATH SUT DIR in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathSutDir);
+            	System.exit(1);
+            }
+            File f0 = new File(configParameters.pathTestsuite);
+            if (f0.isDirectory() == false) {
+                System.out.println ("PATH TEST SUITE in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathTestsuite);
+            	System.exit(1);
+            }
+        } else {
+            System.out.println ("Cannot parse: " + ivct_path + "\\IVCTconfig.xml");
+        	System.exit(1);
         }
         System.out.println ("ivct_path: " + ivct_path);
         System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
@@ -259,6 +271,30 @@ public class IVCTcommander implements MessageListener {
     	}
     	
     	return configParameters;
+      }
+      
+      public static void addSUT(final String sutName) {
+    	  String sutPath = configParameters.pathSutDir + "\\" + sutName;
+          System.out.println("AddSUT path " + sutPath);
+    	  File  f = new File(sutPath);
+          if (f.exists()) {
+              System.out.println ("SUT already exists: " + configParameters.pathSutDir  + "\\" + sutName);
+          	return;
+          }
+
+          f.mkdir();
+      }
+      
+      public static List<String> listSUT() {
+          List<String> suts = new ArrayList<String>();
+    	  File dir = new File(configParameters.pathSutDir);
+    	  File[] filesList = dir.listFiles();
+    	  for (File file : filesList) {
+    	      if (file.isDirectory()) {
+    	    	  suts.add(file.getName());
+    	      }
+    	  }
+    	  return suts;
       }
 
       public static String printJson(String command) {
