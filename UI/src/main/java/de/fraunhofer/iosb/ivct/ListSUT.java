@@ -29,6 +29,10 @@ public class ListSUT implements Command {
 
 	public void execute() {
 		this.rtp.suts = IVCTcommander.listSUT();
+		if (this.rtp.suts.isEmpty()) {
+			System.out.println("No SUT found. Please load a SUT.");
+			return;
+		}
 		if (displayList) {
 			for (String entry : this.rtp.suts)
 			{

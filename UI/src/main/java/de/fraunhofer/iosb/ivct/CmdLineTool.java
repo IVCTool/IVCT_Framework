@@ -280,20 +280,6 @@ class Writer extends Thread {
                 	command = new UnsetConformanceTest(CmdLineTool.ivctCommander);
                 	CmdLineTool.conformanceTestBool = false;
                     break;
-                case "addSUT":
-                case "asut":
-                	if (split.length == 1) {
-                        System.out.println("addSUT: Error missing SUT name");
-                	}
-                	command = new AddSUT(split[1]);
-                    break;
-                case "deleteSUT":
-                case "dsut":
-                	if (split.length == 1) {
-                        System.out.println("deleteSUT: Error missing SUT name");
-                	}
-        			// TODO
-                    break;
                 case "listSUT":
                 case "lsut":
                 	if (split.length > 1) {
@@ -422,8 +408,6 @@ class Writer extends Thread {
                     System.out.println("setTestSuite (st) - set the name of the test suite to be used");
                     System.out.println("setConformanceTest (sct) - set conformance test mode");
                     System.out.println("unsetConformanceTest (uct) - unset conformance test mode");
-                    System.out.println("addSUT (asut) - add SUT folder");
-                    System.out.println("deleteSUT (dsut) - delete SUT folder and files");
                     System.out.println("listSUT (lsut) - list SUT folders");
                     System.out.println("setSUT (ssut) - set current SUT");
                     System.out.println("listTestCases (ltc) - list the available test cases for the test suite");
