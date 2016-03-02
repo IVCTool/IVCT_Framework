@@ -38,6 +38,7 @@ public class CmdLineTool {
     private static String hostname = null;
     protected static boolean conformanceTestBool = false;
     protected static boolean displayLogBool = false;
+    protected static String sutName = null;
     protected static String testCaseName = null;
     protected static String testSuiteName = null;
     protected static RuntimeParameters rtp = new RuntimeParameters();
@@ -194,22 +195,23 @@ class Writer extends Thread {
     }
     
     /*
-     * Check if the test schedule exists for the test suite.
+     * Some commands have no meaning without knowing the SUT involved.
      */
-    private boolean checkTestScheduleKnown(final String testSchedule) {
-    	for (Map.Entry<String, List<String>> entry : CmdLineTool.rtp.testsuiteTestcases.entrySet()) {
-    		if (testSchedule.equals(entry.getKey())) {
-    			return false;
-    		}
+    private boolean checkSUTelected() {
+    	if (CmdLineTool.sutName == null) {
+            System.out.println("SUT not selected yet: use setSUT command first");
+            return true;
     	}
-    	
-    	return true;
+    	return false;
     }
     
     /*
-     * Many commands have no meaning without knowing the test suite involved.
+     * Some commands have no meaning without knowing the test suite involved.
      */
     private boolean checkTestSuiteSelected() {
+    	if (checkSUTelected()) {
+            return true;
+    	}
     	if (CmdLineTool.testSuiteName == null) {
             System.out.println("Testsuite not selected yet: use setTestSuite command first");
             return true;
@@ -233,8 +235,35 @@ class Writer extends Thread {
                 if (line == null) break;
                 String split[]= line.trim().split("\\s+");
                 switch(split[0]) {
+                case "listSUT":
+                case "lsut":
+                	if (split.length > 1) {
+                        System.out.println("listSUT: Warning extra parameter: " + split[1]);
+                	}
+                	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, true);
+                    break;
+                case "setSUT":
+                case "ssut":
+                	if (split.length == 1) {
+                        System.out.println("setSUT: Error missing SUT name");
+                	}
+                	
+                    // check if SUT exists
+                	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, false);
+                	command.execute();
+                	if (checkSutKnown(split[1])) {
+                        System.out.println("setSUT: unknown SUT: " + split[1]);
+                        command = null;
+                        break;
+                	}
+                	CmdLineTool.sutName = split[1];
+                	command = new SetSUT(split[1], CmdLineTool.ivctCommander);
+                    break;
                 case "listTestSuites":
                 case "lt":
+                	if (checkSUTelected()) {
+                		break;
+                	}
                 	if (split.length > 1) {
                         System.out.println("listTestSuites: Warning extra parameter: " + split[1]);
                 	}
@@ -242,6 +271,9 @@ class Writer extends Thread {
                     break;
                 case "setTestSuite":
                 case "st":
+                	if (checkSUTelected()) {
+                		break;
+                	}
                 	if (split.length == 1) {
                 		System.out.println("setTestSuite: Error missing test suite name");
                 		break;
@@ -251,9 +283,8 @@ class Writer extends Thread {
                 		command.execute();
                 	}
                 	boolean gotTestSuite = false;
-                	for (String entry : CmdLineTool.rtp.ls)
-                	{
-                		if (split[1].equals(entry)) {
+        			for (Map.Entry<String, String> entry : CmdLineTool.rtp.ls.entrySet()) {
+                		if (split[1].equals(entry.getKey())) {
                 			gotTestSuite = true;
                 		}
                 	}
@@ -280,47 +311,24 @@ class Writer extends Thread {
                 	command = new UnsetConformanceTest(CmdLineTool.ivctCommander);
                 	CmdLineTool.conformanceTestBool = false;
                     break;
-                case "listSUT":
-                case "lsut":
-                	if (split.length > 1) {
-                        System.out.println("listSUT: Warning extra parameter: " + split[1]);
-                	}
-                	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, true);
-                    break;
-                case "setSUT":
-                case "ssut":
-                	if (split.length == 1) {
-                        System.out.println("setSUT: Error missing SUT name");
-                	}
-                	
-                    // check if SUT exists
-                	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, false);
-                	command.execute();
-                	if (checkSutKnown(split[1])) {
-                        System.out.println("setSUT: unknown SUT: " + split[1]);
-                        command = null;
-                        break;
-                	}
-                	command = new SetSUT(split[1], CmdLineTool.ivctCommander);
-                    break;
                 case "listTestCases":
                 case "ltc":
-                	if (split.length > 1) {
-                        System.out.println("listTestCases: Warning extra parameter: " + split[1]);
-                	}
                 	if (checkTestSuiteSelected()) {
                 		break;
+                	}
+                	if (split.length > 1) {
+                        System.out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
                 	command = new ListTestCases(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, true);
                     break;
                 case "startTestCase":
                 case "stc":
+                	if (checkTestSuiteSelected()) {
+                		break;
+                	}
                 	if (split.length == 1) {
                         System.out.println("startTestCase: Error missing test case id");
                         break;
-                	}
-                	if (checkTestSuiteSelected()) {
-                		break;
                 	}
                 	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, false);
                 	command.execute();
@@ -328,7 +336,7 @@ class Writer extends Thread {
                         System.out.println("startTestCase: unknown test case " + split[1]);
                         break;
                 	}
-                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander);
+                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander, CmdLineTool.testSuiteName);
                 	CmdLineTool.testCaseName = split[1];
                     break;
                 case "abortTestCase":
@@ -340,30 +348,48 @@ class Writer extends Thread {
                 	break;
                 case "listTestSchedules":
                 case "lts":
-                	if (split.length > 1) {
-                        System.out.println("listTestSchedules: Warning extra parameter: " + split[1]);
-                	}
                 	if (checkTestSuiteSelected()) {
                 		break;
+                	}
+                	if (split.length > 1) {
+                        System.out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
                 	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, true);
                     break;
                 case "startTestSchedule":
                 case "sts":
+                	if (checkTestSuiteSelected()) {
+                		break;
+                	}
                 	if (split.length == 1) {
                         System.out.println("startTestSchedule: Error missing test schedule name");
                         break;
                 	}
-                	if (checkTestSuiteSelected()) {
-                		break;
-                	}
                 	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, false);
                 	command.execute();
-                	if (checkTestScheduleKnown(split[1])) {
+                	if (CmdLineTool.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
                         System.out.println("startTestSchedule: unknown test schedule " + split[1]);
                         break;
                 	}
-                	command = new StartTestSchedule(split[1], CmdLineTool.ivctCommander);
+                	List<String> testcases = CmdLineTool.rtp.testsuiteTestcases.get(split[1]);
+            		
+                	// Check if test case exists
+                	for (String testcase : testcases) {
+                		System.out.println(testcase);
+                    	if (checkTestCaseNameKnown(testcase)) {
+                            System.out.println("startTestSchedule: unknown test case " + testcase);
+                            break;
+                    	}
+                	}
+                	
+                	// Create a command structure to share between threads
+                	// One thread works through the list
+                	// Other thread receives test case verdicts and releases semaphore in first thread
+                	// to start next test case
+                	CommandCache commandCache = new CommandCache(testcases);
+                	
+                	// This will create one thread, other thread listens to JMS bus anyway
+                	command = new StartTestSchedule(commandCache, CmdLineTool.ivctCommander, CmdLineTool.testSuiteName);
                     break;
                 case "abortTestSchedule":
                 case "ats":
@@ -404,12 +430,12 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
+                    System.out.println("listSUT (lsut) - list SUT folders");
+                    System.out.println("setSUT (ssut) - set current SUT");
                     System.out.println("listTestSuites (lt) - list the available test suites");
                     System.out.println("setTestSuite (st) - set the name of the test suite to be used");
                     System.out.println("setConformanceTest (sct) - set conformance test mode");
                     System.out.println("unsetConformanceTest (uct) - unset conformance test mode");
-                    System.out.println("listSUT (lsut) - list SUT folders");
-                    System.out.println("setSUT (ssut) - set current SUT");
                     System.out.println("listTestCases (ltc) - list the available test cases for the test suite");
                     System.out.println("startTestCase (stc) - start the named test case");
                     System.out.println("abortTestCase (atc) - abort the running test case");

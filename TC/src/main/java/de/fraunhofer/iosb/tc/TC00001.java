@@ -53,7 +53,8 @@ public class TC00001 {
     public static void main(final String[] args) {
         // Build test case parameters to use
         logger.info("TEST CASE MAIN");
-        final TcParamTmr tcParam = new TcParamTmr();
+    	String paramJson = "{\"federationName\",\"HelloWorld\"}";
+        final TcParamTmr tcParam = new TcParamTmr(paramJson);
         execute(tcParam);
     }
 
@@ -64,7 +65,7 @@ public class TC00001 {
     public static void execute(final TcParamTmr tcParam) {
         // Get logging-IVCT-RTI using tc_param federation name, host
         final IVCT_RTIambassador ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(logger);
-        final TcBaseModel tcBaseModel =  new TcBaseModel(logger, ivct_rti);
+        final TcBaseModel tcBaseModel =  new TcBaseModel(logger, ivct_rti, tcParam);
         final TcFederateAmbassador tcFederateAmbassador = new TcFederateAmbassador(tcBaseModel, logger);
 
         // Test case phase

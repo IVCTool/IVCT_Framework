@@ -30,6 +30,6 @@ public class SetTestSuite implements Command {
 
 	public void execute() {
 		String setTestSuiteString = IVCTcommander.printJson("setTestSuite", "testSuiteName", testsuite);
-		this.ivctCommander.sendToJms(setTestSuiteString);
+//		this.ivctCommander.sendToJms(setTestSuiteString);
 	}
 }

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RuntimeParameters {
-	public List<String> ls = null;
+	public Map<String, String> ls = null;
 	public List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 }

@@ -17,6 +17,7 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.util.List;
+import java.util.Map;
 
 /*
  * This class gets and displays the test suite names.
@@ -35,9 +36,9 @@ public class ListTestSuites implements Command {
 	public void execute() {
 		this.rtp.ls = IVCTcommander.getTestSuiteNames();
 		if (displayList) {
-			for (String entry : this.rtp.ls)
-			{
-				System.out.println(entry);
+
+			for (Map.Entry<String, String> temp : this.rtp.ls.entrySet()) {
+				System.out.println(temp.getKey());
 			}
 		}
 	}

@@ -11,6 +11,10 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Testrunner that takes listens on a certain JMS queue for commands to start a
@@ -65,7 +69,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
         this.jmshelper.parseProperties();
         this.jmshelper.initConnection();
         this.jmshelper.initSession();
-        this.jmshelper.setupQueueListener(this.destination, this);
+        this.jmshelper.setupTopicListener(this.destination, this);
     }
 
 
@@ -77,9 +81,26 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
         }
         if (message instanceof TextMessage) {
             final TextMessage textMessage = (TextMessage) message;
+            String testCaseId = null;
             try {
                 final String content = textMessage.getText();
-                this.executeTests(content.split("\\s"));
+                System.out.println("JMSTestRunner:onMessage " + content);
+    			JSONParser jsonParser = new JSONParser();
+    			try {
+					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
+					String commandTypeName =  (String) jsonObject.get("commandType");
+					System.out.println("The commandType name is: " + commandTypeName);
+					if (commandTypeName.equals("startTestCase")) {
+						testCaseId = (String) jsonObject.get("testCaseId");
+						System.out.println("The test case class is: " + testCaseId);
+
+		                this.executeTests(testCaseId.split("\\s"));
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
             }
             catch (final JMSException ex) {
                 LOGGER.warn("Problems with parsing Message", ex);

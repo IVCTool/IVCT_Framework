@@ -29,26 +29,32 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractTestCase {
 
-    protected abstract void logTestPurpose();
-    
-
-    protected abstract void performTest() throws TcInconclusive, TcFailed;
+	protected abstract IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger);
 
 
-    protected abstract void preambleAction() throws TcInconclusive;
+	protected abstract void logTestPurpose(final Logger logger);
 
 
-    protected abstract void postambleAction() throws TcInconclusive;
+	protected abstract void performTest(final Logger logger) throws TcInconclusive, TcFailed;
+
+
+	protected abstract void preambleAction(final Logger logger) throws TcInconclusive;
+
+
+	protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
 
 
     /**
-     * @param tcParam test case parameters
-     * @param ivct_BaseModel reference to the local cache factory
+     * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
      */
-    public void execute(final IVCT_TcParam tcParam, final IVCT_BaseModel ivct_BaseModel, final Logger logger) {
+    public void execute(final String tcParamJson, final Logger logger) {
     	
-    	logTestPurpose();
+    	IVCT_BaseModel ivct_BaseModel;
+    	
+    	ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
+    	
+    	logTestPurpose(logger);
 
         // Print out test case parameters
         // logger.info(tcParam.toString());
@@ -61,10 +67,10 @@ public abstract class AbstractTestCase {
             // Publish interaction / object classes
             // Subscribe interaction / object classes
 
-            this.preambleAction();
+            this.preambleAction(logger);
         }
         catch (final TcInconclusive ex) {
-            ivct_BaseModel.terminateRti(tcParam);
+            ivct_BaseModel.terminateRti();
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
             return;
         }
@@ -75,16 +81,16 @@ public abstract class AbstractTestCase {
             logger.info("TEST CASE BODY");
 
             // PERFORM TEST
-            this.performTest();
+            this.performTest(logger);
 
         }
         catch (final TcInconclusive ex) {
-            ivct_BaseModel.terminateRti(tcParam);
+            ivct_BaseModel.terminateRti();
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
             return;
         }
         catch (final TcFailed ex) {
-            ivct_BaseModel.terminateRti(tcParam);
+            ivct_BaseModel.terminateRti();
             logger.info("TC FAILED " + ex.getMessage());
             return;
         }
@@ -93,11 +99,11 @@ public abstract class AbstractTestCase {
         try {
             // Test case phase
             logger.info("TEST CASE POSTAMBLE");
-            this.postambleAction();
+            this.postambleAction(logger);
             logger.info("TC PASSED");
         }
         catch (final TcInconclusive ex) {
-            ivct_BaseModel.terminateRti(tcParam);
+            ivct_BaseModel.terminateRti();
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
             return;
         }

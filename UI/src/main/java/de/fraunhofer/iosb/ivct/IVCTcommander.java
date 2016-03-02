@@ -36,6 +36,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -69,7 +72,7 @@ public class IVCTcommander implements MessageListener {
      * @param args The command line arguments
      */
     public static void main(final String[] args) {
-        //        LogConfigurationHelper.configureLogging(JMSTestRunner.class);
+        //        LogConfigurationHelper.configureLogging(IVCTcommander.class);
 //        LogConfigurationHelper.configureLogging();
         try {
             final IVCTcommander runner = new IVCTcommander();
@@ -97,7 +100,7 @@ public class IVCTcommander implements MessageListener {
         this.jmshelper.initConnection();
         this.jmshelper.initSession();
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
-        producer = jmshelper.setupQueueProducer(destination);
+        producer = jmshelper.setupTopicProducer(destination);
         String ivct_path = System.getenv("IVCT_HOME");
         System.out.println ("ivct_path: " + ivct_path);
 
@@ -123,12 +126,13 @@ public class IVCTcommander implements MessageListener {
         
         System.out.println ("IVCTtestsuites");
         domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
-        List<String> ls;
+        Map<String, String> ls;
         ls = getTestSuiteNames();
-		for (String temp : ls) {
-			System.out.println(temp);
+		for (Map.Entry<String, String> temp : ls.entrySet()) {
+			System.out.println(temp.getKey());
+			System.out.println(temp.getValue());
 			Map <String, List<String>> xyz;
-			xyz = readTestSuiteFiles(temp);
+			xyz = readTestSuiteFiles(temp.getKey());
 			if (xyz == null) {
 				continue;
 			}
@@ -166,9 +170,22 @@ public class IVCTcommander implements MessageListener {
         }
         return null;
       }
+    
+    public static String getPackageName(final String testsuite) {
+    	String packageName = null;
+        Map<String, String> ls;
+        ls = getTestSuiteNames();
+		for (Map.Entry<String, String> temp : ls.entrySet()) {
+			if (temp.getKey().equals(testsuite)) {
+				packageName = temp.getValue();
+			System.out.println(temp.getValue());
+			}
+		}
+    	return packageName;
+    }
       
-    public static List<String> getTestSuiteNames() {
-    	List<String> ls = new ArrayList<String>();
+    public static Map<String, String> getTestSuiteNames() {
+    	Map<String, String> myMap = new HashMap <String, String>();
 
     	Element elem = domTestsuite.getDocumentElement();
     	for (Node child = elem.getFirstChild(); child != null; child=child.getNextSibling())
@@ -179,19 +196,26 @@ public class IVCTcommander implements MessageListener {
     			{
     				if (child0.getNodeName().compareTo("testSuite") == 0 )
     				{
+    					String packageName = new String();
+    					String testSuiteName = new String();
     					for (Node child1 = child0.getFirstChild(); child1 != null; child1=child1.getNextSibling())
     					{
     						if (child1.getNodeName().compareTo("name") == 0 )
     						{
-    							ls.add(child1.getFirstChild().getNodeValue());
+    							testSuiteName = child1.getFirstChild().getNodeValue();
+    						}                	  
+    						if (child1.getNodeName().compareTo("packageName") == 0 )
+    						{
+    							packageName = child1.getFirstChild().getNodeValue();
     						}                	  
     					}
+    					myMap.put(testSuiteName, packageName);
     				}
     			}
     		}
     	}
 
-    	return ls;
+    	return myMap;
     }
     
     protected static Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
@@ -327,7 +351,7 @@ public class IVCTcommander implements MessageListener {
      * Initialize the Listening on the JMS Queue
      */
     public void listenToJms() {
-        this.jmshelper.setupQueueListener(this.destination, this);
+        this.jmshelper.setupTopicListener(this.destination, this);
     }
 
 
@@ -337,16 +361,30 @@ public class IVCTcommander implements MessageListener {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Received Command message");
         }
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Received Command message");
+        }
         if (message instanceof TextMessage) {
             final TextMessage textMessage = (TextMessage) message;
             try {
                 final String content = textMessage.getText();
-                System.out.println("IVCT::onMessage " + content);
+                System.out.println("IVCTcommander:onMessage " + content);
+    			JSONParser jsonParser = new JSONParser();
+    			try {
+					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
+					String commandTypeName =  (String) jsonObject.get("commandType");
+					if (commandTypeName.equals("testCaseVerdict")) {
+						System.out.println("The commandType name is: " + commandTypeName);
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
             }
             catch (final JMSException ex) {
                 LOGGER.warn("Problems with parsing Message", ex);
             }
         }
-
     }
 }

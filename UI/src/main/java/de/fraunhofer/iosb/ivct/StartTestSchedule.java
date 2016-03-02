@@ -16,17 +16,42 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
-public class StartTestSchedule implements Command {
-	final String testSchedule;
-	final IVCTcommander ivctCommander;
+import java.util.concurrent.Semaphore;
 
-	StartTestSchedule (final String testSchedule, IVCTcommander ivctCommander) {
-		this.testSchedule = testSchedule;
+public class StartTestSchedule implements Command {
+	final CommandCache commandCache;
+	final IVCTcommander ivctCommander;
+	final String testsuite;
+	private static Semaphore semaphore = new Semaphore(1);
+
+	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final String testsuite) {
+		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
+		this.testsuite = testsuite;
+	}
+	
+	// Call this from JMS thread listener to start the next test case
+	public void gotVerdict() {
+		semaphore.release();
 	}
 
 	public void execute() {
-		String startTestScheduleString = IVCTcommander.printJson("startTestSchedule", "testScheduleName", testSchedule);
-		this.ivctCommander.sendToJms(startTestScheduleString);
+		for (String tc = commandCache.getNextTestCase(); tc != null; tc = commandCache.getNextTestCase()) {
+			final String packageName = IVCTcommander.getPackageName(this.testsuite);
+			if (packageName == null) {
+	            System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + tc + " not run");
+	            return;
+			}
+            System.out.println("START TEST CASE");
+
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + tc);
+			this.ivctCommander.sendToJms(startTestCaseString);
+			try {
+				semaphore.acquire();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -18,15 +18,22 @@ package de.fraunhofer.iosb.ivct;
 
 public class StartTestCase implements Command {
 	final String testcase;
+	final String testsuite;
 	final IVCTcommander ivctCommander;
 
-	StartTestCase (final String testcase, IVCTcommander ivctCommander) {
+	StartTestCase(final String testcase, final IVCTcommander ivctCommander, final String testsuite) {
+		this.testsuite = testsuite;
 		this.testcase = testcase;
 		this.ivctCommander = ivctCommander;
 	}
 
 	public void execute() {
-		String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", testcase);
+		final String packageName = IVCTcommander.getPackageName(this.testsuite);
+		if (packageName == null) {
+            System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + this.testcase + " not run");
+            return;
+		}
+		String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + this.testcase);
 		this.ivctCommander.sendToJms(startTestCaseString);
 	}
 }

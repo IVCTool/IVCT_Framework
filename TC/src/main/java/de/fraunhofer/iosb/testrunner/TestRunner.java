@@ -50,11 +50,9 @@ public class TestRunner {
                 continue;
             }
             // initialize LOGGER, localcache, federeateAmbassador and tcparam
-            final TcParamTmr tcParam = new TcParamTmr();
+        	String paramJson = "{\"federationName\",\"HelloWorld\"}";
             final Logger testLogger = LoggerFactory.getLogger(testCase.getClass());
-            final IVCT_RTIambassador ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(testLogger);
-            final TcBaseModel tcBaseModel = new TcBaseModel(testLogger, ivct_rti);
-            testCase.execute(tcParam, tcBaseModel, testLogger);
+            testCase.execute(paramJson, testLogger);
         }
     }
 }

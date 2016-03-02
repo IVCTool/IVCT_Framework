@@ -42,7 +42,7 @@ public class TcParamTmr implements IVCT_TcParam {
     private final String suteFederate       = "suteFederate";
 
 
-    public TcParamTmr() {
+    public TcParamTmr(final String tcParamJson) {
         // Initiate data
 
         this.fddFiles[0] = new File(this.basePath + "RPR-Switches_v2.0_draft19.10.xml");
