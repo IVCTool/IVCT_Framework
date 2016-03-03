@@ -22,6 +22,7 @@ import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
+import de.fraunhofer.iosb.tc_lib.TcInconclusive;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,12 +44,12 @@ public class TC00003 extends AbstractTestCase {
 
 
     public static void main(final String[] args) {
-    	String paramJson = "{\"federationName\",\"HelloWorld\"}";
+    	String paramJson = "{\"federationName\" : \"HelloWorld\"}";
         new TC00003().execute(paramJson, logger);
     }
     
     @Override
-    public IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger) {
+    public IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive {
     	tcParam              = new TcParamTmr(tcParamJson);
     	ivct_rti             = IVCT_RTI_Factory.getIVCT_RTI(logger);
     	tcBaseModel          = new TcBaseModel(logger, ivct_rti, tcParam);

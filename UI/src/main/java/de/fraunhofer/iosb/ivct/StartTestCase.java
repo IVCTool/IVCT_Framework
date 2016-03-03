@@ -17,14 +17,16 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 public class StartTestCase implements Command {
+	final String paramJson;
 	final String testcase;
 	final String testsuite;
 	final IVCTcommander ivctCommander;
 
-	StartTestCase(final String testcase, final IVCTcommander ivctCommander, final String testsuite) {
+	StartTestCase(final String testcase, final IVCTcommander ivctCommander, final String testsuite, final String paramJson) {
 		this.testsuite = testsuite;
 		this.testcase = testcase;
 		this.ivctCommander = ivctCommander;
+		this.paramJson = paramJson;
 	}
 
 	public void execute() {
@@ -33,7 +35,7 @@ public class StartTestCase implements Command {
             System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + this.testcase + " not run");
             return;
 		}
-		String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + this.testcase);
+		String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + this.testcase, "tcParam", this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 	}
 }

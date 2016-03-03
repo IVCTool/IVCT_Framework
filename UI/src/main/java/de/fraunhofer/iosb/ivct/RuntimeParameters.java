@@ -26,4 +26,5 @@ public class RuntimeParameters {
 	public Map<String, String> ls = null;
 	public List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
+	public String paramJson;
 }

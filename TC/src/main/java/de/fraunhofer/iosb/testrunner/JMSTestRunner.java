@@ -82,6 +82,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
         if (message instanceof TextMessage) {
             final TextMessage textMessage = (TextMessage) message;
             String testCaseId = null;
+            JSONObject testCaseParam = null;
             try {
                 final String content = textMessage.getText();
                 System.out.println("JMSTestRunner:onMessage " + content);
@@ -93,8 +94,10 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 					if (commandTypeName.equals("startTestCase")) {
 						testCaseId = (String) jsonObject.get("testCaseId");
 						System.out.println("The test case class is: " + testCaseId);
+						testCaseParam = (JSONObject) jsonObject.get("tcParam");
+						System.out.println("The test case parameters are: " + testCaseParam.toString());
 
-		                this.executeTests(testCaseId.split("\\s"));
+		                this.executeTests(testCaseId.split("\\s"), testCaseParam.toString());
 					}
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block

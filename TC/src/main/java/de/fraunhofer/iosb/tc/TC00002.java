@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
+import de.fraunhofer.iosb.tc_lib.TcInconclusive;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,16 @@ public class TC00002 {
 
     public static void main(final String[] args) {
         // Build test case parameters to use
-    	String paramJson = "{\"federationName\",\"HelloWorld\"}";
-        final TcParamTmr tcParam = new TcParamTmr(paramJson);
-        execute(tcParam);
+    	String paramJson = "{\"federationName\" : \"HelloWorld\"}";
+		TcParamTmr tcParam = null;
+		try {
+			tcParam = new TcParamTmr(paramJson);
+		} catch (TcInconclusive e) {
+			System.exit(0);
+		}
+		if (tcParam != null) {
+			execute(tcParam);
+		}
     }
 
 

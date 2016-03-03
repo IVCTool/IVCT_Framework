@@ -251,13 +251,20 @@ class Writer extends Thread {
                     // check if SUT exists
                 	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, false);
                 	command.execute();
+                	command = null;
                 	if (checkSutKnown(split[1])) {
                         System.out.println("setSUT: unknown SUT: " + split[1]);
-                        command = null;
                         break;
                 	}
                 	CmdLineTool.sutName = split[1];
+                	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + CmdLineTool.sutName + "\\" + "TcParam.json");
+                	CmdLineTool.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
+                	if (CmdLineTool.rtp.paramJson == null) {
+                        System.out.println("setSUT: cannot read file: " + tcParamFile);
+                        break;
+                	}
                 	command = new SetSUT(split[1], CmdLineTool.ivctCommander);
+                	CmdLineTool.testSuiteName = null;
                     break;
                 case "listTestSuites":
                 case "lt":
@@ -281,6 +288,7 @@ class Writer extends Thread {
                 	if (CmdLineTool.rtp.ls == null) {
                 		command = new ListTestSuites(CmdLineTool.ivctCommander, CmdLineTool.rtp, false);
                 		command.execute();
+                    	command = null;
                 	}
                 	boolean gotTestSuite = false;
         			for (Map.Entry<String, String> entry : CmdLineTool.rtp.ls.entrySet()) {
@@ -332,11 +340,12 @@ class Writer extends Thread {
                 	}
                 	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, false);
                 	command.execute();
+                	command = null;
                 	if (checkTestCaseNameKnown(split[1])) {
                         System.out.println("startTestCase: unknown test case " + split[1]);
                         break;
                 	}
-                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander, CmdLineTool.testSuiteName);
+                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
                 	CmdLineTool.testCaseName = split[1];
                     break;
                 case "abortTestCase":
@@ -367,6 +376,7 @@ class Writer extends Thread {
                 	}
                 	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, false);
                 	command.execute();
+                	command = null;
                 	if (CmdLineTool.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
                         System.out.println("startTestSchedule: unknown test schedule " + split[1]);
                         break;

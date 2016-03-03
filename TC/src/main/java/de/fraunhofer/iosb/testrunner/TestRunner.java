@@ -27,7 +27,8 @@ public class TestRunner {
      * @param args command line parameters
      */
     public static void main(final String[] args) {
-        new TestRunner().executeTests(args);
+    	String paramJson = null;
+        new TestRunner().executeTests(args, paramJson);
 
     }
 
@@ -37,7 +38,7 @@ public class TestRunner {
      *
      * @param classnames The classnames of the tests to execute
      */
-    public void executeTests(final String[] classnames) {
+    public void executeTests(final String[] classnames, final String paramJson) {
         for (final String classname: classnames) {
             AbstractTestCase testCase = null;
             try {
@@ -50,7 +51,6 @@ public class TestRunner {
                 continue;
             }
             // initialize LOGGER, localcache, federeateAmbassador and tcparam
-        	String paramJson = "{\"federationName\",\"HelloWorld\"}";
             final Logger testLogger = LoggerFactory.getLogger(testCase.getClass());
             testCase.execute(paramJson, testLogger);
         }

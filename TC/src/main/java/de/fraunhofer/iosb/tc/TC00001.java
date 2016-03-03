@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
+import de.fraunhofer.iosb.tc_lib.TcInconclusive;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.ResignAction;
@@ -46,17 +47,24 @@ import org.slf4j.LoggerFactory;
 
 
 public class TC00001 {
-    // Test case parameters
-    private static Logger                   logger             = LoggerFactory.getLogger(TC00001.class);
+	// Test case parameters
+	private static Logger                   logger             = LoggerFactory.getLogger(TC00001.class);
 
 
-    public static void main(final String[] args) {
-        // Build test case parameters to use
-        logger.info("TEST CASE MAIN");
-    	String paramJson = "{\"federationName\",\"HelloWorld\"}";
-        final TcParamTmr tcParam = new TcParamTmr(paramJson);
-        execute(tcParam);
-    }
+	public static void main(final String[] args) {
+		// Build test case parameters to use
+		logger.info("TEST CASE MAIN");
+		String paramJson = "{\"federationName\" : \"HelloWorld\"}";
+		TcParamTmr tcParam = null;
+		try {
+			tcParam = new TcParamTmr(paramJson);
+		} catch (TcInconclusive e) {
+			System.exit(0);
+		}
+		if (tcParam != null) {
+			execute(tcParam);
+		}
+	}
 
 
     /**

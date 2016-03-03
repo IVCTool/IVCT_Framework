@@ -29,7 +29,7 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractTestCase {
 
-	protected abstract IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger);
+	protected abstract IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
 
 
 	protected abstract void logTestPurpose(final Logger logger);
@@ -50,9 +50,12 @@ public abstract class AbstractTestCase {
      */
     public void execute(final String tcParamJson, final Logger logger) {
     	
-    	IVCT_BaseModel ivct_BaseModel;
+    	IVCT_BaseModel ivct_BaseModel = null;
     	
-    	ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
+    	try {
+			ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
+		} catch (TcInconclusive e) {
+		}
     	
     	logTestPurpose(logger);
 

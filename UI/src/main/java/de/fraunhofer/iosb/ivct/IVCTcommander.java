@@ -18,6 +18,7 @@ package de.fraunhofer.iosb.ivct;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -183,6 +184,10 @@ public class IVCTcommander implements MessageListener {
 		}
     	return packageName;
     }
+    
+    public static String getSUTdir() {
+    	return configParameters.pathSutDir;
+    }
       
     public static Map<String, String> getTestSuiteNames() {
     	Map<String, String> myMap = new HashMap <String, String>();
@@ -263,6 +268,44 @@ public class IVCTcommander implements MessageListener {
     	}
     }
 
+    public static String readWholeFile(final String filename) {
+    	BufferedReader br = null;
+    	String everything = null;
+
+    	File myFile = new File(filename);
+    	if (myFile.isFile() == false) {
+    		return everything;
+    	}
+
+    	try {
+    		br = new BufferedReader(new FileReader(filename));
+    		StringBuilder sb = new StringBuilder();
+    		String line = br.readLine();
+
+    		while (line != null) {
+    			sb.append(line);
+    			sb.append(System.lineSeparator());
+    			line = br.readLine();
+    		}
+    		everything = sb.toString();
+    	} catch (FileNotFoundException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	} finally {
+    		if (br != null) {
+    			try {
+    				br.close();
+    			} catch (IOException e) {
+    			}
+    		}
+    	}
+
+    	return everything;
+    }
+    
       /*
        * The return class may be changed to hold other kinds of information as
        * required.
@@ -297,18 +340,6 @@ public class IVCTcommander implements MessageListener {
     	return configParameters;
       }
       
-      public static void addSUT(final String sutName) {
-    	  String sutPath = configParameters.pathSutDir + "\\" + sutName;
-          System.out.println("AddSUT path " + sutPath);
-    	  File  f = new File(sutPath);
-          if (f.exists()) {
-              System.out.println ("SUT already exists: " + configParameters.pathSutDir  + "\\" + sutName);
-          	return;
-          }
-
-          f.mkdir();
-      }
-      
       public static List<String> listSUT() {
           List<String> suts = new ArrayList<String>();
     	  File dir = new File(configParameters.pathSutDir);
@@ -332,6 +363,12 @@ public class IVCTcommander implements MessageListener {
       	System.out.println(s);
       	return s;
       }
+
+      public static String printJson(final String command, final String param, final String value, final String param1, final String value1) {
+        	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : " + value1 + "\n}");
+        	System.out.println(s);
+        	return s;
+        }
 
       /**
      * sendToJms
