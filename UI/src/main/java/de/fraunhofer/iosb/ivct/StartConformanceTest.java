@@ -17,17 +17,17 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 /*
- * This class sets test system mode to conformance test.
+ * This class starts the conformance test.
  */
-public class SetConformanceTest implements Command {
+public class StartConformanceTest implements Command {
 	final IVCTcommander ivctCommander;
 
-	SetConformanceTest (IVCTcommander ivctCommander) {
+	StartConformanceTest (IVCTcommander ivctCommander) {
 		this.ivctCommander = ivctCommander;
 	}
 
 	public void execute() {
-		String setConformanceTestString = IVCTcommander.printJson("setConformanceTest");
+		String setConformanceTestString = IVCTcommander.printJson("startConformanceTest");
 		this.ivctCommander.sendToJms(setConformanceTestString);
 	}
 }

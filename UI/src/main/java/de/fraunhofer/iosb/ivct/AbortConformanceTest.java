@@ -17,17 +17,17 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 /*
- * This class unsets test system conformance test mode.
+ * This class aborts the conformance test.
  */
-public class UnsetConformanceTest implements Command {
+public class AbortConformanceTest implements Command {
 	final IVCTcommander ivctCommander;
 
-	UnsetConformanceTest (IVCTcommander ivctCommander) {
+	AbortConformanceTest (IVCTcommander ivctCommander) {
 		this.ivctCommander = ivctCommander;
 	}
 
 	public void execute() {
-		String unsetConformanceTestString = IVCTcommander.printJson("unsetConformanceTest");
+		String unsetConformanceTestString = IVCTcommander.printJson("abortConformanceTest");
 		this.ivctCommander.sendToJms(unsetConformanceTestString);
 	}
 }
