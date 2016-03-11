@@ -48,9 +48,10 @@ public abstract class AbstractTestCase {
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
      */
-    public void execute(final String tcParamJson, final Logger logger) {
+    public IVCT_Verdict execute(final String tcParamJson, final Logger logger) {
     	
     	IVCT_BaseModel ivct_BaseModel = null;
+    	IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
     	
     	try {
 			ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
@@ -75,7 +76,9 @@ public abstract class AbstractTestCase {
         catch (final TcInconclusive ex) {
             ivct_BaseModel.terminateRti();
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            return;
+            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            ivct_Verdict.text = ex.getMessage();
+            return ivct_Verdict;
         }
 
         //test body block
@@ -90,12 +93,16 @@ public abstract class AbstractTestCase {
         catch (final TcInconclusive ex) {
             ivct_BaseModel.terminateRti();
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            return;
+            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            ivct_Verdict.text = ex.getMessage();
+            return ivct_Verdict;
         }
         catch (final TcFailed ex) {
             ivct_BaseModel.terminateRti();
             logger.info("TC FAILED " + ex.getMessage());
-            return;
+            ivct_Verdict.verdict = IVCT_Verdict.Verdict.FAILED;
+            ivct_Verdict.text = ex.getMessage();
+            return ivct_Verdict;
         }
 
         // postamble block
@@ -108,7 +115,12 @@ public abstract class AbstractTestCase {
         catch (final TcInconclusive ex) {
             ivct_BaseModel.terminateRti();
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            return;
+            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            ivct_Verdict.text = ex.getMessage();
+            return ivct_Verdict;
         }
+        
+        ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
+        return ivct_Verdict;
     }
 }

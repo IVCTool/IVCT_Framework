@@ -7,6 +7,8 @@ dependencies {
 	compile     project(':MessagingHelpers')
 	compile     libraries.slf4j_api
 	compile 'commons-cli:commons-cli:1.3'
+	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+
 
 	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic

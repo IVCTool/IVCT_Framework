@@ -34,6 +34,7 @@ public class LogConfigurationHelper extends SecurityManager {
         final LogConfigurationHelper helper = new LogConfigurationHelper();
         final Class<?> clazz = helper.getCallerClass();
         final String filename = "/" + clazz.getSimpleName() + "_logback.xml";
+
         final URL location = clazz.getResource(filename);
         final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         try {

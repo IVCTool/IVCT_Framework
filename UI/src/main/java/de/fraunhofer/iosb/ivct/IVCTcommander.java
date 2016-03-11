@@ -24,9 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -66,6 +69,9 @@ public class IVCTcommander implements MessageListener {
     private MessageProducer producer;
     private static Document domTestsuite;
     private static ConfigParameters configParameters = null;
+	private static Semaphore semaphore = new Semaphore(0);
+	private int countSemaphore = 0;
+	private Set<Long> setSequence = new HashSet<Long>();
 
     /**
      * Main entry point from the command line.
@@ -93,7 +99,7 @@ public class IVCTcommander implements MessageListener {
      */
     public IVCTcommander() throws IOException {
         final Properties properties = new Properties();
-        final InputStream in = this.getClass().getResourceAsStream("/IVCTcommander.properties");
+        final InputStream in = this.getClass().getResourceAsStream("/CmdLineTool.properties");
         final Document domConfig;
         properties.load(in);
         this.jmshelper = new PropertyBasedClientSetup(properties);
@@ -171,6 +177,27 @@ public class IVCTcommander implements MessageListener {
         }
         return null;
       }
+    
+    public void acquireSemaphore() {
+    	try {
+        	countSemaphore++;
+    		System.out.println("Before acquire SEMAPHORE");
+    		semaphore.acquire();
+    		System.out.println("After acquire SEMAPHORE");
+    	} catch (InterruptedException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    }
+
+    public void releaseSemaphore() {
+    	if (countSemaphore > 0) {
+    		System.out.println("Before release SEMAPHORE");
+    		semaphore.release();
+    		System.out.println("After release SEMAPHORE");
+    		countSemaphore--;
+    	}
+    }
     
     public static String getPackageName(final String testsuite) {
     	String packageName = null;
@@ -371,18 +398,17 @@ public class IVCTcommander implements MessageListener {
         }
 
       /**
-     * sendToJms
-     */
-    public void sendToJms(final String userCommand) {
-    	Message message = jmshelper.createTextMessage(userCommand);
-    	System.out.println("SEND TO JMS");
-    	try {
-			producer.send(message);
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
+       * sendToJms
+       */
+      public void sendToJms(final String userCommand) {
+    	  Message message = jmshelper.createTextMessage(userCommand);
+    	  try {
+    		  producer.send(message);
+    	  } catch (JMSException e) {
+    		  // TODO Auto-generated catch block
+    		  e.printStackTrace();
+    	  }
+      }
 
     /**
      * Initialize the Listening on the JMS Queue
@@ -392,36 +418,96 @@ public class IVCTcommander implements MessageListener {
     }
 
 
-    /** {@inheritDoc} */
+    private class onMessageUiConsumer implements Runnable {
+    	private Message message;
+
+    	onMessageUiConsumer(final Message message) {
+    		this.message = message;
+    	}
+
+    	/*
+    	 * JMS will deliver multiple messages. Need to check if the message was already
+    	 *  seen
+    	 */
+    	private boolean checkDuplicateSequenceNumber(final JSONObject jsonObject) {
+			Long temp = Long.valueOf((String)jsonObject.get("sequence"));
+			if (temp == null) {
+				System.out.println("The sequence number is: null");
+			} else {
+				if (setSequence.contains(temp)) {
+					return true;
+				} else {
+					setSequence.add(temp);
+				}
+			}
+    		return false;
+    	}
+
+    	/*
+    	 * (non-Javadoc)
+    	 * @see java.lang.Runnable#run()
+    	 */
+    	public void run() {
+    		if (LOGGER.isTraceEnabled()) {
+    			LOGGER.trace("Received Command message");
+    		}
+    		if (LOGGER.isTraceEnabled()) {
+    			LOGGER.trace("Received Command message");
+    		}
+    		if (message instanceof TextMessage) {
+    			final TextMessage textMessage = (TextMessage) message;
+    			try {
+    				final String content = textMessage.getText();
+    				JSONParser jsonParser = new JSONParser();
+    				try {
+    					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
+    					String commandTypeName =  (String) jsonObject.get("commandType");
+
+
+    					switch (commandTypeName) {
+    					case "announceVerdict":
+    						if (checkDuplicateSequenceNumber(jsonObject)) {
+    							return;
+    						}
+    						System.out.println("The commandType name is: " + commandTypeName);
+    						String testcase =  (String) jsonObject.get("testcase");
+    						if (testcase != null) {
+    							System.out.println("The test case name is: " + testcase);
+    						}
+    						String verdict =  (String) jsonObject.get("verdict");
+    						if (verdict != null) {
+    							System.out.println("The test case verdict is: " + verdict);
+    						}
+    						String verdictText =  (String) jsonObject.get("verdictText");
+    						if (verdictText != null) {
+    							System.out.println("The test case verdict text is: " + verdictText);
+    						}
+    						releaseSemaphore();
+    						break;
+    					case "setSUT":
+    						break;
+    					case "startTestCase":
+    						break;
+    					default:
+    						System.out.println("Unknown commandType name is: " + commandTypeName);
+    						break;
+    					}    					
+    				} catch (ParseException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+
+    			}
+    			catch (final JMSException ex) {
+    				LOGGER.warn("Problems with parsing Message", ex);
+    			}
+    		}
+    	}
+    }
+
+/** {@inheritDoc} */
     @Override
     public void onMessage(final Message message) {
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Received Command message");
-        }
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Received Command message");
-        }
-        if (message instanceof TextMessage) {
-            final TextMessage textMessage = (TextMessage) message;
-            try {
-                final String content = textMessage.getText();
-                System.out.println("IVCTcommander:onMessage " + content);
-    			JSONParser jsonParser = new JSONParser();
-    			try {
-					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
-					String commandTypeName =  (String) jsonObject.get("commandType");
-					if (commandTypeName.equals("testCaseVerdict")) {
-						System.out.println("The commandType name is: " + commandTypeName);
-					}
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-            }
-            catch (final JMSException ex) {
-                LOGGER.warn("Problems with parsing Message", ex);
-            }
-        }
+        (new Thread(new onMessageUiConsumer(message))).start();
     }
 }

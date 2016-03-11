@@ -19,22 +19,18 @@ package de.fraunhofer.iosb.ivct;
 import java.util.concurrent.Semaphore;
 
 public class StartTestSchedule implements Command {
+	final String paramJson;
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
 	final String testsuite;
-	private static Semaphore semaphore = new Semaphore(1);
 
-	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final String testsuite) {
+	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final String testsuite, final String paramJson) {
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		this.testsuite = testsuite;
+		this.paramJson = paramJson;
 	}
 	
-	// Call this from JMS thread listener to start the next test case
-	public void gotVerdict() {
-		semaphore.release();
-	}
-
 	public void execute() {
 		for (String tc = commandCache.getNextTestCase(); tc != null; tc = commandCache.getNextTestCase()) {
 			final String packageName = IVCTcommander.getPackageName(this.testsuite);
@@ -44,14 +40,10 @@ public class StartTestSchedule implements Command {
 			}
             System.out.println("START TEST CASE");
 
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + tc);
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
-			try {
-				semaphore.acquire();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.ivctCommander.acquireSemaphore();
 		}
+        System.out.println("Test schedule finished: " + commandCache.getTestschedule());
 	}
 }
