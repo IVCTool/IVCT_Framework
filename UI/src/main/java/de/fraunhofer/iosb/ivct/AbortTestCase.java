@@ -18,13 +18,15 @@ package de.fraunhofer.iosb.ivct;
 
 public class AbortTestCase implements Command {
 	final IVCTcommander ivctCommander;
+	final int counter;
 	
-	AbortTestCase (IVCTcommander ivctCommander) {
+	AbortTestCase (IVCTcommander ivctCommander, final int counter) {
 		  this.ivctCommander = ivctCommander;
+		  this.counter = counter;
 		  }
 
 	  public void execute() {
-      	String abortTestCaseString = IVCTcommander.printJson("abortTestCase");
+      	String abortTestCaseString = IVCTcommander.printJson("abortTestCase", this.counter);
 		  this.ivctCommander.sendToJms(abortTestCaseString);
 	  }
 }

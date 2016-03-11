@@ -23,10 +23,12 @@ public class StartTestSchedule implements Command {
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
 	final String testsuite;
+	final int counter;
 
-	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final String testsuite, final String paramJson) {
+	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final int counter, final String testsuite, final String paramJson) {
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 		this.testsuite = testsuite;
 		this.paramJson = paramJson;
 	}
@@ -38,9 +40,9 @@ public class StartTestSchedule implements Command {
 	            System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + tc + " not run");
 	            return;
 			}
-            System.out.println("START TEST CASE");
+            System.out.println("Start Test Case: " + tc);
 
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}

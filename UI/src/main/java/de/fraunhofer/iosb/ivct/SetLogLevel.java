@@ -19,14 +19,16 @@ package de.fraunhofer.iosb.ivct;
 public class SetLogLevel implements Command {
 	final String logLevel;
 	final IVCTcommander ivctCommander;
+	final int counter;
 
-	SetLogLevel (final String logLevel, IVCTcommander ivctCommander) {
+	SetLogLevel (final String logLevel, IVCTcommander ivctCommander, final int counter) {
 		this.logLevel = logLevel;
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 	}
 
 	public void execute() {
-		String setLogLevelString = IVCTcommander.printJson("setLogLevel", "logLevelId", logLevel);
+		String setLogLevelString = IVCTcommander.printJson("setLogLevel", this.counter, "logLevelId", logLevel);
 		this.ivctCommander.sendToJms(setLogLevelString);
 	}
 }

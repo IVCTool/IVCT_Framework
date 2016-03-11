@@ -34,6 +34,7 @@ public class ListSUT implements Command {
 			return;
 		}
 		if (displayList) {
+			System.out.println("The SUTs are:");
 			for (String entry : this.rtp.suts)
 			{
 				System.out.println(entry);

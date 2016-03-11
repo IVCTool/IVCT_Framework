@@ -18,13 +18,15 @@ package de.fraunhofer.iosb.ivct;
 
 public class AbortTestSchedule implements Command {
 	final IVCTcommander ivctCommander;
+	final int counter;
 
-	AbortTestSchedule (IVCTcommander ivctCommander) {
+	AbortTestSchedule (IVCTcommander ivctCommander, final int counter) {
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 	}
 
 	public void execute() {
-		String abortTestScheduleString = IVCTcommander.printJson("abortTestSchedule");
+		String abortTestScheduleString = IVCTcommander.printJson("abortTestSchedule", this.counter);
 		this.ivctCommander.sendToJms(abortTestScheduleString);
 	}
 }

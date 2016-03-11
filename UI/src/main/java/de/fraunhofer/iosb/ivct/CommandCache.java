@@ -29,7 +29,6 @@ public class CommandCache {
 	}
 	
 	public String getNextTestCase() {
-        System.out.println("getNextTestCase ENTER");
 
 		if (i < testcases.size()) {
 		return testcases.get(i++);

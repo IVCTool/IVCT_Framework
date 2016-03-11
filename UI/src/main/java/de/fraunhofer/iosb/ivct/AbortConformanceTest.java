@@ -21,13 +21,15 @@ package de.fraunhofer.iosb.ivct;
  */
 public class AbortConformanceTest implements Command {
 	final IVCTcommander ivctCommander;
+	final int counter;
 
-	AbortConformanceTest (IVCTcommander ivctCommander) {
+	AbortConformanceTest (IVCTcommander ivctCommander, final int counter) {
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 	}
 
 	public void execute() {
-		String unsetConformanceTestString = IVCTcommander.printJson("abortConformanceTest");
+		String unsetConformanceTestString = IVCTcommander.printJson("abortConformanceTest", this.counter);
 		this.ivctCommander.sendToJms(unsetConformanceTestString);
 	}
 }

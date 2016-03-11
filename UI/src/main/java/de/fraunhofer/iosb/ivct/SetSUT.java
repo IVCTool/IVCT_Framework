@@ -19,14 +19,16 @@ package de.fraunhofer.iosb.ivct;
 public class SetSUT implements Command {
 	final String sut;
 	final IVCTcommander ivctCommander;
+	final int counter;
 
-	SetSUT(final String sut, IVCTcommander ivctCommander) {
+	SetSUT(final String sut, IVCTcommander ivctCommander, final int counter) {
 		this.sut = sut;
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 	}
 
 	public void execute() {
-		String setSutString = IVCTcommander.printJson("setSUT", "sut", sut);
+		String setSutString = IVCTcommander.printJson("setSUT", counter, "sut", sut);
 		this.ivctCommander.sendToJms(setSutString);
 	}
 }

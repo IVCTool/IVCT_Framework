@@ -22,14 +22,16 @@ package de.fraunhofer.iosb.ivct;
 public class SetTestSuite implements Command {
 	final String testsuite;
 	final IVCTcommander ivctCommander;
+	final int counter;
 
-	SetTestSuite (final String testsuite, IVCTcommander ivctCommander) {
+	SetTestSuite (final String testsuite, IVCTcommander ivctCommander, final int counter) {
 		this.testsuite = testsuite;
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 	}
 
 	public void execute() {
-		String setTestSuiteString = IVCTcommander.printJson("setTestSuite", "testSuiteName", testsuite);
+		String setTestSuiteString = IVCTcommander.printJson("setTestSuite", counter, "testSuiteName", testsuite);
 //		this.ivctCommander.sendToJms(setTestSuiteString);
 	}
 }

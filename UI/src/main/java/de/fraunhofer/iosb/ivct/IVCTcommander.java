@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.Semaphore;
 
 import javax.jms.JMSException;
@@ -72,6 +73,7 @@ public class IVCTcommander implements MessageListener {
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
+	private static Vector<String> list = new Vector<String>();
 
     /**
      * Main entry point from the command line.
@@ -109,7 +111,10 @@ public class IVCTcommander implements MessageListener {
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
         String ivct_path = System.getenv("IVCT_HOME");
-        System.out.println ("ivct_path: " + ivct_path);
+        if (ivct_path == null) {
+            System.out.println ("The global variable IVCT_HOME is NOT set");
+        	System.exit(1);
+        }
 
         domConfig = parseXmlFile(ivct_path + "\\IVCTconfig.xml");
         if (domConfig != null) {
@@ -128,30 +133,10 @@ public class IVCTcommander implements MessageListener {
             System.out.println ("Cannot parse: " + ivct_path + "\\IVCTconfig.xml");
         	System.exit(1);
         }
-        System.out.println ("ivct_path: " + ivct_path);
         System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
-        
-        System.out.println ("IVCTtestsuites");
+        System.out.println ("pathSutDir: " + configParameters.pathSutDir);
+        System.out.println ("Enter command: or help (h)");
         domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
-        Map<String, String> ls;
-        ls = getTestSuiteNames();
-		for (Map.Entry<String, String> temp : ls.entrySet()) {
-			System.out.println(temp.getKey());
-			System.out.println(temp.getValue());
-			Map <String, List<String>> xyz;
-			xyz = readTestSuiteFiles(temp.getKey());
-			if (xyz == null) {
-				continue;
-			}
-			for (Map.Entry<String, List<String>> entry : xyz.entrySet())
-			{
-			    System.out.println("OUT " + entry.getKey());
-				for (String entry0 : entry.getValue())
-				{
-				    System.out.println("XYZ " + entry0);
-				}
-			}
-		}
     }
 
     private static Document parseXmlFile(final String fileName){
@@ -181,9 +166,7 @@ public class IVCTcommander implements MessageListener {
     public void acquireSemaphore() {
     	try {
         	countSemaphore++;
-    		System.out.println("Before acquire SEMAPHORE");
     		semaphore.acquire();
-    		System.out.println("After acquire SEMAPHORE");
     	} catch (InterruptedException e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
@@ -192,9 +175,7 @@ public class IVCTcommander implements MessageListener {
 
     public void releaseSemaphore() {
     	if (countSemaphore > 0) {
-    		System.out.println("Before release SEMAPHORE");
     		semaphore.release();
-    		System.out.println("After release SEMAPHORE");
     		countSemaphore--;
     	}
     }
@@ -338,7 +319,6 @@ public class IVCTcommander implements MessageListener {
        * required.
        */
       private static ConfigParameters parseConfig(Document dom) {
-        System.out.println ("parseConfig");
         ConfigParameters configParameters = new ConfigParameters();
         
         Element elem = dom.getDocumentElement();
@@ -379,20 +359,20 @@ public class IVCTcommander implements MessageListener {
     	  return suts;
       }
 
-      public static String printJson(String command) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\"\n}");
+      public static String printJson(String command, final int counter) {
+      	String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
       	System.out.println(s);
       	return s;
       }
       
-      public static String printJson(String command, String param, String value) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"" + param + "\" : \"" + value + "\"\n}");
+      public static String printJson(String command, final int counter, String param, String value) {
+      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\"\n}");
       	System.out.println(s);
       	return s;
       }
 
-      public static String printJson(final String command, final String param, final String value, final String param1, final String value1) {
-        	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : " + value1 + "\n}");
+      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1) {
+        	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : " + value1 + "}");
         	System.out.println(s);
         	return s;
         }
@@ -420,9 +400,11 @@ public class IVCTcommander implements MessageListener {
 
     private class onMessageUiConsumer implements Runnable {
     	private Message message;
+    	private final Vector<String> list;
 
-    	onMessageUiConsumer(final Message message) {
+    	onMessageUiConsumer(final Message message, final Vector<String> list) {
     		this.message = message;
+    		this.list = list;
     	}
 
     	/*
@@ -472,7 +454,7 @@ public class IVCTcommander implements MessageListener {
     						System.out.println("The commandType name is: " + commandTypeName);
     						String testcase =  (String) jsonObject.get("testcase");
     						if (testcase != null) {
-    							System.out.println("The test case name is: " + testcase);
+    							System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
     						}
     						String verdict =  (String) jsonObject.get("verdict");
     						if (verdict != null) {
@@ -482,6 +464,9 @@ public class IVCTcommander implements MessageListener {
     						if (verdictText != null) {
     							System.out.println("The test case verdict text is: " + verdictText);
     						}
+    						String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict);
+    						this.list.addElement(verdictStr);
+							System.out.println("Verdicts are: " + this.list.toString());
     						releaseSemaphore();
     						break;
     					case "setSUT":
@@ -508,6 +493,6 @@ public class IVCTcommander implements MessageListener {
 /** {@inheritDoc} */
     @Override
     public void onMessage(final Message message) {
-        (new Thread(new onMessageUiConsumer(message))).start();
+        (new Thread(new onMessageUiConsumer(message, list))).start();
     }
 }

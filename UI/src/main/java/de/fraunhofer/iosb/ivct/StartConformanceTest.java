@@ -21,13 +21,15 @@ package de.fraunhofer.iosb.ivct;
  */
 public class StartConformanceTest implements Command {
 	final IVCTcommander ivctCommander;
+	final int counter;
 
-	StartConformanceTest (IVCTcommander ivctCommander) {
+	StartConformanceTest (IVCTcommander ivctCommander, final int counter) {
 		this.ivctCommander = ivctCommander;
+		this.counter = counter;
 	}
 
 	public void execute() {
-		String setConformanceTestString = IVCTcommander.printJson("startConformanceTest");
+		String setConformanceTestString = IVCTcommander.printJson("startConformanceTest", this.counter);
 		this.ivctCommander.sendToJms(setConformanceTestString);
 	}
 }

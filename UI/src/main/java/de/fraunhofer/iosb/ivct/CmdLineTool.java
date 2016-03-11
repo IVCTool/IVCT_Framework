@@ -36,6 +36,7 @@ import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
  */
 public class CmdLineTool {
 	private static final int DEFAULT_PORT = 6789;
+	public static int counter = 0;
 //    Socket socket;
     Thread reader, writer;
     private static String hostname = null;
@@ -52,7 +53,6 @@ public class CmdLineTool {
     public CmdLineTool(String host, int port) {
 //            socket = new Socket(host, port);
             // Create reader and writer sockets
-            System.out.println("Host: " + host + " Port: " + port);
             
             reader = new Reader(this);
             writer = new Writer(this);
@@ -271,7 +271,7 @@ class Writer extends Thread {
                         break;
                 	}
                 	CmdLineTool.sutName = split[1];
-                	command = new SetSUT(split[1], CmdLineTool.ivctCommander);
+                	command = new SetSUT(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
                 	CmdLineTool.testSuiteName = null;
                     break;
                 case "listTestSuites":
@@ -316,7 +316,7 @@ class Writer extends Thread {
                             System.out.println("setSUT: cannot read file: " + tcParamFile);
                             break;
                     	}
-                		command = new SetTestSuite(split[1], CmdLineTool.ivctCommander);
+                		command = new SetTestSuite(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
                 	} else {
                 		System.out.println("Unknown test suite " + split[1]);
                 	}
@@ -335,7 +335,7 @@ class Writer extends Thread {
                         System.out.println("startConformanceTest: Warning extra parameter: " + split[1]);
                 	}
 //                	command = new StartConformanceTest(CmdLineTool.ivctCommander);
-                    System.out.println("startConformanceTest: Warning conformance test logic is not implemented yet");
+                    System.out.println("startConformanceTest: Warning start conformance test logic is NOT IMPLEMENTED yet");
                 	CmdLineTool.conformanceTestBool = true;
                     break;
                 case "abortConformanceTest":
@@ -352,7 +352,7 @@ class Writer extends Thread {
                         System.out.println("abortConformanceTest: Warning extra parameter: " + split[1]);
                 	}
 //                	command = new AbortConformanceTest(CmdLineTool.ivctCommander);
-                    System.out.println("abortConformanceTest: Warning conformance test logic is not implemented yet");
+                    System.out.println("abortConformanceTest: Warning abort conformance test logic is NOT IMPLEMENTED yet");
                 	CmdLineTool.conformanceTestBool = false;
                     break;
                 case "listTestSchedules":
@@ -402,7 +402,7 @@ class Writer extends Thread {
                 	CommandCache commandCache = new CommandCache(split[1], testcases);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(commandCache, CmdLineTool.ivctCommander, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
+                	command = new StartTestSchedule(commandCache, CmdLineTool.ivctCommander, CmdLineTool.counter++, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
                     break;
                 case "abortTestSchedule":
                 case "ats":
@@ -416,7 +416,8 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         System.out.println("abortTestSchedule: Warning extra parameter: " + split[1]);
                 	}
-                	command = new AbortTestSchedule(CmdLineTool.ivctCommander);
+//                	command = new AbortTestSchedule(CmdLineTool.ivctCommander);
+                    System.out.println("abortTestSchedule: Warning abort test schedule logic is NOT IMPLEMENTED yet");
                     break;
                 case "listTestCases":
                 case "ltc":
@@ -448,7 +449,7 @@ class Writer extends Thread {
                         System.out.println("startTestCase: unknown test case " + split[1]);
                         break;
                 	}
-                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
+                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
                 	CmdLineTool.testCaseName = split[1];
                     break;
                 case "abortTestCase":
@@ -463,7 +464,8 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         System.out.println("abortTestCase: Warning extra parameter: " + split[1]);
                 	}
-                	command = new AbortTestCase(CmdLineTool.ivctCommander);
+//                	command = new AbortTestCase(CmdLineTool.ivctCommander);
+                    System.out.println("abortTestCase: Warning abort test case logic is NOT IMPLEMENTED yet");
                 	break;
                 case "setLogLevel":
                 case "sll":
@@ -472,7 +474,8 @@ class Writer extends Thread {
                 		break;
                 	}
                 	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("debug") || split[1].equals("info")) {
-                		command = new SetLogLevel(split[1], CmdLineTool.ivctCommander);
+                		command = new SetLogLevel(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
+                        System.out.println("setLogLevel: Warning abort set log level logic is NOT IMPLEMENTED yet");
                 	} else {
                         System.out.println("Unknown log level: " + split[1]);
                 	}
