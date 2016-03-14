@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -73,7 +74,7 @@ public class IVCTcommander implements MessageListener {
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
-	private static Vector<String> list = new Vector<String>();
+	private static Vector<String> listOfVerdicts = new Vector<String>();
 
     /**
      * Main entry point from the command line.
@@ -358,6 +359,17 @@ public class IVCTcommander implements MessageListener {
     	  }
     	  return suts;
       }
+      
+      public static void listVerdicts() {
+			System.out.println("Verdicts are:");
+			if (listOfVerdicts.isEmpty()) {
+	            System.out.println("--No verdicts found--");
+			}
+	        Iterator<String> itr = listOfVerdicts.iterator();
+	        while(itr.hasNext()){
+	            System.out.println(itr.next());
+	        }
+      }
 
       public static String printJson(String command, final int counter) {
       	String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
@@ -377,6 +389,9 @@ public class IVCTcommander implements MessageListener {
         	return s;
         }
 
+      public static void resetSUT() {
+    	  listOfVerdicts.clear();
+      }
       /**
        * sendToJms
        */
@@ -400,11 +415,11 @@ public class IVCTcommander implements MessageListener {
 
     private class onMessageUiConsumer implements Runnable {
     	private Message message;
-    	private final Vector<String> list;
+    	private final Vector<String> listOfVerdicts;
 
-    	onMessageUiConsumer(final Message message, final Vector<String> list) {
+    	onMessageUiConsumer(final Message message, final Vector<String> listOfVerdicts) {
     		this.message = message;
-    		this.list = list;
+    		this.listOfVerdicts = listOfVerdicts;
     	}
 
     	/*
@@ -464,9 +479,8 @@ public class IVCTcommander implements MessageListener {
     						if (verdictText != null) {
     							System.out.println("The test case verdict text is: " + verdictText);
     						}
-    						String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict);
-    						this.list.addElement(verdictStr);
-							System.out.println("Verdicts are: " + this.list.toString());
+    						String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
+    						this.listOfVerdicts.addElement(verdictStr);
     						releaseSemaphore();
     						break;
     					case "setSUT":
@@ -493,6 +507,6 @@ public class IVCTcommander implements MessageListener {
 /** {@inheritDoc} */
     @Override
     public void onMessage(final Message message) {
-        (new Thread(new onMessageUiConsumer(message, list))).start();
+        (new Thread(new onMessageUiConsumer(message, listOfVerdicts))).start();
     }
 }

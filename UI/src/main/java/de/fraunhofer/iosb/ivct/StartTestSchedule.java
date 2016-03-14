@@ -23,7 +23,7 @@ public class StartTestSchedule implements Command {
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
 	final String testsuite;
-	final int counter;
+	private int counter;
 
 	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final int counter, final String testsuite, final String paramJson) {
 		this.commandCache = commandCache;
@@ -42,7 +42,7 @@ public class StartTestSchedule implements Command {
 			}
             System.out.println("Start Test Case: " + tc);
 
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}

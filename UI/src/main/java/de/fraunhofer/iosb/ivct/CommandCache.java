@@ -21,11 +21,12 @@ import java.util.List;
 public class CommandCache {
 	private String testschedule;
 	private List<String> testcases;
-	private static int i = 0;
+	private int i;
 
 	CommandCache(final String testschedule, final List<String> testcases) {
 		this.testschedule = testschedule;
 		this.testcases = testcases;
+		i = 0;
 	}
 	
 	public String getNextTestCase() {

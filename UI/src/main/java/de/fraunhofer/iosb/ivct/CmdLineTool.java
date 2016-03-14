@@ -273,6 +273,7 @@ class Writer extends Thread {
                 	CmdLineTool.sutName = split[1];
                 	command = new SetSUT(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
                 	CmdLineTool.testSuiteName = null;
+                	IVCTcommander.resetSUT();
                     break;
                 case "listTestSuites":
                 case "lt":
@@ -402,7 +403,8 @@ class Writer extends Thread {
                 	CommandCache commandCache = new CommandCache(split[1], testcases);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(commandCache, CmdLineTool.ivctCommander, CmdLineTool.counter++, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
+                	command = new StartTestSchedule(commandCache, CmdLineTool.ivctCommander, CmdLineTool.counter, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
+                	CmdLineTool.counter += testcases.size();
                     break;
                 case "abortTestSchedule":
                 case "ats":
@@ -467,6 +469,16 @@ class Writer extends Thread {
 //                	command = new AbortTestCase(CmdLineTool.ivctCommander);
                     System.out.println("abortTestCase: Warning abort test case logic is NOT IMPLEMENTED yet");
                 	break;
+                case "listVerdicts":
+                case "lv":
+                	if (checkSutAndTestSuiteSelected()) {
+                		break;
+                	}
+                	if (split.length > 1) {
+                        System.out.println("listVerdicts: Warning extra parameter: " + split[1]);
+                	}
+                	IVCTcommander.listVerdicts();
+                	break;
                 case "setLogLevel":
                 case "sll":
                 	if (split.length == 1) {
@@ -499,6 +511,7 @@ class Writer extends Thread {
                     System.out.println("startTestCase (stc) - start the named test case");
                     System.out.println("abortTestCase (atc) - abort the running test case");
                     System.out.println("setLogLevel (sll) - set the log level for logging - error, warning, debug, info");
+                    System.out.println("listVerdicts (lv) - list the verdicts of the current session");
                     System.out.println("quit (q) - quit the program");
                     System.out.println("help (h) - display the help information");
                     break;
