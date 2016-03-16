@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
+import de.fraunhofer.iosb.tc_lib.TcInconclusive;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,16 @@ public class TC00002 {
 
     public static void main(final String[] args) {
         // Build test case parameters to use
-        final TcParamTmr tcParam = new TcParamTmr();
-        execute(tcParam);
+    	String paramJson = "{\"federationName\" : \"HelloWorld\"}";
+		TcParamTmr tcParam = null;
+		try {
+			tcParam = new TcParamTmr(paramJson);
+		} catch (TcInconclusive e) {
+			System.exit(0);
+		}
+		if (tcParam != null) {
+			execute(tcParam);
+		}
     }
 
 
@@ -43,7 +52,7 @@ public class TC00002 {
      */
     public static void execute(final TcParamTmr tcParam) {
         final IVCT_RTIambassador ivct_FederateAmbassador = IVCT_RTI_Factory.getIVCT_RTI(logger);
-        final TcBaseModel baseModelTc = new TcBaseModel(logger, ivct_FederateAmbassador);
+        final TcBaseModel baseModelTc = new TcBaseModel(logger, ivct_FederateAmbassador, tcParam);
         final TcFederateAmbassador tcFederateAmbassador = new TcFederateAmbassador(baseModelTc, logger);
         // Get logging-IVCT-RTI using tc_param federation name, host
 
@@ -51,7 +60,7 @@ public class TC00002 {
         logger.info("TEST CASE PREAMBLE");
 
         // Initiate rti
-        baseModelTc.initiateRti(federateName, tcFederateAmbassador, tcParam);
+        baseModelTc.initiateRti(federateName, tcFederateAmbassador);
 
         // Publish interaction / object classes
 
@@ -66,6 +75,6 @@ public class TC00002 {
         logger.info("TEST CASE POSTAMBLE");
 
         // Terminate rti
-        baseModelTc.terminateRti(tcParam);
+        baseModelTc.terminateRti();
     }
 }

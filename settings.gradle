@@ -2,6 +2,7 @@ include 'LogSink'
 include 'IEEE1516e'
 include 'TC'
 include 'MessagingHelpers'
+include 'UI'
 
 rootProject.children.each { project ->
     project.buildFileName = "${project.name}.gradle"

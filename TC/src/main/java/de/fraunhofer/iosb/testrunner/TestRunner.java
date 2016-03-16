@@ -1,13 +1,14 @@
 package de.fraunhofer.iosb.testrunner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
+import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
-import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -27,7 +28,9 @@ public class TestRunner {
      * @param args command line parameters
      */
     public static void main(final String[] args) {
-        new TestRunner().executeTests(args);
+    	String paramJson = null;
+    	IVCT_Verdict verdicts[] = new IVCT_Verdict[1];
+        new TestRunner().executeTests(args, paramJson, verdicts);
 
     }
 
@@ -37,7 +40,9 @@ public class TestRunner {
      *
      * @param classnames The classnames of the tests to execute
      */
-    public void executeTests(final String[] classnames) {
+    public void executeTests(final String[] classnames, final String paramJson, final IVCT_Verdict verdicts[]) {
+    	int i = 0;
+    
         for (final String classname: classnames) {
             AbstractTestCase testCase = null;
             try {
@@ -47,15 +52,13 @@ public class TestRunner {
                 LOGGER.error("Could not instantiate " + classname + " !", ex);
             }
             if (testCase == null) {
+            	verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            	verdicts[i++].text = "Could not instantiate " + classname;
                 continue;
             }
             // initialize LOGGER, localcache, federeateAmbassador and tcparam
-            final TcParamTmr tcParam = new TcParamTmr();
             final Logger testLogger = LoggerFactory.getLogger(testCase.getClass());
-            final IVCT_RTIambassador ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(testLogger);
-            final TcBaseModel tcBaseModel = new TcBaseModel(testLogger, ivct_rti);
-            final TcFederateAmbassador tcFederateAmbassador = new TcFederateAmbassador(tcBaseModel, testLogger);
-            testCase.execute(tcParam, tcBaseModel, testLogger);
+            verdicts[i++] = testCase.execute(paramJson, testLogger);
         }
     }
 }
