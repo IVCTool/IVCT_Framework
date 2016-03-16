@@ -1,5 +1,5 @@
 /*
-Copyright 2015, [name of copyright owner, Johannes Mulder (Fraunhofer IOSB)"]
+Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import de.fraunhofer.iosb.tc_lib.IVCT_RTI_Factory;
 import de.fraunhofer.iosb.tc_lib.IVCT_RTIambassador;
 import de.fraunhofer.iosb.tc_lib.TcBaseModel;
 import de.fraunhofer.iosb.tc_lib.TcFederateAmbassador;
+import de.fraunhofer.iosb.tc_lib.TcInconclusive;
 import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.ResignAction;
@@ -46,16 +47,24 @@ import org.slf4j.LoggerFactory;
 
 
 public class TC00001 {
-    // Test case parameters
-    private static Logger                   logger             = LoggerFactory.getLogger(TC00001.class);
+	// Test case parameters
+	private static Logger                   logger             = LoggerFactory.getLogger(TC00001.class);
 
 
-    public static void main(final String[] args) {
-        // Build test case parameters to use
-        logger.info("TEST CASE MAIN");
-        final TcParamTmr tcParam = new TcParamTmr();
-        execute(tcParam);
-    }
+	public static void main(final String[] args) {
+		// Build test case parameters to use
+		logger.info("TEST CASE MAIN");
+		String paramJson = "{\"federationName\" : \"HelloWorld\"}";
+		TcParamTmr tcParam = null;
+		try {
+			tcParam = new TcParamTmr(paramJson);
+		} catch (TcInconclusive e) {
+			System.exit(0);
+		}
+		if (tcParam != null) {
+			execute(tcParam);
+		}
+	}
 
 
     /**
@@ -64,7 +73,7 @@ public class TC00001 {
     public static void execute(final TcParamTmr tcParam) {
         // Get logging-IVCT-RTI using tc_param federation name, host
         final IVCT_RTIambassador ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(logger);
-        final TcBaseModel tcBaseModel =  new TcBaseModel(logger, ivct_rti);
+        final TcBaseModel tcBaseModel =  new TcBaseModel(logger, ivct_rti, tcParam);
         final TcFederateAmbassador tcFederateAmbassador = new TcFederateAmbassador(tcBaseModel, logger);
 
         // Test case phase

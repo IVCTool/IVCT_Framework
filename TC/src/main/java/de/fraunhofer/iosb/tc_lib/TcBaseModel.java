@@ -1,5 +1,5 @@
 /*
-Copyright 2015, [name of copyright owner, Johannes Mulder (Fraunhofer IOSB)"]
+Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -69,8 +69,8 @@ public class TcBaseModel extends IVCT_BaseModel {
      * @param logger reference to the logger
      * @param ivct_rti ivct rti
      */
-    public TcBaseModel(final Logger logger, final IVCT_RTIambassador ivct_rti) {
-        super(ivct_rti, logger);
+    public TcBaseModel(final Logger logger, final IVCT_RTIambassador ivct_rti, final IVCT_TcParam ivct_TcParam) {
+        super(ivct_rti, logger, ivct_TcParam);
         this.ivct_rti = ivct_rti;
         this.logger = logger;
     }
