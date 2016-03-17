@@ -181,7 +181,25 @@ public class IVCTcommander implements MessageListener {
     	}
     }
     
-    public static String getPackageName(final String testsuite) {
+	/*
+	 * JMS will deliver multiple messages. Need to check if the message was already
+	 *  seen
+	 */
+	private boolean checkDuplicateSequenceNumber(final JSONObject jsonObject) {
+		Long temp = Long.valueOf((String)jsonObject.get("sequence"));
+		if (temp == null) {
+			System.out.println("The sequence number is: null");
+		} else {
+			if (setSequence.contains(temp)) {
+				return true;
+			} else {
+				setSequence.add(temp);
+			}
+		}
+		return false;
+	}
+
+public static String getPackageName(final String testsuite) {
     	String packageName = null;
         Map<String, String> ls;
         ls = getTestSuiteNames();
@@ -414,30 +432,12 @@ public class IVCTcommander implements MessageListener {
 
 
     private class onMessageUiConsumer implements Runnable {
-    	private Message message;
+    	private JSONObject jsonObject;
     	private final Vector<String> listOfVerdicts;
 
-    	onMessageUiConsumer(final Message message, final Vector<String> listOfVerdicts) {
-    		this.message = message;
+    	onMessageUiConsumer(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
+    		this.jsonObject = jsonObject;
     		this.listOfVerdicts = listOfVerdicts;
-    	}
-
-    	/*
-    	 * JMS will deliver multiple messages. Need to check if the message was already
-    	 *  seen
-    	 */
-    	private boolean checkDuplicateSequenceNumber(final JSONObject jsonObject) {
-			Long temp = Long.valueOf((String)jsonObject.get("sequence"));
-			if (temp == null) {
-				System.out.println("The sequence number is: null");
-			} else {
-				if (setSequence.contains(temp)) {
-					return true;
-				} else {
-					setSequence.add(temp);
-				}
-			}
-    		return false;
     	}
 
     	/*
@@ -445,68 +445,77 @@ public class IVCTcommander implements MessageListener {
     	 * @see java.lang.Runnable#run()
     	 */
     	public void run() {
-    		if (LOGGER.isTraceEnabled()) {
-    			LOGGER.trace("Received Command message");
-    		}
-    		if (LOGGER.isTraceEnabled()) {
-    			LOGGER.trace("Received Command message");
-    		}
-    		if (message instanceof TextMessage) {
-    			final TextMessage textMessage = (TextMessage) message;
-    			try {
-    				final String content = textMessage.getText();
-    				JSONParser jsonParser = new JSONParser();
-    				try {
-    					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
-    					String commandTypeName =  (String) jsonObject.get("commandType");
+    		String commandTypeName =  (String) jsonObject.get("commandType");
 
-
-    					switch (commandTypeName) {
-    					case "announceVerdict":
-    						if (checkDuplicateSequenceNumber(jsonObject)) {
-    							return;
-    						}
-    						System.out.println("The commandType name is: " + commandTypeName);
-    						String testcase =  (String) jsonObject.get("testcase");
-    						if (testcase != null) {
-    							System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
-    						}
-    						String verdict =  (String) jsonObject.get("verdict");
-    						if (verdict != null) {
-    							System.out.println("The test case verdict is: " + verdict);
-    						}
-    						String verdictText =  (String) jsonObject.get("verdictText");
-    						if (verdictText != null) {
-    							System.out.println("The test case verdict text is: " + verdictText);
-    						}
-    						String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
-    						this.listOfVerdicts.addElement(verdictStr);
-    						releaseSemaphore();
-    						break;
-    					case "setSUT":
-    						break;
-    					case "startTestCase":
-    						break;
-    					default:
-    						System.out.println("Unknown commandType name is: " + commandTypeName);
-    						break;
-    					}    					
-    				} catch (ParseException e) {
-    					// TODO Auto-generated catch block
-    					e.printStackTrace();
-    				}
-
+    		switch (commandTypeName) {
+    		case "announceVerdict":
+    			if (checkDuplicateSequenceNumber(jsonObject)) {
+    				return;
     			}
-    			catch (final JMSException ex) {
-    				LOGGER.warn("Problems with parsing Message", ex);
+    			System.out.println("The commandType name is: " + commandTypeName);
+    			String testcase =  (String) jsonObject.get("testcase");
+    			if (testcase != null) {
+    				System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
     			}
-    		}
+    			String verdict =  (String) jsonObject.get("verdict");
+    			if (verdict != null) {
+    				System.out.println("The test case verdict is: " + verdict);
+    			}
+    			String verdictText =  (String) jsonObject.get("verdictText");
+    			if (verdictText != null) {
+    				System.out.println("The test case verdict text is: " + verdictText);
+    			}
+    			String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
+    			this.listOfVerdicts.addElement(verdictStr);
+    			releaseSemaphore();
+    			break;
+    		default:
+    			System.out.println("Unknown commandType name is: " + commandTypeName);
+    			break;
+    		}    					
     	}
     }
 
 /** {@inheritDoc} */
     @Override
     public void onMessage(final Message message) {
-        (new Thread(new onMessageUiConsumer(message, listOfVerdicts))).start();
+    	if (LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("Received Command message");
+    	}
+    	if (LOGGER.isTraceEnabled()) {
+    		LOGGER.trace("Received Command message");
+    	}
+    	if (message instanceof TextMessage) {
+    		final TextMessage textMessage = (TextMessage) message;
+    		try {
+    			final String content = textMessage.getText();
+    			JSONParser jsonParser = new JSONParser();
+    			try {
+    				JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
+    				String commandTypeName =  (String) jsonObject.get("commandType");
+
+
+    				switch (commandTypeName) {
+    				case "announceVerdict":
+    					(new Thread(new onMessageUiConsumer(jsonObject, listOfVerdicts))).start();
+    					break;
+    				case "setSUT":
+    					break;
+    				case "startTestCase":
+    					break;
+    				default:
+    					System.out.println("Unknown commandType name is: " + commandTypeName);
+    					break;
+    				}    					
+    			} catch (ParseException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+
+    		}
+    		catch (final JMSException ex) {
+    			LOGGER.warn("Problems with parsing Message", ex);
+    		}
+    	}
     }
 }
