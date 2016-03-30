@@ -431,20 +431,13 @@ public static String getPackageName(final String testsuite) {
     }
 
 
-    private class onMessageUiConsumer implements Runnable {
-    	private JSONObject jsonObject;
-    	private final Vector<String> listOfVerdicts;
-
-    	onMessageUiConsumer(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
-    		this.jsonObject = jsonObject;
-    		this.listOfVerdicts = listOfVerdicts;
-    	}
+    private class OnMessageUiConsumer {
 
     	/*
     	 * (non-Javadoc)
     	 * @see java.lang.Runnable#run()
     	 */
-    	public void run() {
+    	public void run(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
     		String commandTypeName =  (String) jsonObject.get("commandType");
 
     		switch (commandTypeName) {
@@ -453,6 +446,12 @@ public static String getPackageName(final String testsuite) {
     				return;
     			}
     			System.out.println("The commandType name is: " + commandTypeName);
+    			Long temp = Long.valueOf((String)jsonObject.get("sequence"));
+    			if (temp == null) {
+    				System.out.println("The sequence number is: null");
+    			} else {
+    				System.out.println("The sequence number is: " + temp);
+    			}
     			String testcase =  (String) jsonObject.get("testcase");
     			if (testcase != null) {
     				System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
@@ -463,10 +462,10 @@ public static String getPackageName(final String testsuite) {
     			}
     			String verdictText =  (String) jsonObject.get("verdictText");
     			if (verdictText != null) {
-    				System.out.println("The test case verdict text is: " + verdictText);
+    				System.out.println("The test case verdict text is: " + verdictText + "\n");
     			}
     			String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
-    			this.listOfVerdicts.addElement(verdictStr);
+    			listOfVerdicts.addElement(verdictStr);
     			releaseSemaphore();
     			break;
     		default:
@@ -475,6 +474,9 @@ public static String getPackageName(final String testsuite) {
     		}    					
     	}
     }
+    
+    private OnMessageUiConsumer onMessageUiConsumer = new OnMessageUiConsumer();
+    private JSONParser jsonParser = new JSONParser();
 
 /** {@inheritDoc} */
     @Override
@@ -482,14 +484,11 @@ public static String getPackageName(final String testsuite) {
     	if (LOGGER.isTraceEnabled()) {
     		LOGGER.trace("Received Command message");
     	}
-    	if (LOGGER.isTraceEnabled()) {
-    		LOGGER.trace("Received Command message");
-    	}
+
     	if (message instanceof TextMessage) {
     		final TextMessage textMessage = (TextMessage) message;
     		try {
     			final String content = textMessage.getText();
-    			JSONParser jsonParser = new JSONParser();
     			try {
     				JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
     				String commandTypeName =  (String) jsonObject.get("commandType");
@@ -497,7 +496,7 @@ public static String getPackageName(final String testsuite) {
 
     				switch (commandTypeName) {
     				case "announceVerdict":
-    					(new Thread(new onMessageUiConsumer(jsonObject, listOfVerdicts))).start();
+    					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts);
     					break;
     				case "setSUT":
     					break;
