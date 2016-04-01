@@ -29,7 +29,7 @@ public class StartConformanceTest implements Command {
 	}
 
 	public void execute() {
-		String setConformanceTestString = IVCTcommander.printJson("startConformanceTest", this.counter);
+		String setConformanceTestString = IVCTcommander.printJson("{ \"commandType\" : \"startConformanceTest\" }", this.counter);
 		this.ivctCommander.sendToJms(setConformanceTestString);
 	}
 }

@@ -29,7 +29,7 @@ public class AbortConformanceTest implements Command {
 	}
 
 	public void execute() {
-		String unsetConformanceTestString = IVCTcommander.printJson("abortConformanceTest", this.counter);
-		this.ivctCommander.sendToJms(unsetConformanceTestString);
+		String abortConformanceTestString = IVCTcommander.printJson("{ \"commandType\" : \"abortConformanceTest\" }", this.counter);
+		this.ivctCommander.sendToJms(abortConformanceTestString);
 	}
 }

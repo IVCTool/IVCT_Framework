@@ -38,7 +38,7 @@ public class CmdLineTool {
 	private static final int DEFAULT_PORT = 6789;
 	public static int counter = 0;
 //    Socket socket;
-    Thread reader, writer;
+    Thread writer;
     private static String hostname = null;
     protected static boolean conformanceTestBool = false;
     protected static String sutName = null;
@@ -48,20 +48,15 @@ public class CmdLineTool {
     private static int port = DEFAULT_PORT;
     public static IVCTcommander ivctCommander;
 
-    // Create the client by creating its reader and writer threads
+    // Create the client by creating a writer thread
     // and starting them.
     public CmdLineTool(String host, int port) {
 //            socket = new Socket(host, port);
-            // Create reader and writer sockets
+            // Create writer socket
             
-            reader = new Reader(this);
             writer = new Writer(this);
-            // Give the reader a higher priority to work around
-            // a problem with shared access to the console.
-            reader.setPriority(6);
             writer.setPriority(5);
-            // Start the threads 
-            reader.start();
+            // Start the thread
             writer.start();
     }
 
@@ -133,29 +128,7 @@ public class CmdLineTool {
     	handleArgs(args);
 
         new CmdLineTool(hostname, port);
-    }
-}
-
-// This thread reads data from the server and prints it on the console
-// As usual, the run() method does the interesting stuff.
-class Reader extends Thread {
-    CmdLineTool client;
-    public Reader(CmdLineTool c) {
-        super("CmdLineTool Reader");
-        this.client = c;
-    }
-    public void run() {
-      for (int i = 0; i < 1000000; i++)
-      {
-//        System.out.println("Loop: " + i);
-        try {
-        	CmdLineTool.ivctCommander.listenToJms();
-            Thread.sleep(100);
-        }
-        catch (InterruptedException ex) {
-        }
-      }
-        System.exit(0);
+    	CmdLineTool.ivctCommander.listenToJms();
     }
 }
 
