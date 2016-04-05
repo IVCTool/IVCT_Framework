@@ -1,12 +1,13 @@
 package de.fraunhofer.iosb.testrunner;
 
+import java.net.URL;
+
+import org.slf4j.LoggerFactory;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import java.net.URL;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * Helper class finding the correct logback configuration file for a given main
