@@ -16,18 +16,12 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter ;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
 
