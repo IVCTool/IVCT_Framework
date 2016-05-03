@@ -41,7 +41,7 @@ public class ListTestSchedules implements Command {
 	        for (Map.Entry<String, List<String>> entry : this.rtp.testsuiteTestcases.entrySet()) {
 	            String schedule = entry.getKey();
                 System.out.println(schedule);
-	        }			
+	        }
 		}
 	}
 }

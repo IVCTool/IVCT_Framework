@@ -136,7 +136,6 @@ public class IVCTcommander implements MessageListener {
         }
         System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        System.out.println ("Enter command: or help (h)");
         domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
     }
 
