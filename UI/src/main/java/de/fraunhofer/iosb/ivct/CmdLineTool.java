@@ -399,6 +399,8 @@ class Writer extends Thread {
                 	break;
                 case "quit":
                 case "q":
+                	command = new QuitCmd("quit", CmdLineTool.ivctCommander, CmdLineTool.counter++);
+                	command.execute();
                     out.println("quit");
                     System.exit(0);
                 case "help":
