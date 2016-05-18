@@ -29,20 +29,20 @@ import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
  * Dialog program using keyboard input.
  */
 public class CmdLineTool {
-	public static int counter = 0;
     Thread writer;
-    protected static boolean conformanceTestBool = false;
-    protected static String sutName = null;
-    protected static String testCaseName = null;
-    protected static String testSuiteName = null;
-    protected static RuntimeParameters rtp = new RuntimeParameters();
     public static IVCTcommander ivctCommander;
 
     // Create the client by creating a writer thread
     // and starting them.
     public CmdLineTool() {
+        try {
+        	CmdLineTool.ivctCommander = new IVCTcommander();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
             // Create writer            
-            writer = new Writer(this);
+            writer = new Writer(ivctCommander);
             writer.setPriority(5);
             // Start the thread
             writer.start();
@@ -62,67 +62,11 @@ public class CmdLineTool {
 
 // This thread reads user input from the console and sends it to the server.
 class Writer extends Thread {
-    CmdLineTool client;
+	IVCTcommander ivctCommander;
 
-    public Writer(CmdLineTool c) {
+    public Writer(IVCTcommander i) {
         super("CmdLineTool Writer");
-        client = c;
-        try {
-        	CmdLineTool.ivctCommander = new IVCTcommander();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    
-    private boolean checkSutKnown(final String testCase) {
-    	for (String entry : CmdLineTool.rtp.suts) {
-    		if (testCase.equals(entry)) {
-    			return false;
-    		}
-    	}
-    	
-    	return true;
-    }
-
-    /*
-     * Check if the test case name occurs in any test schedule.
-     */
-    private boolean checkTestCaseNameKnown(final String testCase) {
-    	for (Map.Entry<String, List<String>> entry : CmdLineTool.rtp.testsuiteTestcases.entrySet()) {
-    		for (String entry0 : entry.getValue()) {
-    			if (testCase.equals(entry0)) {
-    				return false;
-    			}
-    		}
-    	}
-
-    	return true;
-    }
-    
-    /*
-     * Some commands have no meaning without knowing the SUT involved.
-     */
-    private boolean checkSUTselected() {
-    	if (CmdLineTool.sutName == null) {
-            System.out.println("SUT not selected yet: use setSUT command first");
-            return true;
-    	}
-    	return false;
-    }
-    
-    /*
-     * Some commands have no meaning without knowing the test suite involved.
-     */
-    private boolean checkSutAndTestSuiteSelected() {
-    	if (checkSUTselected()) {
-            return true;
-    	}
-    	if (CmdLineTool.testSuiteName == null) {
-            System.out.println("Testsuite not selected yet: use setTestSuite command first");
-            return true;
-    	}
-    	return false;
+        ivctCommander = i;
     }
     
     /*
@@ -132,7 +76,10 @@ class Writer extends Thread {
     	BufferedReader in = null;
         PrintStream out = null;
         Command command = null;
-        try {
+    	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
+    	String tsNotSelected = new String("Testsuite not selected yet: use setTestSuite command first");
+
+    	try {
             String line;
             in = new BufferedReader(new InputStreamReader(System.in));
             out = new PrintStream(System.out);
@@ -150,52 +97,67 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
-                	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, true);
+                	List<String> suts1 = IVCTcommander.listSUT();
+                	if (suts1.isEmpty()) {
+                		System.out.println("No SUT found. Please load a SUT onto the file system.");
+                		break;
+                	}
+        			System.out.println("The SUTs are:");
+        			for (String entry : suts1)
+        			{
+        				System.out.println(entry);
+        			}
                     break;
                 case "setSUT":
                 case "ssut":
                 	// Cannot change SUT when a conformance test is running
-                	if (CmdLineTool.conformanceTestBool) {
-                        out.println("setSUT: Warning conformance test is running cannot change SUT");
-                        break;
+                	if (ivctCommander.getConformanceTestBool()) {
+                		out.println("setSUT: Warning conformance test is running cannot change SUT");
+                		break;
                 	}
 
                 	// Need an input parameter
                 	if (split.length == 1) {
-                        out.println("setSUT: Error missing SUT name");
-                        break;
+                		out.println("setSUT: Error missing SUT name");
+                		break;
                 	}
-                	
-                    // get SUT list
-                	command = new ListSUT(CmdLineTool.ivctCommander, CmdLineTool.rtp, false);
-                	command.execute();
-                	command = null;
-                    // check if SUT entered exists in SUT list
-                	if (checkSutKnown(split[1])) {
-                        out.println("setSUT: unknown SUT: " + split[1]);
-                        break;
+
+                	// get SUT list
+                	List<String> suts2 = IVCTcommander.listSUT();
+                	if (suts2.isEmpty()) {
+                		System.out.println("No SUT found. Please load a SUT onto the file system.");
+                		break;
                 	}
-                	CmdLineTool.sutName = split[1];
-                	command = new SetSUT(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
-                	CmdLineTool.testSuiteName = null;
+                	// check if SUT entered exists in SUT list
+                	if (ivctCommander.checkSutKnown(split[1])) {
+                		out.println("setSUT: unknown SUT: " + split[1]);
+                		break;
+                	}
+                	RuntimeParameters.setSutName(split[1]);
+                	command = new SetSUT(split[1], ivctCommander, ivctCommander.fetchCounter());
                 	IVCTcommander.resetSUT();
-                    break;
+                	break;
                 case "listTestSuites":
                 case "lt":
-                	if (checkSUTselected()) {
+                	if (ivctCommander.checkSUTselected()) {
+                		System.out.println(sutNotSelected);
                 		break;
                 	}
                 	if (split.length > 1) {
-                        out.println("listTestSuites: Warning extra parameter: " + split[1]);
+                		out.println("listTestSuites: Warning extra parameter: " + split[1]);
                 	}
-                	command = new ListTestSuites(CmdLineTool.ivctCommander, CmdLineTool.rtp, true);
-                    break;
+                	ivctCommander.rtp.ls = IVCTcommander.getTestSuiteNames();
+                	for (Map.Entry<String, String> temp : ivctCommander.rtp.ls.entrySet()) {
+                		System.out.println(temp.getKey());
+                	}
+                	break;
                 case "setTestSuite":
                 case "st":
-                	if (checkSUTselected()) {
+                	if (ivctCommander.checkSUTselected()) {
+                        System.out.println(sutNotSelected);
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool) {
+                	if (ivctCommander.getConformanceTestBool()) {
                         out.println("setTestSuite: Error conformance test is running");
                         break;
                 	}
@@ -203,26 +165,24 @@ class Writer extends Thread {
                 		out.println("setTestSuite: Error missing test suite name");
                 		break;
                 	}
-                	if (CmdLineTool.rtp.ls == null) {
-                		command = new ListTestSuites(CmdLineTool.ivctCommander, CmdLineTool.rtp, false);
-                		command.execute();
-                    	command = null;
+                	if (ivctCommander.rtp.ls == null) {
+                    	ivctCommander.rtp.ls = IVCTcommander.getTestSuiteNames();
                 	}
                 	boolean gotTestSuite = false;
-        			for (Map.Entry<String, String> entry : CmdLineTool.rtp.ls.entrySet()) {
+        			for (Map.Entry<String, String> entry : ivctCommander.rtp.ls.entrySet()) {
                 		if (split[1].equals(entry.getKey())) {
                 			gotTestSuite = true;
                 		}
                 	}
                 	if (gotTestSuite) {
-                		CmdLineTool.testSuiteName = split[1];
-                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + CmdLineTool.sutName + "\\" + CmdLineTool.testSuiteName + "\\" + "TcParam.json");
-                    	CmdLineTool.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
-                    	if (CmdLineTool.rtp.paramJson == null) {
+                		RuntimeParameters.setTestSuiteName(split[1]);
+                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName() + "\\" + ivctCommander.getTestSuiteName() + "\\" + "TcParam.json");
+                    	ivctCommander.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
+                    	if (ivctCommander.rtp.paramJson == null) {
                             out.println("setSUT: cannot read file: " + tcParamFile);
                             break;
                     	}
-                		command = new SetTestSuite(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
+                		command = new SetTestSuite(split[1], ivctCommander, ivctCommander.fetchCounter());
                 	} else {
                 		out.println("Unknown test suite " + split[1]);
                 	}
@@ -230,53 +190,59 @@ class Writer extends Thread {
                 case "startConformanceTest":
                 case "sct":
                 	// Cannot run conformance test if SUT is not set
-                	if (checkSUTselected()) {
+                	if (ivctCommander.checkSUTselected()) {
+                        System.out.println(sutNotSelected);
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool) {
+                	if (ivctCommander.getConformanceTestBool()) {
                         out.println("startConformanceTest: Warning conformance test is already running");
                         break;
                 	}
                 	if (split.length > 1) {
                         out.println("startConformanceTest: Warning extra parameter: " + split[1]);
                 	}
-//                	command = new StartConformanceTest(CmdLineTool.ivctCommander);
+//                	command = new StartConformanceTest(ivctCommander);
                     out.println("startConformanceTest: Warning start conformance test logic is NOT IMPLEMENTED yet");
-                	CmdLineTool.conformanceTestBool = true;
+                	ivctCommander.setConformanceTestBool(true);
                     break;
                 case "abortConformanceTest":
                 case "act":
                 	// Cannot abort conformance test if SUT is not set
-                	if (checkSUTselected()) {
+                	if (ivctCommander.checkSUTselected()) {
+                        System.out.println(sutNotSelected);
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool == false) {
+                	if (ivctCommander.getConformanceTestBool() == false) {
                         out.println("abortConformanceTest: Warning no conformance test is running");
                         break;
                 	}
                 	if (split.length > 1) {
                         out.println("abortConformanceTest: Warning extra parameter: " + split[1]);
                 	}
-//                	command = new AbortConformanceTest(CmdLineTool.ivctCommander);
+//                	command = new AbortConformanceTest(ivctCommander);
                     out.println("abortConformanceTest: Warning abort conformance test logic is NOT IMPLEMENTED yet");
-                	CmdLineTool.conformanceTestBool = false;
+                	ivctCommander.setConformanceTestBool(false);
                     break;
                 case "listTestSchedules":
                 case "lts":
-                	if (checkSutAndTestSuiteSelected()) {
+                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
                 	if (split.length > 1) {
-                        out.println("listTestSchedules: Warning extra parameter: " + split[1]);
+                		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, true);
-                    break;
+                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
+                		String schedule = entry.getKey();
+                		System.out.println(schedule);
+                	}
+                	break;
                 case "startTestSchedule":
                 case "sts":
-                	if (checkSutAndTestSuiteSelected()) {
+                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool) {
+                	if (ivctCommander.getConformanceTestBool()) {
                         out.println("startTestSchedule: Warning conformance test is running");
                         break;
                 	}
@@ -284,18 +250,16 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, false);
-                	command.execute();
-                	command = null;
-                	if (CmdLineTool.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
+                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	if (ivctCommander.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
                         out.println("startTestSchedule: unknown test schedule " + split[1]);
                         break;
                 	}
-                	List<String> testcases = CmdLineTool.rtp.testsuiteTestcases.get(split[1]);
+                	List<String> testcases = ivctCommander.rtp.testsuiteTestcases.get(split[1]);
             		
                 	// Check if test case exists
                 	for (String testcase : testcases) {
-                    	if (checkTestCaseNameKnown(testcase)) {
+                    	if (ivctCommander.rtp.checkTestCaseNameKnown(testcase)) {
                             out.println("startTestSchedule: unknown test case " + testcase);
                             break;
                     	}
@@ -308,40 +272,48 @@ class Writer extends Thread {
                 	CommandCache commandCache = new CommandCache(split[1], testcases);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(commandCache, CmdLineTool.ivctCommander, CmdLineTool.counter, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
-                	CmdLineTool.counter += testcases.size();
+                	command = new StartTestSchedule(commandCache, ivctCommander, ivctCommander.fetchCounters(testcases.size()), ivctCommander.getTestSuiteName(), ivctCommander.rtp.paramJson);
                     break;
                 case "abortTestSchedule":
                 case "ats":
-                	if (checkSUTselected()) {
+                	if (ivctCommander.checkSUTselected()) {
+                        System.out.println(sutNotSelected);
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool) {
+                	if (ivctCommander.getConformanceTestBool()) {
                         out.println("abortTestSchedule: Warning conformance test is running");
                         break;
                 	}
                 	if (split.length > 1) {
                         out.println("abortTestSchedule: Warning extra parameter: " + split[1]);
                 	}
-//                	command = new AbortTestSchedule(CmdLineTool.ivctCommander);
+//                	command = new AbortTestSchedule(ivctCommander);
                     out.println("abortTestSchedule: Warning abort test schedule logic is NOT IMPLEMENTED yet");
                     break;
                 case "listTestCases":
                 case "ltc":
-                	if (checkSutAndTestSuiteSelected()) {
+                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
                 	if (split.length > 1) {
-                        out.println("listTestCases: Warning extra parameter: " + split[1]);
+                		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	command = new ListTestCases(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, true);
+                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
+                		String schedule = entry.getKey();
+                		System.out.println(schedule);
+                		List<String> testcases1 = entry.getValue();
+                		for (String testcase : testcases1) {
+                			System.out.println('\t' + testcase);
+                		}
+                	}			
                     break;
                 case "startTestCase":
                 case "stc":
-                	if (checkSutAndTestSuiteSelected()) {
+                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool) {
+                	if (ivctCommander.getConformanceTestBool()) {
                         out.println("startTestCase: Warning conformance test is running");
                         break;
                 	}
@@ -349,34 +321,33 @@ class Writer extends Thread {
                         out.println("startTestCase: Error missing test case id");
                         break;
                 	}
-                	command = new ListTestSchedules(CmdLineTool.ivctCommander, CmdLineTool.rtp, CmdLineTool.testSuiteName, false);
-                	command.execute();
-                	command = null;
-                	if (checkTestCaseNameKnown(split[1])) {
+                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	if (ivctCommander.rtp.checkTestCaseNameKnown(split[1])) {
                         out.println("startTestCase: unknown test case " + split[1]);
                         break;
                 	}
-                	command = new StartTestCase(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++, CmdLineTool.testSuiteName, CmdLineTool.rtp.paramJson);
-                	CmdLineTool.testCaseName = split[1];
+                	command = new StartTestCase(split[1], ivctCommander, ivctCommander.fetchCounter(), ivctCommander.getTestSuiteName(), ivctCommander.rtp.paramJson);
+                	RuntimeParameters.setTestCaseName(split[1]);
                     break;
                 case "abortTestCase":
                 case "atc":
-                	if (checkSUTselected()) {
+                	if (ivctCommander.checkSUTselected()) {
+                        System.out.println(sutNotSelected);
                 		break;
                 	}
-                	if (CmdLineTool.conformanceTestBool) {
+                	if (ivctCommander.getConformanceTestBool()) {
                         out.println("abortTestCase: Warning conformance test is running");
                         break;
                 	}
                 	if (split.length > 1) {
                         out.println("abortTestCase: Warning extra parameter: " + split[1]);
                 	}
-//                	command = new AbortTestCase(CmdLineTool.ivctCommander);
+//                	command = new AbortTestCase(ivctCommander);
                     out.println("abortTestCase: Warning abort test case logic is NOT IMPLEMENTED yet");
                 	break;
                 case "listVerdicts":
                 case "lv":
-                	if (checkSutAndTestSuiteSelected()) {
+                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
                 	if (split.length > 1) {
@@ -391,7 +362,7 @@ class Writer extends Thread {
                 		break;
                 	}
                 	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("debug") || split[1].equals("info")) {
-                		command = new SetLogLevel(split[1], CmdLineTool.ivctCommander, CmdLineTool.counter++);
+                		command = new SetLogLevel(split[1], ivctCommander, ivctCommander.fetchCounter());
                         out.println("setLogLevel: Warning abort set log level logic is NOT IMPLEMENTED yet");
                 	} else {
                         out.println("Unknown log level: " + split[1]);
@@ -399,7 +370,7 @@ class Writer extends Thread {
                 	break;
                 case "quit":
                 case "q":
-                	command = new QuitCmd("quit", CmdLineTool.ivctCommander, CmdLineTool.counter++);
+                	command = new QuitCmd("quit", ivctCommander, ivctCommander.fetchCounter());
                 	command.execute();
                     out.println("quit");
                     System.exit(0);
