@@ -75,6 +75,7 @@ public class IVCTcommander implements MessageListener {
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
+    protected RuntimeParameters rtp = new RuntimeParameters();
 
     /**
      * Main entry point from the command line.
@@ -136,7 +137,6 @@ public class IVCTcommander implements MessageListener {
         }
         System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        System.out.println ("Enter command: or help (h)");
         domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
     }
 
@@ -199,21 +199,57 @@ public class IVCTcommander implements MessageListener {
 		return false;
 	}
 
-public static String getPackageName(final String testsuite) {
-    	String packageName = null;
-        Map<String, String> ls;
-        ls = getTestSuiteNames();
+    public boolean checkSutKnown(final String sut) {
+    	return rtp.checkSutKnown(sut);
+    }
+	
+	/*
+	 * Some commands have no meaning without knowing the test suite involved.
+	 */
+	protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
+		return rtp.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected);
+	}
+
+    protected boolean checkSUTselected() {
+    	return rtp.checkSUTselected();
+    }
+    
+    protected int fetchCounter() {
+    	int i = 1;
+    	return rtp.fetchCounters(i);
+    }
+    
+    protected int fetchCounters(int n) {
+    	return rtp.fetchCounters(n);
+    }
+    
+	public static String getPackageName(final String testsuite) {
+		String packageName = null;
+		Map<String, String> ls;
+		ls = getTestSuiteNames();
 		for (Map.Entry<String, String> temp : ls.entrySet()) {
 			if (temp.getKey().equals(testsuite)) {
 				packageName = temp.getValue();
-			System.out.println(temp.getValue());
+				System.out.println(temp.getValue());
 			}
 		}
-    	return packageName;
-    }
-    
+		return packageName;
+	}
+	
+	public boolean getConformanceTestBool() {
+		return rtp.getConformanceTestBool();
+	}
+	
+	public void setConformanceTestBool(boolean b) {
+		rtp.setConformanceTestBool(b);
+	}
+
     public static String getSUTdir() {
     	return configParameters.pathSutDir;
+    }
+    
+    protected static String getTestSuiteName() {
+    	return RuntimeParameters.getTestSuiteName();
     }
       
     public static Map<String, String> getTestSuiteNames() {
@@ -367,14 +403,10 @@ public static String getPackageName(final String testsuite) {
       }
       
       public static List<String> listSUT() {
-          List<String> suts = new ArrayList<String>();
-    	  File dir = new File(configParameters.pathSutDir);
-    	  File[] filesList = dir.listFiles();
-    	  for (File file : filesList) {
-    	      if (file.isDirectory()) {
-    	    	  suts.add(file.getName());
-    	      }
-    	  }
+    	  RuntimeParameters.setSUTS(configParameters.pathSutDir);
+    	  
+    	  List<String> suts = RuntimeParameters.getSUTS();
+    	  
     	  return suts;
       }
       

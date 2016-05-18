@@ -112,6 +112,9 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
     					String commandTypeName =  (String) jsonObject.get("commandType");
     					System.out.println("The commandType name is: " + commandTypeName);
+    					if (commandTypeName.equals("quit")) {
+    	                    System.exit(0);
+    					}
     					if (commandTypeName.equals("startTestCase")) {
     						Long temp = Long.valueOf((String)jsonObject.get("sequence"));
     						if (temp == null) {

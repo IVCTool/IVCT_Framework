@@ -19,12 +19,132 @@ limitations under the License.
  */
 package de.fraunhofer.iosb.ivct;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RuntimeParameters {
+public final class RuntimeParameters {
+	private boolean conformanceTestBool = false;
+    private int counter = 0;
 	public Map<String, String> ls = null;
-	public List<String> suts = null;
+	private static List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 	public String paramJson;
+    private static String sutName = null;
+    private static String testCaseName = null;
+    private static String testSuiteName = null;
+
+    protected boolean checkSutKnown(final String sut) {
+    	for (String entry : suts) {
+    		if (sut.equals(entry)) {
+    			return false;
+    		}
+    	}
+
+    	return true;
+    }
+
+    /*
+     * Some commands have no meaning without knowing the SUT involved.
+     */
+    protected boolean checkSUTselected() {
+    	if (sutName == null) {
+            return true;
+    	}
+    	return false;
+    }
+    
+    /*
+     * Check if the test case name occurs in any test schedule.
+     */
+    protected boolean checkTestCaseNameKnown(final String testCase) {
+    	for (Map.Entry<String, List<String>> entry : testsuiteTestcases.entrySet()) {
+    		for (String entry0 : entry.getValue()) {
+    			if (testCase.equals(entry0)) {
+    				return false;
+    			}
+    		}
+    	}
+
+    	return true;
+    }
+    
+    /*
+     * Some commands have no meaning without knowing the test suite involved.
+     */
+    protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
+    	if (checkSUTselected()) {
+            System.out.println(sutNotSelected);
+            return true;
+    	}
+    	if (testSuiteName == null) {
+            System.out.println(tsNotSelected);
+            return true;
+    	}
+    	return false;
+    }
+    
+    protected int fetchCounters(int n) {
+    	int ret = counter;
+    	counter += n;
+    	return ret;
+    }
+    
+	public boolean getConformanceTestBool() {
+		return conformanceTestBool;
+	}
+	
+	public void setConformanceTestBool(boolean b) {
+		conformanceTestBool = b;
+	}
+
+    protected static List<String> getSUTS() {
+    	return suts;
+    }
+    
+    protected static void setSUTS(String pathSutDir) {
+  	  suts = new ArrayList<String>();
+  	  File dir = new File(pathSutDir);
+  	  File[] filesList = dir.listFiles();
+  	  for (File file : filesList) {
+  		  if (file.isDirectory()) {
+  			  suts.add(file.getName());
+  		  }
+  	  }
+    }
+    
+    protected static String getSutName() {
+    	return sutName;
+    }
+    
+    protected static void setSutName(String theSutName) {
+    	// Same sut just return.
+    	if (theSutName.equals(sutName)) {
+    		return;
+    	}
+
+    	// Set the sut name.
+    	sutName = theSutName;
+    	
+    	// Reset values.
+    	testCaseName = null;
+    	testSuiteName = null;
+    }
+    
+    protected static String getTestCaseName() {
+    	return testCaseName;
+    }
+    
+    protected static void setTestCaseName(String theTestCaseName) {
+    	testCaseName = theTestCaseName;
+    }
+    
+    protected static String getTestSuiteName() {
+    	return testSuiteName;
+    }
+    
+    protected static void setTestSuiteName(String theTestSuiteName) {
+    	testSuiteName = theTestSuiteName;
+    }
 }
