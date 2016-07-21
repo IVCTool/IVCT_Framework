@@ -1,5 +1,5 @@
 /*
-Copyright 2015, [name of copyright owner, Johannes Mulder (Fraunhofer IOSB)"]
+Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -53,30 +53,31 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
     private IVCT_RTIambassador ivct_rti;
     private Logger logger;
+    private IVCT_TcParam ivct_TcParam;
 
 
     /**
      * @param ivct_rti ivct rti
      * @param logger logger
      */
-    public IVCT_BaseModel(final IVCT_RTIambassador ivct_rti, final Logger logger) {
+    public IVCT_BaseModel(final IVCT_RTIambassador ivct_rti, final Logger logger, final IVCT_TcParam ivct_TcParam) {
         super(logger);
         this.ivct_rti = ivct_rti;
         this.logger = logger;
+        this.ivct_TcParam = ivct_TcParam;
     }
 
 
     /**
      * @param federateName federate name
      * @param federateReference federate reference
-     * @param tcParam test case parameters
      * @return federate handle
      */
-    public FederateHandle initiateRti(final String federateName, final FederateAmbassador federateReference, final IVCT_TcParam tcParam) {
+    public FederateHandle initiateRti(final String federateName, final FederateAmbassador federateReference) {
     	
         // Connect to rti
         try {
-        	ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, tcParam.getSettingsDesignator());
+        	ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.ivct_TcParam.getSettingsDesignator());
         }
         catch (AlreadyConnected e) {
             this.logger.warn("initiateRti: AlreadyConnected (ignored)");
@@ -87,7 +88,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
         // Create federation execution using tc_param foms
         try {
-        	ivct_rti.createFederationExecution(tcParam.getFederationName(), tcParam.getUrls(), "HLAfloat64Time");
+        	ivct_rti.createFederationExecution(this.ivct_TcParam.getFederationName(), this.ivct_TcParam.getUrls(), "HLAfloat64Time");
         }
         catch (final FederationExecutionAlreadyExists e) {
             this.logger.warn("initiateRti: FederationExecutionAlreadyExists (ignored)");
@@ -98,7 +99,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
         // Join federation execution
         try {
-            return ivct_rti.joinFederationExecution(federateName, tcParam.getFederationName(), tcParam.getUrls());
+            return ivct_rti.joinFederationExecution(federateName, this.ivct_TcParam.getFederationName(), this.ivct_TcParam.getUrls());
         }
         catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
             return null;
@@ -107,9 +108,9 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
 
     /**
-     * @param tcParam the test case parameters
+     * Standard function to terminate the RTI
      */
-    public void terminateRti(final IVCT_TcParam tcParam) {
+    public void terminateRti() {
     	
         // Resign federation execution
         try {
@@ -124,7 +125,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
         // Destroy federation execution
         try {
-        	ivct_rti.destroyFederationExecution(tcParam.getFederationName());
+        	ivct_rti.destroyFederationExecution(this.ivct_TcParam.getFederationName());
         }
         catch (final FederatesCurrentlyJoined e1) {
             this.logger.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
