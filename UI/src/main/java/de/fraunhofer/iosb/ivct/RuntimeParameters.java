@@ -1,5 +1,5 @@
 /*
-Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
+Copyright 2016, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,20 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
-
-/**
- *
- * @author mul (Fraunhofer IOSB)
+/*
+ * This class holds variables to use as out parameters.
  */
-public class TcInconclusive  extends Exception {
-    public TcInconclusive(String msg)
-    {
-       super(msg);
-    }
+package de.fraunhofer.iosb.ivct;
 
-    public TcInconclusive(String message, Throwable cause)
-    {
-       super(message, cause);
-    }
+import java.util.List;
+import java.util.Map;
+
+public class RuntimeParameters {
+	public Map<String, String> ls = null;
+	public List<String> suts = null;
+	public Map <String, List<String>> testsuiteTestcases = null;
+	public String paramJson;
 }

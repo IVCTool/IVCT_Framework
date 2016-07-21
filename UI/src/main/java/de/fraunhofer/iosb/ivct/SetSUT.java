@@ -1,5 +1,5 @@
 /*
-Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
+Copyright 2016, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
+package de.fraunhofer.iosb.ivct;
 
-/**
- *
- * @author mul (Fraunhofer IOSB)
- */
-public class TcInconclusive  extends Exception {
-    public TcInconclusive(String msg)
-    {
-       super(msg);
-    }
+public class SetSUT implements Command {
+	final String sut;
+	final IVCTcommander ivctCommander;
+	final int counter;
 
-    public TcInconclusive(String message, Throwable cause)
-    {
-       super(message, cause);
-    }
+	SetSUT(final String sut, IVCTcommander ivctCommander, final int counter) {
+		this.sut = sut;
+		this.ivctCommander = ivctCommander;
+		this.counter = counter;
+	}
+
+	public void execute() {
+		String setSutString = IVCTcommander.printJson("setSUT", counter, "sut", sut);
+		this.ivctCommander.sendToJms(setSutString);
+	}
 }
