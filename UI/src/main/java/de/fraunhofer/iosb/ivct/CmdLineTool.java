@@ -17,6 +17,7 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -30,24 +31,27 @@ import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
  */
 public class CmdLineTool {
     Thread writer;
+	public static Process p;
     public static IVCTcommander ivctCommander;
 
     // Create the client by creating a writer thread
     // and starting them.
     public CmdLineTool() {
-        try {
-        	CmdLineTool.ivctCommander = new IVCTcommander();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-            // Create writer            
-            writer = new Writer(ivctCommander);
-            writer.setPriority(5);
-            // Start the thread
-            writer.start();
+    	try {
+    		CmdLineTool.ivctCommander = new IVCTcommander();
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    	// Create writer            
+    	writer = new Writer(ivctCommander);
+    	writer.setPriority(5);
+    	// Start the thread
+    	writer.start();
+    	    	 
+        (new Thread(new TcRunnable())).start();	
     }
-
+    
     /*
      * Main entry point.
      */
@@ -59,6 +63,60 @@ public class CmdLineTool {
     	CmdLineTool.ivctCommander.listenToJms();
     }
 }
+
+class TcRunnable implements Runnable {
+	 
+    public void run() {
+		File f = getCwd();
+    	String javaHome = System.getenv("JAVA_HOME");
+    	if (javaHome == null) {
+    		System.out.println("JAVA_HOME is not assigned.");
+    	} else {
+    		System.out.println("JAVA_HOME is " + javaHome);
+    	}
+    	
+        String javaExe = javaHome + "\\bin\\java.exe";
+        
+    	String classPath = System.getenv("CLASSPATH");
+    	if (classPath == null) {
+    		System.out.println("CLASSPATH is not assigned.");
+    	} else {
+    		System.out.println("CLASSPATH is " + classPath);
+    	}
+
+		try {
+    		System.out.println("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
+    		CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner", null, f);
+//			CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
+
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(CmdLineTool.p.getInputStream()));
+
+	    	BufferedReader stdError = new BufferedReader(new InputStreamReader(CmdLineTool.p.getErrorStream()));
+
+	    	// read the output from the command
+	        String s = null;
+	    	System.out.println("Here is the standard output of the command:\n");
+	    	while ((s = stdInput.readLine()) != null) {
+//	    		System.out.println(s);
+	    	}
+
+	    	// read any errors from the attempted command
+
+	    	System.out.println("Here is the standard error of the command (if any):\n");
+	    	while ((s = stdError.readLine()) != null) {
+//	    		System.out.println(s);
+	    	}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+
+    private File getCwd() {
+  	  return new File("").getAbsoluteFile();
+  	}
+}
+
 
 // This thread reads user input from the console and sends it to the server.
 class Writer extends Thread {
@@ -272,7 +330,7 @@ class Writer extends Thread {
                 	CommandCache commandCache = new CommandCache(split[1], testcases);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(commandCache, ivctCommander, ivctCommander.fetchCounters(testcases.size()), ivctCommander.getTestSuiteName(), ivctCommander.rtp.paramJson);
+                	command = new StartTestSchedule(commandCache, ivctCommander, ivctCommander.fetchCounters(testcases.size()));
                     break;
                 case "abortTestSchedule":
                 case "ats":
@@ -326,7 +384,7 @@ class Writer extends Thread {
                         out.println("startTestCase: unknown test case " + split[1]);
                         break;
                 	}
-                	command = new StartTestCase(split[1], ivctCommander, ivctCommander.fetchCounter(), ivctCommander.getTestSuiteName(), ivctCommander.rtp.paramJson);
+                	command = new StartTestCase(split[1], ivctCommander, ivctCommander.fetchCounter());
                 	RuntimeParameters.setTestCaseName(split[1]);
                     break;
                 case "abortTestCase":

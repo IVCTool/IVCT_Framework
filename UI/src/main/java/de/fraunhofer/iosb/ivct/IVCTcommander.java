@@ -223,6 +223,10 @@ public class IVCTcommander implements MessageListener {
     	return rtp.fetchCounters(n);
     }
     
+    public static String getTcRunDir () {
+    	return new String("TS_HelloWorld\\TS_HelloWorld\\Bin");
+    }
+    
 	public static String getPackageName(final String testsuite) {
 		String packageName = null;
 		Map<String, String> ls;
@@ -433,11 +437,11 @@ public class IVCTcommander implements MessageListener {
       	return s;
       }
 
-      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1) {
-        	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : " + value1 + "}");
-        	System.out.println(s);
-        	return s;
-        }
+      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1, final String param2, final String value2) {
+      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : \"" + value1 + "\",\n  \"" + param2 + "\" : " + value2 + "}");
+      	System.out.println(s);
+      	return s;
+      }
 
       public static void resetSUT() {
     	  listOfVerdicts.clear();
@@ -530,6 +534,9 @@ public class IVCTcommander implements MessageListener {
     				case "announceVerdict":
     					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts);
     					break;
+    	    		case "quit":
+    	    			// Should ignore
+    	    			break;
     				case "setSUT":
     					break;
     				case "startTestCase":

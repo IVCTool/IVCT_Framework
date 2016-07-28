@@ -16,8 +16,6 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
-import java.util.concurrent.Semaphore;
-
 public class StartTestSchedule implements Command {
 	final String paramJson;
 	final CommandCache commandCache;
@@ -25,12 +23,12 @@ public class StartTestSchedule implements Command {
 	final String testsuite;
 	private int counter;
 
-	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final int counter, final String testsuite, final String paramJson) {
+	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final int counter) {
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
-		this.testsuite = testsuite;
-		this.paramJson = paramJson;
+		this.testsuite = IVCTcommander.getTestSuiteName();
+		this.paramJson = ivctCommander.rtp.paramJson;
 	}
 	
 	public void execute() {
@@ -42,7 +40,8 @@ public class StartTestSchedule implements Command {
 			}
             System.out.println("Start Test Case: " + tc);
 
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
+            String tcRunDir = IVCTcommander.getTcRunDir();
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tcRunDir", tcRunDir, "tcParam", this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}
