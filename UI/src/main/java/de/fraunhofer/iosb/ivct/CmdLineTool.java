@@ -62,7 +62,6 @@ public class CmdLineTool {
         new CmdLineTool();
     	CmdLineTool.ivctCommander.listenToJms();
     }
-}
 
 class TcRunnable implements Runnable {
 	 
@@ -467,4 +466,5 @@ class Writer extends Thread {
         finally { if (out != null) out.close(); }
         System.exit(0);
     }
+}
 }

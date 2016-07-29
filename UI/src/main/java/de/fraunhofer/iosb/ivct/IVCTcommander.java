@@ -248,6 +248,22 @@ public class IVCTcommander implements MessageListener {
 		rtp.setConformanceTestBool(b);
 	}
 
+	public boolean getTestCaseRunningBool() {
+		return rtp.getTestCaseRunningBool();
+	}
+	
+	public void setTestCaseRunningBool(boolean b) {
+		rtp.setTestCaseRunningBool(b);
+	}
+
+	public boolean getTestScheduleRunningBool() {
+		return rtp.getTestScheduleRunningBool();
+	}
+	
+	public void setTestScheduleRunningBool(boolean b) {
+		rtp.setTestScheduleRunningBool(b);
+	}
+
     public static String getSUTdir() {
     	return configParameters.pathSutDir;
     }

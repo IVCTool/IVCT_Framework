@@ -26,6 +26,8 @@ import java.util.Map;
 
 public final class RuntimeParameters {
 	private boolean conformanceTestBool = false;
+	private boolean testCaseRunningBool = false;
+	private boolean testScheduleRunningBool = false;
     private int counter = 0;
 	public Map<String, String> ls = null;
 	private static List<String> suts = null;
@@ -97,6 +99,22 @@ public final class RuntimeParameters {
 	
 	public void setConformanceTestBool(boolean b) {
 		conformanceTestBool = b;
+	}
+
+	public boolean getTestCaseRunningBool() {
+		return testCaseRunningBool;
+	}
+	
+	public void setTestCaseRunningBool(boolean b) {
+		testCaseRunningBool = b;
+	}
+
+	public boolean getTestScheduleRunningBool() {
+		return testScheduleRunningBool;
+	}
+	
+	public void setTestScheduleRunningBool(boolean b) {
+		testScheduleRunningBool = b;
 	}
 
     protected static List<String> getSUTS() {
