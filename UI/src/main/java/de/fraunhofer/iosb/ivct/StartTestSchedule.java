@@ -29,6 +29,7 @@ public class StartTestSchedule implements Command {
 		this.counter = counter;
 		this.testsuite = IVCTcommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
+		ivctCommander.rtp.setTestScheduleRunningBool(true);
 	}
 	
 	public void execute() {
@@ -45,6 +46,7 @@ public class StartTestSchedule implements Command {
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}
+		ivctCommander.rtp.setTestScheduleRunningBool(false);
         System.out.println("Test schedule finished: " + commandCache.getTestschedule());
 	}
 }

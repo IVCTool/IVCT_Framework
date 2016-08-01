@@ -29,6 +29,7 @@ public class StartTestCase implements Command {
 		this.counter = counter;
 		this.testsuite = IVCTcommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
+		ivctCommander.rtp.setTestCaseRunningBool(true);
 	}
 
 	public void execute() {
@@ -41,5 +42,6 @@ public class StartTestCase implements Command {
 		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tcRunDir", tcRunDir, "tcParam", this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 		this.ivctCommander.acquireSemaphore();
+		ivctCommander.rtp.setTestCaseRunningBool(false);
 	}
 }

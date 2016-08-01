@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -212,6 +213,30 @@ public class IVCTcommander implements MessageListener {
 
     protected boolean checkSUTselected() {
     	return rtp.checkSUTselected();
+    }
+    
+    /*
+     * Check if a conformance test, test case or test schedule are running.
+     * 
+     * @param theCaller name of the calling method
+     * @param out the calling method
+     * 
+     * @return whether a critical task is running
+     */
+    protected boolean checkCtTcTsRunning(final String theCaller, PrintStream out) {
+    	if (rtp.getConformanceTestBool()) {
+    		out.println(theCaller + ": Warning conformance test is running cannot change SUT");
+    		return true;
+    	}
+    	if (rtp.getTestCaseRunningBool()) {
+    		out.println(theCaller + ": Warning test case is running cannot change SUT");
+    		return true;
+    	}
+    	if (rtp.getTestScheduleRunningBool()) {
+    		out.println(theCaller + ": Warning test schedule is running cannot change SUT");
+    		return true;
+    	}
+    	return false;
     }
     
     protected int fetchCounter() {
