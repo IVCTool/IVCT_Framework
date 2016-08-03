@@ -23,12 +23,13 @@ public class StartTestCase implements Command {
 	final IVCTcommander ivctCommander;
 	final int counter;
 
-	StartTestCase(final String testcase, final IVCTcommander ivctCommander, final int counter, final String testsuite, final String paramJson) {
+	StartTestCase(final String testcase, final IVCTcommander ivctCommander, final int counter) {
 		this.testcase = testcase;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
-		this.testsuite = testsuite;
-		this.paramJson = paramJson;
+		this.testsuite = IVCTcommander.getTestSuiteName();
+		this.paramJson = ivctCommander.rtp.paramJson;
+		ivctCommander.rtp.setTestCaseRunningBool(true);
 	}
 
 	public void execute() {
@@ -37,8 +38,10 @@ public class StartTestCase implements Command {
             System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + this.testcase + " not run");
             return;
 		}
-		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tcParam", this.paramJson);
+        String tcRunDir = IVCTcommander.getTcRunDir();
+		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tcRunDir", tcRunDir, "tcParam", this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 		this.ivctCommander.acquireSemaphore();
+		ivctCommander.rtp.setTestCaseRunningBool(false);
 	}
 }

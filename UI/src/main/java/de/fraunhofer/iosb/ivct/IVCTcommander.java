@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -214,6 +215,30 @@ public class IVCTcommander implements MessageListener {
     	return rtp.checkSUTselected();
     }
     
+    /*
+     * Check if a conformance test, test case or test schedule are running.
+     * 
+     * @param theCaller name of the calling method
+     * @param out the calling method
+     * 
+     * @return whether a critical task is running
+     */
+    protected boolean checkCtTcTsRunning(final String theCaller, PrintStream out) {
+    	if (rtp.getConformanceTestBool()) {
+    		out.println(theCaller + ": Warning conformance test is running - command not allowed");
+    		return true;
+    	}
+    	if (rtp.getTestCaseRunningBool()) {
+    		out.println(theCaller + ": Warning test case is running - command not allowed");
+    		return true;
+    	}
+    	if (rtp.getTestScheduleRunningBool()) {
+    		out.println(theCaller + ": Warning test schedule is running - command not allowed");
+    		return true;
+    	}
+    	return false;
+    }
+    
     protected int fetchCounter() {
     	int i = 1;
     	return rtp.fetchCounters(i);
@@ -221,6 +246,10 @@ public class IVCTcommander implements MessageListener {
     
     protected int fetchCounters(int n) {
     	return rtp.fetchCounters(n);
+    }
+    
+    public static String getTcRunDir () {
+    	return new String("TS_HelloWorld\\TS_HelloWorld\\Bin");
     }
     
 	public static String getPackageName(final String testsuite) {
@@ -242,6 +271,22 @@ public class IVCTcommander implements MessageListener {
 	
 	public void setConformanceTestBool(boolean b) {
 		rtp.setConformanceTestBool(b);
+	}
+
+	public boolean getTestCaseRunningBool() {
+		return rtp.getTestCaseRunningBool();
+	}
+	
+	public void setTestCaseRunningBool(boolean b) {
+		rtp.setTestCaseRunningBool(b);
+	}
+
+	public boolean getTestScheduleRunningBool() {
+		return rtp.getTestScheduleRunningBool();
+	}
+	
+	public void setTestScheduleRunningBool(boolean b) {
+		rtp.setTestScheduleRunningBool(b);
 	}
 
     public static String getSUTdir() {
@@ -433,11 +478,11 @@ public class IVCTcommander implements MessageListener {
       	return s;
       }
 
-      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1) {
-        	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : " + value1 + "}");
-        	System.out.println(s);
-        	return s;
-        }
+      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1, final String param2, final String value2) {
+      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : \"" + value1 + "\",\n  \"" + param2 + "\" : " + value2 + "}");
+      	System.out.println(s);
+      	return s;
+      }
 
       public static void resetSUT() {
     	  listOfVerdicts.clear();
@@ -530,6 +575,9 @@ public class IVCTcommander implements MessageListener {
     				case "announceVerdict":
     					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts);
     					break;
+    	    		case "quit":
+    	    			// Should ignore
+    	    			break;
     				case "setSUT":
     					break;
     				case "startTestCase":
