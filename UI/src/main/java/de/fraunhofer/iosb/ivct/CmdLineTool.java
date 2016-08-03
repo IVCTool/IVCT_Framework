@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
 
@@ -31,6 +32,9 @@ import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
  */
 public class CmdLineTool {
     Thread writer;
+	private boolean keepGoing = true;
+    private Command command = null;
+	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
 
@@ -48,7 +52,9 @@ public class CmdLineTool {
     	writer.setPriority(5);
     	// Start the thread
     	writer.start();
-    	    	 
+
+        (new Thread(new commandRunnable(this.semaphore, this.keepGoing))).start();
+
         (new Thread(new TcRunnable())).start();	
     }
     
@@ -63,6 +69,32 @@ public class CmdLineTool {
     	CmdLineTool.ivctCommander.listenToJms();
     }
 
+    class commandRunnable implements Runnable {
+    	boolean keepGoing;
+    	Semaphore semaphore;
+
+    	public commandRunnable(Semaphore semaphore, boolean keepGoing) {
+    		this.semaphore = semaphore;
+    		this.keepGoing = keepGoing;
+    	}
+
+    	public void run() {
+    		while (keepGoing) {
+    			try {
+    				this.semaphore.acquire();
+    				if (command != null) {
+    					command.execute();
+    					command = null;
+    				}
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+
+    		}
+    	}
+    }
+    
 class TcRunnable implements Runnable {
 	 
     public void run() {
@@ -130,9 +162,9 @@ class Writer extends Thread {
      * Read user input and execute valid commands.
      */
     public void run() {
+    	boolean gotNewCommand = false;
     	BufferedReader in = null;
         PrintStream out = null;
-        Command command = null;
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
     	String tsNotSelected = new String("Testsuite not selected yet: use setTestSuite command first");
 
@@ -151,6 +183,7 @@ class Writer extends Thread {
                 	break;
                 case "listSUT":
                 case "lsut":
+                	// Warn about extra parameter
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
@@ -191,14 +224,17 @@ class Writer extends Thread {
                 	}
                 	RuntimeParameters.setSutName(split[1]);
                 	command = new SetSUT(split[1], ivctCommander, ivctCommander.fetchCounter());
+                	gotNewCommand = true;
                 	IVCTcommander.resetSUT();
                 	break;
                 case "listTestSuites":
                 case "lt":
+                	// Cannot list test suites if SUT is not set
                 	if (ivctCommander.checkSUTselected()) {
                 		System.out.println(sutNotSelected);
                 		break;
                 	}
+                	// Warn about extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestSuites: Warning extra parameter: " + split[1]);
                 	}
@@ -209,14 +245,16 @@ class Writer extends Thread {
                 	break;
                 case "setTestSuite":
                 case "st":
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
                 	// Check any critical tasks are running
                 	if (ivctCommander.checkCtTcTsRunning("setTestSuite", out)) {
                 		break;
                 	}
+                	// Cannot set test suites if SUT is not selected
+                	if (ivctCommander.checkSUTselected()) {
+                        out.println(sutNotSelected);
+                		break;
+                	}
+                	// Need an input parameter
                 	if (split.length == 1) {
                 		out.println("setTestSuite: Error missing test suite name");
                 		break;
@@ -239,21 +277,23 @@ class Writer extends Thread {
                             break;
                     	}
                 		command = new SetTestSuite(split[1], ivctCommander, ivctCommander.fetchCounter());
+                    	gotNewCommand = true;
                 	} else {
                 		out.println("Unknown test suite " + split[1]);
                 	}
                 	break;
                 case "startConformanceTest":
                 case "sct":
-                	// Cannot run conformance test if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
                 	// Check any critical tasks are running
                 	if (ivctCommander.checkCtTcTsRunning("startConformanceTest", out)) {
                 		break;
                 	}
+                	// Cannot start conformance test if SUT is not set
+                	if (ivctCommander.checkSUTselected()) {
+                        out.println(sutNotSelected);
+                		break;
+                	}
+                	// Warn for extra parameter
                 	if (split.length > 1) {
                         out.println("startConformanceTest: Warning extra parameter: " + split[1]);
                 	}
@@ -273,7 +313,7 @@ class Writer extends Thread {
                         out.println("abortConformanceTest: Warning no conformance test is running");
                         break;
                 	}
-                	// Warn about extra parameters
+                	// Warn about extra parameter
                 	if (split.length > 1) {
                         out.println("abortConformanceTest: Warning extra parameter: " + split[1]);
                 	}
@@ -286,6 +326,7 @@ class Writer extends Thread {
                 	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
+                	// Warn for extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
@@ -297,13 +338,14 @@ class Writer extends Thread {
                 	break;
                 case "startTestSchedule":
                 case "sts":
+                	// Check any critical tasks are running
+                	if (ivctCommander.checkCtTcTsRunning("startTestSchedule", out)) {
+                		break;
+                	}
                 	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
-                	if (ivctCommander.getConformanceTestBool()) {
-                        out.println("startTestSchedule: Warning conformance test is running");
-                        break;
-                	}
+                	// Need an input parameter
                 	if (split.length == 1) {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
@@ -331,6 +373,8 @@ class Writer extends Thread {
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
                 	command = new StartTestSchedule(commandCache, ivctCommander, ivctCommander.fetchCounters(testcases.size()));
+                	gotNewCommand = true;
+                	RuntimeParameters.setTestScheduleName(split[1]);
                     break;
                 case "abortTestSchedule":
                 case "ats":
@@ -361,6 +405,7 @@ class Writer extends Thread {
                 	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
+                	// Warn about extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
@@ -376,13 +421,14 @@ class Writer extends Thread {
                     break;
                 case "startTestCase":
                 case "stc":
+                	// Check any critical tasks are running
+                	if (ivctCommander.checkCtTcTsRunning("startTestCase", out)) {
+                		break;
+                	}
                 	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
-                	if (ivctCommander.getConformanceTestBool()) {
-                        out.println("startTestCase: Warning conformance test is running");
-                        break;
-                	}
+                	// Need an input parameter
                 	if (split.length == 1) {
                         out.println("startTestCase: Error missing test case id");
                         break;
@@ -393,6 +439,7 @@ class Writer extends Thread {
                         break;
                 	}
                 	command = new StartTestCase(split[1], ivctCommander, ivctCommander.fetchCounter());
+                	gotNewCommand = true;
                 	RuntimeParameters.setTestCaseName(split[1]);
                     break;
                 case "abortTestCase":
@@ -412,6 +459,7 @@ class Writer extends Thread {
                         out.println("abortTestCase: no test case is running");
                         break;
                 	}
+                	// Warn about extra parameter
                 	if (split.length > 1) {
                         out.println("abortTestCase: Warning extra parameter: " + split[1]);
                 	}
@@ -423,6 +471,7 @@ class Writer extends Thread {
                 	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
                 		break;
                 	}
+                	// Warn about extra parameter
                 	if (split.length > 1) {
                         out.println("listVerdicts: Warning extra parameter: " + split[1]);
                 	}
@@ -430,6 +479,7 @@ class Writer extends Thread {
                 	break;
                 case "setLogLevel":
                 case "sll":
+                	// Need an input parameter
                 	if (split.length == 1) {
                 		out.println("setLogLevel: Error missing log level: error, warning, debug or info");
                 		break;
@@ -441,8 +491,43 @@ class Writer extends Thread {
                         out.println("Unknown log level: " + split[1]);
                 	}
                 	break;
+                case "status":
+                case "s":
+                	String sut = RuntimeParameters.getSutName();
+                	if (sut == null) {
+                		out.println("SUT:");
+                	} else {
+                		out.println("SUT: " + sut);
+                	}
+                	String testSuiteName = RuntimeParameters.getTestSuiteName();
+                	if (testSuiteName == null) {
+                		out.println("TestSuiteName:");
+                	} else {
+                		out.println("TestSuiteName: " + testSuiteName);
+                	}
+                	String testScheduleName = RuntimeParameters.getTestScheduleName();
+                	if (testScheduleName != null) {
+                		if (ivctCommander.rtp.getTestScheduleRunningBool()) {
+                			out.println("TestScheduleName: " + testScheduleName + " running");
+                		} else {
+                			out.println("TestScheduleName: " + testScheduleName + " finished");
+                		}
+                	}
+                	String testCaseName = RuntimeParameters.getTestCaseName();
+                	if (testCaseName != null) {
+                		if (ivctCommander.rtp.getTestCaseRunningBool()) {
+                			out.println("TestCaseName: " + testCaseName + " running");
+                		} else {
+                			out.println("TestCaseName: " + testCaseName + " finished");
+                		}
+                	}
+                	break;
                 case "quit":
                 case "q":
+                	// Check any critical tasks are running
+                	if (ivctCommander.checkCtTcTsRunning("quit", out)) {
+                		break;
+                	}
                 	command = new QuitCmd("quit", ivctCommander, ivctCommander.fetchCounter());
                 	command.execute();
                     out.println("quit");
@@ -463,6 +548,7 @@ class Writer extends Thread {
                     out.println("abortTestCase (atc) - abort the running test case");
                     out.println("setLogLevel (sll) - set the log level for logging - error, warning, debug, info");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
+                    out.println("status (s) - display status information");
                     out.println("quit (q) - quit the program");
                     out.println("help (h) - display the help information");
                     break;
@@ -471,9 +557,9 @@ class Writer extends Thread {
                     break;
                 }
                 
-                if (command != null) {
-                	command.execute();
-                	command = null;
+                if (gotNewCommand) {
+                	semaphore.release();
+                	gotNewCommand = false;
                 }
                 out.print("> ");
             }

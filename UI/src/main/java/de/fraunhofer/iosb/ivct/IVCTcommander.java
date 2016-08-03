@@ -225,15 +225,15 @@ public class IVCTcommander implements MessageListener {
      */
     protected boolean checkCtTcTsRunning(final String theCaller, PrintStream out) {
     	if (rtp.getConformanceTestBool()) {
-    		out.println(theCaller + ": Warning conformance test is running cannot change SUT");
+    		out.println(theCaller + ": Warning conformance test is running - command not allowed");
     		return true;
     	}
     	if (rtp.getTestCaseRunningBool()) {
-    		out.println(theCaller + ": Warning test case is running cannot change SUT");
+    		out.println(theCaller + ": Warning test case is running - command not allowed");
     		return true;
     	}
     	if (rtp.getTestScheduleRunningBool()) {
-    		out.println(theCaller + ": Warning test schedule is running cannot change SUT");
+    		out.println(theCaller + ": Warning test schedule is running - command not allowed");
     		return true;
     	}
     	return false;
