@@ -125,11 +125,11 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     			String testCaseId = null;
     			JSONObject testCaseParam = null;
 
-    			String ivctRootPath = System.getenv("IVCT_ROOT");
+    			String ivctRootPath = System.getenv("IVCT_TS_HOME");
     			if (ivctRootPath == null) {
-    				System.out.println("IVCT_ROOT is not assigned.");
+    				System.out.println("IVCT_TS_HOME is not assigned.");
     			} else {
-    				System.out.println("IVCT_ROOT is " + ivctRootPath);
+    				System.out.println("IVCT_TS_HOME is " + ivctRootPath);
     			}
 
     			try {
@@ -151,9 +151,9 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     							counter = temp.intValue();
     						}
 
-    						String tcRunDir = (String) jsonObject.get("tcRunDir");
-    						System.out.println("tcRunDir is " + tcRunDir);
-    						if (setCurrentDirectory(ivctRootPath + "\\" + tcRunDir)) {
+    						String tsRunFolder = (String) jsonObject.get("tsRunFolder");
+    						System.out.println("tsRunFolder is " + tsRunFolder);
+    						if (setCurrentDirectory(ivctRootPath + "\\" + tsRunFolder)) {
     							System.out.println("setCurrentDirectory true");
     						}
 

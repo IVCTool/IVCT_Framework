@@ -33,13 +33,13 @@ public class StartTestCase implements Command {
 	}
 
 	public void execute() {
-		final String packageName = IVCTcommander.getPackageName(this.testsuite);
+		final String packageName = ivctCommander.getPackageName(this.testsuite);
 		if (packageName == null) {
             System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + this.testcase + " not run");
             return;
 		}
-        String tcRunDir = IVCTcommander.getTcRunDir();
-		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tcRunDir", tcRunDir, "tcParam", this.paramJson);
+        String tsRunFolder = ivctCommander.getTsRunFolder();
+		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tsRunFolder", tsRunFolder, "tcParam", this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 		this.ivctCommander.acquireSemaphore();
 		ivctCommander.rtp.setTestCaseRunningBool(false);

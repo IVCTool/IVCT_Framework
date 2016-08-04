@@ -21,15 +21,35 @@ package de.fraunhofer.iosb.ivct;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+class TestSuiteParameters {
+	String packageName;
+	String tsRunFolder;
+	TestSuiteParameters() {
+		this.packageName = null;
+		this.tsRunFolder = null;
+	}
+}
+  
 public final class RuntimeParameters {
 	private boolean conformanceTestBool = false;
+	private boolean gotTestSuiteNames = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
+    public Document domTestsuite;
 	private int counter = 0;
-	public Map<String, String> ls = null;
+	public Map<String, TestSuiteParameters> ls = new HashMap <String, TestSuiteParameters>();
 	private static List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 	public String paramJson;
@@ -118,6 +138,63 @@ public final class RuntimeParameters {
 		testScheduleRunningBool = b;
 	}
 
+	public void getTestSuiteNames() {
+
+		if (gotTestSuiteNames) {
+			return;
+		}
+		Element elem = domTestsuite.getDocumentElement();
+		for (Node child = elem.getFirstChild(); child != null; child = child.getNextSibling()) {
+			String s = child.getNodeName();
+			if (s.compareTo("testSuites") == 0) {
+				for (Node child0 = child.getFirstChild(); child0 != null; child0 = child0.getNextSibling()) {
+					if (child0.getNodeName().compareTo("testSuite") == 0) {
+						TestSuiteParameters testSuiteParameters = new TestSuiteParameters();
+						testSuiteParameters.packageName = new String();
+						testSuiteParameters.tsRunFolder = new String();
+						String testSuiteName = new String();
+						for (Node child1 = child0.getFirstChild(); child1 != null; child1 = child1.getNextSibling()) {
+							if (child1.getNodeName().compareTo("name") == 0) {
+								testSuiteName = child1.getFirstChild().getNodeValue();
+							}
+							if (child1.getNodeName().compareTo("packageName") == 0) {
+								testSuiteParameters.packageName = child1.getFirstChild().getNodeValue();
+							}
+							if (child1.getNodeName().compareTo("tsRunFolder") == 0) {
+								testSuiteParameters.tsRunFolder = child1.getFirstChild().getNodeValue();
+							}
+						}
+						ls.put(testSuiteName, testSuiteParameters);
+					}
+				}
+			}
+		}
+		gotTestSuiteNames = true;
+	}
+    
+	public String getPackageName(final String testsuite) {
+		String packageName = null;
+		getTestSuiteNames();
+		for (Map.Entry<String, TestSuiteParameters> temp : ls.entrySet()) {
+			if (temp.getKey().equals(testsuite)) {
+				packageName = temp.getValue().packageName;
+				System.out.println(temp.getValue());
+			}
+		}
+		return packageName;
+	}
+	
+	public String getTsRunFolder() {
+		String tsRunFolder = null;
+		getTestSuiteNames();
+		for (Map.Entry<String, TestSuiteParameters> temp : ls.entrySet()) {
+			if (temp.getKey().equals(testSuiteName)) {
+				tsRunFolder = temp.getValue().tsRunFolder;
+			}
+		}
+		return tsRunFolder;
+	}
+	
 	protected static List<String> getSUTS() {
 		return suts;
 	}
