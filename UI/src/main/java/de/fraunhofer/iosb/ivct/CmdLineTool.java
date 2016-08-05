@@ -238,8 +238,8 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSuites: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.ls = IVCTcommander.getTestSuiteNames();
-                	for (Map.Entry<String, String> temp : ivctCommander.rtp.ls.entrySet()) {
+                	ivctCommander.rtp.getTestSuiteNames();
+                	for (Map.Entry<String, TestSuiteParameters> temp : ivctCommander.rtp.ls.entrySet()) {
                 		System.out.println(temp.getKey());
                 	}
                 	break;
@@ -259,11 +259,9 @@ class Writer extends Thread {
                 		out.println("setTestSuite: Error missing test suite name");
                 		break;
                 	}
-                	if (ivctCommander.rtp.ls == null) {
-                    	ivctCommander.rtp.ls = IVCTcommander.getTestSuiteNames();
-                	}
+                	ivctCommander.rtp.getTestSuiteNames();
                 	boolean gotTestSuite = false;
-        			for (Map.Entry<String, String> entry : ivctCommander.rtp.ls.entrySet()) {
+        			for (Map.Entry<String, TestSuiteParameters> entry : ivctCommander.rtp.ls.entrySet()) {
                 		if (split[1].equals(entry.getKey())) {
                 			gotTestSuite = true;
                 		}
@@ -466,17 +464,6 @@ class Writer extends Thread {
 //                	command = new AbortTestCase(ivctCommander);
                     out.println("abortTestCase: Warning abort test case logic is NOT IMPLEMENTED yet");
                 	break;
-                case "listVerdicts":
-                case "lv":
-                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
-                		break;
-                	}
-                	// Warn about extra parameter
-                	if (split.length > 1) {
-                        out.println("listVerdicts: Warning extra parameter: " + split[1]);
-                	}
-                	IVCTcommander.listVerdicts();
-                	break;
                 case "setLogLevel":
                 case "sll":
                 	// Need an input parameter
@@ -490,6 +477,17 @@ class Writer extends Thread {
                 	} else {
                         out.println("Unknown log level: " + split[1]);
                 	}
+                	break;
+                case "listVerdicts":
+                case "lv":
+                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
+                		break;
+                	}
+                	// Warn about extra parameter
+                	if (split.length > 1) {
+                        out.println("listVerdicts: Warning extra parameter: " + split[1]);
+                	}
+                	IVCTcommander.listVerdicts();
                 	break;
                 case "status":
                 case "s":

@@ -55,7 +55,6 @@ import org.xml.sax.SAXException;
 
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 
-
 /**
  * IVCTcommander takes user input strings, creates and sends messages to the JMS bus,
  * listens to the JMS bus and forwards the messages via callbacks to the user
@@ -70,13 +69,12 @@ public class IVCTcommander implements MessageListener {
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
     private MessageProducer producer;
-    private static Document domTestsuite;
     private static ConfigParameters configParameters = null;
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
-    protected RuntimeParameters rtp = new RuntimeParameters();
+    public RuntimeParameters rtp = new RuntimeParameters();
 
     /**
      * Main entry point from the command line.
@@ -113,9 +111,9 @@ public class IVCTcommander implements MessageListener {
         this.jmshelper.initSession();
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
-        String ivct_path = System.getenv("IVCT_HOME");
+        String ivct_path = System.getenv("IVCT_CONF");
         if (ivct_path == null) {
-            System.out.println ("The global variable IVCT_HOME is NOT set");
+            System.out.println ("The global variable IVCT_CONF is NOT set");
         	System.exit(1);
         }
 
@@ -138,7 +136,7 @@ public class IVCTcommander implements MessageListener {
         }
         System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
+        rtp.domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
     }
 
     private static Document parseXmlFile(final String fileName){
@@ -248,21 +246,12 @@ public class IVCTcommander implements MessageListener {
     	return rtp.fetchCounters(n);
     }
     
-    public static String getTcRunDir () {
-    	return new String("TS_HelloWorld\\TS_HelloWorld\\Bin");
+    public String getTsRunFolder() {
+    	return rtp.getTsRunFolder();
     }
     
-	public static String getPackageName(final String testsuite) {
-		String packageName = null;
-		Map<String, String> ls;
-		ls = getTestSuiteNames();
-		for (Map.Entry<String, String> temp : ls.entrySet()) {
-			if (temp.getKey().equals(testsuite)) {
-				packageName = temp.getValue();
-				System.out.println(temp.getValue());
-			}
-		}
-		return packageName;
+	public String getPackageName(final String testsuite) {
+		return rtp.getPackageName(testsuite);
 	}
 	
 	public boolean getConformanceTestBool() {
@@ -295,40 +284,6 @@ public class IVCTcommander implements MessageListener {
     
     protected static String getTestSuiteName() {
     	return RuntimeParameters.getTestSuiteName();
-    }
-      
-    public static Map<String, String> getTestSuiteNames() {
-    	Map<String, String> myMap = new HashMap <String, String>();
-
-    	Element elem = domTestsuite.getDocumentElement();
-    	for (Node child = elem.getFirstChild(); child != null; child=child.getNextSibling())
-    	{
-    		String s = child.getNodeName();
-    		if (s.compareTo("testSuites") == 0) {
-    			for (Node child0 = child.getFirstChild(); child0 != null; child0=child0.getNextSibling())
-    			{
-    				if (child0.getNodeName().compareTo("testSuite") == 0 )
-    				{
-    					String packageName = new String();
-    					String testSuiteName = new String();
-    					for (Node child1 = child0.getFirstChild(); child1 != null; child1=child1.getNextSibling())
-    					{
-    						if (child1.getNodeName().compareTo("name") == 0 )
-    						{
-    							testSuiteName = child1.getFirstChild().getNodeValue();
-    						}                	  
-    						if (child1.getNodeName().compareTo("packageName") == 0 )
-    						{
-    							packageName = child1.getFirstChild().getNodeValue();
-    						}                	  
-    					}
-    					myMap.put(testSuiteName, packageName);
-    				}
-    			}
-    		}
-    	}
-
-    	return myMap;
     }
     
     protected static Map <String, List<String>> readTestSuiteFiles(final String testsuite) {

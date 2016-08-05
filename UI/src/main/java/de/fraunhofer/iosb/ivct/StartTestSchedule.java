@@ -34,15 +34,15 @@ public class StartTestSchedule implements Command {
 	
 	public void execute() {
 		for (String tc = commandCache.getNextTestCase(); tc != null; tc = commandCache.getNextTestCase()) {
-			final String packageName = IVCTcommander.getPackageName(this.testsuite);
+			final String packageName = ivctCommander.getPackageName(this.testsuite);
 			if (packageName == null) {
 	            System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + tc + " not run");
 	            return;
 			}
             System.out.println("Start Test Case: " + tc);
 
-            String tcRunDir = IVCTcommander.getTcRunDir();
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tcRunDir", tcRunDir, "tcParam", this.paramJson);
+            String tsRunFolder = ivctCommander.getTsRunFolder();
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tsRunFolder", tsRunFolder, "tcParam", this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}
