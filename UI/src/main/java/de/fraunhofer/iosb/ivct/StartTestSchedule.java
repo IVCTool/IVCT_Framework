@@ -46,6 +46,7 @@ public class StartTestSchedule implements Command {
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}
+		ivctCommander.addTestSessionSeparator();
 		ivctCommander.rtp.setTestScheduleRunningBool(false);
         System.out.println("Test schedule finished: " + commandCache.getTestschedule());
 	}

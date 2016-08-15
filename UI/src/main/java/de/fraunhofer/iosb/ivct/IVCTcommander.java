@@ -180,6 +180,10 @@ public class IVCTcommander implements MessageListener {
     	}
     }
     
+    public void addTestSessionSeparator() {
+    	String blank = new String(" ");
+		listOfVerdicts.addElement(blank);    	
+    }
 	/*
 	 * JMS will deliver multiple messages. Need to check if the message was already
 	 *  seen
@@ -410,8 +414,9 @@ public class IVCTcommander implements MessageListener {
     	  return suts;
       }
       
-      public static void listVerdicts() {
+      public void listVerdicts() {
 			System.out.println("Verdicts are:");
+			System.out.println("SUT: " + rtp.getSutName());
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
 			}
@@ -484,6 +489,7 @@ public class IVCTcommander implements MessageListener {
     			} else {
     				System.out.println("The sequence number is: " + temp);
     			}
+    			String testSchedule = rtp.getTestScheduleName();
     			String testcase =  (String) jsonObject.get("testcase");
     			if (testcase != null) {
     				System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
@@ -496,8 +502,19 @@ public class IVCTcommander implements MessageListener {
     			if (verdictText != null) {
     				System.out.println("The test case verdict text is: " + verdictText + "\n");
     			}
-    			String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
-    			listOfVerdicts.addElement(verdictStr);
+    			String verdictStr = null;
+    			if (testSchedule == null) {
+    				verdictStr = new String("(single tc) " + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
+    			} else {
+    				verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
+    			}
+    			if (rtp.checkTestSuiteNameNew()) {
+    				String testSuiteStr = new String("Test Suite: " + rtp.getTestSuiteName());
+    				listOfVerdicts.addElement(testSuiteStr);
+    				addTestSessionSeparator();
+    				rtp.setTestSuiteNameUsed();
+    			}
+				listOfVerdicts.addElement(verdictStr);
     			releaseSemaphore();
     			break;
     		default:

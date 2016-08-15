@@ -35,6 +35,7 @@ public class LogSink {
         instance.loadProperties();
         instance.init();
         instance.execute();
+        System.exit(0);;
     }
 
 
@@ -72,13 +73,13 @@ public class LogSink {
     private void execute() {
         LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-        // Loop until the word "exit" is typed
-        System.out.println("Type \"exit\" to quit JMSTopicSink.");
+        // Loop until "exit", "quit" or "q" is typed
+        System.out.println("Type \"quit\" to exit JMSTopicSink.");
         while (true) {
             String s;
             try {
                 s = stdin.readLine();
-                if (s.equalsIgnoreCase("exit")) {
+                if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
                     System.out.println("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
                     return;
                 }

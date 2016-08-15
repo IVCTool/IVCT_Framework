@@ -47,6 +47,7 @@ public final class RuntimeParameters {
 	private boolean gotTestSuiteNames = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
+	private boolean testSuiteNameNew = true;
     public Document domTestsuite;
 	private int counter = 0;
 	public Map<String, TestSuiteParameters> ls = new HashMap <String, TestSuiteParameters>();
@@ -92,6 +93,13 @@ public final class RuntimeParameters {
 
 		return true;
 	}
+	
+	/*
+	 * Check if the test suite name changed since last check.
+	 */
+	protected boolean checkTestSuiteNameNew() {
+		return testSuiteNameNew;
+	}
 
 	/*
 	 * Some commands have no meaning without knowing the test suite involved.
@@ -136,6 +144,10 @@ public final class RuntimeParameters {
 
 	public void setTestScheduleRunningBool(boolean b) {
 		testScheduleRunningBool = b;
+	}
+	
+	public void setTestSuiteNameUsed() {
+		testSuiteNameNew = false;
 	}
 
 	public void getTestSuiteNames() {
@@ -251,7 +263,12 @@ public final class RuntimeParameters {
 		return testSuiteName;
 	}
 
-	protected static void setTestSuiteName(String theTestSuiteName) {
-		testSuiteName = theTestSuiteName;
+	protected void setTestSuiteName(String testSuiteName) {
+		if (this.testSuiteName != null) {
+			if (this.testSuiteName.equals(testSuiteName) == false) {
+				this.testSuiteNameNew = true;
+			}
+		}
+		this.testSuiteName = testSuiteName;
 	}
 }
