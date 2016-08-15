@@ -267,7 +267,7 @@ class Writer extends Thread {
                 		}
                 	}
                 	if (gotTestSuite) {
-                		RuntimeParameters.setTestSuiteName(split[1]);
+                		ivctCommander.rtp.setTestSuiteName(split[1]);
                     	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName() + "\\" + ivctCommander.getTestSuiteName() + "\\" + "TcParam.json");
                     	ivctCommander.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
                     	if (ivctCommander.rtp.paramJson == null) {
@@ -487,7 +487,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listVerdicts: Warning extra parameter: " + split[1]);
                 	}
-                	IVCTcommander.listVerdicts();
+                	ivctCommander.listVerdicts();
                 	break;
                 case "status":
                 case "s":
