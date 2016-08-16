@@ -47,6 +47,7 @@ public abstract class AbstractTestCase {
     /**
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
+     * @return the verdict
      */
     public IVCT_Verdict execute(final String tcParamJson, final Logger logger) {
     	
