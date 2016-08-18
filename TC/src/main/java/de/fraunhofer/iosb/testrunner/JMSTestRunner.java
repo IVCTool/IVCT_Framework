@@ -1,22 +1,24 @@
 package de.fraunhofer.iosb.testrunner;
 
-import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
-import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
+import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 
 /**
  * Testrunner that takes listens on a certain JMS queue for commands to start a
@@ -97,22 +99,68 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     		this.message = message;
     		this.testRunner = testRunner;
     	}
-    	
+
+    	private File getCwd() {
+    		return new File("").getAbsoluteFile();
+    	}
+
+    	private boolean setCurrentDirectory(String directory_name)
+    	{
+    		boolean result = false;  // Boolean indicating whether directory was set
+    		File    directory;       // Desired current working directory
+
+    		directory = new File(directory_name).getAbsoluteFile();
+    		if (directory.exists() || directory.mkdirs())
+    		{
+    			result = (System.setProperty("user.dir", directory.getAbsolutePath()) != null);
+    		}
+
+    		return result;
+    	}
+
     	public void run() {
     		System.out.println("onMessageConsumer before");
-            if (message instanceof TextMessage) {
-                final TextMessage textMessage = (TextMessage) message;
-                String testCaseId = null;
-                JSONObject testCaseParam = null;
-                try {
-                    final String content = textMessage.getText();
-                    System.out.println("JMSTestRunner:onMessage " + content);
-        			JSONParser jsonParser = new JSONParser();
-        			try {
+    		if (message instanceof TextMessage) {
+    			final TextMessage textMessage = (TextMessage) message;
+    			String testCaseId = null;
+    			JSONObject testCaseParam = null;
+
+    			String ivctRootPath = System.getenv("IVCT_TS_HOME");
+    			if (ivctRootPath == null) {
+    				System.out.println("IVCT_TS_HOME is not assigned.");
+    			} else {
+    				System.out.println("IVCT_TS_HOME is " + ivctRootPath);
+    			}
+
+    			try {
+    				final String content = textMessage.getText();
+    				System.out.println("JMSTestRunner:onMessage " + content);
+    				JSONParser jsonParser = new JSONParser();
+    				try {
     					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
     					String commandTypeName =  (String) jsonObject.get("commandType");
     					System.out.println("The commandType name is: " + commandTypeName);
+    					if (commandTypeName.equals("quit")) {
+    						System.exit(0);
+    					}
     					if (commandTypeName.equals("startTestCase")) {
+    						Long temp = Long.valueOf((String)jsonObject.get("sequence"));
+    						if (temp == null) {
+    							System.out.println("The sequence number is: null");
+    						} else {
+    							counter = temp.intValue();
+    						}
+
+    						String tsRunFolder = (String) jsonObject.get("tsRunFolder");
+    						System.out.println("tsRunFolder is " + tsRunFolder);
+    						if (setCurrentDirectory(ivctRootPath + "\\" + tsRunFolder)) {
+    							System.out.println("setCurrentDirectory true");
+    						}
+
+    		    			File f = getCwd();
+    						String tcDir = f.getAbsolutePath();
+    						System.out.println("TC DIR is " + tcDir);
+
     						testCaseId = (String) jsonObject.get("testCaseId");
     						System.out.println("The test case class is: " + testCaseId);
     						testCaseParam = (JSONObject) jsonObject.get("tcParam");
@@ -120,21 +168,21 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     						String[] testcases = testCaseId.split("\\s");
     						IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
-    		                this.testRunner.executeTests(testCaseId.split("\\s"), testCaseParam.toString(), verdicts);
-    		                for (int i = 0; i < testcases.length; i++) {
-    		                	sendToJms(verdicts[i].toJson(testcases[i], counter++));
-    		                }
+    						this.testRunner.executeTests(testCaseId.split("\\s"), testCaseParam.toString(), verdicts);
+    						for (int i = 0; i < testcases.length; i++) {
+    							sendToJms(verdicts[i].toJson(testcases[i], counter++));
+    						}
     					}
     				} catch (ParseException e) {
     					// TODO Auto-generated catch block
     					e.printStackTrace();
     				}
 
-                }
-                catch (final JMSException ex) {
-                    LOGGER.warn("Problems with parsing Message", ex);
-                }
-            }
+    			}
+    			catch (final JMSException ex) {
+    				LOGGER.warn("Problems with parsing Message", ex);
+    			}
+    		}
     		System.out.println("onMessageConsumer after");
     	}
     }

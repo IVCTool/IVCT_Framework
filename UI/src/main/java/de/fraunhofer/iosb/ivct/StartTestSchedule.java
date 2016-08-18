@@ -16,8 +16,6 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
-import java.util.concurrent.Semaphore;
-
 public class StartTestSchedule implements Command {
 	final String paramJson;
 	final CommandCache commandCache;
@@ -25,27 +23,31 @@ public class StartTestSchedule implements Command {
 	final String testsuite;
 	private int counter;
 
-	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final int counter, final String testsuite, final String paramJson) {
+	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander, final int counter) {
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
-		this.testsuite = testsuite;
-		this.paramJson = paramJson;
+		this.testsuite = IVCTcommander.getTestSuiteName();
+		this.paramJson = ivctCommander.rtp.paramJson;
+		ivctCommander.rtp.setTestScheduleRunningBool(true);
 	}
 	
 	public void execute() {
 		for (String tc = commandCache.getNextTestCase(); tc != null; tc = commandCache.getNextTestCase()) {
-			final String packageName = IVCTcommander.getPackageName(this.testsuite);
+			final String packageName = ivctCommander.getPackageName(this.testsuite);
 			if (packageName == null) {
 	            System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + tc + " not run");
 	            return;
 			}
             System.out.println("Start Test Case: " + tc);
 
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tcParam", this.paramJson);
+            String tsRunFolder = ivctCommander.getTsRunFolder();
+			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tsRunFolder", tsRunFolder, "tcParam", this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}
+		ivctCommander.addTestSessionSeparator();
+		ivctCommander.rtp.setTestScheduleRunningBool(false);
         System.out.println("Test schedule finished: " + commandCache.getTestschedule());
 	}
 }

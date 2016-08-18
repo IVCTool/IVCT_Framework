@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +55,6 @@ import org.xml.sax.SAXException;
 
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 
-
 /**
  * IVCTcommander takes user input strings, creates and sends messages to the JMS bus,
  * listens to the JMS bus and forwards the messages via callbacks to the user
@@ -69,12 +69,12 @@ public class IVCTcommander implements MessageListener {
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
     private MessageProducer producer;
-    private static Document domTestsuite;
     private static ConfigParameters configParameters = null;
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
+    public RuntimeParameters rtp = new RuntimeParameters();
 
     /**
      * Main entry point from the command line.
@@ -111,9 +111,9 @@ public class IVCTcommander implements MessageListener {
         this.jmshelper.initSession();
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
-        String ivct_path = System.getenv("IVCT_HOME");
+        String ivct_path = System.getenv("IVCT_CONF");
         if (ivct_path == null) {
-            System.out.println ("The global variable IVCT_HOME is NOT set");
+            System.out.println ("The global variable IVCT_CONF is NOT set");
         	System.exit(1);
         }
 
@@ -136,8 +136,7 @@ public class IVCTcommander implements MessageListener {
         }
         System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        System.out.println ("Enter command: or help (h)");
-        domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
+        rtp.domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
     }
 
     private static Document parseXmlFile(final String fileName){
@@ -181,6 +180,10 @@ public class IVCTcommander implements MessageListener {
     	}
     }
     
+    public void addTestSessionSeparator() {
+    	String blank = new String(" ");
+		listOfVerdicts.addElement(blank);    	
+    }
 	/*
 	 * JMS will deliver multiple messages. Need to check if the message was already
 	 *  seen
@@ -199,55 +202,92 @@ public class IVCTcommander implements MessageListener {
 		return false;
 	}
 
-public static String getPackageName(final String testsuite) {
-    	String packageName = null;
-        Map<String, String> ls;
-        ls = getTestSuiteNames();
-		for (Map.Entry<String, String> temp : ls.entrySet()) {
-			if (temp.getKey().equals(testsuite)) {
-				packageName = temp.getValue();
-			System.out.println(temp.getValue());
-			}
-		}
-    	return packageName;
+    public boolean checkSutKnown(final String sut) {
+    	return rtp.checkSutKnown(sut);
+    }
+	
+	/*
+	 * Some commands have no meaning without knowing the test suite involved.
+	 */
+	protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
+		return rtp.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected);
+	}
+
+    protected boolean checkSUTselected() {
+    	return rtp.checkSUTselected();
     }
     
+    /*
+     * Check if a conformance test, test case or test schedule are running.
+     * 
+     * @param theCaller name of the calling method
+     * @param out the calling method
+     * 
+     * @return whether a critical task is running
+     */
+    protected boolean checkCtTcTsRunning(final String theCaller, PrintStream out) {
+    	if (rtp.getConformanceTestBool()) {
+    		out.println(theCaller + ": Warning conformance test is running - command not allowed");
+    		return true;
+    	}
+    	if (rtp.getTestCaseRunningBool()) {
+    		out.println(theCaller + ": Warning test case is running - command not allowed");
+    		return true;
+    	}
+    	if (rtp.getTestScheduleRunningBool()) {
+    		out.println(theCaller + ": Warning test schedule is running - command not allowed");
+    		return true;
+    	}
+    	return false;
+    }
+    
+    protected int fetchCounter() {
+    	int i = 1;
+    	return rtp.fetchCounters(i);
+    }
+    
+    protected int fetchCounters(int n) {
+    	return rtp.fetchCounters(n);
+    }
+    
+    public String getTsRunFolder() {
+    	return rtp.getTsRunFolder();
+    }
+    
+	public String getPackageName(final String testsuite) {
+		return rtp.getPackageName(testsuite);
+	}
+	
+	public boolean getConformanceTestBool() {
+		return rtp.getConformanceTestBool();
+	}
+	
+	public void setConformanceTestBool(boolean b) {
+		rtp.setConformanceTestBool(b);
+	}
+
+	public boolean getTestCaseRunningBool() {
+		return rtp.getTestCaseRunningBool();
+	}
+	
+	public void setTestCaseRunningBool(boolean b) {
+		rtp.setTestCaseRunningBool(b);
+	}
+
+	public boolean getTestScheduleRunningBool() {
+		return rtp.getTestScheduleRunningBool();
+	}
+	
+	public void setTestScheduleRunningBool(boolean b) {
+		rtp.setTestScheduleRunningBool(b);
+	}
+
     public static String getSUTdir() {
     	return configParameters.pathSutDir;
     }
-      
-    public static Map<String, String> getTestSuiteNames() {
-    	Map<String, String> myMap = new HashMap <String, String>();
-
-    	Element elem = domTestsuite.getDocumentElement();
-    	for (Node child = elem.getFirstChild(); child != null; child=child.getNextSibling())
-    	{
-    		String s = child.getNodeName();
-    		if (s.compareTo("testSuites") == 0) {
-    			for (Node child0 = child.getFirstChild(); child0 != null; child0=child0.getNextSibling())
-    			{
-    				if (child0.getNodeName().compareTo("testSuite") == 0 )
-    				{
-    					String packageName = new String();
-    					String testSuiteName = new String();
-    					for (Node child1 = child0.getFirstChild(); child1 != null; child1=child1.getNextSibling())
-    					{
-    						if (child1.getNodeName().compareTo("name") == 0 )
-    						{
-    							testSuiteName = child1.getFirstChild().getNodeValue();
-    						}                	  
-    						if (child1.getNodeName().compareTo("packageName") == 0 )
-    						{
-    							packageName = child1.getFirstChild().getNodeValue();
-    						}                	  
-    					}
-    					myMap.put(testSuiteName, packageName);
-    				}
-    			}
-    		}
-    	}
-
-    	return myMap;
+    
+    protected static String getTestSuiteName() {
+    	return RuntimeParameters.getTestSuiteName();
     }
     
     protected static Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
@@ -367,19 +407,16 @@ public static String getPackageName(final String testsuite) {
       }
       
       public static List<String> listSUT() {
-          List<String> suts = new ArrayList<String>();
-    	  File dir = new File(configParameters.pathSutDir);
-    	  File[] filesList = dir.listFiles();
-    	  for (File file : filesList) {
-    	      if (file.isDirectory()) {
-    	    	  suts.add(file.getName());
-    	      }
-    	  }
+    	  RuntimeParameters.setSUTS(configParameters.pathSutDir);
+    	  
+    	  List<String> suts = RuntimeParameters.getSUTS();
+    	  
     	  return suts;
       }
       
-      public static void listVerdicts() {
+      public void listVerdicts() {
 			System.out.println("Verdicts are:");
+			System.out.println("SUT: " + rtp.getSutName());
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
 			}
@@ -401,11 +438,11 @@ public static String getPackageName(final String testsuite) {
       	return s;
       }
 
-      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1) {
-        	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : " + value1 + "}");
-        	System.out.println(s);
-        	return s;
-        }
+      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1, final String param2, final String value2) {
+      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : \"" + value1 + "\",\n  \"" + param2 + "\" : " + value2 + "}");
+      	System.out.println(s);
+      	return s;
+      }
 
       public static void resetSUT() {
     	  listOfVerdicts.clear();
@@ -431,20 +468,13 @@ public static String getPackageName(final String testsuite) {
     }
 
 
-    private class onMessageUiConsumer implements Runnable {
-    	private JSONObject jsonObject;
-    	private final Vector<String> listOfVerdicts;
-
-    	onMessageUiConsumer(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
-    		this.jsonObject = jsonObject;
-    		this.listOfVerdicts = listOfVerdicts;
-    	}
+    private class OnMessageUiConsumer {
 
     	/*
     	 * (non-Javadoc)
     	 * @see java.lang.Runnable#run()
     	 */
-    	public void run() {
+    	public void run(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
     		String commandTypeName =  (String) jsonObject.get("commandType");
 
     		switch (commandTypeName) {
@@ -453,6 +483,13 @@ public static String getPackageName(final String testsuite) {
     				return;
     			}
     			System.out.println("The commandType name is: " + commandTypeName);
+    			Long temp = Long.valueOf((String)jsonObject.get("sequence"));
+    			if (temp == null) {
+    				System.out.println("The sequence number is: null");
+    			} else {
+    				System.out.println("The sequence number is: " + temp);
+    			}
+    			String testSchedule = rtp.getTestScheduleName();
     			String testcase =  (String) jsonObject.get("testcase");
     			if (testcase != null) {
     				System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
@@ -463,10 +500,21 @@ public static String getPackageName(final String testsuite) {
     			}
     			String verdictText =  (String) jsonObject.get("verdictText");
     			if (verdictText != null) {
-    				System.out.println("The test case verdict text is: " + verdictText);
+    				System.out.println("The test case verdict text is: " + verdictText + "\n");
     			}
-    			String verdictStr = new String(testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
-    			this.listOfVerdicts.addElement(verdictStr);
+    			String verdictStr = null;
+    			if (testSchedule == null) {
+    				verdictStr = new String("(single tc) " + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
+    			} else {
+    				verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
+    			}
+    			if (rtp.checkTestSuiteNameNew()) {
+    				String testSuiteStr = new String("Test Suite: " + rtp.getTestSuiteName());
+    				listOfVerdicts.addElement(testSuiteStr);
+    				addTestSessionSeparator();
+    				rtp.setTestSuiteNameUsed();
+    			}
+				listOfVerdicts.addElement(verdictStr);
     			releaseSemaphore();
     			break;
     		default:
@@ -475,6 +523,9 @@ public static String getPackageName(final String testsuite) {
     		}    					
     	}
     }
+    
+    private OnMessageUiConsumer onMessageUiConsumer = new OnMessageUiConsumer();
+    private JSONParser jsonParser = new JSONParser();
 
 /** {@inheritDoc} */
     @Override
@@ -482,14 +533,11 @@ public static String getPackageName(final String testsuite) {
     	if (LOGGER.isTraceEnabled()) {
     		LOGGER.trace("Received Command message");
     	}
-    	if (LOGGER.isTraceEnabled()) {
-    		LOGGER.trace("Received Command message");
-    	}
+
     	if (message instanceof TextMessage) {
     		final TextMessage textMessage = (TextMessage) message;
     		try {
     			final String content = textMessage.getText();
-    			JSONParser jsonParser = new JSONParser();
     			try {
     				JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
     				String commandTypeName =  (String) jsonObject.get("commandType");
@@ -497,8 +545,11 @@ public static String getPackageName(final String testsuite) {
 
     				switch (commandTypeName) {
     				case "announceVerdict":
-    					(new Thread(new onMessageUiConsumer(jsonObject, listOfVerdicts))).start();
+    					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts);
     					break;
+    	    		case "quit":
+    	    			// Should ignore
+    	    			break;
     				case "setSUT":
     					break;
     				case "startTestCase":
