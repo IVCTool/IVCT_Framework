@@ -223,7 +223,8 @@ class Writer extends Thread {
                 		break;
                 	}
                 	RuntimeParameters.setSutName(split[1]);
-                	command = new SetSUT(split[1], ivctCommander, ivctCommander.fetchCounter());
+                	String sutPath = IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName();
+                	command = new SetSUT(split[1], ivctCommander, sutPath, ivctCommander.fetchCounter());
                 	gotNewCommand = true;
                 	IVCTcommander.resetSUT();
                 	break;

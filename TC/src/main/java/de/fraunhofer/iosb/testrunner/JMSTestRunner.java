@@ -123,6 +123,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     		if (message instanceof TextMessage) {
     			final TextMessage textMessage = (TextMessage) message;
     			String testCaseId = null;
+    			String testScheduleName = null;
     			JSONObject testCaseParam = null;
 
     			String ivctRootPath = System.getenv("IVCT_TS_HOME");
@@ -161,7 +162,8 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     						String tcDir = f.getAbsolutePath();
     						System.out.println("TC DIR is " + tcDir);
 
-    						testCaseId = (String) jsonObject.get("testCaseId");
+    			            testScheduleName = (String) jsonObject.get("testScheduleName");
+    			            testCaseId = (String) jsonObject.get("testCaseId");
     						System.out.println("The test case class is: " + testCaseId);
     						testCaseParam = (JSONObject) jsonObject.get("tcParam");
     						System.out.println("The test case parameters are: " + testCaseParam.toString());
@@ -170,7 +172,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     						this.testRunner.executeTests(testCaseId.split("\\s"), testCaseParam.toString(), verdicts);
     						for (int i = 0; i < testcases.length; i++) {
-    							sendToJms(verdicts[i].toJson(testcases[i], counter++));
+    							sendToJms(verdicts[i].toJson(testScheduleName, testcases[i], counter++));
     						}
     					}
     				} catch (ParseException e) {

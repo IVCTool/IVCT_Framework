@@ -24,7 +24,7 @@ public class IVCT_Verdict {
 	public Verdict verdict;
 	public String text;
 	
-	public String toJson(final String testcase, int counter) {
+	public String toJson(final String testScheduleName, final String testcase, int counter) {
 		String s = new String();
 		switch (verdict) {
 		case PASSED:
@@ -38,7 +38,7 @@ public class IVCT_Verdict {
 			s = "INCONCLUSIVE";
 			break;
 		}
-		String str = new String("{ \"commandType\" : \"announceVerdict\", \"sequence\" : \"" + counter + "\", \"testcase\" : \"" + testcase + "\", \"verdict\" : \"" + s + "\", \"verdictText\" : \"" + this.text + "\" }");
+		String str = new String("{ \"commandType\" : \"announceVerdict\", \"sequence\" : \"" + counter + "\", \"testScheduleName\" : \"" + testScheduleName + "\", \"testcase\" : \"" + testcase + "\", \"verdict\" : \"" + s + "\", \"verdictText\" : \"" + this.text + "\" }");
 		return str;
 	}
 }

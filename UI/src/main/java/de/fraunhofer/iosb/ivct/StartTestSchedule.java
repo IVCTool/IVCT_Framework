@@ -41,8 +41,12 @@ public class StartTestSchedule implements Command {
 			}
             System.out.println("Start Test Case: " + tc);
 
+            String testScheduleName = "";
+            if (ivctCommander.rtp.getTestScheduleRunningBool()) {
+            	testScheduleName = RuntimeParameters.getTestScheduleName();
+            }
             String tsRunFolder = ivctCommander.getTsRunFolder();
-			String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter++, "testCaseId", packageName + "." + tc, "tsRunFolder", tsRunFolder, "tcParam", this.paramJson);
+			String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter++, testScheduleName, packageName + "." + tc, tsRunFolder, this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}

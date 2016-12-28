@@ -39,7 +39,8 @@ public class StartTestCase implements Command {
             return;
 		}
         String tsRunFolder = ivctCommander.getTsRunFolder();
-		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tsRunFolder", tsRunFolder, "tcParam", this.paramJson);
+        String testScheduleName = "";
+		String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter, testScheduleName, packageName + "." + this.testcase, tsRunFolder, this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 		this.ivctCommander.acquireSemaphore();
 		ivctCommander.addTestSessionSeparator();

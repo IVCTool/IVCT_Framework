@@ -31,6 +31,8 @@ public class LogSink {
     public static void main(final String[] args) {
         // TODO Auto-generated method stub
         LOGGER.info("in main");
+        final ReportEngine reportEngine = new ReportEngine();
+        new Thread(reportEngine).start();
         final LogSink instance = new LogSink();
         instance.loadProperties();
         instance.init();

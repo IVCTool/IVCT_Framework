@@ -416,7 +416,7 @@ public class IVCTcommander implements MessageListener {
       
       public void listVerdicts() {
 			System.out.println("Verdicts are:");
-			System.out.println("SUT: " + rtp.getSutName());
+			System.out.println("SUT: " + RuntimeParameters.getSutName());
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
 			}
@@ -427,7 +427,7 @@ public class IVCTcommander implements MessageListener {
       }
 
       public static String printJson(String command, final int counter) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
+   		String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
       	System.out.println(s);
       	return s;
       }
@@ -438,11 +438,11 @@ public class IVCTcommander implements MessageListener {
       	return s;
       }
 
-      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1, final String param2, final String value2) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : \"" + value1 + "\",\n  \"" + param2 + "\" : " + value2 + "}");
-      	System.out.println(s);
-      	return s;
-      }
+      public static String printTestCaseJson(final int counter, final String testScheduleName, final String testCaseId, final String value1, final String value2) {
+	  	String s = new String("{\n  \"commandType\" : \"" + "startTestCase" + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"testScheduleName\" : \"" + testScheduleName + "\",\n  \"testCaseId\" : \"" + testCaseId + "\",\n  \"tsRunFolder\" : \"" + value1 + "\",\n  \"tcParam\" : " + value2 + "}");
+	    	System.out.println(s);
+	    	return s;
+	  }
 
       public static void resetSUT() {
     	  listOfVerdicts.clear();
