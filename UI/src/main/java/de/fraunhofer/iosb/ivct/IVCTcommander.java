@@ -74,6 +74,7 @@ public class IVCTcommander implements MessageListener {
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
+	private static boolean cmdVerboseBool = false;
     public RuntimeParameters rtp = new RuntimeParameters();
 
     /**
@@ -286,8 +287,12 @@ public class IVCTcommander implements MessageListener {
     	return configParameters.pathSutDir;
     }
     
-    protected static String getTestSuiteName() {
+    protected String getTestSuiteName() {
     	return RuntimeParameters.getTestSuiteName();
+    }
+    
+    protected void setCmdVerboseBool(final boolean b) {
+    	cmdVerboseBool = b;
     }
     
     protected static Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
@@ -428,20 +433,26 @@ public class IVCTcommander implements MessageListener {
 
       public static String printJson(String command, final int counter) {
    		String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
-      	System.out.println(s);
+   		if (cmdVerboseBool) {
+   			System.out.println(s);
+   		}
       	return s;
       }
       
       public static String printJson(String command, final int counter, String param, String value) {
       	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\"\n}");
-      	System.out.println(s);
+      	if (cmdVerboseBool) {
+      		System.out.println(s);
+      	}
       	return s;
       }
 
       public static String printTestCaseJson(final int counter, final String testScheduleName, final String testCaseId, final String value1, final String value2) {
 	  	String s = new String("{\n  \"commandType\" : \"" + "startTestCase" + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"testScheduleName\" : \"" + testScheduleName + "\",\n  \"testCaseId\" : \"" + testCaseId + "\",\n  \"tsRunFolder\" : \"" + value1 + "\",\n  \"tcParam\" : " + value2 + "}");
+      	if (cmdVerboseBool) {
 	    	System.out.println(s);
-	    	return s;
+      	}
+	    return s;
 	  }
 
       public static void resetSUT() {
@@ -474,7 +485,7 @@ public class IVCTcommander implements MessageListener {
     	 * (non-Javadoc)
     	 * @see java.lang.Runnable#run()
     	 */
-    	public void run(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
+    	public void run(final JSONObject jsonObject, final Vector<String> listOfVerdicts, final boolean cmdVerboseBool) {
     		String commandTypeName =  (String) jsonObject.get("commandType");
 
     		switch (commandTypeName) {
@@ -482,26 +493,34 @@ public class IVCTcommander implements MessageListener {
     			if (checkDuplicateSequenceNumber(jsonObject)) {
     				return;
     			}
-    			System.out.println("The commandType name is: " + commandTypeName);
+    			if (cmdVerboseBool) {
+    				System.out.println("The commandType name is: " + commandTypeName);
+    			}
     			Long temp = Long.valueOf((String)jsonObject.get("sequence"));
-    			if (temp == null) {
-    				System.out.println("The sequence number is: null");
-    			} else {
-    				System.out.println("The sequence number is: " + temp);
+    			if (cmdVerboseBool) {
+    				if (temp == null) {
+    					System.out.println("The sequence number is: null");
+    				} else {
+    					System.out.println("The sequence number is: " + temp);
+    				}
     			}
     			String testSchedule = rtp.getTestScheduleName();
     			String testcase =  (String) jsonObject.get("testcase");
-    			if (testcase != null) {
-    				System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
+    			if (testcase == null) {
+    				System.out.println("Error: the test case name is null");
     			}
     			String verdict =  (String) jsonObject.get("verdict");
-    			if (verdict != null) {
-    				System.out.println("The test case verdict is: " + verdict);
+    			if (verdict == null) {
+    				System.out.println("Error: test case verdict is null");
     			}
     			String verdictText =  (String) jsonObject.get("verdictText");
-    			if (verdictText != null) {
-    				System.out.println("The test case verdict text is: " + verdictText + "\n");
+    			if (verdictText == null) {
+    				System.out.println("Error: the test case verdict text is null");
     			}
+    			if (testcase != null && verdict != null && verdictText != null) {
+    				System.out.println("The verdict is: " + testcase.substring(testcase.lastIndexOf(".") + 1) + " " + verdict + " " + verdictText);
+    			}
+    			System.out.println("\n");
     			String verdictStr = null;
     			if (testSchedule == null) {
     				verdictStr = new String("(single tc) " + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
@@ -545,7 +564,7 @@ public class IVCTcommander implements MessageListener {
 
     				switch (commandTypeName) {
     				case "announceVerdict":
-    					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts);
+    					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts, cmdVerboseBool);
     					break;
     	    		case "quit":
     	    			// Should ignore

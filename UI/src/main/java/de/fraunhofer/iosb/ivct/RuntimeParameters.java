@@ -43,6 +43,7 @@ class TestSuiteParameters {
 }
   
 public final class RuntimeParameters {
+	private static boolean abortTestScheduleBool = false;
 	private boolean conformanceTestBool = false;
 	private boolean gotTestSuiteNames = false;
 	private boolean testCaseRunningBool = false;
@@ -122,6 +123,14 @@ public final class RuntimeParameters {
 		return ret;
 	}
 
+	public static boolean getAbortTestScheduleBool() {
+		return abortTestScheduleBool;
+	}
+
+	public static void setAbortTestScheduleBool(boolean b) {
+		abortTestScheduleBool = b;
+	}
+
 	public boolean getConformanceTestBool() {
 		return conformanceTestBool;
 	}
@@ -190,7 +199,6 @@ public final class RuntimeParameters {
 		for (Map.Entry<String, TestSuiteParameters> temp : ls.entrySet()) {
 			if (temp.getKey().equals(testsuite)) {
 				packageName = temp.getValue().packageName;
-				System.out.println(temp.getValue());
 			}
 		}
 		return packageName;

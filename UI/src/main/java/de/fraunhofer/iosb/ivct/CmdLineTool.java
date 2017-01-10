@@ -396,8 +396,9 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("abortTestSchedule: Warning extra parameter: " + split[1]);
                 	}
+                	RuntimeParameters.setAbortTestScheduleBool(true);
 //                	command = new AbortTestSchedule(ivctCommander);
-                    out.println("abortTestSchedule: Warning abort test schedule logic is NOT IMPLEMENTED yet");
+                    out.println("abortTestSchedule: Warning: only stops running remaining test cases");
                     break;
                 case "listTestCases":
                 case "ltc":
@@ -474,7 +475,7 @@ class Writer extends Thread {
                 	}
                 	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("debug") || split[1].equals("info")) {
                 		command = new SetLogLevel(split[1], ivctCommander, ivctCommander.fetchCounter());
-                        out.println("setLogLevel: Warning abort set log level logic is NOT IMPLEMENTED yet");
+                        out.println("setLogLevel: Warning: set log level logic is NOT IMPLEMENTED yet");
                 	} else {
                         out.println("Unknown log level: " + split[1]);
                 	}
@@ -521,6 +522,16 @@ class Writer extends Thread {
                 		}
                 	}
                 	break;
+                case "terse":
+                case "t":
+                	ivctCommander.setCmdVerboseBool(false);
+            		out.println("Command line output is now terse.");
+                	break;
+                case "verbose":
+                case "v":
+                	ivctCommander.setCmdVerboseBool(true);
+            		out.println("Command line output is now verbose.");
+                	break;
                 case "quit":
                 case "q":
                 	// Check any critical tasks are running
@@ -548,6 +559,8 @@ class Writer extends Thread {
                     out.println("setLogLevel (sll) - set the log level for logging - error, warning, debug, info");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
                     out.println("status (s) - display status information");
+                    out.println("terse (t) - display only important session information");
+                    out.println("verbose (v) - display detailed session information");
                     out.println("quit (q) - quit the program");
                     out.println("help (h) - display the help information");
                     break;

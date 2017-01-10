@@ -27,19 +27,26 @@ public class StartTestSchedule implements Command {
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
-		this.testsuite = IVCTcommander.getTestSuiteName();
+		this.testsuite = this.ivctCommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
 		ivctCommander.rtp.setTestScheduleRunningBool(true);
 	}
 	
 	public void execute() {
+		int currentTestcase = 0;
+		int numberOfTestCases = commandCache.getNumberOfTestCases();
+		
 		for (String tc = commandCache.getNextTestCase(); tc != null; tc = commandCache.getNextTestCase()) {
+			if (RuntimeParameters.getAbortTestScheduleBool()) {
+				break;
+			}
 			final String packageName = ivctCommander.getPackageName(this.testsuite);
 			if (packageName == null) {
 	            System.out.println("StartTestCase: packageName not found for " + this.testsuite + " testcase " + tc + " not run");
 	            return;
 			}
-            System.out.println("Start Test Case: " + tc);
+			currentTestcase += 1;
+            System.out.println("Start Test Case: " + tc + " (" + currentTestcase + " of " + numberOfTestCases + ")");
 
             String testScheduleName = "";
             if (ivctCommander.rtp.getTestScheduleRunningBool()) {
@@ -51,6 +58,7 @@ public class StartTestSchedule implements Command {
 			this.ivctCommander.acquireSemaphore();
 		}
 		ivctCommander.addTestSessionSeparator();
+    	RuntimeParameters.setAbortTestScheduleBool(false);
 		ivctCommander.rtp.setTestScheduleRunningBool(false);
         System.out.println("Test schedule finished: " + commandCache.getTestschedule());
 	}

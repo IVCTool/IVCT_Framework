@@ -27,7 +27,7 @@ public class StartTestCase implements Command {
 		this.testcase = testcase;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
-		this.testsuite = IVCTcommander.getTestSuiteName();
+		this.testsuite = this.ivctCommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
 		ivctCommander.rtp.setTestCaseRunningBool(true);
 	}
