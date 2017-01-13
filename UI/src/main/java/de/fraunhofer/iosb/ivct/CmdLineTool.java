@@ -398,7 +398,7 @@ class Writer extends Thread {
                 	}
                 	RuntimeParameters.setAbortTestScheduleBool(true);
 //                	command = new AbortTestSchedule(ivctCommander);
-                    out.println("abortTestSchedule: Warning: only stops running remaining test cases");
+                    out.println("abortTestSchedule: N.B: only stops running remaining test cases");
                     break;
                 case "listTestCases":
                 case "ltc":
@@ -500,9 +500,7 @@ class Writer extends Thread {
                 		out.println("SUT: " + sut);
                 	}
                 	String testSuiteName = RuntimeParameters.getTestSuiteName();
-                	if (testSuiteName == null) {
-                		out.println("TestSuiteName:");
-                	} else {
+                	if (testSuiteName != null) {
                 		out.println("TestSuiteName: " + testSuiteName);
                 	}
                 	String testScheduleName = RuntimeParameters.getTestScheduleName();
