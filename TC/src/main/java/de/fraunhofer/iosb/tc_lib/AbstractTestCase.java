@@ -17,6 +17,7 @@ limitations under the License.
 package de.fraunhofer.iosb.tc_lib;
 
 import org.slf4j.Logger;
+import org.slf4j.MDC;
 
 
 /**
@@ -29,18 +30,35 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractTestCase {
 
+    /**
+     * @param tcParamJson a JSON string containing values to use in the testcase
+     * @param logger The {@link Logger} to use
+     * @return the IVCT base model to use in the test cases
+     */
 	protected abstract IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
 
 
+    /**
+     * @param logger The {@link Logger} to use
+     */
 	protected abstract void logTestPurpose(final Logger logger);
 
 
+    /**
+     * @param logger The {@link Logger} to use
+     */
 	protected abstract void performTest(final Logger logger) throws TcInconclusive, TcFailed;
 
 
+    /**
+     * @param logger The {@link Logger} to use
+     */
 	protected abstract void preambleAction(final Logger logger) throws TcInconclusive;
 
 
+    /**
+     * @param logger The {@link Logger} to use
+     */
 	protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
 
 
@@ -53,6 +71,7 @@ public abstract class AbstractTestCase {
     	
     	IVCT_BaseModel ivct_BaseModel = null;
     	IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
+        MDC.put("testcase", this.getClass().getSimpleName());
     	
     	try {
 			ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);

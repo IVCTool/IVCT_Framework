@@ -92,7 +92,7 @@ public class IVCTcommander implements MessageListener {
             runner.listenToJms();
         }
         catch (final IOException ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error("main: IOException", ex);
         }
     }
 
@@ -169,8 +169,8 @@ public class IVCTcommander implements MessageListener {
         	countSemaphore++;
     		semaphore.acquire();
     	} catch (InterruptedException e) {
-    		// TODO Auto-generated catch block
     		e.printStackTrace();
+            LOGGER.error("acquireSemaphore: ", e);
     	}
     }
 
@@ -330,14 +330,13 @@ public class IVCTcommander implements MessageListener {
     			records.add(line);
     		}
     		reader.close();
-    		return records;
     	}
     	catch (Exception e)
     	{
     		System.err.format("Exception occurred trying to read '%s'.", filename);
     		e.printStackTrace();
-    		return null;
     	}
+		return records;
     }
 
     public static String readWholeFile(final String filename) {
@@ -578,13 +577,13 @@ public class IVCTcommander implements MessageListener {
     					break;
     				}    					
     			} catch (ParseException e) {
-    				// TODO Auto-generated catch block
     				e.printStackTrace();
+    	            LOGGER.error("onMessage: ", e);
     			}
 
     		}
-    		catch (final JMSException ex) {
-    			LOGGER.warn("Problems with parsing Message", ex);
+    		catch (final JMSException e) {
+    			LOGGER.error("onMessage: problems with getText", e);
     		}
     	}
     }
