@@ -102,6 +102,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
             return ivct_rti.joinFederationExecution(federateName, this.ivct_TcParam.getFederationName(), this.ivct_TcParam.getUrls());
         }
         catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+            this.logger.error("initiateRti: ", e);
         	return null;
         }
     }

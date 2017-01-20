@@ -68,6 +68,7 @@ public class IVCTcommander implements MessageListener {
     private static Logger            LOGGER                       = LoggerFactory.getLogger(IVCTcommander.class);
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
+    private String pathTestsuite;
     private MessageProducer producer;
     private static ConfigParameters configParameters = null;
 	private static Semaphore semaphore = new Semaphore(0);
@@ -117,6 +118,11 @@ public class IVCTcommander implements MessageListener {
             System.out.println ("The global variable IVCT_CONF is NOT set");
         	System.exit(1);
         }
+        pathTestsuite = System.getenv("IVCT_TS_HOME");
+        if (pathTestsuite == null) {
+            System.out.println ("The global variable IVCT_TS_HOME is NOT set");
+        	System.exit(1);
+        }
 
         domConfig = parseXmlFile(ivct_path + "\\IVCTconfig.xml");
         if (domConfig != null) {
@@ -126,18 +132,18 @@ public class IVCTcommander implements MessageListener {
                 System.out.println ("PATH SUT DIR in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathSutDir);
             	System.exit(1);
             }
-            File f0 = new File(configParameters.pathTestsuite);
+            File f0 = new File(pathTestsuite);
             if (f0.isDirectory() == false) {
-                System.out.println ("PATH TEST SUITE in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathTestsuite);
+                System.out.println ("Global variable IVCT_TS_HOME is NOT a FOLDER: " + pathTestsuite);
             	System.exit(1);
             }
         } else {
             System.out.println ("Cannot parse: " + ivct_path + "\\IVCTconfig.xml");
         	System.exit(1);
         }
-        System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
+        System.out.println ("pathTestsuite: " + pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        rtp.domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
+        rtp.domTestsuite = parseXmlFile(pathTestsuite + "\\IVCTtestsuites.xml");
     }
 
     private static Document parseXmlFile(final String fileName){
@@ -295,11 +301,11 @@ public class IVCTcommander implements MessageListener {
     	cmdVerboseBool = b;
     }
     
-    protected static Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
+    protected Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
         Map <String, List<String>> xyz = new HashMap <String, List<String>>();
     	File mine;
     	int i;
-    	String path = configParameters.pathTestsuite + "\\" + testsuite;
+    	String path = pathTestsuite + "\\" + testsuite + "\\" + "TestSuites";
     	String files[];
     	mine = new File(path);
     	files = mine.list ();
@@ -395,12 +401,6 @@ public class IVCTcommander implements MessageListener {
               {
                 if (child0.getNodeType() == Node.ELEMENT_NODE) {
                 	configParameters.pathSutDir = child0.getFirstChild().getNodeValue();
-                }
-              }
-              if (child0.getNodeName().compareTo("testSuites") == 0 )
-              {
-                if (child0.getNodeType() == Node.ELEMENT_NODE) {
-                	configParameters.pathTestsuite = child0.getFirstChild().getNodeValue();
                 }
               }
             }

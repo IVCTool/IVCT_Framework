@@ -21,5 +21,4 @@ package de.fraunhofer.iosb.ivct;
  */
 public class ConfigParameters {
 	public String pathSutDir;
-	public String pathTestsuite;
 }

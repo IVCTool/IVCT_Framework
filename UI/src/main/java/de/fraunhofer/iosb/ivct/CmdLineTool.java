@@ -329,7 +329,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
                 		String schedule = entry.getKey();
                 		System.out.println(schedule);
@@ -349,7 +349,7 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	if (ivctCommander.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
                         out.println("startTestSchedule: unknown test schedule " + split[1]);
                         break;
@@ -409,7 +409,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
                 		String schedule = entry.getKey();
                 		System.out.println(schedule);
@@ -433,7 +433,7 @@ class Writer extends Thread {
                         out.println("startTestCase: Error missing test case id");
                         break;
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	if (ivctCommander.rtp.checkTestCaseNameKnown(split[1])) {
                         out.println("startTestCase: unknown test case " + split[1]);
                         break;
