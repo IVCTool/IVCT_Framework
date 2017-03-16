@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 
 /**
@@ -29,8 +30,10 @@ public class LogSink {
      * @param args command line arguments
      */
     public static void main(final String[] args) {
-        // TODO Auto-generated method stub
+        MDC.put("testcase", "LogSink");
         LOGGER.info("in main");
+        final ReportEngine reportEngine = new ReportEngine();
+        new Thread(reportEngine).start();
         final LogSink instance = new LogSink();
         instance.loadProperties();
         instance.init();

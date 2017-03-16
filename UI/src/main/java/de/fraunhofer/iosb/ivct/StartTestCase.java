@@ -27,7 +27,7 @@ public class StartTestCase implements Command {
 		this.testcase = testcase;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
-		this.testsuite = IVCTcommander.getTestSuiteName();
+		this.testsuite = this.ivctCommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
 		ivctCommander.rtp.setTestCaseRunningBool(true);
 	}
@@ -39,7 +39,8 @@ public class StartTestCase implements Command {
             return;
 		}
         String tsRunFolder = ivctCommander.getTsRunFolder();
-		String startTestCaseString = IVCTcommander.printJson("startTestCase", this.counter, "testCaseId", packageName + "." + this.testcase, "tsRunFolder", tsRunFolder, "tcParam", this.paramJson);
+        String testScheduleName = "";
+		String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter, testScheduleName, packageName + "." + this.testcase, tsRunFolder, this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 		this.ivctCommander.acquireSemaphore();
 		ivctCommander.addTestSessionSeparator();
