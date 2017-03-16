@@ -40,32 +40,38 @@ public class CmdLineTool {
 
     // Create the client by creating a writer thread
     // and starting them.
-    public CmdLineTool() {
-    	try {
-    		CmdLineTool.ivctCommander = new IVCTcommander();
-    	} catch (IOException e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
+    public CmdLineTool() throws IOException {
+    	// Create IVCTcommander
+    	CmdLineTool.ivctCommander = new IVCTcommander();
     	// Create writer            
     	writer = new Writer(ivctCommander);
     	writer.setPriority(5);
     	// Start the thread
     	writer.start();
 
-        (new Thread(new commandRunnable(this.semaphore, this.keepGoing))).start();
+    	(new Thread(new commandRunnable(this.semaphore, this.keepGoing))).start();
 
-        (new Thread(new TcRunnable())).start();	
+    	(new Thread(new TcRunnable())).start();	
     }
     
-    /*
+    /**
      * Main entry point.
+     *
+     * @param args command line parameters
      */
     public static void main(String[] args) {
-        //        LogConfigurationHelper.configureLogging(JMSTestRunner.class);
-        LogConfigurationHelper.configureLogging();
+    	// LogConfigurationHelper.configureLogging(JMSTestRunner.class);
+    	LogConfigurationHelper.configureLogging();
 
-        new CmdLineTool();
+    	try {
+    		new CmdLineTool();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    		System.out.println("CmdLineTool: new IVCTcommander: " + e);
+    		return;
+    	}
+
+    	// Handle callbacks
     	CmdLineTool.ivctCommander.listenToJms();
     }
 
@@ -534,7 +540,13 @@ class Writer extends Thread {
                 case "q":
                 	// Check any critical tasks are running
                 	if (ivctCommander.checkCtTcTsRunning("quit", out)) {
-                		break;
+                		out.println("Do you want to quit anyway?");
+                        line = in.readLine();
+                        if (line == null) break;
+                        String splitQuit[]= line.trim().split("\\s+");
+                        if (splitQuit[0].equalsIgnoreCase("yes") == false) {
+                    		break;
+                        }
                 	}
                 	command = new QuitCmd("quit", ivctCommander, ivctCommander.fetchCounter());
                 	command.execute();

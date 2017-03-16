@@ -524,6 +524,11 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 	}
 
 
+	/**
+	 * Utility function to display AttributeHandles
+	 * @param theAttributes is a map containing the AttributeHandleValues
+	 * @return the string containing the AttributeHandles
+	 */
 	private String printAttributeHandleValueMap(final AttributeHandleValueMap theAttributes) {
 		final StringBuilder stringBuilder = new StringBuilder();
 		for (final Map.Entry entry: theAttributes.entrySet()) {
@@ -584,6 +589,11 @@ public final class IVCT_LoggingFederateAmbassador implements FederateAmbassador 
 	}
 
 
+	/**
+	 * Utility function to display ParameterHandles
+	 * @param theAttributes is a map containing the ParameterHandleValues
+	 * @return the string containing the ParameterHandles
+	 */
 	private String printParameterHandleValueMap(final ParameterHandleValueMap theAttributes) {
 		final StringBuilder stringBuilder = new StringBuilder();
 		for (final Map.Entry entry: theAttributes.entrySet()) {

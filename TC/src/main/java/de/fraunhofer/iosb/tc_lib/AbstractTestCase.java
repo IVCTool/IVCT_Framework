@@ -76,6 +76,11 @@ public abstract class AbstractTestCase {
     	try {
 			ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
 		} catch (TcInconclusive e) {
+			String s = "getIVCT_BaseModel unsuccessful";
+        	logger.info("TC INCONCLUSIVE " + s);
+        	ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+        	ivct_Verdict.text = s;
+        	return ivct_Verdict;
 		}
     	
     	logTestPurpose(logger);
@@ -94,11 +99,13 @@ public abstract class AbstractTestCase {
             this.preambleAction(logger);
         }
         catch (final TcInconclusive ex) {
-            ivct_BaseModel.terminateRti();
-            logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
+        	if (ivct_BaseModel != null) {
+        		ivct_BaseModel.terminateRti();
+        	}
+        	logger.info("TC INCONCLUSIVE " + ex.getMessage());
+        	ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+        	ivct_Verdict.text = ex.getMessage();
+        	return ivct_Verdict;
         }
 
         //test body block
@@ -111,18 +118,22 @@ public abstract class AbstractTestCase {
 
         }
         catch (final TcInconclusive ex) {
-            ivct_BaseModel.terminateRti();
-            logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
+        	if (ivct_BaseModel != null) {
+        		ivct_BaseModel.terminateRti();
+        	}
+        	logger.info("TC INCONCLUSIVE " + ex.getMessage());
+        	ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+        	ivct_Verdict.text = ex.getMessage();
+        	return ivct_Verdict;
         }
         catch (final TcFailed ex) {
-            ivct_BaseModel.terminateRti();
-            logger.info("TC FAILED " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.FAILED;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
+        	if (ivct_BaseModel != null) {
+        		ivct_BaseModel.terminateRti();
+        	}
+        	logger.info("TC FAILED " + ex.getMessage());
+        	ivct_Verdict.verdict = IVCT_Verdict.Verdict.FAILED;
+        	ivct_Verdict.text = ex.getMessage();
+        	return ivct_Verdict;
         }
 
         // postamble block
@@ -133,11 +144,13 @@ public abstract class AbstractTestCase {
             logger.info("TC PASSED");
         }
         catch (final TcInconclusive ex) {
-            ivct_BaseModel.terminateRti();
-            logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
+        	if (ivct_BaseModel != null) {
+        		ivct_BaseModel.terminateRti();
+        	}
+        	logger.info("TC INCONCLUSIVE " + ex.getMessage());
+        	ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+        	ivct_Verdict.text = ex.getMessage();
+        	return ivct_Verdict;
         }
         
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;

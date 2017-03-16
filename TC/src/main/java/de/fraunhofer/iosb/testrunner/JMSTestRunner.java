@@ -104,14 +104,24 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     		return new File("").getAbsoluteFile();
     	}
 
+    	/**
+    	 * This method provides a way to set the current working directory
+    	 * which is not available as such in java.
+    	 * 
+    	 * N.B. This method uses a trick to get the desired result
+    	 *
+    	 * @param directory_name name of directory to be the current directory
+    	 * @return true if successful
+    	 */
     	private boolean setCurrentDirectory(String directory_name)
     	{
     		boolean result = false;  // Boolean indicating whether directory was set
     		File    directory;       // Desired current working directory
 
     		directory = new File(directory_name).getAbsoluteFile();
-    		if (directory.exists() || directory.mkdirs())
+    		if (directory.exists())
     		{
+    			directory.mkdirs();
     			result = (System.setProperty("user.dir", directory.getAbsolutePath()) != null);
     		}
 
