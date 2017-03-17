@@ -336,6 +336,10 @@ class Writer extends Thread {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
                 	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	if (ivctCommander.rtp.testsuiteTestcases == null) {
+                		System.out.println("ERROR: No test schedule files found in " + ivctCommander.getTestschedulePath());
+                		break;
+                	}
                 	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
                 		String schedule = entry.getKey();
                 		System.out.println(schedule);
@@ -540,7 +544,7 @@ class Writer extends Thread {
                 case "q":
                 	// Check any critical tasks are running
                 	if (ivctCommander.checkCtTcTsRunning("quit", out)) {
-                		out.println("Do you want to quit anyway?");
+                		out.println("Do you want to quit anyway? (answer yes to quit UI)");
                         line = in.readLine();
                         if (line == null) break;
                         String splitQuit[]= line.trim().split("\\s+");

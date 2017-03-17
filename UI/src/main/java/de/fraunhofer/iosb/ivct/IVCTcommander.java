@@ -69,6 +69,7 @@ public class IVCTcommander implements MessageListener {
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
     private String pathTestsuite;
+    private String testSchedulePath = null;
     private MessageProducer producer;
     private static ConfigParameters configParameters = null;
 	private static Semaphore semaphore = new Semaphore(0);
@@ -305,15 +306,15 @@ public class IVCTcommander implements MessageListener {
         Map <String, List<String>> xyz = new HashMap <String, List<String>>();
     	File mine;
     	int i;
-    	String path = pathTestsuite + "\\" + testsuite + "\\" + "TestSuites";
+    	testSchedulePath = pathTestsuite + "\\" + testsuite + "\\" + "TestSchedules";
     	String files[];
-    	mine = new File(path);
+    	mine = new File(testSchedulePath);
     	files = mine.list ();
     	if (files == null) {
     		return null;
     	}
     	for (i = 0; i < files.length; i++) {
-    		String p = new String(path + "\\" + files[i]);
+    		String p = new String(testSchedulePath + "\\" + files[i]);
     		mine = new File (p);
     		if (mine.isFile()) {
     	    	List<String> ls;
@@ -322,6 +323,10 @@ public class IVCTcommander implements MessageListener {
     		}
     	}
     	return xyz;
+    }
+    
+    String getTestschedulePath() {
+    	return testSchedulePath;
     }
       
     private static List<String> readFile(String filename)
@@ -419,7 +424,6 @@ public class IVCTcommander implements MessageListener {
       }
       
       public void listVerdicts() {
-			System.out.println("Verdicts are:");
 			System.out.println("SUT: " + RuntimeParameters.getSutName());
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
@@ -527,8 +531,11 @@ public class IVCTcommander implements MessageListener {
     				verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
     			}
     			if (rtp.checkTestSuiteNameNew()) {
-    				String testSuiteStr = new String("Test Suite: " + rtp.getTestSuiteName());
+    				String testSuiteStr = new String("Test Suite: " + RuntimeParameters.getTestSuiteName());
     				listOfVerdicts.addElement(testSuiteStr);
+    				testSuiteStr = new String("Verdicts are:");
+    				listOfVerdicts.addElement(testSuiteStr);
+    				System.out.println("Verdicts are:");
     				addTestSessionSeparator();
     				rtp.setTestSuiteNameUsed();
     			}
