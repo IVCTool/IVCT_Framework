@@ -86,8 +86,7 @@ public class TcBaseModel extends IVCT_BaseModel {
             this.ivct_rti.connect(federateReference, callbackModel, localSettingsDesignator);
         }
         catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError ex) {
-            // TODO Auto-generated catch block
-            ex.printStackTrace();
+            this.logger.error("TcBaseModel: connect: " + ex);
         }
     }
 
@@ -222,7 +221,9 @@ public class TcBaseModel extends IVCT_BaseModel {
                 attributeValues.put(this._attributeIdName, nameEncoder.toByteArray());
                 this.ivct_rti.updateAttributeValues(this._userId, attributeValues, null);
             }
-            catch (final RTIexception ignored) {}
+            catch (final RTIexception ex) {
+                this.logger.error("TcBaseModel: provideAttributeValueUpdate: " + ex);
+            }
         }
     }
 
@@ -257,7 +258,7 @@ public class TcBaseModel extends IVCT_BaseModel {
                 this.logger.info(sender + ": " + message + "> ");
             }
             catch (final DecoderException e) {
-                this.logger.error("Failed to decode incoming interaction");
+                this.logger.error("TcBaseModel: receiveInteraction: Failed to decode incoming interaction");
             }
         }
     }

@@ -83,6 +83,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
             this.logger.warn("initiateRti: AlreadyConnected (ignored)");
         }
         catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | CallNotAllowedFromWithinCallback | RTIinternalError e) {
+            this.logger.error("initiateRti: ", e);
             return null;
         }
 
@@ -94,6 +95,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
             this.logger.warn("initiateRti: FederationExecutionAlreadyExists (ignored)");
         }
         catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
+            this.logger.error("initiateRti: ", e);
             return null;
         }
 
@@ -102,7 +104,8 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
             return ivct_rti.joinFederationExecution(federateName, this.ivct_TcParam.getFederationName(), this.ivct_TcParam.getUrls());
         }
         catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-            return null;
+            this.logger.error("initiateRti: ", e);
+        	return null;
         }
     }
 
@@ -117,6 +120,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         	ivct_rti.resignFederationExecution(ResignAction.DELETE_OBJECTS_THEN_DIVEST);
         }
         catch (NotConnected e) {
+            this.logger.warn("terminateRti: NotConnected (ignored)");
     		return;
         }
         catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
@@ -131,6 +135,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
             this.logger.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
         }
         catch (NotConnected e) {
+            this.logger.warn("terminateRti: NotConnected (ignored)");
     		return;
         }
         catch (FederationExecutionDoesNotExist | RTIinternalError e) {

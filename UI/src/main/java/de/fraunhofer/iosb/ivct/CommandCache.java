@@ -38,6 +38,10 @@ public class CommandCache {
 		}
 	}
 	
+	public int getNumberOfTestCases() {
+		return testcases.size();
+	}
+	
 	public String getTestschedule() {
 		return this.testschedule;
 	}

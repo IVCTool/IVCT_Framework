@@ -16,19 +16,29 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
+import org.json.simple.JSONObject;
+
 public class SetSUT implements Command {
 	final String sut;
+	final String sutPath;
 	final IVCTcommander ivctCommander;
 	final int counter;
 
-	SetSUT(final String sut, IVCTcommander ivctCommander, final int counter) {
+	SetSUT(final String sut, IVCTcommander ivctCommander, String sutPath, final int counter) {
 		this.sut = sut;
 		this.ivctCommander = ivctCommander;
+		this.sutPath = sutPath;
 		this.counter = counter;
 	}
 
 	public void execute() {
-		String setSutString = IVCTcommander.printJson("setSUT", counter, "sut", sut);
+		JSONObject obj = new JSONObject();
+		obj.put("commandType", "setSUT");
+		obj.put("sequence", new Integer(counter));
+		obj.put("sut", this.sut);
+		obj.put("sutPath", this.sutPath);
+		String setSutString = obj.toString();
+		
 		this.ivctCommander.sendToJms(setSutString);
 	}
 }

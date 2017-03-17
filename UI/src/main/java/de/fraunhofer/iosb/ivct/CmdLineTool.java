@@ -40,32 +40,38 @@ public class CmdLineTool {
 
     // Create the client by creating a writer thread
     // and starting them.
-    public CmdLineTool() {
-    	try {
-    		CmdLineTool.ivctCommander = new IVCTcommander();
-    	} catch (IOException e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
+    public CmdLineTool() throws IOException {
+    	// Create IVCTcommander
+    	CmdLineTool.ivctCommander = new IVCTcommander();
     	// Create writer            
     	writer = new Writer(ivctCommander);
     	writer.setPriority(5);
     	// Start the thread
     	writer.start();
 
-        (new Thread(new commandRunnable(this.semaphore, this.keepGoing))).start();
+    	(new Thread(new commandRunnable(this.semaphore, this.keepGoing))).start();
 
-        (new Thread(new TcRunnable())).start();	
+    	(new Thread(new TcRunnable())).start();	
     }
     
-    /*
+    /**
      * Main entry point.
+     *
+     * @param args command line parameters
      */
     public static void main(String[] args) {
-        //        LogConfigurationHelper.configureLogging(JMSTestRunner.class);
-        LogConfigurationHelper.configureLogging();
+    	// LogConfigurationHelper.configureLogging(JMSTestRunner.class);
+    	LogConfigurationHelper.configureLogging();
 
-        new CmdLineTool();
+    	try {
+    		new CmdLineTool();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    		System.out.println("CmdLineTool: new IVCTcommander: " + e);
+    		return;
+    	}
+
+    	// Handle callbacks
     	CmdLineTool.ivctCommander.listenToJms();
     }
 
@@ -223,7 +229,8 @@ class Writer extends Thread {
                 		break;
                 	}
                 	RuntimeParameters.setSutName(split[1]);
-                	command = new SetSUT(split[1], ivctCommander, ivctCommander.fetchCounter());
+                	String sutPath = IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName();
+                	command = new SetSUT(split[1], ivctCommander, sutPath, ivctCommander.fetchCounter());
                 	gotNewCommand = true;
                 	IVCTcommander.resetSUT();
                 	break;
@@ -328,7 +335,11 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	if (ivctCommander.rtp.testsuiteTestcases == null) {
+                		System.out.println("ERROR: No test schedule files found in " + ivctCommander.getTestschedulePath());
+                		break;
+                	}
                 	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
                 		String schedule = entry.getKey();
                 		System.out.println(schedule);
@@ -348,7 +359,7 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	if (ivctCommander.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
                         out.println("startTestSchedule: unknown test schedule " + split[1]);
                         break;
@@ -395,8 +406,9 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("abortTestSchedule: Warning extra parameter: " + split[1]);
                 	}
+                	RuntimeParameters.setAbortTestScheduleBool(true);
 //                	command = new AbortTestSchedule(ivctCommander);
-                    out.println("abortTestSchedule: Warning abort test schedule logic is NOT IMPLEMENTED yet");
+                    out.println("abortTestSchedule: N.B: only stops running remaining test cases");
                     break;
                 case "listTestCases":
                 case "ltc":
@@ -407,7 +419,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
                 		String schedule = entry.getKey();
                 		System.out.println(schedule);
@@ -431,7 +443,7 @@ class Writer extends Thread {
                         out.println("startTestCase: Error missing test case id");
                         break;
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = IVCTcommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
                 	if (ivctCommander.rtp.checkTestCaseNameKnown(split[1])) {
                         out.println("startTestCase: unknown test case " + split[1]);
                         break;
@@ -473,7 +485,7 @@ class Writer extends Thread {
                 	}
                 	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("debug") || split[1].equals("info")) {
                 		command = new SetLogLevel(split[1], ivctCommander, ivctCommander.fetchCounter());
-                        out.println("setLogLevel: Warning abort set log level logic is NOT IMPLEMENTED yet");
+                        out.println("setLogLevel: Warning: set log level logic is NOT IMPLEMENTED yet");
                 	} else {
                         out.println("Unknown log level: " + split[1]);
                 	}
@@ -498,9 +510,7 @@ class Writer extends Thread {
                 		out.println("SUT: " + sut);
                 	}
                 	String testSuiteName = RuntimeParameters.getTestSuiteName();
-                	if (testSuiteName == null) {
-                		out.println("TestSuiteName:");
-                	} else {
+                	if (testSuiteName != null) {
                 		out.println("TestSuiteName: " + testSuiteName);
                 	}
                 	String testScheduleName = RuntimeParameters.getTestScheduleName();
@@ -520,11 +530,27 @@ class Writer extends Thread {
                 		}
                 	}
                 	break;
+                case "terse":
+                case "t":
+                	ivctCommander.setCmdVerboseBool(false);
+            		out.println("Command line output is now terse.");
+                	break;
+                case "verbose":
+                case "v":
+                	ivctCommander.setCmdVerboseBool(true);
+            		out.println("Command line output is now verbose.");
+                	break;
                 case "quit":
                 case "q":
                 	// Check any critical tasks are running
                 	if (ivctCommander.checkCtTcTsRunning("quit", out)) {
-                		break;
+                		out.println("Do you want to quit anyway? (answer yes to quit UI)");
+                        line = in.readLine();
+                        if (line == null) break;
+                        String splitQuit[]= line.trim().split("\\s+");
+                        if (splitQuit[0].equalsIgnoreCase("yes") == false) {
+                    		break;
+                        }
                 	}
                 	command = new QuitCmd("quit", ivctCommander, ivctCommander.fetchCounter());
                 	command.execute();
@@ -547,6 +573,8 @@ class Writer extends Thread {
                     out.println("setLogLevel (sll) - set the log level for logging - error, warning, debug, info");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
                     out.println("status (s) - display status information");
+                    out.println("terse (t) - display only important session information");
+                    out.println("verbose (v) - display detailed session information");
                     out.println("quit (q) - quit the program");
                     out.println("help (h) - display the help information");
                     break;

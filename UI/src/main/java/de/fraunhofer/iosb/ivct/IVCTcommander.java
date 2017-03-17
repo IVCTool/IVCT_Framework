@@ -68,12 +68,15 @@ public class IVCTcommander implements MessageListener {
     private static Logger            LOGGER                       = LoggerFactory.getLogger(IVCTcommander.class);
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
+    private String pathTestsuite;
+    private String testSchedulePath = null;
     private MessageProducer producer;
     private static ConfigParameters configParameters = null;
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
+	private static boolean cmdVerboseBool = false;
     public RuntimeParameters rtp = new RuntimeParameters();
 
     /**
@@ -91,7 +94,7 @@ public class IVCTcommander implements MessageListener {
             runner.listenToJms();
         }
         catch (final IOException ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error("main: IOException", ex);
         }
     }
 
@@ -116,6 +119,11 @@ public class IVCTcommander implements MessageListener {
             System.out.println ("The global variable IVCT_CONF is NOT set");
         	System.exit(1);
         }
+        pathTestsuite = System.getenv("IVCT_TS_HOME");
+        if (pathTestsuite == null) {
+            System.out.println ("The global variable IVCT_TS_HOME is NOT set");
+        	System.exit(1);
+        }
 
         domConfig = parseXmlFile(ivct_path + "\\IVCTconfig.xml");
         if (domConfig != null) {
@@ -125,18 +133,18 @@ public class IVCTcommander implements MessageListener {
                 System.out.println ("PATH SUT DIR in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathSutDir);
             	System.exit(1);
             }
-            File f0 = new File(configParameters.pathTestsuite);
+            File f0 = new File(pathTestsuite);
             if (f0.isDirectory() == false) {
-                System.out.println ("PATH TEST SUITE in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathTestsuite);
+                System.out.println ("Global variable IVCT_TS_HOME is NOT a FOLDER: " + pathTestsuite);
             	System.exit(1);
             }
         } else {
             System.out.println ("Cannot parse: " + ivct_path + "\\IVCTconfig.xml");
         	System.exit(1);
         }
-        System.out.println ("pathTestsuite: " + configParameters.pathTestsuite);
+        System.out.println ("pathTestsuite: " + pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        rtp.domTestsuite = parseXmlFile(configParameters.pathTestsuite + "\\IVCTtestsuites.xml");
+        rtp.domTestsuite = parseXmlFile(pathTestsuite + "\\IVCTtestsuites.xml");
     }
 
     private static Document parseXmlFile(final String fileName){
@@ -168,8 +176,8 @@ public class IVCTcommander implements MessageListener {
         	countSemaphore++;
     		semaphore.acquire();
     	} catch (InterruptedException e) {
-    		// TODO Auto-generated catch block
     		e.printStackTrace();
+            LOGGER.error("acquireSemaphore: ", e);
     	}
     }
 
@@ -286,23 +294,27 @@ public class IVCTcommander implements MessageListener {
     	return configParameters.pathSutDir;
     }
     
-    protected static String getTestSuiteName() {
+    protected String getTestSuiteName() {
     	return RuntimeParameters.getTestSuiteName();
     }
     
-    protected static Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
+    protected void setCmdVerboseBool(final boolean b) {
+    	cmdVerboseBool = b;
+    }
+    
+    protected Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
         Map <String, List<String>> xyz = new HashMap <String, List<String>>();
     	File mine;
     	int i;
-    	String path = configParameters.pathTestsuite + "\\" + testsuite;
+    	testSchedulePath = pathTestsuite + "\\" + testsuite + "\\" + "TestSchedules";
     	String files[];
-    	mine = new File(path);
+    	mine = new File(testSchedulePath);
     	files = mine.list ();
     	if (files == null) {
     		return null;
     	}
     	for (i = 0; i < files.length; i++) {
-    		String p = new String(path + "\\" + files[i]);
+    		String p = new String(testSchedulePath + "\\" + files[i]);
     		mine = new File (p);
     		if (mine.isFile()) {
     	    	List<String> ls;
@@ -311,6 +323,10 @@ public class IVCTcommander implements MessageListener {
     		}
     	}
     	return xyz;
+    }
+    
+    String getTestschedulePath() {
+    	return testSchedulePath;
     }
       
     private static List<String> readFile(String filename)
@@ -325,14 +341,13 @@ public class IVCTcommander implements MessageListener {
     			records.add(line);
     		}
     		reader.close();
-    		return records;
     	}
     	catch (Exception e)
     	{
     		System.err.format("Exception occurred trying to read '%s'.", filename);
     		e.printStackTrace();
-    		return null;
     	}
+		return records;
     }
 
     public static String readWholeFile(final String filename) {
@@ -393,12 +408,6 @@ public class IVCTcommander implements MessageListener {
                 	configParameters.pathSutDir = child0.getFirstChild().getNodeValue();
                 }
               }
-              if (child0.getNodeName().compareTo("testSuites") == 0 )
-              {
-                if (child0.getNodeType() == Node.ELEMENT_NODE) {
-                	configParameters.pathTestsuite = child0.getFirstChild().getNodeValue();
-                }
-              }
             }
           }
     	}
@@ -415,8 +424,7 @@ public class IVCTcommander implements MessageListener {
       }
       
       public void listVerdicts() {
-			System.out.println("Verdicts are:");
-			System.out.println("SUT: " + rtp.getSutName());
+			System.out.println("SUT: " + RuntimeParameters.getSutName());
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
 			}
@@ -427,22 +435,28 @@ public class IVCTcommander implements MessageListener {
       }
 
       public static String printJson(String command, final int counter) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
-      	System.out.println(s);
+   		String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
+   		if (cmdVerboseBool) {
+   			System.out.println(s);
+   		}
       	return s;
       }
       
       public static String printJson(String command, final int counter, String param, String value) {
       	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\"\n}");
-      	System.out.println(s);
+      	if (cmdVerboseBool) {
+      		System.out.println(s);
+      	}
       	return s;
       }
 
-      public static String printJson(final String command, final int counter, final String param, final String value, final String param1, final String value1, final String param2, final String value2) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\",\n  \"" + param1 + "\" : \"" + value1 + "\",\n  \"" + param2 + "\" : " + value2 + "}");
-      	System.out.println(s);
-      	return s;
-      }
+      public static String printTestCaseJson(final int counter, final String testScheduleName, final String testCaseId, final String value1, final String value2) {
+	  	String s = new String("{\n  \"commandType\" : \"" + "startTestCase" + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"testScheduleName\" : \"" + testScheduleName + "\",\n  \"testCaseId\" : \"" + testCaseId + "\",\n  \"tsRunFolder\" : \"" + value1 + "\",\n  \"tcParam\" : " + value2 + "}");
+      	if (cmdVerboseBool) {
+	    	System.out.println(s);
+      	}
+	    return s;
+	  }
 
       public static void resetSUT() {
     	  listOfVerdicts.clear();
@@ -474,7 +488,7 @@ public class IVCTcommander implements MessageListener {
     	 * (non-Javadoc)
     	 * @see java.lang.Runnable#run()
     	 */
-    	public void run(final JSONObject jsonObject, final Vector<String> listOfVerdicts) {
+    	public void run(final JSONObject jsonObject, final Vector<String> listOfVerdicts, final boolean cmdVerboseBool) {
     		String commandTypeName =  (String) jsonObject.get("commandType");
 
     		switch (commandTypeName) {
@@ -482,26 +496,34 @@ public class IVCTcommander implements MessageListener {
     			if (checkDuplicateSequenceNumber(jsonObject)) {
     				return;
     			}
-    			System.out.println("The commandType name is: " + commandTypeName);
+    			if (cmdVerboseBool) {
+    				System.out.println("The commandType name is: " + commandTypeName);
+    			}
     			Long temp = Long.valueOf((String)jsonObject.get("sequence"));
-    			if (temp == null) {
-    				System.out.println("The sequence number is: null");
-    			} else {
-    				System.out.println("The sequence number is: " + temp);
+    			if (cmdVerboseBool) {
+    				if (temp == null) {
+    					System.out.println("The sequence number is: null");
+    				} else {
+    					System.out.println("The sequence number is: " + temp);
+    				}
     			}
     			String testSchedule = rtp.getTestScheduleName();
     			String testcase =  (String) jsonObject.get("testcase");
-    			if (testcase != null) {
-    				System.out.println("The test case name is: " + testcase.substring(testcase.lastIndexOf(".") + 1));
+    			if (testcase == null) {
+    				System.out.println("Error: the test case name is null");
     			}
     			String verdict =  (String) jsonObject.get("verdict");
-    			if (verdict != null) {
-    				System.out.println("The test case verdict is: " + verdict);
+    			if (verdict == null) {
+    				System.out.println("Error: test case verdict is null");
     			}
     			String verdictText =  (String) jsonObject.get("verdictText");
-    			if (verdictText != null) {
-    				System.out.println("The test case verdict text is: " + verdictText + "\n");
+    			if (verdictText == null) {
+    				System.out.println("Error: the test case verdict text is null");
     			}
+    			if (testcase != null && verdict != null && verdictText != null) {
+    				System.out.println("The verdict is: " + testcase.substring(testcase.lastIndexOf(".") + 1) + " " + verdict + " " + verdictText);
+    			}
+    			System.out.println("\n");
     			String verdictStr = null;
     			if (testSchedule == null) {
     				verdictStr = new String("(single tc) " + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
@@ -509,8 +531,11 @@ public class IVCTcommander implements MessageListener {
     				verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
     			}
     			if (rtp.checkTestSuiteNameNew()) {
-    				String testSuiteStr = new String("Test Suite: " + rtp.getTestSuiteName());
+    				String testSuiteStr = new String("Test Suite: " + RuntimeParameters.getTestSuiteName());
     				listOfVerdicts.addElement(testSuiteStr);
+    				testSuiteStr = new String("Verdicts are:");
+    				listOfVerdicts.addElement(testSuiteStr);
+    				System.out.println("Verdicts are:");
     				addTestSessionSeparator();
     				rtp.setTestSuiteNameUsed();
     			}
@@ -545,7 +570,7 @@ public class IVCTcommander implements MessageListener {
 
     				switch (commandTypeName) {
     				case "announceVerdict":
-    					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts);
+    					onMessageUiConsumer.run(jsonObject, IVCTcommander.listOfVerdicts, cmdVerboseBool);
     					break;
     	    		case "quit":
     	    			// Should ignore
@@ -559,13 +584,13 @@ public class IVCTcommander implements MessageListener {
     					break;
     				}    					
     			} catch (ParseException e) {
-    				// TODO Auto-generated catch block
     				e.printStackTrace();
+    	            LOGGER.error("onMessage: ", e);
     			}
 
     		}
-    		catch (final JMSException ex) {
-    			LOGGER.warn("Problems with parsing Message", ex);
+    		catch (final JMSException e) {
+    			LOGGER.error("onMessage: problems with getText", e);
     		}
     	}
     }
