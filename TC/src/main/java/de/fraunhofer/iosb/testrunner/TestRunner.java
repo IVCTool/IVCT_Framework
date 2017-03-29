@@ -12,7 +12,7 @@ import de.fraunhofer.iosb.tc_lib.TcParamTmr;
 
 
 /**
- * Simple test enviroment. The TestRunner takes the classnames of the tests as
+ * Simple test environment. The TestRunner takes the classnames of the tests as
  * commandline arguments and then executes the tests in the given order.
  *
  * @author sen (Fraunhofer IOSB)

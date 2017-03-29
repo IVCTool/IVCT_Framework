@@ -54,6 +54,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
+import de.fraunhofer.iosb.tc_lib.LineUtil;
 
 /**
  * IVCTcommander takes user input strings, creates and sends messages to the JMS bus,
@@ -405,7 +406,7 @@ public class IVCTcommander implements MessageListener {
               if (child0.getNodeName().compareTo("sutDir") == 0 )
               {
                 if (child0.getNodeType() == Node.ELEMENT_NODE) {
-                	configParameters.pathSutDir = child0.getFirstChild().getNodeValue();
+                	configParameters.pathSutDir = LineUtil.replaceMacro(child0.getFirstChild().getNodeValue());
                 }
               }
             }

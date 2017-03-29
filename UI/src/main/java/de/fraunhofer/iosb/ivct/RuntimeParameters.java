@@ -33,6 +33,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import de.fraunhofer.iosb.tc_lib.LineUtil;
+
 class TestSuiteParameters {
 	String packageName;
 	String tsRunFolder;
@@ -182,7 +184,7 @@ public final class RuntimeParameters {
 								testSuiteParameters.packageName = child1.getFirstChild().getNodeValue();
 							}
 							if (child1.getNodeName().compareTo("tsRunFolder") == 0) {
-								testSuiteParameters.tsRunFolder = child1.getFirstChild().getNodeValue();
+								testSuiteParameters.tsRunFolder = LineUtil.replaceMacro(child1.getFirstChild().getNodeValue());
 							}
 						}
 						ls.put(testSuiteName, testSuiteParameters);
