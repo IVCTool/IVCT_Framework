@@ -21,3 +21,4 @@ bin
 logs
 build
 /.gradle
+/.nb-gradle/
