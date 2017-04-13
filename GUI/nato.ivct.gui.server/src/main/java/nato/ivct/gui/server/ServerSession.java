@@ -1,7 +1,9 @@
 package nato.ivct.gui.server;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
@@ -66,6 +68,12 @@ public class ServerSession extends AbstractServerSession {
 	@Override
 	protected void execLoadSession() {
 		LOG.info("created a new session for {}", getUserId());
+		ivctCmdFactory = new Factory();
+		try {
+			ivctCmdFactory.initialize();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		LOG.info("load SuT Information");
 		loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());

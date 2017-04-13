@@ -90,6 +90,14 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 			}
 		}
 
+		public VendorColumn getVendorColumn() {
+			return getColumnSet().getColumnByClass(VendorColumn.class);
+		}
+
+		public BadgeColumn getBadgeColumn() {
+			return getColumnSet().getColumnByClass(BadgeColumn.class);
+		}
+
 		public SuTDescriptionColumn getSuTDescriptionColumn() {
 			return getColumnSet().getColumnByClass(SuTDescriptionColumn.class);
 		}
@@ -133,6 +141,34 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 				return 500;
 			}
 		}
+
+		@Order(3000)
+		public class VendorColumn extends AbstractStringColumn {
+			@Override
+			protected String getConfiguredHeaderText() {
+				return TEXTS.get("Vendor");
+			}
+
+			@Override
+			protected int getConfiguredWidth() {
+				return 100;
+			}
+		}
+
+		@Order(4000)
+		public class BadgeColumn extends AbstractStringColumn {
+			@Override
+			protected String getConfiguredHeaderText() {
+				return TEXTS.get("Badge");
+			}
+
+			@Override
+			protected int getConfiguredWidth() {
+				return 100;
+			}
+		}
+		
+		
 
 	}
 

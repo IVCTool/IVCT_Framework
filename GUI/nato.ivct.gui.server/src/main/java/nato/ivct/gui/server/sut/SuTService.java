@@ -41,6 +41,8 @@ public class SuTService implements ISuTService {
 			row = pageData.addRow();
 			row.setSuTid(value.id);
 			row.setSuTDescription(value.description);
+			row.setVendor(value.vendor);
+			row.setBadge(value.conformanceStatment);
 			sut_hm.put(row.getSuTid(), row);
 
 		}

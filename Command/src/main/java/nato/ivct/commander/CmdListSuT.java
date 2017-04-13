@@ -14,7 +14,14 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class CmdListSuT implements Command {
 
@@ -22,30 +29,57 @@ public class CmdListSuT implements Command {
 
 	@Override
 	public void execute() {
-		// TODO [hzg] implement the some file loader to read the JSON descriptions of SuT's
-		
-		// Create dummy data
-		SutDescription sut = new SutDescription();
-		sut.id = "SuT1";
-		sut.description = "Demonstration System";
-		sut.vendor = "Fraunhofer IOSB";
-		sut.conformanceStatment = "HelloWorld";
-		sutMap.put("SuT1", sut);
+		// TODO [hzg] implement the some file loader to read the JSON
+		// descriptions of SuT's
 
-		sut = new SutDescription();
-		sut.id = "SuT2";
-		sut.description = "The same Demonstration System as the SuT1 demonstration system";
-		sut.vendor = "Fraunhofer IOSB";
-		sut.conformanceStatment = "HelloWorld";
-		sutMap.put("SuT2", sut);
+		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME));
+		File[] filesList = dir.listFiles();
+		for (File file : filesList) {
+			if (file.isDirectory()) {
+				Object obj;
+				JSONParser parser = new JSONParser();
+				try {
+					SutDescription sut = new SutDescription();
+					obj = parser.parse(new FileReader(file + "\\CS.json"));
+					JSONObject jsonObj = (JSONObject) obj;
+					sut.id = (String) jsonObj.get("id");
+					sut.description = (String) jsonObj.get("description");
+					sut.vendor = (String) jsonObj.get("vendor");
+					sut.conformanceStatment = (String) jsonObj.get("badge");
+					sutMap.put(sut.id, sut);
+				} catch (IOException | ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-		sut = new SutDescription();
-		sut.id = "SuT3";
-		sut.description = "Some other Demonstration System just to have some other system with some very long description text that does not fit into one single line";
-		sut.vendor = "Fraunhofer IOSB";
-		sut.conformanceStatment = "HelloWorld";
-		sutMap.put("SuT3", sut);
-		
+			}
+		}
+
+		// // Create dummy data
+		// SutDescription sut = new SutDescription();
+		// sut.id = "SuT1";
+		// sut.description = "Demonstration System";
+		// sut.vendor = "Fraunhofer IOSB";
+		// sut.conformanceStatment = "HelloWorld";
+		// sutMap.put("SuT1", sut);
+		//
+		// sut = new SutDescription();
+		// sut.id = "SuT2";
+		// sut.description = "The same Demonstration System as the SuT1
+		// demonstration system";
+		// sut.vendor = "Fraunhofer IOSB";
+		// sut.conformanceStatment = "HelloWorld";
+		// sutMap.put("SuT2", sut);
+		//
+		// sut = new SutDescription();
+		// sut.id = "SuT3";
+		// sut.description = "Some other Demonstration System just to have some
+		// other system with some very long description text that does not fit
+		// into one single line";
+		// sut.vendor = "Fraunhofer IOSB";
+		// sut.conformanceStatment = "HelloWorld";
+		// sutMap.put("SuT3", sut);
+
 	}
 
 }

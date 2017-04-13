@@ -59,6 +59,7 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbFormData prepareCreate(CbFormData formData) {
+		LOG.info ("prepareCreate");
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -68,6 +69,7 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbFormData create(CbFormData formData) {
+		LOG.info ("create");
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -77,6 +79,7 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbFormData load(CbFormData formData) {
+		LOG.info ("load");
 		if (!ACCESS.check(new ReadCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -86,6 +89,7 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbFormData store(CbFormData formData) {
+		LOG.info ("store");
 		if (!ACCESS.check(new UpdateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
