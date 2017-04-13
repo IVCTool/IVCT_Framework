@@ -49,6 +49,7 @@ public class SuTService implements ISuTService {
 
 	@Override
 	public SuTFormData prepareCreate(SuTFormData formData) {
+		LOG.info ("prepareCreate");
 		if (!ACCESS.check(new CreateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -58,6 +59,7 @@ public class SuTService implements ISuTService {
 
 	@Override
 	public SuTFormData create(SuTFormData formData) {
+		LOG.info ("create");
 		if (!ACCESS.check(new CreateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -67,6 +69,7 @@ public class SuTService implements ISuTService {
 
 	@Override
 	public SuTFormData load(SuTFormData formData) {
+		LOG.info ("load");
 		if (!ACCESS.check(new ReadSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -76,6 +79,7 @@ public class SuTService implements ISuTService {
 
 	@Override
 	public SuTFormData store(SuTFormData formData) {
+		LOG.info ("store");
 		if (!ACCESS.check(new UpdateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
