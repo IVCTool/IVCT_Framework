@@ -1,4 +1,4 @@
-/* Copyright 2015, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class CmdListSuT implements Command {
 		// TODO [hzg] implement the some file loader to read the JSON
 		// descriptions of SuT's
 
-		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME));
+		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			if (file.isDirectory()) {

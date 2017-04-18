@@ -1,4 +1,4 @@
-/* Copyright 2015, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,11 +28,12 @@ import org.slf4j.LoggerFactory;
 public class Factory {
 	
 	public static Properties props = null;
-	public static final String IVCT_HOME		= "C:/home";
-	public static final String IVCT_TS_HOME		= "C:/home";
-	public static final String IVCT_SUT_HOME	= "C:/ProjekteLokal/MSG134/DemoFolders/IVCTsut";
-	public static final String RTI				= "myRTI";
-	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
+	public static final String IVCT_HOME_ID			= "IVCT_HOME_ID";
+	public static final String IVCT_TS_HOME_ID		= "IVCT_TS_HOME_ID";
+	public static final String IVCT_SUT_HOME_ID		= "IVCT_SUT_HOME_ID";
+	public static final String RTI_ID				= "RTI_ID";
+	
+	public static final org.slf4j.Logger LOGGER 	= LoggerFactory.getLogger(Factory.class);
 
 	/* 
 	 * Factory has to be initialized before any commands are being created.
@@ -44,11 +45,11 @@ public class Factory {
 		}
 		catch (final FileNotFoundException e){
 			LOGGER.warn("no properties file IVCT.properties found");
-			props.setProperty(IVCT_HOME, "C:/ProjekteLokal/MSG134/IVCT_Framework");
-			props.setProperty(IVCT_TS_HOME, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTtestSuites");
-			props.setProperty(IVCT_SUT_HOME, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTsut");
-			props.setProperty(RTI, "pRTI");
-			props.store (new FileOutputStream("IVCT.properties"), "IVCT Properties");
+			props.setProperty(IVCT_HOME_ID, "C:/ProjekteLokal/MSG134/IVCT_Framework");
+			props.setProperty(IVCT_TS_HOME_ID, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTtestSuites");
+			props.setProperty(IVCT_SUT_HOME_ID, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTsut");
+			props.setProperty(RTI_ID, "pRTI");
+			props.store (new FileOutputStream("IVCT.properties"), "IVCT Properties File");
 			LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
 			LOGGER.warn(props.toString());
 		}
