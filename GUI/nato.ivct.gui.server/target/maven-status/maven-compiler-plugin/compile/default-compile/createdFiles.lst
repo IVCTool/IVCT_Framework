@@ -1,5 +1,2 @@
-nato\ivct\gui\server\sut\SuTService.class
 nato\ivct\gui\server\security\ServerAccessControlService.class
 nato\ivct\gui\server\ServerServletFilter.class
-nato\ivct\gui\server\ServerSession.class
-nato\ivct\gui\server\cb\CbService.class
