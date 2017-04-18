@@ -5,8 +5,7 @@
 
 # Package Files #
 *.jar
-# don't ignore .war projects
-#  *.war
+*.war
 *.ear
 
 # but not the wrapper jar
