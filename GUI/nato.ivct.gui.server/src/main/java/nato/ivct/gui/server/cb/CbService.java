@@ -84,6 +84,9 @@ public class CbService implements ICbService {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
 		// TODO [hzg] add business logic here.
+		CbTableRowData cbRowData = cb_hm.get(formData.getCbId());
+		formData.getCbName().setValue(cbRowData.getCapabilityName());
+		formData.getCbDescription().setValue(cbRowData.getCapabilityDescription());
 		return formData;
 	}
 

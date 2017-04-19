@@ -76,6 +76,10 @@ public class SuTService implements ISuTService {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
 		// TODO [hzg] add business logic here.
+		SuTTableRowData sutRow = sut_hm.get(formData.getSutId());
+		formData.getName().setValue(sutRow.getSuTid());
+		formData.getSutVendor().setValue(sutRow.getVendor());
+		formData.getDescr().setValue(sutRow.getSuTDescription());
 		return formData;
 	}
 
