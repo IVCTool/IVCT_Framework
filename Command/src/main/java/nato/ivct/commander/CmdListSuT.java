@@ -29,8 +29,7 @@ public class CmdListSuT implements Command {
 
 	@Override
 	public void execute() {
-		// TODO [hzg] implement the some file loader to read the JSON
-		// descriptions of SuT's
+		// file loader to read the JSON descriptions of SuT's
 
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
 		File[] filesList = dir.listFiles();
