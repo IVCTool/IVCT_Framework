@@ -153,7 +153,7 @@
     <master_plugin_clean_version>3.0.0</master_plugin_clean_version>
     <master_plugin_build-helper_version>1.9.1</master_plugin_build-helper_version>
     <master_javadoc_opts></master_javadoc_opts>
-    <master_coverage_jacoco_destFile>C:\ProjekteLokal\MSG134\IVCT_Framework\GUI\nato.ivct.gui/../target/jacoco-all.exec</master_coverage_jacoco_destFile>
+    <master_coverage_jacoco_destFile>C:\Projekte\MSG134\IVCT_Framework\GUI\nato.ivct.gui/../target/jacoco-all.exec</master_coverage_jacoco_destFile>
     <master_plugin_tycho-extras_version>0.22.0</master_plugin_tycho-extras_version>
     <master_test_reuseVm>true</master_test_reuseVm>
     <master_plugin_cargo_version>1.4.15</master_plugin_cargo_version>
