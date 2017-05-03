@@ -124,7 +124,12 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredMaxLength() {
-					return 128;
+					return 512;
+				}
+				@Override
+				protected int getConfiguredGridW() {
+					// TODO Auto-generated method stub
+					return 4;
 				}
 			}
 
@@ -138,6 +143,11 @@ public class CbForm extends AbstractForm {
 				@Override
 				protected int getConfiguredMaxLength() {
 					return 128;
+				}
+				@Override
+				protected int getConfiguredGridW() {
+					// TODO Auto-generated method stub
+					return 4;
 				}
 			}
 
