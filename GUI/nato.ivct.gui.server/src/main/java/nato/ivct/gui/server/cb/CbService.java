@@ -26,7 +26,11 @@ public class CbService implements ICbService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 
-	HashMap<String, CbTableRowData> cb_hm = new HashMap<String, CbTableRowData>();
+	HashMap<String, BadgeDescription> cb_hm = new HashMap<String, BadgeDescription>();
+	public BadgeDescription getBadgeDescription (String cb){
+		return cb_hm.get(cb);
+	}
+	
 
 	@Override
 	public CbTablePageData getCbTableData(SearchFilter filter) {
@@ -40,10 +44,11 @@ public class CbService implements ICbService {
 		CbTableRowData row;
 		for (BadgeDescription value : badgeCmd.badgeMap.values()) {
            row = pageData.addRow();
-           row.setCapabilityName(value.capabilityName);
+           row.setCpId(value.ID);
+           row.setCapabilityName(value.name);
            row.setCapabilityDescription(value.description);
            row.setCbVisual(value.cbVisual);
-           cb_hm.put(row.getCapabilityName(), row);
+           cb_hm.put(value.ID, value);
 		}
 		return pageData;
 	}
@@ -84,9 +89,10 @@ public class CbService implements ICbService {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
 		// TODO [hzg] add business logic here.
-		CbTableRowData cbRowData = cb_hm.get(formData.getCbId());
-		formData.getCbName().setValue(cbRowData.getCapabilityName());
-		formData.getCbDescription().setValue(cbRowData.getCapabilityDescription());
+		String s = formData.getCbId();
+		BadgeDescription cb = cb_hm.get(formData.getCbId());
+		formData.getCbName().setValue(cb.ID);
+		formData.getCbDescription().setValue(cb.description);
 		return formData;
 	}
 

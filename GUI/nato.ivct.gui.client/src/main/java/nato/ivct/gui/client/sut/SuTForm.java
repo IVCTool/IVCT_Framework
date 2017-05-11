@@ -1,7 +1,11 @@
 package nato.ivct.gui.client.sut;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITree;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -11,10 +15,12 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
+import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.shared.services.common.code.AbstractCode;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox;
@@ -33,16 +39,24 @@ import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.ExecuteButton;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.TerminateButton;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.EventsField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.CapabilitiesField;
 
 @FormData(value = SuTFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTForm extends AbstractForm {
 
-	private String sutId;
+	private String sutId = null;
+	private String title = null;
+
+	public SuTForm(String formTitle) {
+		title = formTitle;
+	}
 
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [hzg] verify translation
-		return TEXTS.get("SuT");
+		if (title != null)
+			return title;
+		else
+			return TEXTS.get("SuT");
 	}
 
 	public void startModify() {
@@ -99,6 +113,10 @@ public class SuTForm extends AbstractForm {
 
 	public EventsField getEventsField() {
 		return getFieldByClass(EventsField.class);
+	}
+
+	public CapabilitiesField getCapabilitiesField() {
+		return getFieldByClass(CapabilitiesField.class);
 	}
 
 	public NameField getNameField() {
@@ -178,6 +196,22 @@ public class SuTForm extends AbstractForm {
 					return 128;
 				}
 			}
+
+			@Order(4000)
+			public class CapabilitiesField extends AbstractStringField {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Capabilities");
+				}
+
+				@Override
+				protected int getConfiguredMaxLength() {
+					return 128;
+				}
+			}
+			
+			
+			
 		}
 
 		@Order(2000)
@@ -188,7 +222,8 @@ public class SuTForm extends AbstractForm {
 			}
 
 			@Order(4000)
-			public class CapabilitiesBox extends AbstractListBox<Long> {
+			public class CapabilitiesBox extends AbstractListBox<String> {
+
 				@Override
 				protected String getConfiguredLabel() {
 					return TEXTS.get("Capabilities");
@@ -197,6 +232,17 @@ public class SuTForm extends AbstractForm {
 				@Override
 				protected int getConfiguredGridH() {
 					return 6;
+				}
+
+				@Override
+				protected void execInitField() {
+					// TODO Auto-generated method stub
+					// super.execInitField();
+					Set<String> values = new HashSet<String>();
+					values.add("one");
+					values.add("two");
+					setValue(values);
+					setFilterCheckedRowsValue(true);
 				}
 			}
 
@@ -264,11 +310,8 @@ public class SuTForm extends AbstractForm {
 					return 6;
 				}
 			}
-			
-			
-			
+
 		}
-		
 
 		@Order(100000)
 		public class OkButton extends AbstractOkButton {

@@ -15,11 +15,17 @@ limitations under the License. */
 package nato.ivct.commander;
 
 public class BadgeDescription {
-	public String capabilityName;
+
+	public class InteroperabilityRequirement {
+		public String ID;
+		public String description;
+		public String TC;
+	}
+
+	public String ID;
+	public String name;
 	public String description;
 	public String cbVisual;
+	public String[] dependency;
+	public InteroperabilityRequirement[] requirements;
 }
-
-
-
-

@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -41,11 +42,17 @@ public class CmdListSuT implements Command {
 					SutDescription sut = new SutDescription();
 					obj = parser.parse(new FileReader(file + "\\CS.json"));
 					JSONObject jsonObj = (JSONObject) obj;
-					sut.id = (String) jsonObj.get("id");
+					sut.ID = (String) jsonObj.get("id");
 					sut.description = (String) jsonObj.get("description");
 					sut.vendor = (String) jsonObj.get("vendor");
-					sut.conformanceStatment = (String) jsonObj.get("badge");
-					sutMap.put(sut.id, sut);
+					JSONArray cs = (JSONArray) jsonObj.get("badge");
+					sut.conformanceStatment = new String[cs.size()];
+					for (int i=0; i < cs.size(); i++) {
+						sut.conformanceStatment[i] = cs.get(i).toString();
+					}
+
+					//sut.conformanceStatment = (String) jsonObj.get("badge");
+					sutMap.put(sut.ID, sut);
 				} catch (IOException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -53,32 +60,6 @@ public class CmdListSuT implements Command {
 
 			}
 		}
-
-		// // Create dummy data
-		// SutDescription sut = new SutDescription();
-		// sut.id = "SuT1";
-		// sut.description = "Demonstration System";
-		// sut.vendor = "Fraunhofer IOSB";
-		// sut.conformanceStatment = "HelloWorld";
-		// sutMap.put("SuT1", sut);
-		//
-		// sut = new SutDescription();
-		// sut.id = "SuT2";
-		// sut.description = "The same Demonstration System as the SuT1
-		// demonstration system";
-		// sut.vendor = "Fraunhofer IOSB";
-		// sut.conformanceStatment = "HelloWorld";
-		// sutMap.put("SuT2", sut);
-		//
-		// sut = new SutDescription();
-		// sut.id = "SuT3";
-		// sut.description = "Some other Demonstration System just to have some
-		// other system with some very long description text that does not fit
-		// into one single line";
-		// sut.vendor = "Fraunhofer IOSB";
-		// sut.conformanceStatment = "HelloWorld";
-		// sutMap.put("SuT3", sut);
-
 	}
 
 }

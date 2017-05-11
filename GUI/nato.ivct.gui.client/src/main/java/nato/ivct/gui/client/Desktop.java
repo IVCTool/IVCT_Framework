@@ -74,7 +74,7 @@ public class Desktop extends AbstractDesktop {
 
 			@Override
 			protected void execAction() {
-				new SuTForm().startNew();
+				new SuTForm(TEXTS.get("SuT")).startNew();
 			}
 		}
 

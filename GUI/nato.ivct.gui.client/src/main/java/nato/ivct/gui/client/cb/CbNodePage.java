@@ -6,11 +6,11 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNode
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.shared.TEXTS;
 
-import nato.ivct.gui.client.sut.SuTTablePage;
+import nato.ivct.gui.client.sut.CapabilityTablePage;
 
 public class CbNodePage extends AbstractPageWithNodes {
 
-	private String cbId;
+	private String suId;
 	
 	@Override
 	protected String getConfiguredTitle() {
@@ -26,17 +26,15 @@ public class CbNodePage extends AbstractPageWithNodes {
 
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-		SuTTablePage sutTablePage = new SuTTablePage();
-		sutTablePage.setCbId(getCbId());
-		// TODO set the content
-		pageList.add(sutTablePage);
+		CapabilityTablePage cbTablePage = new CapabilityTablePage();
+		cbTablePage.setSutId(getSutId());
+		pageList.add(cbTablePage);
 	}
 
-	public String getCbId() {
-		return cbId;
-	}
-
-	public void setCbId(String cbId) {
-		this.cbId = cbId;
+	public String getSutId() {
+		return suId;
+	}	
+	public void setSutId(String Id) {
+		this.suId = Id;
 	}
 }

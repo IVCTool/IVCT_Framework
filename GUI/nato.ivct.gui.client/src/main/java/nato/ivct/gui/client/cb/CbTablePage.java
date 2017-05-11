@@ -42,7 +42,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 		protected Class<? extends IMenu> getConfiguredDefaultMenu() {
 			return EditMenu.class;
 		}
-		
+
 		@Order(1000)
 		public class EditMenu extends AbstractMenu {
 			@Override
@@ -53,7 +53,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 			@Override
 			protected void execAction() {
 				CbForm form = new CbForm();
-				form.setCbId(getCapabilityNameColumn().getSelectedValue());
+				form.setCbId(getCpIdColumn().getSelectedValue());
 				form.addFormListener(new CbFormListener());
 				form.startModify();
 			}
@@ -91,7 +91,18 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 		public class CpIdColumn extends AbstractStringColumn {
 			@Override
 			protected boolean getConfiguredDisplayable() {
-				return false;
+				return true;
+			}
+
+			@Override
+			protected String getConfiguredHeaderText() {
+				// TODO Auto-generated method stub
+				return TEXTS.get("ID");
+			}
+
+			@Override
+			protected int getConfiguredWidth() {
+				return 200;
 			}
 
 			@Override

@@ -1,12 +1,19 @@
 package nato.ivct.gui.server.sut;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
+import org.mockito.internal.util.collections.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +25,21 @@ import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTFormData;
+import nato.ivct.gui.shared.sut.SuTFormData.CapabilitiesBox;
+import nato.ivct.gui.shared.sut.SuTFormData.TestResults;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
 import nato.ivct.gui.shared.sut.SuTTablePageData.SuTTableRowData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 public class SuTService implements ISuTService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
+	private HashMap<String, SutDescription> sutMap = null;
 
-	HashMap<String, SuTTableRowData> sut_hm = new HashMap<String, SuTTableRowData>();
+	HashMap<String, SutDescription> sut_hm = new HashMap<String, SutDescription>();
+	
+	public SutDescription getSutDescription(String sutId) {
+		return sutMap.get(sutId);
+	}
 
 	@Override
 	public SuTTablePageData getSuTTableData(SearchFilter filter) {
@@ -36,14 +50,22 @@ public class SuTService implements ISuTService {
 		Command result = future.awaitDoneAndGet();
 		// copy sut descriptions into table rows
 		CmdListSuT sutCmd = (CmdListSuT) result;
-		for (SutDescription value : sutCmd.sutMap.values()) {
+		sutMap = sutCmd.sutMap;
+		for (SutDescription value : sutMap.values()) {
 			SuTTableRowData row;
 			row = pageData.addRow();
-			row.setSuTid(value.id);
+			row.setSuTid(value.ID);
 			row.setSuTDescription(value.description);
 			row.setVendor(value.vendor);
-			row.setBadge(value.conformanceStatment);
-			sut_hm.put(row.getSuTid(), row);
+			String cs = "";
+			for (int i=0; i<value.conformanceStatment.length; i++){
+				cs = cs + value.conformanceStatment[i].toString();
+				if (i < value.conformanceStatment.length - 1) {
+					cs = cs + ", ";
+				}
+			}
+			row.setBadge(cs);
+			sut_hm.put(row.getSuTid(), value);
 
 		}
 		return pageData;
@@ -75,11 +97,15 @@ public class SuTService implements ISuTService {
 		if (!ACCESS.check(new ReadSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
-		SuTTableRowData sutRow = sut_hm.get(formData.getSutId());
-		formData.getName().setValue(sutRow.getSuTid());
-		formData.getSutVendor().setValue(sutRow.getVendor());
-		formData.getDescr().setValue(sutRow.getSuTDescription());
+		// find the SuT description by selected SuTid.
+		SutDescription sut = sutMap.get(formData.getSutId());
+		// fill the form data
+		formData.setSutId(sut.ID);
+		formData.getName().setValue(sut.ID);
+		formData.getSutVendor().setValue(sut.vendor);
+		formData.getDescr().setValue(sut.description);
+		formData.getCapabilities().setValue (sut.conformanceStatment.toString());
+		formData.getCapabilitiesBox().setValue(Arrays.stream(sut.conformanceStatment).collect(Collectors.toSet()));
 		return formData;
 	}
 

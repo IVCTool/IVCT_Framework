@@ -36,7 +36,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		CbNodePage childPage = new CbNodePage();
-		childPage.setCbId(getTable().getSuTidColumn().getValue(row));
+		childPage.setSutId(getTable().getSuTidColumn().getValue(row));
 		return childPage;
 	}
 
@@ -47,6 +47,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 	public class Table extends AbstractTable {
 
+		
 		@Order(1000)
 		public class EditMenu extends AbstractMenu {
 			@Override
@@ -56,7 +57,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected void execAction() {
-				SuTForm form = new SuTForm();
+				SuTForm form = new SuTForm(getSuTidColumn().getSelectedValue());
 				form.setSutId(getSuTidColumn().getSelectedValue());
 				form.addFormListener(new SuTFormListener());
 				form.startModify();
@@ -72,7 +73,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected void execAction() {
-				SuTForm form = new SuTForm();
+				SuTForm form = new SuTForm(getSuTidColumn().getSelectedValue());
 				form.addFormListener(new SuTFormListener());
 				form.startNew();
 			}
@@ -151,7 +152,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected int getConfiguredWidth() {
-				return 100;
+				return 200;
 			}
 		}
 
@@ -164,7 +165,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected int getConfiguredWidth() {
-				return 100;
+				return 300;
 			}
 		}
 		

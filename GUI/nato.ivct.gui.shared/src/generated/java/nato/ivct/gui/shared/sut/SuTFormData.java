@@ -19,6 +19,10 @@ public class SuTFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
+	public Capabilities getCapabilities() {
+		return getFieldByClass(Capabilities.class);
+	}
+
 	public CapabilitiesBox getCapabilitiesBox() {
 		return getFieldByClass(CapabilitiesBox.class);
 	}
@@ -61,7 +65,12 @@ public class SuTFormData extends AbstractFormData {
 		return getFieldByClass(TestResults.class);
 	}
 
-	public static class CapabilitiesBox extends AbstractValueFieldData<Set<Long>> {
+	public static class Capabilities extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class CapabilitiesBox extends AbstractValueFieldData<Set<String>> {
 
 		private static final long serialVersionUID = 1L;
 	}

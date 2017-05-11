@@ -15,8 +15,8 @@ limitations under the License. */
 package nato.ivct.commander;
 
 public class SutDescription {
-	public String id;
+	public String ID;
 	public String description;
 	public String vendor;
-	public String conformanceStatment;
+	public String[] conformanceStatment;
 }
