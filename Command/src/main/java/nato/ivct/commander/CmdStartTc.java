@@ -14,8 +14,14 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-public class CmdStartTc implements Command {
+import javax.jms.MessageProducer;
 
+public class CmdStartTc implements Command {
+	MessageProducer producer;
+
+	public CmdStartTc (MessageProducer p){
+		producer = p;
+	}
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
@@ -23,3 +29,18 @@ public class CmdStartTc implements Command {
 	}
 
 }
+
+
+
+//	{
+//	  "commandType" : "startTestCase",
+//	  "sequence" : "125",
+//	  "testScheduleName" : "Badge100",
+//	  "testCaseId" : "de.fraunhofer.iosb.tc_helloworld.TC0002",
+//	  "tsRunFolder" : "TS_HelloWorld\\TS_HelloWorld\\bin",
+//	  "tcParam" : {
+//		  "federationName" : "HelloWorld",
+//		  "rtiHostName" : "localhost",
+//		  "sutFederateName" : "A"
+//		}
+//	}

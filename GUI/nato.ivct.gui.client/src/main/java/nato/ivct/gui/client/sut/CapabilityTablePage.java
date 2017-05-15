@@ -46,6 +46,11 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		importPageData(BEANS.get(ICapabilityService.class).getCapabilityTableData(filter));
 	}
 
+	@Override
+	protected boolean getConfiguredLeaf() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	public class Table extends AbstractTable {
 
 		@Order(1000)
