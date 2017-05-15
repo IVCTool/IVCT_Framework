@@ -33,8 +33,8 @@ public class CapabilityService implements ICapabilityService {
 			if (badge != null) {
 				for (int j = 0; j < badge.requirements.length; j++) {
 					CapabilityTableRowData row = pageData.addRow();
-					row.setRequirementId(sutDesc.conformanceStatment[i]);
-					row.setBadgeId(badge.requirements[j].ID);
+					row.setBadgeId(sutDesc.conformanceStatment[i]);
+					row.setRequirementId(badge.requirements[j].ID);
 					row.setRequirementDesc(badge.requirements[j].description);
 					row.setAbstractTC(badge.requirements[j].TC);
 					row.setTCresult("no result");

@@ -33,7 +33,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 	@Override
 	protected boolean getConfiguredLeaf() {
-		return false;
+		return true;
 	}
 
 	public class Table extends AbstractTable {

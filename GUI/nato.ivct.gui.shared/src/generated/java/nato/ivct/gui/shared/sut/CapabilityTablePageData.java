@@ -52,24 +52,16 @@ public class CapabilityTablePageData extends AbstractTablePageData {
 	public static class CapabilityTableRowData extends AbstractTableRowData {
 
 		private static final long serialVersionUID = 1L;
-		public static final String requirementId = "requirementId";
 		public static final String badgeId = "badgeId";
+		public static final String requirementId = "requirementId";
 		public static final String requirementDesc = "requirementDesc";
 		public static final String abstractTC = "abstractTC";
 		public static final String tCresult = "tCresult";
-		private String m_requirementId;
 		private String m_badgeId;
+		private String m_requirementId;
 		private String m_requirementDesc;
 		private String m_abstractTC;
 		private String m_tCresult;
-
-		public String getRequirementId() {
-			return m_requirementId;
-		}
-
-		public void setRequirementId(String newRequirementId) {
-			m_requirementId = newRequirementId;
-		}
 
 		public String getBadgeId() {
 			return m_badgeId;
@@ -77,6 +69,14 @@ public class CapabilityTablePageData extends AbstractTablePageData {
 
 		public void setBadgeId(String newBadgeId) {
 			m_badgeId = newBadgeId;
+		}
+
+		public String getRequirementId() {
+			return m_requirementId;
+		}
+
+		public void setRequirementId(String newRequirementId) {
+			m_requirementId = newRequirementId;
 		}
 
 		public String getRequirementDesc() {

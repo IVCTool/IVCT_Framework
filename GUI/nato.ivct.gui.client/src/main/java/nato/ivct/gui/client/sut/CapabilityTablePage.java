@@ -2,8 +2,12 @@ package nato.ivct.gui.client.sut;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scout.rt.client.context.ClientRunContext;
+import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.Data;
+import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
@@ -13,7 +17,9 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
@@ -56,17 +62,31 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected void execAction() {
-				List<ITableRow> tcArray = getSelectedRows();
+				Jobs.schedule(new IRunnable() {
+					@Override
+					public void run() throws Exception {
+						
+						// use ModelJobs to synchronize with GUI
+						ModelJobs.schedule(new IRunnable() {
 
-				for (ITableRow tr : tcArray){
-					List<Object> tc = tr.getKeyValues();
-					for (Object o : tc) {
-						String s = o.toString();
+							@Override
+							public void run() throws Exception {
+								List<ITableRow> tcArray = getSelectedRows();
+								for (ITableRow tr : tcArray) {
+									List<Object> tc = tr.getKeyValues();
+									tr.setCellValue(4, "starting");
+									tr.setBackgroundColor("FFA500");
+									for (Object o : tc) {
+										String s = o.toString();
+									}
+								}
+							}
+						}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 					}
-					tr.setBackgroundColor("f99494");
-				}
+				}, Jobs.newInput().withName("Executing Test cases").withRunContext(ClientRunContexts.copyCurrent()));
 			}
-		}
+		}				
+						
 
 		public AbstractTCColumn getAbstractTCColumn() {
 			return getColumnSet().getColumnByClass(AbstractTCColumn.class);
@@ -89,28 +109,28 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		}
 
 		@Order(1000)
-		public class RequirementIdColumn extends AbstractStringColumn {
-			@Override
-			protected String getConfiguredHeaderText() {
-				return TEXTS.get("ID");
-			}
-
-			@Override
-			protected int getConfiguredWidth() {
-				return 100;
-			}
-		}
-
-		@Order(2000)
 		public class BadgeIdColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Interop.req");
+				return TEXTS.get("Badge");
 			}
 
 			@Override
 			protected int getConfiguredWidth() {
 				return 200;
+			}
+		}
+
+		@Order(2000)
+		public class RequirementIdColumn extends AbstractStringColumn {
+			@Override
+			protected String getConfiguredHeaderText() {
+				return TEXTS.get("Requirement");
+			}
+
+			@Override
+			protected int getConfiguredWidth() {
+				return 100;
 			}
 		}
 
