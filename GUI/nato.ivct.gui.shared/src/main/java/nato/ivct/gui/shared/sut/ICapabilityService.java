@@ -8,4 +8,6 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 public interface ICapabilityService extends IService {
 
 	CapabilityTablePageData getCapabilityTableData(SearchFilter filter);
+	void executeTestCase(String sut, String tc, String badge);
+
 }

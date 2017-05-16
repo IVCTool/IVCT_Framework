@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
+import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.Factory;
 
 /**
@@ -24,6 +25,7 @@ public class ServerSession extends AbstractServerSession {
 
 	private IFuture<CmdListSuT> loadSuTJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
+	private IFuture<CmdStartTc> startTcJobs = null;
 	Factory ivctCmdFactory = new Factory();
 
 	public class LoadSuTdescriptions implements Callable<CmdListSuT> {
@@ -48,6 +50,31 @@ public class ServerSession extends AbstractServerSession {
 			return badges;
 		}
 
+	}
+	
+	public class ExecuteTestCase implements Callable<CmdStartTc>{
+		private String sut;
+		private String tc;
+		private String badge;
+
+		public ExecuteTestCase (String _sut, String _tc, String _badge) {
+			sut = _sut;
+			tc = _tc;
+			badge = _badge;
+		}
+		
+		@Override
+		public CmdStartTc call() throws Exception {
+			// TODO Auto-generated method stub
+			CmdStartTc tcCmd = ivctCmdFactory.createCmdStartTc();
+			tcCmd.setSut(sut);
+			tcCmd.setTc(tc);
+			tcCmd.setBadge(badge);
+			tcCmd.execute();
+
+			return null;
+		}
+		
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -88,6 +115,13 @@ public class ServerSession extends AbstractServerSession {
 
 	public IFuture<CmdListBadges> getLoadBadgesJob() {
 		return loadBadgesJob;
+	}
+
+	public void execStartTc(String sut, String tc, String badge) {
+		LOG.info("starting test case");
+		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge), Jobs.newInput());
+		
+		
 	}
 
 }

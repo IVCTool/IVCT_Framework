@@ -1,19 +1,20 @@
 package nato.ivct.gui.server.sut;
 
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.SutDescription;
-import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.ICapabilityService;
 import nato.ivct.gui.shared.sut.ISuTService;
+import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 public class CapabilityService implements ICapabilityService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
@@ -43,5 +44,11 @@ public class CapabilityService implements ICapabilityService {
 		}
 
 		return pageData;
+	}
+	
+	public void executeTestCase(String sut, String tc, String badge) {
+		BEANS.get(ClientNotificationRegistry.class).putForAllNodes(new TestCaseNotification());
+		// execute the CmdStartTc commands
+		ServerSession.get().execStartTc(sut, tc, badge);
 	}
 }

@@ -88,8 +88,6 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new ReadCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
-		String s = formData.getCbId();
 		BadgeDescription cb = cb_hm.get(formData.getCbId());
 		formData.getCbName().setValue(cb.ID);
 		formData.getCbDescription().setValue(cb.description);

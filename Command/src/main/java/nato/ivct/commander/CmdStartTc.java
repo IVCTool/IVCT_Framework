@@ -14,33 +14,83 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageProducer;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.slf4j.LoggerFactory;
 
 public class CmdStartTc implements Command {
-	MessageProducer producer;
+	private MessageProducer producer;
+	private String sut;
+	private String badge;
+	private String tc;
+	
+	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	public CmdStartTc (MessageProducer p){
+
+	public CmdStartTc(MessageProducer p) {
 		producer = p;
 	}
+
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
+		// build the start parameter
+		try {
+			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+			JSONObject startCmd = new JSONObject();
+			startCmd.put("sutId", sut);
+			startCmd.put("testScheduleName", badge);
+			startCmd.put("testCaseId", tc);
+			startCmd.put("tsRunFolder", sutHome);
+			startCmd.put("testCaseId", tc);
+			startCmd.put("testCaseId", tc);
+			JSONParser parser = new JSONParser();
+			String paramFileName = sutHome + "\\" + sut + "\\" + badge+ "\\TcParam.json";
+			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
+			startCmd.put("tcParam", jsonParam);
 
+			// send the start message
+			Message m = Factory.jmsHelper.createTextMessage (startCmd.toString());
+			producer.send(m);
+
+		} catch (IOException | ParseException | JMSException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("error in starting test case <" + badge + "/" + tc + ">");
+			e.printStackTrace();
+		}
+
+	}
+
+	public String getSut() {
+		return sut;
+	}
+
+	public void setSut(String sut) {
+		this.sut = sut;
+	}
+
+	public String getTc() {
+		return tc;
+	}
+
+	public void setTc(String tc) {
+		this.tc = tc;
+	}
+
+	public String getBadge() {
+		return badge;
+	}
+
+	public void setBadge(String _badge) {
+		this.badge = _badge;
 	}
 
 }
-
-
-
-//	{
-//	  "commandType" : "startTestCase",
-//	  "sequence" : "125",
-//	  "testScheduleName" : "Badge100",
-//	  "testCaseId" : "de.fraunhofer.iosb.tc_helloworld.TC0002",
-//	  "tsRunFolder" : "TS_HelloWorld\\TS_HelloWorld\\bin",
-//	  "tcParam" : {
-//		  "federationName" : "HelloWorld",
-//		  "rtiHostName" : "localhost",
-//		  "sutFederateName" : "A"
-//		}
-//	}

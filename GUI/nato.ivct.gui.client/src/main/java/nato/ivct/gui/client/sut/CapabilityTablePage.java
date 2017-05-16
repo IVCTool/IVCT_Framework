@@ -31,6 +31,7 @@ import nato.ivct.gui.shared.sut.ICapabilityService;
 public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 
 	private String sutId = null;
+	private TestCaseResultHandler resultHandler = null;
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -67,28 +68,52 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected void execAction() {
-				Jobs.schedule(new IRunnable() {
+				// use ModelJobs to asynchronously start test case execution sequence
+				ModelJobs.schedule(new IRunnable() {
+
 					@Override
 					public void run() throws Exception {
-						
-						// use ModelJobs to synchronize with GUI
-						ModelJobs.schedule(new IRunnable() {
-
-							@Override
-							public void run() throws Exception {
-								List<ITableRow> tcArray = getSelectedRows();
-								for (ITableRow tr : tcArray) {
-									List<Object> tc = tr.getKeyValues();
-									tr.setCellValue(4, "starting");
-									tr.setBackgroundColor("FFA500");
-									for (Object o : tc) {
-										String s = o.toString();
-									}
-								}
+						resultHandler = new TestCaseResultHandler();
+						ICapabilityService cbService = BEANS.get(ICapabilityService.class);
+						List<ITableRow> tcArray = getSelectedRows();
+						for (ITableRow tr : tcArray) {
+							List<Object> tc = tr.getKeyValues();
+							tr.setCellValue(4, "starting");
+							tr.setBackgroundColor("FFA500");
+							for (Object o : tc) {
+								String s = o.toString();
 							}
-						}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+							String badge = tr.getCell(0).toString();
+							String tcName = tr.getCell(3).toString();
+							cbService.executeTestCase(sutId, tcName, badge);
+						}
+
 					}
-				}, Jobs.newInput().withName("Executing Test cases").withRunContext(ClientRunContexts.copyCurrent()));
+				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+				
+				
+//				Jobs.schedule(new IRunnable() {
+//					@Override
+//					public void run() throws Exception {
+//						
+//						// use ModelJobs to synchronize with GUI
+//						ModelJobs.schedule(new IRunnable() {
+//
+//							@Override
+//							public void run() throws Exception {
+//								List<ITableRow> tcArray = getSelectedRows();
+//								for (ITableRow tr : tcArray) {
+//									List<Object> tc = tr.getKeyValues();
+//									tr.setCellValue(4, "starting");
+//									tr.setBackgroundColor("FFA500");
+//									for (Object o : tc) {
+//										String s = o.toString();
+//									}
+//								}
+//							}
+//						}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+//					}
+//				}, Jobs.newInput().withName("Executing Test cases").withRunContext(ClientRunContexts.copyCurrent()));
 			}
 		}				
 						

@@ -43,7 +43,7 @@ public class Factory {
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
-	PropertyBasedClientSetup jmsHelper = null;
+	static public PropertyBasedClientSetup jmsHelper = null;
 
 	/*
 	 * Factory has to be initialized before any commands are being created.
