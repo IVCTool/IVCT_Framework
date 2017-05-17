@@ -233,9 +233,9 @@ class Writer extends Thread {
                 		break;
                 	}
                 	ivctCommander.rtp.setSutName(split[1]);
-                	String sutPath = IVCTcommander.getSUTdir() + "\\" + ivctCommander.rtp.getSutName();
-                	command = new SetSUT(split[1], ivctCommander, sutPath, ivctCommander.fetchCounter());
-                	gotNewCommand = true;
+//                	String sutPath = IVCTcommander.getSUTdir() + "\\" + ivctCommander.rtp.getSutName();
+//                	command = new SetSUT(split[1], ivctCommander, sutPath, ivctCommander.fetchCounter());
+//                	gotNewCommand = true;
                 	IVCTcommander.resetSUT();
                 	break;
                 case "listTestSuites":
