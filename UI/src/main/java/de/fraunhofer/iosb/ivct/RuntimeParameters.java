@@ -57,7 +57,7 @@ public final class RuntimeParameters {
 	private static List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 	public String paramJson;
-	private static String sutName = null;
+	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private static String testSuiteName = null;
@@ -232,11 +232,11 @@ public final class RuntimeParameters {
 		}
 	}
 
-	protected static String getSutName() {
+	protected String getSutName() {
 		return sutName;
 	}
 
-	protected static void setSutName(String theSutName) {
+	protected void setSutName(String theSutName) {
 		// Same sut just return.
 		if (theSutName.equals(sutName)) {
 			return;

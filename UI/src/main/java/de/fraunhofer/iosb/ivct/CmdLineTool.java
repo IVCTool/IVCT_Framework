@@ -122,8 +122,12 @@ class TcRunnable implements Runnable {
     	}
 
 		try {
-    		System.out.println("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
-    		CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner", null, f);
+			String javaOpts = System.getenv("JAVA_OPTS");
+			if (javaOpts == null) {
+				javaOpts = "-Duser.country=US -Duser.language=EN";
+			}
+			System.out.println("\"" + javaExe + "\" " + javaOpts +" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
+			CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" " + javaOpts + " -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner", null, f);
 //			CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
 
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(CmdLineTool.p.getInputStream()));
@@ -228,8 +232,8 @@ class Writer extends Thread {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}
-                	RuntimeParameters.setSutName(split[1]);
-                	String sutPath = IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName();
+                	ivctCommander.rtp.setSutName(split[1]);
+                	String sutPath = IVCTcommander.getSUTdir() + "\\" + ivctCommander.rtp.getSutName();
                 	command = new SetSUT(split[1], ivctCommander, sutPath, ivctCommander.fetchCounter());
                 	gotNewCommand = true;
                 	IVCTcommander.resetSUT();
@@ -275,7 +279,7 @@ class Writer extends Thread {
                 	}
                 	if (gotTestSuite) {
                 		ivctCommander.rtp.setTestSuiteName(split[1]);
-                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName() + "\\" + ivctCommander.getTestSuiteName() + "\\" + "TcParam.json");
+                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + ivctCommander.rtp.getSutName() + "\\" + ivctCommander.getTestSuiteName() + "\\" + "TcParam.json");
                     	ivctCommander.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
                     	if (ivctCommander.rtp.paramJson == null) {
                             out.println("setSUT: cannot read file: " + tcParamFile);
@@ -503,7 +507,7 @@ class Writer extends Thread {
                 	break;
                 case "status":
                 case "s":
-                	String sut = RuntimeParameters.getSutName();
+                	String sut = ivctCommander.rtp.getSutName();
                 	if (sut == null) {
                 		out.println("SUT:");
                 	} else {

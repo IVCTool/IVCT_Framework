@@ -425,7 +425,7 @@ public class IVCTcommander implements MessageListener {
       }
       
       public void listVerdicts() {
-			System.out.println("SUT: " + RuntimeParameters.getSutName());
+			System.out.println("SUT: " + rtp.getSutName());
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
 			}
@@ -451,8 +451,8 @@ public class IVCTcommander implements MessageListener {
       	return s;
       }
 
-      public static String printTestCaseJson(final int counter, final String testScheduleName, final String testCaseId, final String value1, final String value2) {
-	  	String s = new String("{\n  \"commandType\" : \"" + "startTestCase" + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"testScheduleName\" : \"" + testScheduleName + "\",\n  \"testCaseId\" : \"" + testCaseId + "\",\n  \"tsRunFolder\" : \"" + value1 + "\",\n  \"tcParam\" : " + value2 + "}");
+      public static String printTestCaseJson(final int counter, final String sutName, final String sutDir, final String testScheduleName, final String testCaseId, final String value1, final String value2) {
+	  	String s = new String("{\n  \"commandType\" : \"" + "startTestCase" + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"sutName\" : \"" + sutName + "\",\n  \"sutDir\" : \"" + sutDir + "\",\n  \"testScheduleName\" : \"" + testScheduleName + "\",\n  \"testCaseId\" : \"" + testCaseId + "\",\n  \"tsRunFolder\" : \"" + value1 + "\",\n  \"tcParam\" : " + value2 + "}");
       	if (cmdVerboseBool) {
 	    	System.out.println(s);
       	}

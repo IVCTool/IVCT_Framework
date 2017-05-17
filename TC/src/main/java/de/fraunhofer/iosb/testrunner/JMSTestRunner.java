@@ -145,6 +145,8 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     			try {
     				final String content = textMessage.getText();
+    			    String                   sutName;
+    			    String                   sutDir;
     				System.out.println("JMSTestRunner:onMessage " + content);
     				JSONParser jsonParser = new JSONParser();
     				try {
@@ -161,6 +163,9 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     						} else {
     							counter = temp.intValue();
     						}
+    						
+    						sutName = (String) jsonObject.get("sutName");
+    						sutDir =  (String) jsonObject.get("sutDir");
 
     						String tsRunFolder = (String) jsonObject.get("tsRunFolder");
     						System.out.println("tsRunFolder is " + tsRunFolder);
@@ -182,7 +187,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     						this.testRunner.executeTests(testCaseId.split("\\s"), testCaseParam.toString(), verdicts);
     						for (int i = 0; i < testcases.length; i++) {
-    							sendToJms(verdicts[i].toJson(testScheduleName, testcases[i], counter++));
+    							sendToJms(verdicts[i].toJson(sutName, sutDir, testScheduleName, testcases[i], counter++));
     						}
     					}
     				} catch (ParseException e) {

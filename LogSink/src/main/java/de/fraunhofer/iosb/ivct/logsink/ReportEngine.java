@@ -206,27 +206,7 @@ public class ReportEngine implements MessageListener, Runnable  {
         		closeFile();
                 System.exit(0);
 			case "setSUT":
-				LocalDateTime ldt = LocalDateTime.now();
-				String formattedMM = String.format("%02d", ldt.getMonthValue());
-				String formatteddd = String.format("%02d", ldt.getDayOfMonth());
-				String formattedhh = String.format("%02d", ldt.getHour());
-				String formattedmm = String.format("%02d", ldt.getMinute());
-				System.out.println("checkMessage: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
-				String sut =  (String) jsonObject.get("sut");
-				String sutPath =  (String) jsonObject.get("sutPath");
-				System.out.println("checkMessage: sutPath: " + sutPath);
-		    	String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "_" + formattedhh + "-" + formattedmm + ".txt";
-		    	openFile(sutPath, fName);
-		    	path = FileSystems.getDefault().getPath(sutPath, fName);
-		    	writer.write(dashes, 0, dashes.length());
-	    		writer.newLine();
-				String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + ldt.getMonthValue() + "-" + ldt.getDayOfMonth() + " " + ldt.getHour() + ":" + ldt.getMinute();
-	    		writer.write(a, 0, a.length());
-	    		writer.newLine();
-		    	writer.write(dashes, 0, dashes.length());
-	    		writer.newLine();
-	    		writer.newLine();
-	    		writer.flush();
+				doSutChanged(jsonObject);
 				break;
 			case "startTestCase":
 				System.out.println("checkMessage: startTestCase");
@@ -244,4 +224,27 @@ public class ReportEngine implements MessageListener, Runnable  {
 		}
     }
 
+    private void doSutChanged (JSONObject jsonObject) throws IOException {
+		LocalDateTime ldt = LocalDateTime.now();
+		String formattedMM = String.format("%02d", ldt.getMonthValue());
+		String formatteddd = String.format("%02d", ldt.getDayOfMonth());
+		String formattedhh = String.format("%02d", ldt.getHour());
+		String formattedmm = String.format("%02d", ldt.getMinute());
+		System.out.println("checkMessage: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
+		String sut =  (String) jsonObject.get("sut");
+		String sutPath =  (String) jsonObject.get("sutPath");
+		System.out.println("checkMessage: sutPath: " + sutPath);
+    	String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "_" + formattedhh + "-" + formattedmm + ".txt";
+    	openFile(sutPath, fName);
+    	path = FileSystems.getDefault().getPath(sutPath, fName);
+    	writer.write(dashes, 0, dashes.length());
+		writer.newLine();
+		String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + ldt.getMonthValue() + "-" + ldt.getDayOfMonth() + " " + ldt.getHour() + ":" + ldt.getMinute();
+		writer.write(a, 0, a.length());
+		writer.newLine();
+    	writer.write(dashes, 0, dashes.length());
+		writer.newLine();
+		writer.newLine();
+		writer.flush();
+    }
 }
