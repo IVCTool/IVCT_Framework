@@ -38,7 +38,7 @@ public class Factory {
 	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
 	public static final String RTI_ID = "RTI_ID";
-	private static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
+	public static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
 	private MessageProducer producer = null;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
