@@ -20,6 +20,8 @@ public class StartTestSchedule implements Command {
 	final String paramJson;
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
+	final String sut;
+	final String sutDir;
 	final String testsuite;
 	private int counter;
 
@@ -27,6 +29,8 @@ public class StartTestSchedule implements Command {
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
+		this.sut = this.ivctCommander.rtp.getSutName();
+		this.sutDir = IVCTcommander.getSUTdir() + "\\" + ivctCommander.rtp.getSutName();
 		this.testsuite = this.ivctCommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
 		ivctCommander.rtp.setTestScheduleRunningBool(true);
@@ -53,7 +57,7 @@ public class StartTestSchedule implements Command {
             	testScheduleName = RuntimeParameters.getTestScheduleName();
             }
             String tsRunFolder = ivctCommander.getTsRunFolder();
-			String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter++, testScheduleName, packageName + "." + tc, tsRunFolder, this.paramJson);
+			String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter++, this.sut, this.sutDir, testScheduleName, packageName + "." + tc, tsRunFolder, this.paramJson);
 			this.ivctCommander.sendToJms(startTestCaseString);
 			this.ivctCommander.acquireSemaphore();
 		}
