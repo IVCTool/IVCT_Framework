@@ -14,14 +14,13 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
-import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -32,33 +31,53 @@ public class CmdStartTc implements Command {
 	private String sut;
 	private String badge;
 	private String tc;
-	
-	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
+	private static int cmdCounter = 0;
 
+	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
 	public CmdStartTc(MessageProducer p) {
 		producer = p;
 	}
 
 	@Override
+	/*
+	 * The Structure of start test case command message looks like the following:
+	 * 
+	 * {
+	 *   "sequence":0, "commandType":"startTestCase",
+	 *   "testScheduleName":"HelloWorld",
+	 *   "sutName":"hw_iosb",
+	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
+	 *   "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
+	 *   "tcParam":{
+	 *     "rtiHostName":"localhost",
+	 *     "federationName":"HelloWorld",
+	 *     "sutFederateName":"A"
+	 *   },
+	 *   "testCaseId":"TC0002"}
+	 * 
+	 * @see nato.ivct.commander.Command#execute()
+	 */
 	public void execute() {
 		// build the start parameter
 		try {
-			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
-			startCmd.put("sutId", sut);
+			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+			String tsHome = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
+			String paramFileName = sutHome + "\\" + sut + "\\" + badge + "\\TcParam.json";
+			startCmd.put("commandType", "startTestCase");
+			startCmd.put("sequence", cmdCounter++);
+			startCmd.put("sutName", sut);
+			startCmd.put("sutDir", sutHome + "\\" + sut);
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder", sutHome);
-			startCmd.put("testCaseId", tc);
-			startCmd.put("testCaseId", tc);
-			JSONParser parser = new JSONParser();
-			String paramFileName = sutHome + "\\" + sut + "\\" + badge+ "\\TcParam.json";
+			startCmd.put("tsRunFolder", tsHome + "\\" + badge);
 			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
 			startCmd.put("tcParam", jsonParam);
 
 			// send the start message
-			Message m = Factory.jmsHelper.createTextMessage (startCmd.toString());
+			Message m = Factory.jmsHelper.createTextMessage(startCmd.toString());
 			producer.send(m);
 
 		} catch (IOException | ParseException | JMSException e) {
