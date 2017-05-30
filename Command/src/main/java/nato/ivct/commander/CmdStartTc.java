@@ -67,7 +67,7 @@ public class CmdStartTc implements Command {
 			String tsHome = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
 			String paramFileName = sutHome + "\\" + sut + "\\" + badge + "\\TcParam.json";
 			startCmd.put("commandType", "startTestCase");
-			startCmd.put("sequence", cmdCounter++);
+			startCmd.put("sequence", Integer.toString(cmdCounter++));
 			startCmd.put("sutName", sut);
 			startCmd.put("sutDir", sutHome + "\\" + sut);
 			startCmd.put("testScheduleName", badge);
