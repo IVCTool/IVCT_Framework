@@ -40,6 +40,19 @@ public class CapabilityService implements ICapabilityService {
 					row.setAbstractTC(badge.requirements[j].TC);
 					row.setTCresult("no result");
 				}
+				for (int k = 0; k < badge.dependency.length; k++) {
+					BadgeDescription dependentBadge = cbService.getBadgeDescription(badge.dependency[k]);
+					if (dependentBadge != null){
+						for (int l = 0; l < dependentBadge.requirements.length; l++) {
+							CapabilityTableRowData row = pageData.addRow();
+							row.setBadgeId(dependentBadge.ID);
+							row.setRequirementId(dependentBadge.requirements[l].ID);
+							row.setRequirementDesc(dependentBadge.requirements[l].description);
+							row.setAbstractTC(dependentBadge.requirements[l].TC);
+							row.setTCresult("no result");	
+						}
+					}
+				}
 			}
 		}
 
