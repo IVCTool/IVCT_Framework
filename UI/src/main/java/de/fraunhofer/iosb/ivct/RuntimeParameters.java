@@ -33,6 +33,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import de.fraunhofer.iosb.tc_lib.LineUtil;
+
 class TestSuiteParameters {
 	String packageName;
 	String tsRunFolder;
@@ -55,7 +57,7 @@ public final class RuntimeParameters {
 	private static List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 	public String paramJson;
-	private static String sutName = null;
+	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private static String testSuiteName = null;
@@ -182,7 +184,7 @@ public final class RuntimeParameters {
 								testSuiteParameters.packageName = child1.getFirstChild().getNodeValue();
 							}
 							if (child1.getNodeName().compareTo("tsRunFolder") == 0) {
-								testSuiteParameters.tsRunFolder = child1.getFirstChild().getNodeValue();
+								testSuiteParameters.tsRunFolder = LineUtil.replaceMacro(child1.getFirstChild().getNodeValue());
 							}
 						}
 						ls.put(testSuiteName, testSuiteParameters);
@@ -230,11 +232,11 @@ public final class RuntimeParameters {
 		}
 	}
 
-	protected static String getSutName() {
+	protected String getSutName() {
 		return sutName;
 	}
 
-	protected static void setSutName(String theSutName) {
+	protected void setSutName(String theSutName) {
 		// Same sut just return.
 		if (theSutName.equals(sutName)) {
 			return;
