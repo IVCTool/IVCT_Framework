@@ -56,11 +56,13 @@ public class ServerSession extends AbstractServerSession {
 		private String sut;
 		private String tc;
 		private String badge;
+		private String runFolder;
 
-		public ExecuteTestCase (String _sut, String _tc, String _badge) {
+		public ExecuteTestCase (String _sut, String _tc, String _badge, String _runFolder) {
 			sut = _sut;
 			tc = _tc;
 			badge = _badge;
+			runFolder = _runFolder;
 		}
 		
 		@Override
@@ -70,6 +72,7 @@ public class ServerSession extends AbstractServerSession {
 			tcCmd.setSut(sut);
 			tcCmd.setTc(tc);
 			tcCmd.setBadge(badge);
+			tcCmd.setRunFolder(runFolder);
 			tcCmd.execute();
 
 			return null;
@@ -117,9 +120,9 @@ public class ServerSession extends AbstractServerSession {
 		return loadBadgesJob;
 	}
 
-	public void execStartTc(String sut, String tc, String badge) {
+	public void execStartTc(String sut, String tc, String badge, String runFolder) {
 		LOG.info("starting test case");
-		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge), Jobs.newInput());
+		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, runFolder), Jobs.newInput());
 		
 		
 	}

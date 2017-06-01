@@ -44,6 +44,7 @@ public class CmdListBadges implements Command {
 					badge.ID = (String) jsonObj.get("id");
 					badge.name = (String) jsonObj.get("name");
 					badge.description = (String) jsonObj.get("description");
+					badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
 					badge.cbVisual = (String) jsonObj.get("graphics");
 					JSONArray depend = (JSONArray) jsonObj.get("dependency");
 					if (depend != null) {

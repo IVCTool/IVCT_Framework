@@ -31,6 +31,7 @@ public class CmdStartTc implements Command {
 	private String sut;
 	private String badge;
 	private String tc;
+	private String runFolder;
 	private static int cmdCounter = 0;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
@@ -39,12 +40,14 @@ public class CmdStartTc implements Command {
 		producer = p;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	/*
 	 * The Structure of start test case command message looks like the following:
 	 * 
 	 * {
-	 *   "sequence":0, "commandType":"startTestCase",
+	 *   "sequence":"0", 
+	 *   "commandType":"startTestCase",
 	 *   "testScheduleName":"HelloWorld",
 	 *   "sutName":"hw_iosb",
 	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
@@ -64,7 +67,7 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			String tsHome = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
+			//String tsHome = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
 			String paramFileName = sutHome + "\\" + sut + "\\" + badge + "\\TcParam.json";
 			startCmd.put("commandType", "startTestCase");
 			startCmd.put("sequence", Integer.toString(cmdCounter++));
@@ -72,7 +75,7 @@ public class CmdStartTc implements Command {
 			startCmd.put("sutDir", sutHome + "\\" + sut);
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder", tsHome + "\\" + badge);
+			startCmd.put("tsRunFolder", runFolder);
 			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
 			startCmd.put("tcParam", jsonParam);
 
@@ -110,6 +113,14 @@ public class CmdStartTc implements Command {
 
 	public void setBadge(String _badge) {
 		this.badge = _badge;
+	}
+
+	public String getRunFolder() {
+		return runFolder;
+	}
+
+	public void setRunFolder(String runFolder) {
+		this.runFolder = runFolder;
 	}
 
 }

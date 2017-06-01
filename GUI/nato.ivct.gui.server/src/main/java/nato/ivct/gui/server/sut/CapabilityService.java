@@ -62,6 +62,8 @@ public class CapabilityService implements ICapabilityService {
 	public void executeTestCase(String sut, String tc, String badge) {
 		BEANS.get(ClientNotificationRegistry.class).putForAllNodes(new TestCaseNotification());
 		// execute the CmdStartTc commands
-		ServerSession.get().execStartTc(sut, tc, badge);
+		CbService cbService = (CbService) BEANS.get(CbService.class);
+		BadgeDescription b = cbService.getBadgeDescription(badge);
+		ServerSession.get().execStartTc(sut, tc, badge, b.tsRunTimeFolder);
 	}
 }
