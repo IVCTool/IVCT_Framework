@@ -30,7 +30,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
 	private int counter = 0;
     private static final String      PROPERTY_JMSTESTRUNNER_QUEUE = "jmstestrunner.queue";
-    private static Logger            LOGGER                       = LoggerFactory.getLogger(JMSTestRunner.class);
+    private static Logger            logger                       = LoggerFactory.getLogger(JMSTestRunner.class);
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
     private MessageProducer producer;
@@ -48,7 +48,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
             runner.listenToJms();
         }
         catch (final IOException ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -75,7 +75,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
    */
   public void sendToJms(final String userCommand) {
   	Message message = jmshelper.createTextMessage(userCommand);
-  	System.out.println("SEND TO JMS");
+	logger.debug("JMSTestRunner:sendToJms");
   	try {
 			producer.send(message);
 		} catch (JMSException e) {
@@ -129,7 +129,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     	}
 
     	public void run() {
-    		System.out.println("onMessageConsumer before");
+    		logger.debug("JMSTestRunner:onMessageConsumer:run: enter");
     		if (message instanceof TextMessage) {
     			final TextMessage textMessage = (TextMessage) message;
     			String testCaseId = null;
@@ -138,28 +138,28 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     			String ivctRootPath = System.getenv("IVCT_TS_HOME");
     			if (ivctRootPath == null) {
-    				System.out.println("IVCT_TS_HOME is not assigned.");
+    	    		logger.error("JMSTestRunner:onMessageConsumer:run: IVCT_TS_HOME is not assigned");
     			} else {
-    				System.out.println("IVCT_TS_HOME is " + ivctRootPath);
+    				logger.info("JMSTestRunner:onMessageConsumer:run: IVCT_TS_HOME is " + ivctRootPath);
     			}
 
     			try {
     				final String content = textMessage.getText();
     			    String                   sutName;
     			    String                   sutDir;
-    				System.out.println("JMSTestRunner:onMessage " + content);
+    			    logger.info("JMSTestRunner:onMessageConsumer:run: " + content);
     				JSONParser jsonParser = new JSONParser();
     				try {
     					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
     					String commandTypeName =  (String) jsonObject.get("commandType");
-    					System.out.println("The commandType name is: " + commandTypeName);
+    					logger.info("JMSTestRunner:onMessageConsumer:run: The commandType name is: " + commandTypeName);
     					if (commandTypeName.equals("quit")) {
     						System.exit(0);
     					}
     					if (commandTypeName.equals("startTestCase")) {
     						Long temp = Long.valueOf((String)jsonObject.get("sequence"));
     						if (temp == null) {
-    							System.out.println("The sequence number is: null");
+    							logger.error("JMSTestRunner:onMessageConsumer:run: the sequence number is: null");
     						} else {
     							counter = temp.intValue();
     						}
@@ -168,20 +168,20 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     						sutDir =  (String) jsonObject.get("sutDir");
 
     						String tsRunFolder = (String) jsonObject.get("tsRunFolder");
-    						System.out.println("tsRunFolder is " + tsRunFolder);
+    						logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + tsRunFolder);
     						if (setCurrentDirectory(ivctRootPath + "\\" + tsRunFolder)) {
-    							System.out.println("setCurrentDirectory true");
+    							logger.info("JMSTestRunner:onMessageConsumer:run: setCurrentDirectory true");
     						}
 
     		    			File f = getCwd();
     						String tcDir = f.getAbsolutePath();
-    						System.out.println("TC DIR is " + tcDir);
+    						logger.info("JMSTestRunner:onMessageConsumer:run: TC DIR is " + tcDir);
 
     			            testScheduleName = (String) jsonObject.get("testScheduleName");
     			            testCaseId = (String) jsonObject.get("testCaseId");
-    						System.out.println("The test case class is: " + testCaseId);
+    			            logger.info("JMSTestRunner:onMessageConsumer:run: The test case class is: " + testCaseId);
     						testCaseParam = (JSONObject) jsonObject.get("tcParam");
-    						System.out.println("The test case parameters are: " + testCaseParam.toString());
+    						logger.info("JMSTestRunner:onMessageConsumer:run: The test case parameters are: " + testCaseParam.toString());
     						String[] testcases = testCaseId.split("\\s");
     						IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
@@ -197,10 +197,10 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     			}
     			catch (final JMSException ex) {
-    				LOGGER.warn("Problems with parsing Message", ex);
+    				logger.error("JMSTestRunner:onMessageConsumer:run: Problems with parsing Message", ex);
     			}
     		}
-    		System.out.println("onMessageConsumer after");
+    		logger.debug("JMSTestRunner:onMessageConsumer:run: after");
     	}
     }
 
@@ -208,8 +208,8 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     /** {@inheritDoc} */
     @Override
     public void onMessage(final Message message) {
-    	if (LOGGER.isTraceEnabled()) {
-    		LOGGER.trace("Received Command message");
+    	if (logger.isTraceEnabled()) {
+    		logger.trace("JMSTestRunner:onMessage: Received Command message");
     	}
 
     	Thread th1 = new Thread(new onMessageConsumer(message, this));
