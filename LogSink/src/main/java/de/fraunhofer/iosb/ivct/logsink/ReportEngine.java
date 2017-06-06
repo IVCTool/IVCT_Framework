@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 
 public class ReportEngine implements MessageListener, Runnable  {
-
+    Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
 	private String      LISTENER_TOPIC = "listener.topic";
     private static long count = 1;
     private static PropertyBasedClientSetup jmshelper;
@@ -108,7 +108,6 @@ public class ReportEngine implements MessageListener, Runnable  {
      * perform the listener role
      */
     public void run() {
-        Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
         final Properties properties = new Properties();
         in = getClass().getResourceAsStream("/ReportEngine.properties");
         try {
@@ -126,7 +125,7 @@ public class ReportEngine implements MessageListener, Runnable  {
         //        this.jmshelper.setupTopicListener(destination, this);
         jmshelper.setupTopicListener(destination, this);
 
-        LOGGER.info("ReportEngine: Waiting for messages...");
+        LOGGER.info("ReportEngine:run: Waiting for messages...");
     }
     
     /** {@inheritDoc} */
@@ -135,7 +134,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     	inCalls++;
     	try {
 			if (message.getJMSRedelivered() ) {
-				System.out.println("MESSAGE REDELIVERED");
+				LOGGER.warn("ReportEngine:onMessage: MESSAGE REDELIVERED");
 			}
 		} catch (JMSException e1) {
 			// TODO Auto-generated catch block
@@ -146,7 +145,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     		try {
     			body = ((TextMessage) message).getText();
     			if( "SHUTDOWN".equals(body)) {
-    				System.out.println("SHUTDOWN " + count + " " + inCalls);
+    				LOGGER.info("ReportEngine:onMessage: SHUTDOWN " + count + " " + inCalls);
     		    	try {
     					Thread.sleep(10000);
     				} catch (InterruptedException e) {
@@ -156,7 +155,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     				jmshelper.disconnect();
     			} else {
         				count++;
-        				System.out.println("ReportEngine " + count + " " + body);
+        				LOGGER.info("ReportEngine:onMessage: ReportEngine " + count + " " + body);
         	    		checkMessage(body);
     			}
     		} catch (JMSException e) {
@@ -165,7 +164,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     		}
 
     	} else {
-    		System.out.println("Unexpected message type: "+message.getClass());
+    		LOGGER.warn("ReportEngine:onMessage: Unexpected message type: "+message.getClass());
     	}
     }
     
@@ -177,7 +176,7 @@ public class ReportEngine implements MessageListener, Runnable  {
 
 			switch (commandTypeName) {
 			case "announceVerdict":
-				System.out.println("checkMessage: announceVerdict");
+				LOGGER.info("ReportEngine:checkMessage: announceVerdict");
 				String sut =  (String) jsonObject.get("sutName");
 				if (sut.equals(knownSut) == false) {
 					doSutChanged(jsonObject);
@@ -215,10 +214,10 @@ public class ReportEngine implements MessageListener, Runnable  {
 //				doSutChanged(jsonObject);
 				break;
 			case "startTestCase":
-				System.out.println("checkMessage: startTestCase");
+				LOGGER.info("ReportEngine:checkMessage: startTestCase");
 				break;
 			default:
-				System.out.println("Unknown commandType name is: " + commandTypeName);
+				LOGGER.error("ReportEngine:checkMessage: Unknown commandType name is: " + commandTypeName);
 				break;
 			}    					
 		} catch (ParseException e) {
@@ -236,10 +235,10 @@ public class ReportEngine implements MessageListener, Runnable  {
 		String formatteddd = String.format("%02d", ldt.getDayOfMonth());
 		String formattedhh = String.format("%02d", ldt.getHour());
 		String formattedmm = String.format("%02d", ldt.getMinute());
-		System.out.println("checkMessage: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
+		LOGGER.info("ReportEngine:doSutChanged: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
 		String sut =  (String) jsonObject.get("sutName");
 		String sutPath =  (String) jsonObject.get("sutDir");
-		System.out.println("checkMessage: sutPath: " + sutPath);
+		LOGGER.info("ReportEngine:doSutChanged: sutPath: " + sutPath);
     	String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "_" + formattedhh + "-" + formattedmm + ".txt";
     	openFile(sutPath, fName);
     	path = FileSystems.getDefault().getPath(sutPath, fName);

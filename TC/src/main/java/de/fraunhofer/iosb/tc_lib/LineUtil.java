@@ -16,7 +16,11 @@ limitations under the License.
 
 package de.fraunhofer.iosb.tc_lib;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LineUtil {
+    static Logger logger = LoggerFactory.getLogger(LineUtil.class);
 
 	public static String replaceMacro(String inString)
 	{
@@ -50,7 +54,7 @@ public class LineUtil {
 							if (env.length() > 0) {
 								b = System.getenv(env.toString());
 							} else {
-								System.out.println("Missing environment variable ");
+								logger.error("LineUtil:replaceMacro: Missing environment variable ");
 							}
 							if (b != null)
 							{
@@ -60,7 +64,7 @@ public class LineUtil {
 							}
 							else
 							{
-								System.out.println("Environment variable not found: " + env.toString());
+								logger.error("LineUtil:replaceMacro: Environment variable not found: " + env.toString());
 								String s = inString.subSequence(i, i + k + 3).toString();
 								out.append(s);
 								l += j - i;
@@ -72,7 +76,7 @@ public class LineUtil {
 					}
 					if (gotClosing == false)
 					{
-						System.out.println("Missing closing bracket");
+						logger.error("LineUtil:replaceMacro: Missing closing bracket");
 					}
 				}
 			}
