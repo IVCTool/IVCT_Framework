@@ -1,7 +1,7 @@
 dependencies {
 	compile     libraries.slf4j_api
-	compile			junit
-	compile			hamcrest-core
+	compile		libraries.junit
+	compile		libraries.hamcrest_core
 }
 
 javadoc {
