@@ -43,21 +43,15 @@ public class CmdStartTc implements Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	/*
-	 * The Structure of start test case command message looks like the following:
+	 * The Structure of start test case command message looks like the
+	 * following:
 	 * 
-	 * {
-	 *   "sequence":"0", 
-	 *   "commandType":"startTestCase",
-	 *   "testScheduleName":"HelloWorld",
-	 *   "sutName":"hw_iosb",
-	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
-	 *   "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
-	 *   "tcParam":{
-	 *     "rtiHostName":"localhost",
-	 *     "federationName":"HelloWorld",
-	 *     "sutFederateName":"A"
-	 *   },
-	 *   "testCaseId":"TC0002"}
+	 * { "sequence":"0", "commandType":"startTestCase",
+	 * "testScheduleName":"HelloWorld", "sutName":"hw_iosb",
+	 * "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
+	 * "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
+	 * "tcParam":{ "rtiHostName":"localhost", "federationName":"HelloWorld",
+	 * "sutFederateName":"A" }, "testCaseId":"TC0002"}
 	 * 
 	 * @see nato.ivct.commander.Command#execute()
 	 */
@@ -67,7 +61,8 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			//String tsHome = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
+			// String tsHome =
+			// Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
 			String paramFileName = sutHome + "\\" + sut + "\\" + badge + "\\TcParam.json";
 			startCmd.put("commandType", "startTestCase");
 			startCmd.put("sequence", Integer.toString(cmdCounter++));
@@ -82,7 +77,6 @@ public class CmdStartTc implements Command {
 			// send the start message
 			Message m = Factory.jmsHelper.createTextMessage(startCmd.toString());
 			producer.send(m);
-
 		} catch (IOException | ParseException | JMSException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error("error in starting test case <" + badge + "/" + tc + ">");

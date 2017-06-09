@@ -2,9 +2,7 @@ package nato.ivct.gui.client.sut;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import org.eclipse.scout.rt.client.context.ClientRunContext;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.job.ModelJobs;
@@ -17,7 +15,6 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.TEXTS;
@@ -25,13 +22,14 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import nato.ivct.gui.client.sut.CapabilityTablePage.Table;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
+import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.ICapabilityService;
 
 @Data(CapabilityTablePageData.class)
 public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 
 	private String sutId = null;
-	private TestCaseResultHandler resultHandler = null;
+	// private TestCaseResultHandler resultHandler = null;
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -52,6 +50,7 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		// TODO Auto-generated method stub
 		return true;
 	}
+
 	public class Table extends AbstractTable {
 
 		@Order(1000)
@@ -68,55 +67,28 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected void execAction() {
-				// use ModelJobs to asynchronously start test case execution sequence
+				// start the result handler
+				// resultHandler = new TestCaseResultHandler();
+
+				// use ModelJobs to asynchronously start test case execution
+				// sequence
 				ModelJobs.schedule(new IRunnable() {
 
 					@Override
 					public void run() throws Exception {
-						resultHandler = new TestCaseResultHandler();
 						ICapabilityService cbService = BEANS.get(ICapabilityService.class);
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
-							List<Object> tc = tr.getKeyValues();
 							tr.setCellValue(4, "starting");
 							tr.setBackgroundColor("FFA500");
-							for (Object o : tc) {
-								String s = o.toString();
-							}
 							String badge = tr.getCell(0).toString();
 							String tcName = tr.getCell(3).toString();
 							cbService.executeTestCase(sutId, tcName, badge);
 						}
-
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
-				
-				
-//				Jobs.schedule(new IRunnable() {
-//					@Override
-//					public void run() throws Exception {
-//						
-//						// use ModelJobs to synchronize with GUI
-//						ModelJobs.schedule(new IRunnable() {
-//
-//							@Override
-//							public void run() throws Exception {
-//								List<ITableRow> tcArray = getSelectedRows();
-//								for (ITableRow tr : tcArray) {
-//									List<Object> tc = tr.getKeyValues();
-//									tr.setCellValue(4, "starting");
-//									tr.setBackgroundColor("FFA500");
-//									for (Object o : tc) {
-//										String s = o.toString();
-//									}
-//								}
-//							}
-//						}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
-//					}
-//				}, Jobs.newInput().withName("Executing Test cases").withRunContext(ClientRunContexts.copyCurrent()));
 			}
-		}				
-						
+		}
 
 		public AbstractTCColumn getAbstractTCColumn() {
 			return getColumnSet().getColumnByClass(AbstractTCColumn.class);

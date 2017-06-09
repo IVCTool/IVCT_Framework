@@ -1,19 +1,14 @@
 package nato.ivct.gui.server.sut;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.shared.TEXTS;
-import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
-import org.mockito.internal.util.collections.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +21,6 @@ import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTFormData.CapabilitiesBox;
-import nato.ivct.gui.shared.sut.SuTFormData.TestResults;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
 import nato.ivct.gui.shared.sut.SuTTablePageData.SuTTableRowData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
@@ -104,8 +98,15 @@ public class SuTService implements ISuTService {
 		formData.getName().setValue(sut.ID);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
-		formData.getCapabilities().setValue (sut.conformanceStatment.toString());
-		formData.getCapabilitiesBox().setValue(Arrays.stream(sut.conformanceStatment).collect(Collectors.toSet()));
+		formData.getCapabilities().setValue (String.join(",", sut.conformanceStatment));
+		
+		CapabilitiesBox cb = formData.getCapabilitiesBox();
+		
+		Set<String> vs = new HashSet<String>();
+		vs.add("1; value1\r");
+		vs.add("2; value2\r");
+		cb.setValue(vs);
+		
 		return formData;
 	}
 

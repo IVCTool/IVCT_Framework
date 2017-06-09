@@ -27,6 +27,7 @@ import javax.jms.MessageProducer;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
+import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 
 /*
  * The Factory is used to create Command objects to be executed by a user interface.
@@ -90,5 +91,8 @@ public class Factory {
 	
 	public CmdStartTc createCmdStartTc () {
 		return new CmdStartTc(producer);
+	}
+	public CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
+		return new CmdStartTestResultListener(listener);
 	}
 }

@@ -3,10 +3,11 @@ package nato.ivct.gui.server;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import org.eclipse.scout.rt.platform.exception.ProcessingException;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
+import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.server.session.ServerSessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,11 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdStartTc;
+import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
+import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
+import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 /**
  * <h3>{@link ServerSession}</h3>
@@ -26,8 +31,13 @@ public class ServerSession extends AbstractServerSession {
 	private IFuture<CmdListSuT> loadSuTJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
 	private IFuture<CmdStartTc> startTcJobs = null;
+	private IFuture<CmdStartTestResultListener> testResultListener = null;
+	private ResultListener sessionResultListener;
 	Factory ivctCmdFactory = new Factory();
 
+	/*
+	 * Load SuT descriptions job
+	 */
 	public class LoadSuTdescriptions implements Callable<CmdListSuT> {
 
 		@Override
@@ -39,6 +49,9 @@ public class ServerSession extends AbstractServerSession {
 		}
 	}
 
+	/*
+	 * Load Badge descriptions job
+	 */
 	public class LoadBadgeDescriptions implements Callable<CmdListBadges> {
 
 		@Override
@@ -52,19 +65,55 @@ public class ServerSession extends AbstractServerSession {
 
 	}
 	
-	public class ExecuteTestCase implements Callable<CmdStartTc>{
+	public class ResultListener implements OnResultListener {
+
+		@Override
+		public void OnResult(TcResult result) {
+			// TODO Auto-generated method stub
+			TestCaseNotification notification = new TestCaseNotification ();
+			notification.setTc(result.tc);
+			notification.setVerdict(result.verdict);
+			notification.setText(result.text);
+			BEANS.get(ClientNotificationRegistry.class).putForAllNodes(notification);
+		}		
+	}
+
+	/*
+	 * Wait for test case results job
+	 */
+	public class TestResultListener implements Callable<CmdStartTestResultListener> {
+
+		private CmdStartTestResultListener resultCmd;
+		private ResultListener resultListener;
+
+		public TestResultListener (ResultListener listener) {
+			resultListener = listener;
+		}
+		
+		@Override
+		public CmdStartTestResultListener call() throws Exception {
+			resultCmd = ivctCmdFactory.createCmdStartTestResultListener(resultListener);
+			resultCmd.execute();
+			return resultCmd;
+		}
+	}
+
+	/*
+	 * Execute test case job
+	 */
+	public class ExecuteTestCase implements Callable<CmdStartTc> {
 		private String sut;
 		private String tc;
 		private String badge;
 		private String runFolder;
 
-		public ExecuteTestCase (String _sut, String _tc, String _badge, String _runFolder) {
+		public ExecuteTestCase(String _sut, String _tc, String _badge, String _runFolder) {
 			sut = _sut;
 			tc = _tc;
 			badge = _badge;
 			runFolder = _runFolder;
 		}
-		
+
 		@Override
 		public CmdStartTc call() throws Exception {
 			// TODO Auto-generated method stub
@@ -77,7 +126,7 @@ public class ServerSession extends AbstractServerSession {
 
 			return null;
 		}
-		
+
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -110,6 +159,10 @@ public class ServerSession extends AbstractServerSession {
 
 		LOG.info("load Badge Descriptions");
 		loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
+
+		LOG.info("start test case Result Listener");
+		sessionResultListener = new ResultListener ();
+		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
 	}
 
 	public IFuture<CmdListSuT> getCmdJobs() {
@@ -123,8 +176,7 @@ public class ServerSession extends AbstractServerSession {
 	public void execStartTc(String sut, String tc, String badge, String runFolder) {
 		LOG.info("starting test case");
 		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, runFolder), Jobs.newInput());
-		
-		
+
 	}
 
 }
