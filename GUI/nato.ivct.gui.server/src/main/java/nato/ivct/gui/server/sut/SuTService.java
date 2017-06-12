@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -98,15 +99,17 @@ public class SuTService implements ISuTService {
 		formData.getName().setValue(sut.ID);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
-		formData.getCapabilities().setValue (String.join(",", sut.conformanceStatment));
-		
-		CapabilitiesBox cb = formData.getCapabilitiesBox();
-		
-		Set<String> vs = new HashSet<String>();
-		vs.add("1; value1\r");
-		vs.add("2; value2\r");
-		cb.setValue(vs);
-		
+		//formData.getCapabilities().setValue (String.join(",", Arrays.asList(sut.conformanceStatment))); this causes API check failure !?!
+		String caps = "";
+		for (String s : sut.conformanceStatment) {
+			if (caps.equals("")) {
+				caps = s;
+			}
+			else {
+				caps = caps + ", " + s;				
+			}
+		}
+		formData.getCapabilities().setValue(caps);
 		return formData;
 	}
 

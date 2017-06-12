@@ -31,7 +31,9 @@ public class CmdListBadges implements Command {
 
 	@Override
 	public void execute() {
+		Factory.LOGGER.info("Factory.IVCT_TS_HOME_ID " + Factory.IVCT_TS_HOME_ID);
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_TS_HOME_ID));
+		Factory.LOGGER.info("Read Badge descriptions from " + dir.getAbsolutePath());
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			Object obj;
