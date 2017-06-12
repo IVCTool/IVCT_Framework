@@ -175,10 +175,10 @@ public final class RuntimeParameters {
 						TestSuiteParameters testSuiteParameters = new TestSuiteParameters();
 						testSuiteParameters.packageName = new String();
 						testSuiteParameters.tsRunFolder = new String();
-						String testSuiteName = new String();
+						String testSuiteNameTmp = new String();
 						for (Node child1 = child0.getFirstChild(); child1 != null; child1 = child1.getNextSibling()) {
 							if (child1.getNodeName().compareTo("name") == 0) {
-								testSuiteName = child1.getFirstChild().getNodeValue();
+								testSuiteNameTmp = child1.getFirstChild().getNodeValue();
 							}
 							if (child1.getNodeName().compareTo("packageName") == 0) {
 								testSuiteParameters.packageName = child1.getFirstChild().getNodeValue();
@@ -187,7 +187,7 @@ public final class RuntimeParameters {
 								testSuiteParameters.tsRunFolder = LineUtil.replaceMacro(child1.getFirstChild().getNodeValue());
 							}
 						}
-						ls.put(testSuiteName, testSuiteParameters);
+						ls.put(testSuiteNameTmp, testSuiteParameters);
 					}
 				}
 			}

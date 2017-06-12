@@ -16,6 +16,8 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
+import java.io.File;
+
 public class StartTestSchedule implements Command {
 	final String paramJson;
 	final CommandCache commandCache;
@@ -30,7 +32,7 @@ public class StartTestSchedule implements Command {
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
 		this.sut = this.ivctCommander.rtp.getSutName();
-		this.sutDir = IVCTcommander.getSUTdir() + "\\" + ivctCommander.rtp.getSutName();
+		this.sutDir = IVCTcommander.getSUTdir() + File.separator + ivctCommander.rtp.getSutName();
 		this.testsuite = this.ivctCommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
 		ivctCommander.rtp.setTestScheduleRunningBool(true);
