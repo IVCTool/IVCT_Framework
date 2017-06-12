@@ -14,6 +14,7 @@ import javax.jms.TextMessage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import ch.qos.logback.classic.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,9 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
         LogConfigurationHelper.configureLogging();
         try {
             final JMSTestRunner runner = new JMSTestRunner();
-            runner.listenToJms();
+            if (runner.listenToJms()) {
+            	System.exit(1);
+            }
         }
         catch (final IOException ex) {
             logger.error(ex.getMessage(), ex);
@@ -63,9 +66,15 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
         final InputStream in = this.getClass().getResourceAsStream("/JMSTestRunner.properties");
         properties.load(in);
         this.jmshelper = new PropertyBasedClientSetup(properties);
-        this.jmshelper.parseProperties();
-        this.jmshelper.initConnection();
-        this.jmshelper.initSession();
+        if (this.jmshelper.parseProperties()) {
+        	System.exit(1);
+        }
+        if (this.jmshelper.initConnection()) {
+        	System.exit(1);
+        }
+        if (this.jmshelper.initSession()) {
+        	System.exit(1);
+        }
         this.destination = properties.getProperty(PROPERTY_JMSTESTRUNNER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
     }
@@ -87,8 +96,11 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     /**
      * Initialize the Listening on the JMS Queue
      */
-    public void listenToJms() {
-        this.jmshelper.setupTopicListener(this.destination, this);
+    public boolean listenToJms() {
+        if (this.jmshelper.setupTopicListener(this.destination, this)) {
+        	return true;
+        }
+        return false;
     }
 
     private class onMessageConsumer implements Runnable {
@@ -156,6 +168,34 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     					if (commandTypeName.equals("quit")) {
     						System.exit(0);
     					}
+    					if (commandTypeName.equals("setLogLevel")) {
+		    		        if (logger instanceof ch.qos.logback.classic.Logger) {
+		        			    ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
+	    						String logLevelId = (String) jsonObject.get("logLevelId");
+	    						switch (logLevelId) {
+	    						case "error":
+	    							logger.trace("JMSTestRunner:onMessageConsumer:run: error");
+			        			    lo.setLevel(Level.ERROR);
+	    							break;
+	    						case "warning":
+	    							logger.trace("JMSTestRunner:onMessageConsumer:run: warning");
+			        			    lo.setLevel(Level.WARN);
+	    							break;
+	    						case "info":
+	    							logger.trace("JMSTestRunner:onMessageConsumer:run: info");
+			        			    lo.setLevel(Level.INFO);
+	    							break;
+	    						case "debug":
+	    							logger.trace("JMSTestRunner:onMessageConsumer:run: debug");
+			        			    lo.setLevel(Level.INFO);
+	    							break;
+	    						case "trace":
+	    							logger.trace("JMSTestRunner:onMessageConsumer:run: trace");
+			        			    lo.setLevel(Level.TRACE);
+	    							break;
+	    						}
+		    		        }
+    					}
     					if (commandTypeName.equals("startTestCase")) {
     						Long temp = Long.valueOf((String)jsonObject.get("sequence"));
     						if (temp == null) {
@@ -169,7 +209,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     						String tsRunFolder = (String) jsonObject.get("tsRunFolder");
     						logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + tsRunFolder);
-    						if (setCurrentDirectory(ivctRootPath + "\\" + tsRunFolder)) {
+    						if (setCurrentDirectory(ivctRootPath + File.separator + tsRunFolder)) {
     							logger.info("JMSTestRunner:onMessageConsumer:run: setCurrentDirectory true");
     						}
 
@@ -185,7 +225,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     						String[] testcases = testCaseId.split("\\s");
     						IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
-    						this.testRunner.executeTests(testCaseId.split("\\s"), testCaseParam.toString(), verdicts);
+    						this.testRunner.executeTests(logger, testCaseId.split("\\s"), testCaseParam.toString(), verdicts);
     						for (int i = 0; i < testcases.length; i++) {
     							sendToJms(verdicts[i].toJson(sutName, sutDir, testScheduleName, testcases[i], counter++));
     						}

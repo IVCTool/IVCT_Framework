@@ -155,7 +155,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     				jmshelper.disconnect();
     			} else {
         				count++;
-        				LOGGER.info("ReportEngine:onMessage: ReportEngine " + count + " " + body);
+        				LOGGER.trace("ReportEngine:onMessage: ReportEngine " + count + " " + body);
         	    		checkMessage(body);
     			}
     		} catch (JMSException e) {
@@ -210,6 +210,9 @@ public class ReportEngine implements MessageListener, Runnable  {
     		case "quit":
         		closeFile();
                 System.exit(0);
+            case "setLogLevel":
+    			// Should ignore
+    			break;
 			case "setSUT":
 //				doSutChanged(jsonObject);
 				break;
