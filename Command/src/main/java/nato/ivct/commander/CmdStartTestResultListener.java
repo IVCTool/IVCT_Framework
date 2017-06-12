@@ -39,12 +39,11 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 
 	@Override
 	public void onMessage(Message message) {
-		// TODO Auto-generated method stub
-		LOGGER.debug("JMS Message received: " + message);
 		if (message instanceof TextMessage) {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
+				LOGGER.info("JMS Message received: " + content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
