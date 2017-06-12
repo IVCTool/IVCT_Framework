@@ -16,8 +16,12 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
+import java.io.File;
+
 public class StartTestCase implements Command {
 	final String paramJson;
+	final String sut;
+	final String sutDir;
 	final String testcase;
 	final String testsuite;
 	final IVCTcommander ivctCommander;
@@ -27,6 +31,8 @@ public class StartTestCase implements Command {
 		this.testcase = testcase;
 		this.ivctCommander = ivctCommander;
 		this.counter = counter;
+		this.sut = this.ivctCommander.rtp.getSutName();
+		this.sutDir = IVCTcommander.getSUTdir() + File.separator + ivctCommander.rtp.getSutName();
 		this.testsuite = this.ivctCommander.getTestSuiteName();
 		this.paramJson = ivctCommander.rtp.paramJson;
 		ivctCommander.rtp.setTestCaseRunningBool(true);
@@ -40,7 +46,7 @@ public class StartTestCase implements Command {
 		}
         String tsRunFolder = ivctCommander.getTsRunFolder();
         String testScheduleName = "";
-		String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter, testScheduleName, packageName + "." + this.testcase, tsRunFolder, this.paramJson);
+		String startTestCaseString = IVCTcommander.printTestCaseJson(this.counter, this.sut, this.sutDir, testScheduleName, packageName + "." + this.testcase, tsRunFolder, this.paramJson);
 		this.ivctCommander.sendToJms(startTestCaseString);
 		this.ivctCommander.acquireSemaphore();
 		ivctCommander.addTestSessionSeparator();

@@ -72,7 +72,9 @@ public class CmdLineTool {
     	}
 
     	// Handle callbacks
-    	CmdLineTool.ivctCommander.listenToJms();
+    	if (CmdLineTool.ivctCommander.listenToJms()) {
+        	System.exit(1);
+    	}
     }
 
     class commandRunnable implements Runnable {
@@ -112,7 +114,7 @@ class TcRunnable implements Runnable {
     		System.out.println("JAVA_HOME is " + javaHome);
     	}
     	
-        String javaExe = javaHome + "\\bin\\java.exe";
+        String javaExe = javaHome + File.separator + "bin" + File.separator + "java";
         
     	String classPath = System.getenv("CLASSPATH");
     	if (classPath == null) {
@@ -122,9 +124,12 @@ class TcRunnable implements Runnable {
     	}
 
 		try {
-    		System.out.println("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
-    		CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner", null, f);
-//			CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
+			String javaOpts = System.getenv("JAVA_OPTS");
+			if (javaOpts == null) {
+				javaOpts = "-Duser.country=US -Duser.language=EN";
+			}
+			System.out.println("\"" + javaExe + "\" " + javaOpts +" -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner");
+			CmdLineTool.p = Runtime.getRuntime().exec("\"" + javaExe + "\" " + javaOpts + " -classpath \"" + classPath + "\" de.fraunhofer.iosb.testrunner.JMSTestRunner", null, f);
 
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(CmdLineTool.p.getInputStream()));
 
@@ -171,6 +176,7 @@ class Writer extends Thread {
     	boolean gotNewCommand = false;
     	BufferedReader in = null;
         PrintStream out = null;
+        String logLevelString = "default";
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
     	String tsNotSelected = new String("Testsuite not selected yet: use setTestSuite command first");
 
@@ -228,10 +234,7 @@ class Writer extends Thread {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}
-                	RuntimeParameters.setSutName(split[1]);
-                	String sutPath = IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName();
-                	command = new SetSUT(split[1], ivctCommander, sutPath, ivctCommander.fetchCounter());
-                	gotNewCommand = true;
+                	ivctCommander.rtp.setSutName(split[1]);
                 	IVCTcommander.resetSUT();
                 	break;
                 case "listTestSuites":
@@ -275,7 +278,7 @@ class Writer extends Thread {
                 	}
                 	if (gotTestSuite) {
                 		ivctCommander.rtp.setTestSuiteName(split[1]);
-                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + "\\" + RuntimeParameters.getSutName() + "\\" + ivctCommander.getTestSuiteName() + "\\" + "TcParam.json");
+                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + File.separator + ivctCommander.rtp.getSutName() + File.separator + ivctCommander.getTestSuiteName() + File.separator + "TcParam.json");
                     	ivctCommander.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
                     	if (ivctCommander.rtp.paramJson == null) {
                             out.println("setSUT: cannot read file: " + tcParamFile);
@@ -480,12 +483,14 @@ class Writer extends Thread {
                 case "sll":
                 	// Need an input parameter
                 	if (split.length == 1) {
-                		out.println("setLogLevel: Error missing log level: error, warning, debug or info");
+                		out.println("setLogLevel: Error missing log level: error, warning, info, debug or trace");
                 		break;
                 	}
-                	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("debug") || split[1].equals("info")) {
+                	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("info") || split[1].equals("debug") || split[1].equals("trace")) {
+                		logLevelString = split[1];
                 		command = new SetLogLevel(split[1], ivctCommander, ivctCommander.fetchCounter());
-                        out.println("setLogLevel: Warning: set log level logic is NOT IMPLEMENTED yet");
+                    	command.execute();
+                    	command = null;
                 	} else {
                         out.println("Unknown log level: " + split[1]);
                 	}
@@ -503,7 +508,7 @@ class Writer extends Thread {
                 	break;
                 case "status":
                 case "s":
-                	String sut = RuntimeParameters.getSutName();
+                	String sut = ivctCommander.rtp.getSutName();
                 	if (sut == null) {
                 		out.println("SUT:");
                 	} else {
@@ -529,6 +534,7 @@ class Writer extends Thread {
                 			out.println("TestCaseName: " + testCaseName + " finished");
                 		}
                 	}
+                	out.println("loglevel: " + logLevelString);
                 	break;
                 case "terse":
                 case "t":
@@ -570,7 +576,7 @@ class Writer extends Thread {
                     out.println("listTestCases (ltc) - list the available test cases for the test suite");
                     out.println("startTestCase (stc) - start the named test case");
                     out.println("abortTestCase (atc) - abort the running test case");
-                    out.println("setLogLevel (sll) - set the log level for logging - error, warning, debug, info");
+                    out.println("setLogLevel (sll) - set the log level for logging - error, warning, info, debug, trace");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
                     out.println("status (s) - display status information");
                     out.println("terse (t) - display only important session information");
