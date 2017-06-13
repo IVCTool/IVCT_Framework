@@ -12,7 +12,7 @@ public class CmdSetLogLevel implements Command {
 	/*
 	 *      	"commandType : "setLogLevel"
 	 *          "sequence    : counter 
-	 *          "param"      : "trace" | "debug" | "info" | "warning" | "error"
+	 *          "logLevelId"      : "trace" | "debug" | "info" | "warning" | "error"
 	 *          
 	 * @see nato.ivct.commander.Command#execute()
 	 */
@@ -20,9 +20,9 @@ public class CmdSetLogLevel implements Command {
 	@SuppressWarnings("unchecked")
 	public void execute() {
 		JSONObject startCmd = new JSONObject();
-		startCmd.put("commandType", "startTestsetLogLevel");
+		startCmd.put("commandType", "setLogLevel");
 		startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
-		startCmd.put("param", logLevel);
+		startCmd.put("logLevelId", logLevel);
 		Factory.sendToJms(startCmd.toString());
 	}
 

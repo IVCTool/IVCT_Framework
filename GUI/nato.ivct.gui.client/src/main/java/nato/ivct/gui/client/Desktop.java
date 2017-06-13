@@ -10,6 +10,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.desktop.AbstractDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.client.ui.form.AbstractFormMenu;
 import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -97,7 +98,7 @@ public class Desktop extends AbstractDesktop {
 	}
 
 	@Order(1500)
-	public class OptionsMenu extends AbstractMenu {
+	public class OptionsMenu extends AbstractFormMenu<OptionsForm> {
 		@Override
 		protected String getConfiguredText() {
 			return TEXTS.get("Options");
@@ -109,14 +110,16 @@ public class Desktop extends AbstractDesktop {
 		}
 
 		@Override
-		protected void execAction() {
-		}
-
-		@Override
 		protected String getConfiguredIconId() {
 			// TODO Auto-generated method stub
 			return AbstractIcons.Gear;
 		}
+		
+	    @Override
+	    protected Class<OptionsForm> getConfiguredForm() {
+	      return OptionsForm.class;
+	    }
+
 	}
 
 	@Order(2000)

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
+import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
@@ -64,18 +65,18 @@ public class ServerSession extends AbstractServerSession {
 		}
 
 	}
-	
+
 	public class ResultListener implements OnResultListener {
 
 		@Override
 		public void OnResult(TcResult result) {
 			// TODO Auto-generated method stub
-			TestCaseNotification notification = new TestCaseNotification ();
+			TestCaseNotification notification = new TestCaseNotification();
 			notification.setTc(result.tc);
 			notification.setVerdict(result.verdict);
 			notification.setText(result.text);
 			BEANS.get(ClientNotificationRegistry.class).putForAllNodes(notification);
-		}		
+		}
 	}
 
 	/*
@@ -86,10 +87,10 @@ public class ServerSession extends AbstractServerSession {
 		private CmdStartTestResultListener resultCmd;
 		private ResultListener resultListener;
 
-		public TestResultListener (ResultListener listener) {
+		public TestResultListener(ResultListener listener) {
 			resultListener = listener;
 		}
-		
+
 		@Override
 		public CmdStartTestResultListener call() throws Exception {
 			resultCmd = ivctCmdFactory.createCmdStartTestResultListener(resultListener);
@@ -116,7 +117,6 @@ public class ServerSession extends AbstractServerSession {
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			// TODO Auto-generated method stub
 			CmdStartTc tcCmd = ivctCmdFactory.createCmdStartTc();
 			tcCmd.setSut(sut);
 			tcCmd.setTc(tc);
@@ -124,6 +124,23 @@ public class ServerSession extends AbstractServerSession {
 			tcCmd.setRunFolder(runFolder);
 			tcCmd.execute();
 
+			return null;
+		}
+
+	}
+
+	public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
+
+		private String logLevel;
+
+		public ExecuteSetLogLevel(String level) {
+			logLevel = level;
+		}
+
+		@Override
+		public CmdSetLogLevel call() throws Exception {
+			CmdSetLogLevel setCmd = new CmdSetLogLevel(logLevel);
+			setCmd.execute();
 			return null;
 		}
 
@@ -161,7 +178,7 @@ public class ServerSession extends AbstractServerSession {
 		loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
 
 		LOG.info("start test case Result Listener");
-		sessionResultListener = new ResultListener ();
+		sessionResultListener = new ResultListener();
 		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
 	}
 
@@ -176,6 +193,12 @@ public class ServerSession extends AbstractServerSession {
 	public void execStartTc(String sut, String tc, String badge, String runFolder) {
 		LOG.info("starting test case");
 		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, runFolder), Jobs.newInput());
+
+	}
+
+	public void setLogLevel (String level) {
+		LOG.info("set log level");
+		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
 
 	}
 

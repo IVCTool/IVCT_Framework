@@ -57,7 +57,7 @@ public class CmdStartTc implements Command {
 			startCmd.put("commandType", "startTestCase");
 			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
-			startCmd.put("sutDir", sutHome + File.separator + sut);
+			startCmd.put("sutDir", sutHome + JSONObject.escape(File.separator) + sut); 
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
 			startCmd.put("tsRunFolder", runFolder);
@@ -66,8 +66,6 @@ public class CmdStartTc implements Command {
 
 			// send the start message
 			Factory.sendToJms(startCmd.toString());
-//			Message m = Factory.jmsHelper.createTextMessage(startCmd.toString());
-//			producer.send(m);
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error("error in starting test case <" + badge + File.separator + tc + ">");
