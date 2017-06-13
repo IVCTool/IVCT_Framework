@@ -17,6 +17,10 @@ public class CbFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
+	public CbDependencies getCbDependencies() {
+		return getFieldByClass(CbDependencies.class);
+	}
+
 	public CbDescription getCbDescription() {
 		return getFieldByClass(CbDescription.class);
 	}
@@ -45,6 +49,11 @@ public class CbFormData extends AbstractFormData {
 
 	public IncludedCb getIncludedCb() {
 		return getFieldByClass(IncludedCb.class);
+	}
+
+	public static class CbDependencies extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
 	}
 
 	public static class CbDescription extends AbstractValueFieldData<String> {

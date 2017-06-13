@@ -91,6 +91,17 @@ public class CbService implements ICbService {
 		BadgeDescription cb = cb_hm.get(formData.getCbId());
 		formData.getCbName().setValue(cb.ID);
 		formData.getCbDescription().setValue(cb.description);
+		String dependencies = "";
+		for (String s : cb.dependency) {
+			if (dependencies.equals("")) {
+				dependencies = s;
+			}
+			else {
+				dependencies = dependencies + ", " + s;				
+			}
+		}
+
+		formData.getCbDependencies().setValue(dependencies);
 		return formData;
 	}
 

@@ -27,6 +27,7 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesField;
 
 @FormData(value = CbFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class CbForm extends AbstractForm {
@@ -90,6 +91,10 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(CbImageField.class);
 	}
 
+	public CbDependenciesField getCbDependenciesField() {
+		return getFieldByClass(CbDependenciesField.class);
+	}
+
 	public OkButton getOkButton() {
 		return getFieldByClass(OkButton.class);
 	}
@@ -146,10 +151,29 @@ public class CbForm extends AbstractForm {
 				}
 				@Override
 				protected int getConfiguredGridW() {
-					// TODO Auto-generated method stub
 					return 4;
 				}
 			}
+
+			@Order(2500)
+			public class CbDependenciesField extends AbstractStringField {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Dependencies");
+				}
+
+				@Override
+				protected int getConfiguredMaxLength() {
+					return 128;
+				}
+				
+				@Override
+				protected int getConfiguredGridW() {
+					return 4;
+				}
+			}
+			
+			
 
 			@Order(3000)
 			public class CbImageField extends AbstractImageField {
@@ -165,12 +189,12 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridH() {
-					return 4;
+					return 2;
 				}
 
 				@Override
 				protected boolean getConfiguredLabelVisible() {
-					return false;
+					return true;
 				}
 			}
 			
