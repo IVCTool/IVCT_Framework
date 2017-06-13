@@ -92,7 +92,9 @@ public class IVCTcommander implements MessageListener {
             final IVCTcommander runner = new IVCTcommander();
             String userCommand = "Freddy";
             runner.sendToJms(userCommand);
-            runner.listenToJms();
+            if (runner.listenToJms()) {
+            	System.exit(1);
+            }
         }
         catch (final IOException ex) {
             LOGGER.error("main: IOException", ex);
@@ -110,9 +112,15 @@ public class IVCTcommander implements MessageListener {
         final Document domConfig;
         properties.load(in);
         this.jmshelper = new PropertyBasedClientSetup(properties);
-        this.jmshelper.parseProperties();
-        this.jmshelper.initConnection();
-        this.jmshelper.initSession();
+        if (this.jmshelper.parseProperties()) {
+        	System.exit(1);
+        }
+        if (this.jmshelper.initConnection()) {
+        	System.exit(1);
+        }
+        if (this.jmshelper.initSession()) {
+        	System.exit(1);
+        }
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
         String ivct_path = System.getenv("IVCT_CONF");
@@ -126,7 +134,7 @@ public class IVCTcommander implements MessageListener {
         	System.exit(1);
         }
 
-        domConfig = parseXmlFile(ivct_path + "\\IVCTconfig.xml");
+        domConfig = parseXmlFile(ivct_path + File.separator + "IVCTconfig.xml");
         if (domConfig != null) {
         	configParameters = parseConfig(domConfig);
             File f = new File(configParameters.pathSutDir);
@@ -140,12 +148,12 @@ public class IVCTcommander implements MessageListener {
             	System.exit(1);
             }
         } else {
-            System.out.println ("Cannot parse: " + ivct_path + "\\IVCTconfig.xml");
+            System.out.println ("Cannot parse: " + ivct_path + File.separator + "IVCTconfig.xml");
         	System.exit(1);
         }
         System.out.println ("pathTestsuite: " + pathTestsuite);
         System.out.println ("pathSutDir: " + configParameters.pathSutDir);
-        rtp.domTestsuite = parseXmlFile(pathTestsuite + "\\IVCTtestsuites.xml");
+        rtp.domTestsuite = parseXmlFile(pathTestsuite + File.separator + "IVCTtestsuites.xml");
     }
 
     private static Document parseXmlFile(final String fileName){
@@ -307,7 +315,7 @@ public class IVCTcommander implements MessageListener {
         Map <String, List<String>> xyz = new HashMap <String, List<String>>();
     	File mine;
     	int i;
-    	testSchedulePath = pathTestsuite + "\\" + testsuite + "\\" + "TestSchedules";
+    	testSchedulePath = pathTestsuite + File.separator + testsuite + File.separator + "TestSchedules";
     	String files[];
     	mine = new File(testSchedulePath);
     	files = mine.list ();
@@ -315,7 +323,7 @@ public class IVCTcommander implements MessageListener {
     		return null;
     	}
     	for (i = 0; i < files.length; i++) {
-    		String p = new String(testSchedulePath + "\\" + files[i]);
+    		String p = new String(testSchedulePath + File.separator + files[i]);
     		mine = new File (p);
     		if (mine.isFile()) {
     	    	List<String> ls;
@@ -477,9 +485,13 @@ public class IVCTcommander implements MessageListener {
 
     /**
      * Initialize the Listening on the JMS Queue
+     * @return true means failure
      */
-    public void listenToJms() {
-        this.jmshelper.setupTopicListener(this.destination, this);
+    public boolean listenToJms() {
+        if (this.jmshelper.setupTopicListener(this.destination, this)) {
+        	return true;
+        }
+        return false;
     }
 
 
@@ -576,9 +588,14 @@ public class IVCTcommander implements MessageListener {
     	    		case "quit":
     	    			// Should ignore
     	    			break;
+                    case "setLogLevel":
+    	    			// Should ignore
+    	    			break;
     				case "setSUT":
+    	    			// Should ignore
     					break;
     				case "startTestCase":
+    	    			// Should ignore
     					break;
     				default:
     					System.out.println("Unknown commandType name is: " + commandTypeName);
