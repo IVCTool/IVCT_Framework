@@ -18,28 +18,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
 public class CmdStartTc implements Command {
-	private MessageProducer producer;
+//	private MessageProducer producer;
 	private String sut;
 	private String badge;
 	private String tc;
 	private String runFolder;
-	private static int cmdCounter = 0;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
-
-	public CmdStartTc(MessageProducer p) {
-		producer = p;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -62,11 +53,9 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			// String tsHome =
-			// Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
 			String paramFileName = sutHome + File.separator + sut + File.separator + badge + File.separator + "TcParam.json";
 			startCmd.put("commandType", "startTestCase");
-			startCmd.put("sequence", Integer.toString(cmdCounter++));
+			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
 			startCmd.put("sutDir", sutHome + File.separator + sut);
 			startCmd.put("testScheduleName", badge);
@@ -76,9 +65,10 @@ public class CmdStartTc implements Command {
 			startCmd.put("tcParam", jsonParam);
 
 			// send the start message
-			Message m = Factory.jmsHelper.createTextMessage(startCmd.toString());
-			producer.send(m);
-		} catch (IOException | ParseException | JMSException e) {
+			Factory.sendToJms(startCmd.toString());
+//			Message m = Factory.jmsHelper.createTextMessage(startCmd.toString());
+//			producer.send(m);
+		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error("error in starting test case <" + badge + File.separator + tc + ">");
 			e.printStackTrace();

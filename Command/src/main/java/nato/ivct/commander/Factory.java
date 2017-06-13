@@ -40,7 +40,9 @@ public class Factory {
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
 	public static final String RTI_ID = "RTI_ID";
 	public static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
-	private MessageProducer producer = null;
+	private static MessageProducer producer = null;
+	private static int cmdCounter = 0;
+
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
@@ -71,7 +73,7 @@ public class Factory {
 		}
 	}
 	
-    public void sendToJms(final String userCommand) {
+    public static void sendToJms(final String userCommand) {
   	  Message message = jmsHelper.createTextMessage(userCommand);
   	  try {
   		  producer.send(message);
@@ -80,6 +82,8 @@ public class Factory {
   		  e.printStackTrace();
   	  }
     }
+    
+    
 
 	public CmdListSuT createCmdListSut() {
 		return new CmdListSuT();
@@ -90,9 +94,23 @@ public class Factory {
 	}
 	
 	public CmdStartTc createCmdStartTc () {
-		return new CmdStartTc(producer);
+		return new CmdStartTc();
 	}
+	
+//	public CmdSetLogLevel createCmdSetLogLevel () {
+//		return new CmdSetLogLevel();
+//	}
+//	
 	public CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
 		return new CmdStartTestResultListener(listener);
 	}
+
+	public static int getCmdCounter() {
+		return cmdCounter;
+	}
+
+	public static int newCmdCount() {
+		return ++cmdCounter;
+	}
+
 }
