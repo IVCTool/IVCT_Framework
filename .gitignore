@@ -3,11 +3,6 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
 # but not the wrapper jar
 !gradle-wrapper.jar
 
@@ -20,5 +15,6 @@ hs_err_pid*
 bin
 logs
 build
+target
 /.gradle
 /.nb-gradle/

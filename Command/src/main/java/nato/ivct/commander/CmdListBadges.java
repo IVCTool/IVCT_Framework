@@ -1,4 +1,4 @@
-/* Copyright 2015, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,48 +14,71 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 
 public class CmdListBadges implements Command {
 	public HashMap<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
 
-
 	@Override
 	public void execute() {
-		// TODO [hzg] implement the some file loader to read the JSON descriptions of Badges
-		
-		// Create dummy data
-		BadgeDescription badge;
-		badge = new BadgeDescription();
-		badge.capabilityName = "HLA_BASE_2016";
-		badge.description = "The Basic HLA Certification Test";
-		badge.cbVisual = "file://some/path/icon.png";
-		badgeMap.put("HLA_BASE_2016", badge);
+		Factory.LOGGER.info("Factory.IVCT_TS_HOME_ID " + Factory.IVCT_TS_HOME_ID);
+		File dir = new File(Factory.props.getProperty(Factory.IVCT_TS_HOME_ID));
+		Factory.LOGGER.info("Read Badge descriptions from " + dir.getAbsolutePath());
+		File[] filesList = dir.listFiles();
+		for (File file : filesList) {
+			Object obj;
+			JSONParser parser = new JSONParser();
+			if (file.isFile()) {
+				try {
+					BadgeDescription badge = new BadgeDescription();
+					obj = parser.parse(new FileReader(file));
+					JSONObject jsonObj = (JSONObject) obj;
+					badge.ID = (String) jsonObj.get("id");
+					badge.name = (String) jsonObj.get("name");
+					badge.description = (String) jsonObj.get("description");
+					badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
+					badge.cbVisual = (String) jsonObj.get("graphics");
+					JSONArray depend = (JSONArray) jsonObj.get("dependency");
+					if (depend != null) {
+						badge.dependency = new String[depend.size()];
+						for (int i = 0; i < depend.size(); i++) {
+							badge.dependency[i] = depend.get(i).toString();
+						}
+					} else {
+						badge.dependency = null;
+					}
+					JSONArray requirements = (JSONArray) jsonObj.get("requirements");
+					if (requirements != null) {
+						badge.requirements = new InteroperabilityRequirement[requirements.size()];
+						for (int i = 0; i < requirements.size(); i++) {
+							JSONObject req = (JSONObject) requirements.get(i);
+							badge.requirements[i] = badge.new InteroperabilityRequirement();
+							badge.requirements[i].ID = (String) req.get("id");
+							badge.requirements[i].description = (String) req.get("description");
+							badge.requirements[i].TC = (String) req.get("TC");
+						}
+					} else {
+						badge.requirements = null;
+					}
 
-		badge = new BadgeDescription();
-		badge.capabilityName = "NETN-AGG-2016";
-		badge.description = "NETN-FOM v2.0 Aggregate FOM Module";
-		badge.cbVisual = "file://some/path/icon.png";
-		badgeMap.put("NETN-AGG-2016", badge);
+					badgeMap.put(badge.ID, badge);
+				} catch (IOException | ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-		badge = new BadgeDescription();
-		badge.capabilityName = "NETN-ENTITY-2016";
-		badge.description = "NETN FOM v2.0 Physical FOM Module";
-		badge.cbVisual = "file://some/path/icon.png";
-		badgeMap.put("NETN-ENTITY-2016", badge);
-		
-		badge = new BadgeDescription();
-		badge.capabilityName = "CWIX-DR-2017";
-		badge.description = "Simulation Interoperability Compliance Badge for CWIX 2017";
-		badge.cbVisual = "file://some/path/icon.png";
-		badgeMap.put("CWIX-DR-2017", badge);
-
-		badge = new BadgeDescription();
-		badge.capabilityName = "CWIX-WARFARE-2017";
-		badge.description = "Simulation Interoperability Compliance Badge for CWIX 2017 WARFARE";
-		badge.cbVisual = "file://some/path/icon.png";
-		badgeMap.put("CWIX-WARFARE-2017", badge);
-
+			}
+		}
 	}
 
 }
