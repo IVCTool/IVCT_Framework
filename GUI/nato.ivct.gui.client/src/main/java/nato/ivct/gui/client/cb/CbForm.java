@@ -1,5 +1,8 @@
 package nato.ivct.gui.client.cb;
 
+import java.io.File;
+import java.io.InputStream;
+
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -13,8 +16,10 @@ import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringFiel
 import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.shared.TEXTS;
 
+import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.CbFormData;
@@ -33,7 +38,7 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesField;
 public class CbForm extends AbstractForm {
 
 	private String cbId;
-	
+
 	@Override
 	protected String getConfiguredTitle() {
 		// TODO [hzg] verify translation
@@ -45,12 +50,13 @@ public class CbForm extends AbstractForm {
 		// TODO Auto-generated method stub
 		return IForm.DISPLAY_HINT_VIEW;
 	}
+
 	@Override
 	public Object computeExclusiveKey() {
 		// TODO Auto-generated method stub
 		return getCbId();
 	}
-	
+
 	public void startModify() {
 		startInternalExclusive(new ModifyHandler());
 	}
@@ -111,8 +117,12 @@ public class CbForm extends AbstractForm {
 
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
-
 		
+		@Override
+        protected int getConfiguredGridColumnCount() {
+          return 5;
+        }
+
 		@Order(1000)
 		public class GeneralBox extends AbstractGroupBox {
 			@Override
@@ -128,13 +138,9 @@ public class CbForm extends AbstractForm {
 				}
 
 				@Override
-				protected int getConfiguredMaxLength() {
-					return 512;
-				}
-				@Override
 				protected int getConfiguredGridW() {
 					// TODO Auto-generated method stub
-					return 4;
+					return 3;
 				}
 			}
 
@@ -145,13 +151,27 @@ public class CbForm extends AbstractForm {
 					return TEXTS.get("CapabilityDescription");
 				}
 
+				
 				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
+				protected int getConfiguredGridH() {
+					// TODO Auto-generated method stub
+					return 2;
 				}
+
 				@Override
 				protected int getConfiguredGridW() {
-					return 4;
+					return 3;
+				}
+				
+				@Override
+				protected boolean getConfiguredMultilineText() {
+					return true;
+				}
+				
+				@Override
+				protected boolean getConfiguredWrapText() {
+					// TODO Auto-generated method stub
+					return true;
 				}
 			}
 
@@ -166,14 +186,12 @@ public class CbForm extends AbstractForm {
 				protected int getConfiguredMaxLength() {
 					return 128;
 				}
-				
+
 				@Override
 				protected int getConfiguredGridW() {
-					return 4;
+					return 3;
 				}
 			}
-			
-			
 
 			@Order(3000)
 			public class CbImageField extends AbstractImageField {
@@ -189,19 +207,23 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridH() {
+					return 4;
+				}
+				
+				@Override
+				protected int getConfiguredGridW() {
+					// TODO Auto-generated method stub
 					return 2;
 				}
 
 				@Override
 				protected boolean getConfiguredLabelVisible() {
-					return true;
+					return false;
 				}
 			}
-			
-			
-			
-			
+
 		}
+
 		@Order(2000)
 		public class IncludedCbBox extends AbstractGroupBox {
 			@Override
@@ -224,9 +246,8 @@ public class CbForm extends AbstractForm {
 					return 6;
 				}
 			}
-			
+
 		}
-		
 
 		@Order(100000)
 		public class OkButton extends AbstractOkButton {
@@ -246,7 +267,15 @@ public class CbForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-
+			// load badge image
+			try (InputStream in = ResourceBase.class.getResourceAsStream("icons" + File.separator + formData.getCbId() + ".png")) {
+				getCbImageField().setImage(IOUtility.readBytes(in));
+				getCbImageField().setImageId(formData.getCbId());
+	          }
+	          catch (Exception e) {
+	            e.printStackTrace();
+	          }
+			
 			setEnabledPermission(new UpdateCbPermission());
 		}
 

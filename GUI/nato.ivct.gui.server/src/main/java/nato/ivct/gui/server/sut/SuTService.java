@@ -1,9 +1,6 @@
 package nato.ivct.gui.server.sut;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
@@ -13,6 +10,7 @@ import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.Command;
 import nato.ivct.commander.SutDescription;
@@ -21,7 +19,6 @@ import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTFormData;
-import nato.ivct.gui.shared.sut.SuTFormData.CapabilitiesBox;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
 import nato.ivct.gui.shared.sut.SuTTablePageData.SuTTableRowData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
@@ -41,10 +38,11 @@ public class SuTService implements ISuTService {
 		LOG.info ("getSuTTableData");
 		SuTTablePageData pageData = new SuTTablePageData();
 		// wait until collect SuT Descriptions Job has finished
-		IFuture<CmdListSuT> future = ServerSession.get().getCmdJobs();
-		Command result = future.awaitDoneAndGet();
+		IFuture<CmdListSuT> future1 = ServerSession.get().getCmdJobs();
+		ServerSession.get().getLoadBadgesJob().awaitDone();
+		Command resultSuT = future1.awaitDoneAndGet();
 		// copy sut descriptions into table rows
-		CmdListSuT sutCmd = (CmdListSuT) result;
+		CmdListSuT sutCmd = (CmdListSuT) resultSuT;
 		sutMap = sutCmd.sutMap;
 		for (SutDescription value : sutMap.values()) {
 			SuTTableRowData row;
