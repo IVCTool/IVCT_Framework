@@ -94,10 +94,14 @@ public class Factory {
 		return new CmdStartTc(_sut, _badge, _tc, _runFolder);
 	}
 
-	// public CmdSetLogLevel createCmdSetLogLevel () {
-	// return new CmdSetLogLevel();
-	// }
-	//
+	public CmdSetLogLevel createCmdSetLogLevel(String level) {
+		return new CmdSetLogLevel(level);
+	}
+	
+	public CmdQuit createCmdQuit () {
+		return new CmdQuit();
+	}
+
 	public CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
 		return new CmdStartTestResultListener(listener);
 	}
