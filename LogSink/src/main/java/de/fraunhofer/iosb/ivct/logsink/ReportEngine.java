@@ -50,7 +50,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     private int numFailed = 0;
     private int numInconclusive = 0;
     private int numPassed = 0;
-    private BufferedWriter writer;
+    private BufferedWriter writer = null;
     private Path file = null;
     private Path path;
     private JSONParser jsonParser = new JSONParser();
@@ -83,27 +83,30 @@ public class ReportEngine implements MessageListener, Runnable  {
     }
     
     private void closeFile() {
-		try {
-    		writer.newLine();
-	    	writer.write(dashes, 0, dashes.length());
-    		writer.newLine();
-			String verdicts = "// Verdicts: Passed: " + numPassed + " Failed: " + numFailed + " Inconclusive: " + numInconclusive;
-			writer.write(verdicts);
-    		writer.newLine();
-	    	writer.write(dashes, 0, dashes.length());
-    		writer.newLine();
-			writer.close();
-			if (numFailed == 0 && numInconclusive == 0 && numPassed == 0) {
-				Files.deleteIfExists(path);
-			}
-			numFailed = 0;
-			numInconclusive = 0;
-			numPassed = 0;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	try {
+    		if (writer != null) {
+    			writer.newLine();
+    			writer.write(dashes, 0, dashes.length());
+    			writer.newLine();
+    			String verdicts = "// Verdicts: Passed: " + numPassed + " Failed: " + numFailed + " Inconclusive: " + numInconclusive;
+    			writer.write(verdicts);
+    			writer.newLine();
+    			writer.write(dashes, 0, dashes.length());
+    			writer.newLine();
+    			writer.close();
+    			if (numFailed == 0 && numInconclusive == 0 && numPassed == 0) {
+    				Files.deleteIfExists(path);
+    			}
+    		}
+    		numFailed = 0;
+    		numInconclusive = 0;
+    		numPassed = 0;
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
     }
+
     /**
      * perform the listener role
      */
