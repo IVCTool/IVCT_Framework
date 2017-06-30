@@ -117,11 +117,11 @@ public class CbForm extends AbstractForm {
 
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
-		
+
 		@Override
-        protected int getConfiguredGridColumnCount() {
-          return 5;
-        }
+		protected int getConfiguredGridColumnCount() {
+			return 5;
+		}
 
 		@Order(1000)
 		public class GeneralBox extends AbstractGroupBox {
@@ -151,7 +151,6 @@ public class CbForm extends AbstractForm {
 					return TEXTS.get("CapabilityDescription");
 				}
 
-				
 				@Override
 				protected int getConfiguredGridH() {
 					// TODO Auto-generated method stub
@@ -162,12 +161,12 @@ public class CbForm extends AbstractForm {
 				protected int getConfiguredGridW() {
 					return 3;
 				}
-				
+
 				@Override
 				protected boolean getConfiguredMultilineText() {
 					return true;
 				}
-				
+
 				@Override
 				protected boolean getConfiguredWrapText() {
 					// TODO Auto-generated method stub
@@ -209,7 +208,7 @@ public class CbForm extends AbstractForm {
 				protected int getConfiguredGridH() {
 					return 4;
 				}
-				
+
 				@Override
 				protected int getConfiguredGridW() {
 					// TODO Auto-generated method stub
@@ -268,13 +267,15 @@ public class CbForm extends AbstractForm {
 			formData = service.load(formData);
 			importFormData(formData);
 			// load badge image
-			try (InputStream in = ResourceBase.class.getResourceAsStream("icons" + File.separator + formData.getCbId() + ".png")) {
+			try (InputStream in = ResourceBase.class
+					.getResourceAsStream("icons" + File.separator + formData.getCbId() + ".png")) {
 				getCbImageField().setImage(IOUtility.readBytes(in));
 				getCbImageField().setImageId(formData.getCbId());
-	          }
-	          catch (Exception e) {
-	            e.printStackTrace();
-	          }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			getForm().setSubTitle(formData.getCbName().getValue());
 			
 			setEnabledPermission(new UpdateCbPermission());
 		}
