@@ -1,6 +1,8 @@
 package nato.ivct.gui.server.sut;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
@@ -34,15 +36,25 @@ public class CapabilityService implements ICapabilityService {
 			BadgeDescription badge = cbService.getBadgeDescription(sutDesc.conformanceStatment[i]);
 			if (badge != null) {
 				collectInteroperabilityRequirements(pageData, badge);
+			} else {
+				LOG.warn("badge not found: " + sutDesc.conformanceStatment[i]);			
 			}
 		}
 		cap_hm.put(sutDesc.ID, pageData);
 		return pageData;
 	}
 
-	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge) {
-		CbService cbService = (CbService) BEANS.get(CbService.class);
-		if (badge != null) {
+	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge,
+			Set<BadgeDescription> badgesCollected) {
+		if (badge == null) {
+			LOG.warn("invalid badge received");
+			return;
+		}
+		else if (badgesCollected.contains(badge)) {
+			LOG.warn("recursive badge dependency ignored: " + badge.name);
+			return;
+		}
+		else {
 			for (int j = 0; j < badge.requirements.length; j++) {
 				CapabilityTableRowData row = pageData.addRow();
 				row.setBadgeId(badge.ID);
@@ -52,12 +64,18 @@ public class CapabilityService implements ICapabilityService {
 				row.setTCresult("no result");
 			}
 			for (int k = 0; k < badge.dependency.length; k++) {
+				CbService cbService = (CbService) BEANS.get(CbService.class);
 				BadgeDescription dependentBadge = cbService.getBadgeDescription(badge.dependency[k]);
 				if (dependentBadge != null) {
-					collectInteroperabilityRequirements(pageData, dependentBadge);
+					badgesCollected.add(badge);
+					collectInteroperabilityRequirements(pageData, dependentBadge, badgesCollected);
 				}
 			}
 		}
+	}
+
+	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge) {
+		collectInteroperabilityRequirements (pageData, badge, new HashSet<BadgeDescription>());
 
 	}
 
