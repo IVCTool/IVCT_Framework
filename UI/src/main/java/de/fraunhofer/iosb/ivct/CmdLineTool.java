@@ -22,10 +22,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
+import nato.ivct.commander.CmdQuit;
+import nato.ivct.commander.CmdSetLogLevel;
 
 /*
  * Dialog program using keyboard input.
@@ -199,7 +200,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> suts1 = IVCTcommander.listSUT();
+                	List<String> suts1 = ivctCommander.listSUT();
                 	if (suts1.isEmpty()) {
                 		System.out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
@@ -224,7 +225,7 @@ class Writer extends Thread {
                 	}
 
                 	// get SUT list
-                	List<String> suts2 = IVCTcommander.listSUT();
+                	List<String> suts2 = ivctCommander.listSUT();
                 	if (suts2.isEmpty()) {
                 		out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
@@ -248,9 +249,9 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSuites: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.getTestSuiteNames();
-                	for (Map.Entry<String, TestSuiteParameters> temp : ivctCommander.rtp.ls.entrySet()) {
-                		System.out.println(temp.getKey());
+                	List<String> ls0 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	for (String temp : ls0) {
+                		System.out.println(temp);
                 	}
                 	break;
                 case "setTestSuite":
@@ -269,23 +270,16 @@ class Writer extends Thread {
                 		out.println("setTestSuite: Error missing test suite name");
                 		break;
                 	}
-                	ivctCommander.rtp.getTestSuiteNames();
+                	List<String> ls1 = ivctCommander.rtp.getTestSuiteNames();
                 	boolean gotTestSuite = false;
-        			for (Map.Entry<String, TestSuiteParameters> entry : ivctCommander.rtp.ls.entrySet()) {
-                		if (split[1].equals(entry.getKey())) {
+        			for (String entry : ls1) {
+                		if (split[1].equals(entry)) {
                 			gotTestSuite = true;
+                			break;
                 		}
                 	}
                 	if (gotTestSuite) {
                 		ivctCommander.rtp.setTestSuiteName(split[1]);
-                    	String tcParamFile = new String(IVCTcommander.getSUTdir() + File.separator + ivctCommander.rtp.getSutName() + File.separator + ivctCommander.getTestSuiteName() + File.separator + "TcParam.json");
-                    	ivctCommander.rtp.paramJson = IVCTcommander.readWholeFile(tcParamFile);
-                    	if (ivctCommander.rtp.paramJson == null) {
-                            out.println("setSUT: cannot read file: " + tcParamFile);
-                            break;
-                    	}
-                		command = new SetTestSuite(split[1], ivctCommander, ivctCommander.fetchCounter());
-                    	gotNewCommand = true;
                 	} else {
                 		out.println("Unknown test suite " + split[1]);
                 	}
@@ -338,15 +332,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
-                	if (ivctCommander.rtp.testsuiteTestcases == null) {
-                		System.out.println("ERROR: No test schedule files found in " + ivctCommander.getTestschedulePath());
-                		break;
-                	}
-                	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
-                		String schedule = entry.getKey();
-                		System.out.println(schedule);
-                	}
+            		System.out.println(ivctCommander.rtp.getTestSuiteName());
                 	break;
                 case "startTestSchedule":
                 case "sts":
@@ -362,29 +348,16 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
-                	if (ivctCommander.rtp.testsuiteTestcases.containsKey(split[1]) == false) {
-                        out.println("startTestSchedule: unknown test schedule " + split[1]);
-                        break;
-                	}
-                	List<String> testcases = ivctCommander.rtp.testsuiteTestcases.get(split[1]);
+                	List<String> testcases0 = ivctCommander.rtp.getTestcases(ivctCommander.rtp.getTestSuiteName());
             		
-                	// Check if test case exists
-                	for (String testcase : testcases) {
-                    	if (ivctCommander.rtp.checkTestCaseNameKnown(testcase)) {
-                            out.println("startTestSchedule: unknown test case " + testcase);
-                            break;
-                    	}
-                	}
-                	
                 	// Create a command structure to share between threads
                 	// One thread works through the list
                 	// Other thread receives test case verdicts and releases semaphore in first thread
                 	// to start next test case
-                	CommandCache commandCache = new CommandCache(split[1], testcases);
+                	CommandCache commandCache = new CommandCache(split[1], testcases0);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(commandCache, ivctCommander, ivctCommander.fetchCounters(testcases.size()));
+                	command = new StartTestSchedule(commandCache, ivctCommander);
                 	gotNewCommand = true;
                 	RuntimeParameters.setTestScheduleName(split[1]);
                     break;
@@ -422,14 +395,9 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
-                	for (Map.Entry<String, List<String>> entry : ivctCommander.rtp.testsuiteTestcases.entrySet()) {
-                		String schedule = entry.getKey();
-                		System.out.println(schedule);
-                		List<String> testcases1 = entry.getValue();
-                		for (String testcase : testcases1) {
-                			System.out.println('\t' + testcase);
-                		}
+                	List<String> testcases1 = ivctCommander.rtp.getTestcases(ivctCommander.rtp.getTestSuiteName());
+                	for (String testcase : testcases1) {
+                			System.out.println('\t' + testcase.substring(testcase.lastIndexOf(".") + 1));
                 	}			
                     break;
                 case "startTestCase":
@@ -446,13 +414,13 @@ class Writer extends Thread {
                         out.println("startTestCase: Error missing test case id");
                         break;
                 	}
-                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
-                	if (ivctCommander.rtp.checkTestCaseNameKnown(split[1])) {
+//                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
+                	String fullTestcaseName = ivctCommander.rtp.getFullTestcaseName(ivctCommander.rtp.getTestSuiteName(), split[1]);
+                	if (ivctCommander.rtp.checkTestCaseNameKnown(ivctCommander.getTestSuiteName(), fullTestcaseName)) {
                         out.println("startTestCase: unknown test case " + split[1]);
                         break;
                 	}
-                	command = new StartTestCase(split[1], ivctCommander, ivctCommander.fetchCounter());
-                	gotNewCommand = true;
+                	ivctCommander.rtp.startTestCase(fullTestcaseName);
                 	RuntimeParameters.setTestCaseName(split[1]);
                     break;
                 case "abortTestCase":
@@ -488,8 +456,8 @@ class Writer extends Thread {
                 	}
                 	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("info") || split[1].equals("debug") || split[1].equals("trace")) {
                 		logLevelString = split[1];
-                		command = new SetLogLevel(split[1], ivctCommander, ivctCommander.fetchCounter());
-                    	command.execute();
+                		CmdSetLogLevel cmdSetLogLevel = ivctCommander.rtp.createCmdSetLogLevel(split[1]);
+                		cmdSetLogLevel.execute();
                     	command = null;
                 	} else {
                         out.println("Unknown log level: " + split[1]);
@@ -514,7 +482,7 @@ class Writer extends Thread {
                 	} else {
                 		out.println("SUT: " + sut);
                 	}
-                	String testSuiteName = RuntimeParameters.getTestSuiteName();
+                	String testSuiteName = ivctCommander.rtp.getTestSuiteName();
                 	if (testSuiteName != null) {
                 		out.println("TestSuiteName: " + testSuiteName);
                 	}
@@ -558,8 +526,8 @@ class Writer extends Thread {
                     		break;
                         }
                 	}
-                	command = new QuitCmd("quit", ivctCommander, ivctCommander.fetchCounter());
-                	command.execute();
+                	CmdQuit cmdQuit = ivctCommander.rtp.createCmdQuit();
+                	cmdQuit.execute();
                     out.println("quit");
                     System.exit(0);
                 case "help":
