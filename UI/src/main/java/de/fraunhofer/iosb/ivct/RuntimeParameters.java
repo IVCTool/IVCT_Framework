@@ -272,22 +272,30 @@ public final class RuntimeParameters {
 					if (ind < 0) {
 						badges.add(conformanceStatment[i]);
 					}
-					for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-						BadgeDescription bd = s.getValue();
-						if (bd.ID.equals(conformanceStatment[i])) {
-							for (int j = 0; j < s.getValue().dependency.length; j++) {
-								int indd = badges.indexOf(s.getValue().dependency[j]);
-								if (indd < 0) {
-									badges.add(s.getValue().dependency[j]);
-								}
-							}
-						}
+					if (getRecursiveBadges(badges, conformanceStatment[i])) {
+						return null;
 					}
 				}
 				return badges;
 			}
 		}
 		return badges;
+	}
+	
+	private boolean getRecursiveBadges(List<String> badges, final String currentBadge) {
+		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
+			BadgeDescription bd = s.getValue();
+			if (bd.ID.equals(currentBadge)) {
+				for (int j = 0; j < s.getValue().dependency.length; j++) {
+					int indd = badges.indexOf(s.getValue().dependency[j]);
+					if (indd < 0) {
+						badges.add(s.getValue().dependency[j]);
+						getRecursiveBadges(badges, s.getValue().dependency[j]);
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	private void listSUTs() {
