@@ -52,7 +52,7 @@ public class CmdLineTool {
 
     	(new Thread(new commandRunnable(this.semaphore, this.keepGoing))).start();
 
-    	(new Thread(new TcRunnable())).start();	
+//    	(new Thread(new TcRunnable())).start();	
     }
     
     /**
@@ -238,52 +238,6 @@ class Writer extends Thread {
                 	ivctCommander.rtp.setSutName(split[1]);
                 	IVCTcommander.resetSUT();
                 	break;
-                case "listTestSuites":
-                case "lt":
-                	// Cannot list test suites if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
-                		System.out.println(sutNotSelected);
-                		break;
-                	}
-                	// Warn about extra parameter
-                	if (split.length > 1) {
-                		out.println("listTestSuites: Warning extra parameter: " + split[1]);
-                	}
-                	List<String> ls0 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
-                	for (String temp : ls0) {
-                		System.out.println(temp);
-                	}
-                	break;
-                case "setTestSuite":
-                case "st":
-                	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("setTestSuite", out)) {
-                		break;
-                	}
-                	// Cannot set test suites if SUT is not selected
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
-                	// Need an input parameter
-                	if (split.length == 1) {
-                		out.println("setTestSuite: Error missing test suite name");
-                		break;
-                	}
-                	List<String> ls1 = ivctCommander.rtp.getTestSuiteNames();
-                	boolean gotTestSuite = false;
-        			for (String entry : ls1) {
-                		if (split[1].equals(entry)) {
-                			gotTestSuite = true;
-                			break;
-                		}
-                	}
-                	if (gotTestSuite) {
-                		ivctCommander.rtp.setTestSuiteName(split[1]);
-                	} else {
-                		out.println("Unknown test suite " + split[1]);
-                	}
-                	break;
                 case "startConformanceTest":
                 case "sct":
                 	// Check any critical tasks are running
@@ -325,14 +279,18 @@ class Writer extends Thread {
                     break;
                 case "listTestSchedules":
                 case "lts":
-                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
+                	if (ivctCommander.checkSUTselected()) {
+                		System.out.println(sutNotSelected);
                 		break;
                 	}
                 	// Warn for extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-            		System.out.println(ivctCommander.rtp.getTestSuiteName());
+                	List<String> ls2 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	for (String temp : ls2) {
+                		System.out.println(temp);
+                	}
                 	break;
                 case "startTestSchedule":
                 case "sts":
@@ -340,7 +298,8 @@ class Writer extends Thread {
                 	if (ivctCommander.checkCtTcTsRunning("startTestSchedule", out)) {
                 		break;
                 	}
-                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
+                	if (ivctCommander.checkSUTselected()) {
+                        out.println(sutNotSelected);
                 		break;
                 	}
                 	// Need an input parameter
@@ -348,7 +307,21 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	List<String> testcases0 = ivctCommander.rtp.getTestcases(ivctCommander.rtp.getTestSuiteName());
+                	List<String> ls1 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	boolean gotTestSchedule = false;
+        			for (String entry : ls1) {
+                		if (split[1].equals(entry)) {
+                			gotTestSchedule = true;
+                			break;
+                		}
+                	}
+                	if (gotTestSchedule) {
+                		ivctCommander.rtp.setTestSuiteName(split[1]);
+                	} else {
+                		out.println("Unknown test schedule " + split[1]);
+                		break;
+                	}
+                	List<String> testcases0 = ivctCommander.rtp.getTestcases(split[1]);
             		
                 	// Create a command structure to share between threads
                 	// One thread works through the list
@@ -388,17 +361,22 @@ class Writer extends Thread {
                     break;
                 case "listTestCases":
                 case "ltc":
-                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
+                	if (ivctCommander.checkSUTselected()) {
+                        out.println(sutNotSelected);
                 		break;
                 	}
                 	// Warn about extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> testcases1 = ivctCommander.rtp.getTestcases(ivctCommander.rtp.getTestSuiteName());
-                	for (String testcase : testcases1) {
-                			System.out.println('\t' + testcase.substring(testcase.lastIndexOf(".") + 1));
-                	}			
+                	List<String> ls3 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	for (String temp : ls3) {
+                		System.out.println(temp);
+                    	List<String> testcases1 = ivctCommander.rtp.getTestcases(temp);
+                    	for (String testcase : testcases1) {
+                    			System.out.println('\t' + testcase.substring(testcase.lastIndexOf(".") + 1));
+                    	}			
+                	}
                     break;
                 case "startTestCase":
                 case "stc":
@@ -406,22 +384,26 @@ class Writer extends Thread {
                 	if (ivctCommander.checkCtTcTsRunning("startTestCase", out)) {
                 		break;
                 	}
-                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
+                	if (ivctCommander.checkSUTselected()) {
+                        out.println(sutNotSelected);
                 		break;
                 	}
                 	// Need an input parameter
-                	if (split.length == 1) {
-                        out.println("startTestCase: Error missing test case id");
+                	if (split.length < 3) {
+                		if (split.length < 2) {
+                			out.println("startTestCase: Error missing badge name and test case id");
+                		} else {
+                			out.println("startTestCase: Error missing badge name or test case id");
+                		}
+                		break;
+                	}
+                	String fullTestcaseName = ivctCommander.rtp.getFullTestcaseName(split[1], split[2]);
+                	if (ivctCommander.rtp.checkTestCaseNameKnown(split[1], fullTestcaseName)) {
+                        out.println("startTestCase: unknown testSchedule testCase: " + split[1] + " " + split[2]);
                         break;
                 	}
-//                	ivctCommander.rtp.testsuiteTestcases = ivctCommander.readTestSuiteFiles(ivctCommander.getTestSuiteName());
-                	String fullTestcaseName = ivctCommander.rtp.getFullTestcaseName(ivctCommander.rtp.getTestSuiteName(), split[1]);
-                	if (ivctCommander.rtp.checkTestCaseNameKnown(ivctCommander.getTestSuiteName(), fullTestcaseName)) {
-                        out.println("startTestCase: unknown test case " + split[1]);
-                        break;
-                	}
-                	ivctCommander.rtp.startTestCase(fullTestcaseName);
-                	RuntimeParameters.setTestCaseName(split[1]);
+                	ivctCommander.rtp.startTestCase(split[1], fullTestcaseName);
+                	RuntimeParameters.setTestCaseName(split[2]);
                     break;
                 case "abortTestCase":
                 case "atc":
@@ -465,7 +447,8 @@ class Writer extends Thread {
                 	break;
                 case "listVerdicts":
                 case "lv":
-                	if (ivctCommander.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected)) {
+                	if (ivctCommander.checkSUTselected()) {
+                        out.println(sutNotSelected);
                 		break;
                 	}
                 	// Warn about extra parameter
@@ -481,10 +464,6 @@ class Writer extends Thread {
                 		out.println("SUT:");
                 	} else {
                 		out.println("SUT: " + sut);
-                	}
-                	String testSuiteName = ivctCommander.rtp.getTestSuiteName();
-                	if (testSuiteName != null) {
-                		out.println("TestSuiteName: " + testSuiteName);
                 	}
                 	String testScheduleName = RuntimeParameters.getTestScheduleName();
                 	if (testScheduleName != null) {
@@ -533,18 +512,16 @@ class Writer extends Thread {
                 case "help":
                 case "h":
                     out.println("listSUT (lsut) - list SUT folders");
-                    out.println("setSUT (ssut) - set active SUT");
-                    out.println("listTestSuites (lt) - list the available test suites");
-                    out.println("setTestSuite (st) - set the name of the test suite to be used");
+                    out.println("setSUT (ssut) sut - set active SUT");
                     out.println("startConformanceTest (sct) - start conformance test");
                     out.println("abortConformanceTest (act) - abort conformance test");
                     out.println("listTestSchedules (lts) - list the available test schedules for the test suite");
-                    out.println("startTestSchedule (sts) - start the named test schedule");
+                    out.println("startTestSchedule (sts) testSchedule - start the named test schedule");
                     out.println("abortTestSchedule (ats) - abort the running test schedule");
                     out.println("listTestCases (ltc) - list the available test cases for the test suite");
-                    out.println("startTestCase (stc) - start the named test case");
+                    out.println("startTestCase (stc) testSchedule testcase - start the named test case");
                     out.println("abortTestCase (atc) - abort the running test case");
-                    out.println("setLogLevel (sll) - set the log level for logging - error, warning, info, debug, trace");
+                    out.println("setLogLevel (sll) loglevel - set the log level for logging - error, warning, info, debug, trace");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
                     out.println("status (s) - display status information");
                     out.println("terse (t) - display only important session information");

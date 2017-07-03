@@ -121,11 +121,6 @@ public class IVCTcommander implements MessageListener {
         }
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
-        String ivct_path = System.getenv("IVCT_CONF");
-        if (ivct_path == null) {
-            System.out.println ("The global variable IVCT_CONF is NOT set");
-        	System.exit(1);
-        }
     }
 
     public void acquireSemaphore() {
@@ -171,13 +166,6 @@ public class IVCTcommander implements MessageListener {
     	return rtp.checkSutKnown(sut);
     }
 	
-	/*
-	 * Some commands have no meaning without knowing the test suite involved.
-	 */
-	protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
-		return rtp.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected);
-	}
-
     protected boolean checkSUTselected() {
     	return rtp.checkSUTselected();
     }
@@ -239,10 +227,6 @@ public class IVCTcommander implements MessageListener {
 		rtp.setTestScheduleRunningBool(b);
 	}
 
-    protected String getTestSuiteName() {
-    	return rtp.getTestSuiteName();
-    }
-    
     protected void setCmdVerboseBool(final boolean b) {
     	cmdVerboseBool = b;
     }
@@ -359,9 +343,7 @@ public class IVCTcommander implements MessageListener {
     				verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
     			}
     			if (rtp.checkTestSuiteNameNew()) {
-    				String testSuiteStr = new String("Test Suite: " + rtp.getTestSuiteName());
-    				listOfVerdicts.addElement(testSuiteStr);
-    				testSuiteStr = new String("Verdicts are:");
+    				String testSuiteStr = new String("Verdicts are:");
     				listOfVerdicts.addElement(testSuiteStr);
     				addTestSessionSeparator();
     				rtp.setTestSuiteNameUsed();
