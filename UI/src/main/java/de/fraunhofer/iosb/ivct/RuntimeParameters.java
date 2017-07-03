@@ -44,15 +44,6 @@ import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.Factory;
 
-class TestSuiteParameters {
-	String packageName;
-	String tsRunFolder;
-	TestSuiteParameters() {
-		this.packageName = null;
-		this.tsRunFolder = null;
-	}
-}
-  
 public final class RuntimeParameters {
 	private static boolean abortTestScheduleBool = false;
 	private boolean conformanceTestBool = false;
@@ -120,8 +111,8 @@ public final class RuntimeParameters {
 	/*
 	 * 
 	 */
-	protected boolean startTestCase(final String testCase) {
-		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, testSuiteName, testCase, getTsRunFolder(testSuiteName));
+	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
+		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, theTestSuiteName, testCase, Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + getTsRunFolder(theTestSuiteName));
 		cmdStartTc.execute();
 		return false;
 	}
@@ -152,21 +143,6 @@ public final class RuntimeParameters {
 	 */
 	protected boolean checkTestSuiteNameNew() {
 		return testSuiteNameNew;
-	}
-
-	/*
-	 * Some commands have no meaning without knowing the test suite involved.
-	 */
-	protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
-		if (checkSUTselected()) {
-			System.out.println(sutNotSelected);
-			return true;
-		}
-		if (testSuiteName == null) {
-			System.out.println(tsNotSelected);
-			return true;
-		}
-		return false;
 	}
 
 	protected int fetchCounters(int n) {
@@ -249,7 +225,10 @@ public final class RuntimeParameters {
 		getTestSuiteNames();
 		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
 			BadgeDescription bd = s.getValue();
-			tsRunFolder = bd.tsRunTimeFolder;
+			if (bd.ID.equals(testsuite) == true) {
+				tsRunFolder = bd.tsRunTimeFolder;
+				break;
+			}
 		}
 		return tsRunFolder;
 	}
