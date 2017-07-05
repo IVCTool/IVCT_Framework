@@ -1,5 +1,7 @@
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import nato.ivct.commander.Factory;
@@ -11,8 +13,16 @@ import nato.ivct.commander.Factory;
  * @author hzg, @date 07.04.17 10:59
  */
 public class LibraryTest {
-    @Test public void testSomeLibraryMethod() {
-        Factory classUnderTest = new Factory ();
-        assertTrue("someLibraryMethod should return 'true'", classUnderTest.createCmdListSut() != null);
-    }
+	@Test
+	public void testSomeLibraryMethod() {
+		Factory classUnderTest;
+		try {
+			classUnderTest = new Factory();
+			classUnderTest.initialize();
+			assertTrue("someLibraryMethod should return 'true'", classUnderTest.createCmdListSut() != null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

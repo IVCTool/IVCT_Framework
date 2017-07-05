@@ -1,4 +1,4 @@
-/* Copyright 2015, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,11 +15,17 @@ limitations under the License. */
 package nato.ivct.commander;
 
 public class BadgeDescription {
-	public String capabilityName;
+
+	public class InteroperabilityRequirement {
+		public String ID;
+		public String description;
+		public String TC;
+	}
+
+	public String ID;
+	public String name;
 	public String description;
 	public String cbVisual;
+	public String[] dependency;
+	public InteroperabilityRequirement[] requirements;
 }
-
-
-
-

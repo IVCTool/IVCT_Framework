@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>nato.ivct.gui</groupId>
+  <artifactId>nato.ivct.gui</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>IVCT Parent Module</name>
+  <description>Maven Master hosted at Eclipse Scout</description>
+  <url>https://eclipse.org/scout/maven_plugin_config-master/maven_rt_plugin_config-master/nato.ivct.gui</url>
+  <inceptionYear>2015</inceptionYear>
+  <licenses>
+    <license>
+      <name>Eclipse Public License v1.0</name>
+      <comments>All rights reserved.
+
+       This program and the accompanying materials are made
+       available under the terms of the Eclipse Public License v1.0
+       which accompanies this distribution, and is available at
+       http://www.eclipse.org/legal/epl-v10.htm</comments>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Eclipse Scout Committers</name>
+      <email>scout-dev@eclipse.org</email>
+      <organization>Eclipse</organization>
+      <organizationUrl>https://www.eclipse.org</organizationUrl>
+    </developer>
+  </developers>
+  <mailingLists>
+    <mailingList>
+      <name>scout-dev Mailing List</name>
+      <subscribe>https://dev.eclipse.org/mailman/listinfo/scout-dev</subscribe>
+      <unsubscribe>https://dev.eclipse.org/mailman/listinfo/scout-dev</unsubscribe>
+      <post>scout-dev@eclipse.org</post>
+      <archive>http://dev.eclipse.org/mhonarc/lists/scout-dev</archive>
+    </mailingList>
+  </mailingLists>
+  <scm>
+    <connection>scm:git:git://git.eclipse.org/gitroot/scout/maven-master.git/maven_plugin_config-master/maven_rt_plugin_config-master/nato.ivct.gui</connection>
+    <developerConnection>scm:git:ssh://${eclipse_gerrit_username}@git.eclipse.org:29418/scout/maven-master.git/maven_plugin_config-master/maven_rt_plugin_config-master/nato.ivct.gui</developerConnection>
+    <tag>v2.0.8</tag>
+    <url>https://git.eclipse.org/c/scout/maven-master.git/maven_plugin_config-master/maven_rt_plugin_config-master/nato.ivct.gui/</url>
+  </scm>
+  <issueManagement>
+    <system>Bugzilla</system>
+    <url>https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;product=Scout;classification=Technology</url>
+  </issueManagement>
+  <distributionManagement>
+    <repository>
+      <id>repo.eclipse.org</id>
+      <name>Scout Repository - Releases</name>
+      <url>https://repo.eclipse.org/content/repositories/scout-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>repo.eclipse.org</id>
+      <name>Scout Repository - Snapshots</name>
+      <url>https://repo.eclipse.org/content/repositories/scout-snapshots/</url>
+    </snapshotRepository>
+    <site>
+      <id>eclipse.scout.site</id>
+      <name>Eclipse Scout Site</name>
+      <url>http://staging/maven_plugin_config-master/maven_rt_plugin_config-master/nato.ivct.gui</url>
+    </site>
+  </distributionManagement>
+  <properties>
+    <master_dependency_jaxws_version>2.2.10</master_dependency_jaxws_version>
+    <master_ossrh_autoReleaseAfterClose>false</master_ossrh_autoReleaseAfterClose>
+    <master_test_jvmMemory>-Xms512m -Xmx2048m</master_test_jvmMemory>
+    <maven.build.timestamp.format>yyyyMMdd-HHmmss</maven.build.timestamp.format>
+    <master_plugin_nexus-staging_version>1.6.6</master_plugin_nexus-staging_version>
+    <master_plugin_properties_version>2.0.1</master_plugin_properties_version>
+    <master_plugin_exec_version>1.4.0</master_plugin_exec_version>
+    <master_release_checkinMessage>[release] version updated to 1.0.0-SNAPSHOT</master_release_checkinMessage>
+    <master_plugin_eclipse_version>2.10</master_plugin_eclipse_version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <master_deploy_SnapshotUrl>https://repo.eclipse.org/content/repositories/scout-snapshots/</master_deploy_SnapshotUrl>
+    <master_plugin_gpg_version>1.6</master_plugin_gpg_version>
+    <master_git-id_skip>false</master_git-id_skip>
+    <master_plugin_dependency_version>2.10</master_plugin_dependency_version>
+    <master_plugin_license_version>2.11</master_plugin_license_version>
+    <maven.api.version>3.2.1</maven.api.version>
+    <master_deploy_ReleaseUrl>https://repo.eclipse.org/content/repositories/scout-releases/</master_deploy_ReleaseUrl>
+    <master_plugin_source_version>2.4</master_plugin_source_version>
+    <master_plugin_jacoco_version>0.7.5.201505241946</master_plugin_jacoco_version>
+    <master_plugin_bundle_version>2.5.3</master_plugin_bundle_version>
+    <jdk.source.version>1.8</jdk.source.version>
+    <master_sanityCheck_skip>false</master_sanityCheck_skip>
+    <master_release_tagName>${base.version}.I</master_release_tagName>
+    <master_plugin_site_version>3.4</master_plugin_site_version>
+    <master_plugin_versions_version>2.2</master_plugin_versions_version>
+    <master_webTest_skip>false</master_webTest_skip>
+    <master_plugin_tycho_version>0.22.0</master_plugin_tycho_version>
+    <master_release_milestoneVersion>I</master_release_milestoneVersion>
+    <org.eclipse.scout.rt.version>6.1.0.M5</org.eclipse.scout.rt.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <master_unitTest_failureIgnore>true</master_unitTest_failureIgnore>
+    <master_plugin_install_version>2.5.2</master_plugin_install_version>
+    <master_plugin_enforcer_version>1.4.1</master_plugin_enforcer_version>
+    <master_plugin_javadoc_version>2.10.3</master_plugin_javadoc_version>
+    <master_test_remoteDebugPort>8000</master_test_remoteDebugPort>
+    <master_plugin_git-commit-id_version>2.2.0</master_plugin_git-commit-id_version>
+    <master_dependency_phantomjs_version>1.9.7</master_dependency_phantomjs_version>
+    <master_plugin_flatten_version>1.0.0</master_plugin_flatten_version>
+    <master_plugin_release_version>2.5.3</master_plugin_release_version>
+    <master_plugin_jar_version>2.6</master_plugin_jar_version>
+    <master_deploy_ReleaseId>repo.eclipse.org</master_deploy_ReleaseId>
+    <master_plugin_jasmine_version>2.0</master_plugin_jasmine_version>
+    <master_test_argLine>${master_test_jacocoArgLine} -Xms512m -Xmx2048m
+      -Dfile.encoding=UTF-8</master_test_argLine>
+    <jdk.min.version>1.7</jdk.min.version>
+    <master_plugin_antrun_version>1.8</master_plugin_antrun_version>
+    <master_release_pushChanges>false</master_release_pushChanges>
+    <master_plugin_jaxws_version>2.4</master_plugin_jaxws_version>
+    <master_plugin_jarsigner_version>1.1.2</master_plugin_jarsigner_version>
+    <master_plugin_ear_version>2.10.1</master_plugin_ear_version>
+    <master_plugin_assembly_version>2.6</master_plugin_assembly_version>
+    <master_plugin_resources_version>2.7</master_plugin_resources_version>
+    <maven.min.version>3.2.1</maven.min.version>
+    <master_coverage_skip>false</master_coverage_skip>
+    <master_deploy_SnapshotId>repo.eclipse.org</master_deploy_SnapshotId>
+    <master_plugin_animal-sniffer_version>1.15</master_plugin_animal-sniffer_version>
+    <master_test_forkCount>0.5C</master_test_forkCount>
+    <master_plugin_replacer_version>1.5.3</master_plugin_replacer_version>
+    <master_plugin_war_version>2.6</master_plugin_war_version>
+    <master_plugin_jxr_version>2.5</master_plugin_jxr_version>
+    <master_release_newVersion>${base.version}.I</master_release_newVersion>
+    <master_unitTest_skip>false</master_unitTest_skip>
+    <nato.ivct.gui.nato.ivct.gui.version>1.0.0-SNAPSHOT</nato.ivct.gui.nato.ivct.gui.version>
+    <master_plugin_surefire_version>2.18.1</master_plugin_surefire_version>
+    <master_plugin_tomcat7_version>2.1</master_plugin_tomcat7_version>
+    <master_plugin_eclipse-settings_version>3.0.1</master_plugin_eclipse-settings_version>
+    <master_plugin_failsafe_version>2.18.1</master_plugin_failsafe_version>
+    <master_deployAtEnd>true</master_deployAtEnd>
+    <master_dependency_eclipseSettings_master_version>2.0.8</master_dependency_eclipseSettings_master_version>
+    <master_flatten_mode>oss</master_flatten_mode>
+    <master_test_runOrder>hourly</master_test_runOrder>
+    <master_plugin_changelog_version>2.3</master_plugin_changelog_version>
+    <master_git-id_failNoGit>false</master_git-id_failNoGit>
+    <master_plugin_scm_version>1.9.4</master_plugin_scm_version>
+    <master_plugin_project-info-reports_version>2.8.1</master_plugin_project-info-reports_version>
+    <master_plugin_jandex_version>1.0.3</master_plugin_jandex_version>
+    <master_plugin_ant_version>2.4</master_plugin_ant_version>
+    <master_test_debugArgLine>-Xdebug
+      -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</master_test_debugArgLine>
+    <master_git-id_useNative>false</master_git-id_useNative>
+    <master_dependency_tycho-compiler_version>0.23.1</master_dependency_tycho-compiler_version>
+    <master_plugin_compiler_version>3.3</master_plugin_compiler_version>
+    <master_plugin_duplicate-finder_version>1.2.1</master_plugin_duplicate-finder_version>
+    <master_plugin_deploy_version>2.8.2</master_plugin_deploy_version>
+    <master_plugin_clean_version>3.0.0</master_plugin_clean_version>
+    <master_plugin_build-helper_version>1.9.1</master_plugin_build-helper_version>
+    <master_javadoc_opts></master_javadoc_opts>
+    <master_coverage_jacoco_destFile>C:\projects\MSG134\IVCT_Framework\GUI\nato.ivct.gui/../target/jacoco-all.exec</master_coverage_jacoco_destFile>
+    <master_plugin_tycho-extras_version>0.22.0</master_plugin_tycho-extras_version>
+    <master_test_reuseVm>true</master_test_reuseVm>
+    <master_plugin_cargo_version>1.4.15</master_plugin_cargo_version>
+    <master_plugin_sortpom_version>2.4.0</master_plugin_sortpom_version>
+    <master_plugin_phantomjs_version>0.7</master_plugin_phantomjs_version>
+    <master_test_timeout>300</master_test_timeout>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.scout.rt</groupId>
+        <artifactId>org.eclipse.scout.rt</artifactId>
+        <version>${org.eclipse.scout.rt.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>nato.ivct.gui</groupId>
+        <artifactId>nato.ivct.gui.client</artifactId>
+        <version>${nato.ivct.gui.nato.ivct.gui.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nato.ivct.gui</groupId>
+        <artifactId>nato.ivct.gui.shared</artifactId>
+        <version>${nato.ivct.gui.nato.ivct.gui.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nato.ivct.gui</groupId>
+        <artifactId>nato.ivct.gui.server</artifactId>
+        <version>${nato.ivct.gui.nato.ivct.gui.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nato.ivct.gui</groupId>
+        <artifactId>nato.ivct.gui.ui.html</artifactId>
+        <version>${nato.ivct.gui.nato.ivct.gui.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <repositories>
+    <repository>
+      <snapshots />
+      <id>eclipse.snapshot</id>
+      <name>eclipse-snapshot-repo</name>
+      <url>https://repo.eclipse.org/content/groups/snapshots/</url>
+    </repository>
+  </repositories>
+</project>

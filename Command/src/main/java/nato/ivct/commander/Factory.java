@@ -1,4 +1,4 @@
-/* Copyright 2015, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,47 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.slf4j.LoggerFactory;
+
+/*
+ * The Factory is used to create Command objects to be executed by a user interface.
+ */
 public class Factory {
+	
+	public static Properties props = null;
+	public static final String IVCT_HOME_ID			= "IVCT_HOME_ID";
+	public static final String IVCT_TS_HOME_ID		= "IVCT_TS_HOME_ID";
+	public static final String IVCT_SUT_HOME_ID		= "IVCT_SUT_HOME_ID";
+	public static final String RTI_ID				= "RTI_ID";
+	
+	public static final org.slf4j.Logger LOGGER 	= LoggerFactory.getLogger(Factory.class);
+
+	/* 
+	 * Factory has to be initialized before any commands are being created.
+	 */
+	public void initialize () throws FileNotFoundException, IOException{
+		props = new Properties();
+		try {
+			props.load(new FileInputStream("IVCT.properties"));
+		}
+		catch (final FileNotFoundException e){
+			LOGGER.warn("no properties file IVCT.properties found");
+			props.setProperty(IVCT_HOME_ID, "C:/ProjekteLokal/MSG134/IVCT_Framework");
+			props.setProperty(IVCT_TS_HOME_ID, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTtestSuites");
+			props.setProperty(IVCT_SUT_HOME_ID, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTsut");
+			props.setProperty(RTI_ID, "pRTI");
+			props.store (new FileOutputStream("IVCT.properties"), "IVCT Properties File");
+			LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
+			LOGGER.warn(props.toString());
+		}
+	}
+	
 	public CmdListSuT createCmdListSut() {
 		return new CmdListSuT();
 	}
