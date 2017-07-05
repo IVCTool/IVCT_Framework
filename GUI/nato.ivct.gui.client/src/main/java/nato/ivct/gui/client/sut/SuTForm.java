@@ -1,11 +1,10 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
-import org.eclipse.scout.rt.client.ui.basic.tree.ITree;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -15,18 +14,22 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
-import org.eclipse.scout.rt.shared.services.common.code.AbstractCode;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.CapabilitiesBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.TestResultsField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.EventsField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.ExecuteButton;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.TerminateButton;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.CapabilitiesField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.SutVendorField;
@@ -35,11 +38,6 @@ import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.ExecuteButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.TerminateButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.EventsField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.CapabilitiesField;
 
 @FormData(value = SuTFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTForm extends AbstractForm {
@@ -237,13 +235,14 @@ public class SuTForm extends AbstractForm {
 				@Override
 				protected void execInitField() {
 					// TODO Auto-generated method stub
-					// super.execInitField();
-					Set<String> values = new HashSet<String>();
-					values.add("one");
-					values.add("two");
-					setValue(values);
-					setFilterCheckedRowsValue(true);
+					super.execInitField();
 				}
+				@Override
+				protected List<? extends ILookupRow<String>> execLoadTableData() {
+					// TODO Auto-generated method stub
+					return super.execLoadTableData();
+				}
+				
 			}
 
 			@Order(5000)

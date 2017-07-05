@@ -40,7 +40,7 @@ public class CmdListSuT implements Command {
 				JSONParser parser = new JSONParser();
 				try {
 					SutDescription sut = new SutDescription();
-					obj = parser.parse(new FileReader(file + "\\CS.json"));
+					obj = parser.parse(new FileReader(file + File.separator + "CS.json"));
 					JSONObject jsonObj = (JSONObject) obj;
 					sut.ID = (String) jsonObj.get("id");
 					sut.description = (String) jsonObj.get("description");

@@ -25,6 +25,7 @@ public class BadgeDescription {
 	public String ID;
 	public String name;
 	public String description;
+	public String tsRunTimeFolder;
 	public String cbVisual;
 	public String[] dependency;
 	public InteroperabilityRequirement[] requirements;

@@ -33,6 +33,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import de.fraunhofer.iosb.tc_lib.LineUtil;
+
 class TestSuiteParameters {
 	String packageName;
 	String tsRunFolder;
@@ -55,7 +57,7 @@ public final class RuntimeParameters {
 	private static List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 	public String paramJson;
-	private static String sutName = null;
+	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private static String testSuiteName = null;
@@ -173,19 +175,19 @@ public final class RuntimeParameters {
 						TestSuiteParameters testSuiteParameters = new TestSuiteParameters();
 						testSuiteParameters.packageName = new String();
 						testSuiteParameters.tsRunFolder = new String();
-						String testSuiteName = new String();
+						String testSuiteNameTmp = new String();
 						for (Node child1 = child0.getFirstChild(); child1 != null; child1 = child1.getNextSibling()) {
 							if (child1.getNodeName().compareTo("name") == 0) {
-								testSuiteName = child1.getFirstChild().getNodeValue();
+								testSuiteNameTmp = child1.getFirstChild().getNodeValue();
 							}
 							if (child1.getNodeName().compareTo("packageName") == 0) {
 								testSuiteParameters.packageName = child1.getFirstChild().getNodeValue();
 							}
 							if (child1.getNodeName().compareTo("tsRunFolder") == 0) {
-								testSuiteParameters.tsRunFolder = child1.getFirstChild().getNodeValue();
+								testSuiteParameters.tsRunFolder = LineUtil.replaceMacro(child1.getFirstChild().getNodeValue());
 							}
 						}
-						ls.put(testSuiteName, testSuiteParameters);
+						ls.put(testSuiteNameTmp, testSuiteParameters);
 					}
 				}
 			}
@@ -230,11 +232,11 @@ public final class RuntimeParameters {
 		}
 	}
 
-	protected static String getSutName() {
+	protected String getSutName() {
 		return sutName;
 	}
 
-	protected static void setSutName(String theSutName) {
+	protected void setSutName(String theSutName) {
 		// Same sut just return.
 		if (theSutName.equals(sutName)) {
 			return;
