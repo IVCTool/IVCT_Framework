@@ -68,7 +68,8 @@ public class CmdStartTc implements Command {
 			startCmd.put("sutDir", sutHome + JSONObject.escape(File.separator) + sut);
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder", runFolder);
+			startCmd.put("tsRunFolder",
+					Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + runFolder);
 			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
 			startCmd.put("tcParam", jsonParam);
 
