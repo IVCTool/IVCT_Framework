@@ -70,12 +70,16 @@ public class CmdStartTc implements Command {
 			startCmd.put("testCaseId", tc);
 			startCmd.put("tsRunFolder",
 					Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + runFolder);
-			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
+			
+//			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
+			String paramFileContentString = Factory.readWholeFile(paramFileName);
+			String tmpString = Factory.replaceMacro(paramFileContentString);
+			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 			startCmd.put("tcParam", jsonParam);
 
 			// send the start message
 			Factory.sendToJms(startCmd.toString());
-		} catch (IOException | ParseException e) {
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error("error in starting test case <" + badge + File.separator + tc + ">");
 			e.printStackTrace();

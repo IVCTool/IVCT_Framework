@@ -14,9 +14,12 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -72,6 +75,105 @@ public class Factory {
 		}
 	}
 
+	public static String readWholeFile(final String filename) {
+		BufferedReader br = null;
+		String everything = null;
+
+		File myFile = new File(filename);
+		if (myFile.isFile() == false) {
+			return everything;
+		}
+
+		try {
+			br = new BufferedReader(new FileReader(filename));
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+			}
+			everything = sb.toString();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+
+		return everything;
+	}
+
+	public static String replaceMacro(String inString) {
+		StringBuilder env = new StringBuilder();
+		StringBuilder out = new StringBuilder();
+		int len;
+
+		env.setLength(512);
+		out.setLength(512);
+		out.setLength(0);
+		len = inString.length();
+
+		// Loop through inString character by character
+		for (int i = 0, l = 0; i < len; i++, l++) {
+			boolean gotClosing = false;
+			boolean gotEnv = false;
+			if (i < len - 1) {
+				// Check if we have "$(" in inString
+				if (inString.charAt(i) == '$' && inString.charAt(i + 1) == '(') {
+					gotClosing = false;
+					for (int j = i + 2, k = 0; j < len; j++, k++) {
+						if (inString.charAt(j) == ')') {
+							String b = null;
+							gotClosing = true;
+							gotEnv = true;
+							env.setLength(k);
+							if (env.length() > 0) {
+								b = Factory.props.getProperty(env.toString());
+							} else {
+								LOGGER.error("LineUtil:replaceMacro: Missing environment variable ");
+							}
+							if (b != null) {
+								out.append(b);
+								l += b.length() - 1;
+								i = j;
+							} else {
+								LOGGER.error(
+										"LineUtil:replaceMacro: Environment variable not found: " + env.toString());
+								String s = inString.subSequence(i, i + k + 3).toString();
+								out.append(s);
+								l += j - i;
+								i = j;
+							}
+							break;
+						}
+						env.setCharAt(k, inString.charAt(j));
+					}
+					if (gotClosing == false) {
+						LOGGER.error("LineUtil:replaceMacro: Missing closing bracket");
+					}
+				}
+			}
+			if (gotEnv) {
+				gotEnv = false;
+				continue;
+			}
+			out.insert(l, inString.charAt(i));
+			out.setLength(l + 1);
+		}
+
+		return out.toString();
+	}
+
 	public static void sendToJms(final String userCommand) {
 		Message message = jmsHelper.createTextMessage(userCommand);
 		try {
@@ -97,8 +199,8 @@ public class Factory {
 	public CmdSetLogLevel createCmdSetLogLevel(String level) {
 		return new CmdSetLogLevel(level);
 	}
-	
-	public CmdQuit createCmdQuit () {
+
+	public CmdQuit createCmdQuit() {
 		return new CmdQuit();
 	}
 
