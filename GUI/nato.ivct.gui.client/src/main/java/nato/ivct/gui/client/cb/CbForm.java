@@ -18,26 +18,28 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.shared.TEXTS;
+import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.UpdateCbPermission;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesField;
 
 @FormData(value = CbFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class CbForm extends AbstractForm {
 
 	private String cbId;
+	org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -272,7 +274,7 @@ public class CbForm extends AbstractForm {
 				getCbImageField().setImage(IOUtility.readBytes(in));
 				getCbImageField().setImageId(formData.getCbId());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
 			}
 
 			getForm().setSubTitle(formData.getCbName().getValue());
