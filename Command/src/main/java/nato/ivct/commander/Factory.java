@@ -35,9 +35,9 @@ import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 public class Factory {
 
 	public static Properties props = null;
-	public static final String IVCT_HOME_ID = "IVCT_HOME_ID";
 	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
+	public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
 	public static final String RTI_ID = "RTI_ID";
 	public static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
 	private static MessageProducer producer = null;
@@ -62,9 +62,9 @@ public class Factory {
 
 		} catch (final FileNotFoundException e) {
 			LOGGER.warn("no properties file IVCT.properties found");
-			props.setProperty(IVCT_HOME_ID, "C:/ProjekteLokal/MSG134/IVCT_Framework");
-			props.setProperty(IVCT_TS_HOME_ID, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTtestSuites");
-			props.setProperty(IVCT_SUT_HOME_ID, "C:/ProjekteLokal/MSG134/DemoFolders/IVCTsut");
+			props.setProperty(IVCT_TS_HOME_ID, "C:/MSG134/DemoFolders/IVCTtestSuites");
+			props.setProperty(IVCT_SUT_HOME_ID, "C:/MSG134/DemoFolders/IVCTsut");
+			props.setProperty(IVCT_BADGE_HOME_ID, "C:/MSG134/DemoFolders/Badges");
 			props.setProperty(RTI_ID, "pRTI");
 			props.store(new FileOutputStream("IVCT.properties"), "IVCT Properties File");
 			LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
