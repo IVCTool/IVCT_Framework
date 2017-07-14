@@ -3,6 +3,7 @@ apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.testrunner.JMSTestRunner'
 
 dependencies {
+	compile     project(':Command')
 	compile     project(':IEEE1516e')
 	compile     project(':MessagingHelpers')
 	compile     libraries.slf4j_api
