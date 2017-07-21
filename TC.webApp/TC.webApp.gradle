@@ -3,7 +3,7 @@ apply plugin: 'war'
 repositories {
     mavenCentral()
 }
-
+		
 dependencies {
 	compile     project(':TC')
     compile     project(':MessagingHelpers')
@@ -21,5 +21,11 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
     
+    runtime files ('C:/Program Files/prti1516e/lib/prti1516e.jar')
+    
+    runtime     group: 'msg134-common', name: 'ETC_FRA_Common', version: '0.0.1'
+    runtime     group: 'msg134-cs_verification', name: 'TS_CS_Verification', version: '0.0.1'
+    
+    runtime     group: 'msg134-helloworld', name: 'TS_HelloWorld', version: '0.4.0'
 }
 
