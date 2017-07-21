@@ -1,0 +1,12 @@
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: '1.4'
+    compile group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+}
+
