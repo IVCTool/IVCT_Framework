@@ -14,8 +14,6 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import java.io.File;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -65,9 +63,8 @@ public class CmdStartTc implements Command {
 			startCmd.put("sutDir", sutHome + '/' + sut);
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder",
-					Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
-			
+			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
+
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			String tmpString = Factory.replaceMacro(paramFileContentString);
 			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
