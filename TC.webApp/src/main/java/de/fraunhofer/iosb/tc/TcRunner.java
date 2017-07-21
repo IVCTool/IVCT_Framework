@@ -21,7 +21,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-//import de.fraunhofer.iosb.testrunner.JMSTestRunner;
+
+import org.slf4j.LoggerFactory;
+
+import de.fraunhofer.iosb.testrunner.JMSTestRunner;
+import nato.ivct.commander.Factory;
 
 /**
  * Servlet implementation class TcRunner
@@ -29,13 +33,14 @@ import javax.servlet.http.HttpServletResponse;
 public class TcRunner extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static boolean initialized = false;
+	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
 	/**
-	 * @see HttpServlet#HttpServlet()
+	 * 
 	 */
 	public TcRunner() {
 		super();
-		// TODO Auto-generated constructor stub
+		LOGGER.info("TcRunner instanciated");
 	}
 	
 	public String getGreeting() {
@@ -46,41 +51,36 @@ public class TcRunner extends HttpServlet {
 	 * 
 	 */
 	public void init(ServletConfig config) throws ServletException {
-		// TODO Auto-generated method stub
-
-		//JMSTestRunner.main(null);
+		JMSTestRunner.main(null);
 		initialized = true;
-
+		LOGGER.info("TcRunner initialized");
 	}
 
 	/**
 	 * 
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 		initialized = false;
+		LOGGER.info("TcRunner destroyed");
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		LOGGER.info("TcRunner doGet");
 		if (initialized) {
 			response.getWriter().append("Test Case Engine is running at: ").append(request.getContextPath());
 		}
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		LOGGER.info("TcRunner doPost");
 		doGet(request, response);
 	}
 
