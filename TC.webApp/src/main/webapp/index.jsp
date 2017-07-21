@@ -1,4 +1,4 @@
-<jsp:useBean id="greeter" class="org.gradle.sample.Greeter"/>
+<jsp:useBean id="TcRunner" class="de.fraunhofer.iosb.tc.TcRunner"/>
 <html>
-<p>${greeter.greeting}</p>
+<p>${TcRunner.greeting}</p>
 </html>
