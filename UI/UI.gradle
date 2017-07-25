@@ -3,7 +3,7 @@ apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.ivct.CmdLineTool'
 
 dependencies {
-	compile     project(':IEEE1516e')
+//	compile     project(':IEEE1516e')
 	compile     project(':MessagingHelpers')
 	compile     project(':TC')
 	compile     project(':Command')

@@ -15,11 +15,29 @@ ext {
         junitVersion = '4.+'
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-        
-    		
         logbackVersion = '1.1.3'
         slf4jVersion = '1.7.10'
 		activemqVersion = '5.12.0'   
+		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
+		rti = "prti1516e"
+		//rti = "IEEE1516e"
+		//rti = "mak"
+		
+		switch (rti) {
+			case "prti1516e":	
+				rti_jar =   "prti1516e.jar"
+				rti_lib =   "C:/Program Files/prti1516e/lib"
+				break
+			case "mak":
+				logger.warn ('MAK RTI not configured yet')
+				break
+			case "IEEE1516e":
+			default:
+				logger.warn ('No RTI is used. Compile with empty interface')
+
+		}
+
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
 		
@@ -37,6 +55,7 @@ ext {
                 slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
+				
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
                 junit:                          "junit:junit:${junitVersion}"
         ]
