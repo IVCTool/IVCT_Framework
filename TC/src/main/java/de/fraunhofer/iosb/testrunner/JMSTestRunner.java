@@ -35,6 +35,10 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 	private PropertyBasedClientSetup jmshelper;
 	private String destination;
 	private MessageProducer producer;
+	
+	public String logLevelId = Level.INFO.toString();
+	public String testCaseId = "no test case is running";
+
 
 	/**
 	 * disconnect from JMS 
@@ -156,7 +160,6 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 			logger.debug("JMSTestRunner:onMessageConsumer:run: enter");
 			if (message instanceof TextMessage) {
 				final TextMessage textMessage = (TextMessage) message;
-				String testCaseId = null;
 				String testScheduleName = null;
 				JSONObject testCaseParam = null;
 
@@ -176,7 +179,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 						if (commandTypeName.equals("setLogLevel")) {
 							if (logger instanceof ch.qos.logback.classic.Logger) {
 								ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
-								String logLevelId = (String) jsonObject.get("logLevelId");
+								logLevelId = (String) jsonObject.get("logLevelId");
 								switch (logLevelId) {
 								case "error":
 									logger.trace("JMSTestRunner:onMessageConsumer:run: error");

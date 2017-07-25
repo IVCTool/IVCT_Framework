@@ -44,8 +44,12 @@ public class TcRunner extends HttpServlet {
 		LOGGER.info("TcRunner instanciated");
 	}
 	
-	public String getGreeting() {
-		return "hi...";
+	public String getLogLevel() {
+		return runner.logLevelId;
+	}
+	
+	public String getActiveTestCase () {
+		return runner.testCaseId;
 	}
 
 	/**
