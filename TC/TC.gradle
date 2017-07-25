@@ -5,7 +5,6 @@ mainClassName = 'de.fraunhofer.iosb.testrunner.JMSTestRunner'
 dependencies {
 	compile     project(':Command')
 	compile     project(':MessagingHelpers')
-    compile files ('C:/Program Files/prti1516e/lib/prti1516e.jar')
 
 	compile     libraries.slf4j_api
 	compile     'com.googlecode.json-simple:json-simple:1.1.1'
