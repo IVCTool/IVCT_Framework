@@ -59,6 +59,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     /**
      * @param ivct_rti ivct rti
      * @param logger logger
+     * @param ivct_TcParam ivct_TcParam
      */
     public IVCT_BaseModel(final IVCT_RTIambassador ivct_rti, final Logger logger, final IVCT_TcParam ivct_TcParam) {
         super(logger);

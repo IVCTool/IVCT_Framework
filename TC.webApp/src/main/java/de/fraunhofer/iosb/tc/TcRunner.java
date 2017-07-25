@@ -33,6 +33,7 @@ import nato.ivct.commander.Factory;
 public class TcRunner extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static boolean initialized = false;
+	private static JMSTestRunner runner = null;
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
 	/**
@@ -51,8 +52,17 @@ public class TcRunner extends HttpServlet {
 	 * 
 	 */
 	public void init(ServletConfig config) throws ServletException {
-		JMSTestRunner.main(null);
-		initialized = true;
+        //LogConfigurationHelper.configureLogging();
+        try {
+            runner = new JMSTestRunner();
+            if (runner.listenToJms()) {
+            	System.exit(1);
+            }
+        }
+        catch (final IOException ex) {
+        	LOGGER.error(ex.getMessage(), ex);
+        }
+        initialized = true;
 		LOGGER.info("TcRunner initialized");
 	}
 
@@ -61,6 +71,7 @@ public class TcRunner extends HttpServlet {
 	 */
 	public void destroy() {
 		initialized = false;
+		runner.disconnect();
 		LOGGER.info("TcRunner destroyed");
 	}
 
