@@ -40,7 +40,7 @@ public class CmdListSuT implements Command {
 				JSONParser parser = new JSONParser();
 				try {
 					SutDescription sut = new SutDescription();
-					obj = parser.parse(new FileReader(file + File.separator + "CS.json"));
+					obj = parser.parse(new FileReader(file + "/CS.json"));
 					JSONObject jsonObj = (JSONObject) obj;
 					sut.ID = (String) jsonObj.get("id");
 					sut.description = (String) jsonObj.get("description");
@@ -50,8 +50,6 @@ public class CmdListSuT implements Command {
 					for (int i=0; i < cs.size(); i++) {
 						sut.conformanceStatment[i] = cs.get(i).toString();
 					}
-
-					//sut.conformanceStatment = (String) jsonObj.get("badge");
 					sutMap.put(sut.ID, sut);
 				} catch (IOException | ParseException e) {
 					// TODO Auto-generated catch block

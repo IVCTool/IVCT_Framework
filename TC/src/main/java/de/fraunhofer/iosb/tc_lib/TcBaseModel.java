@@ -68,6 +68,7 @@ public class TcBaseModel extends IVCT_BaseModel {
     /**
      * @param logger reference to the logger
      * @param ivct_rti ivct rti
+     * @param ivct_TcParam ivct_TcParam
      */
     public TcBaseModel(final Logger logger, final IVCT_RTIambassador ivct_rti, final IVCT_TcParam ivct_TcParam) {
         super(ivct_rti, logger, ivct_TcParam);

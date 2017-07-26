@@ -1,6 +1,8 @@
 include 'LogSink'
+include 'LogSink.webApp'
 include 'IEEE1516e'
 include 'TC'
+include 'TC.webApp'
 include 'MessagingHelpers'
 include 'Command'
 include 'UI'

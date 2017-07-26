@@ -34,6 +34,7 @@ public abstract class AbstractTestCase {
      * @param tcParamJson a JSON string containing values to use in the testcase
      * @param logger The {@link Logger} to use
      * @return the IVCT base model to use in the test cases
+     * @throws TcInconclusive if test is inconclusive
      */
 	protected abstract IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
 
@@ -46,18 +47,22 @@ public abstract class AbstractTestCase {
 
     /**
      * @param logger The {@link Logger} to use
+     * @throws TcInconclusive if test is inconclusive
+     * @throws TcFailed if test case failed
      */
 	protected abstract void performTest(final Logger logger) throws TcInconclusive, TcFailed;
 
 
     /**
      * @param logger The {@link Logger} to use
+     * @throws TcInconclusive if test is inconclusive
      */
 	protected abstract void preambleAction(final Logger logger) throws TcInconclusive;
 
 
     /**
      * @param logger The {@link Logger} to use
+     * @throws TcInconclusive if test is inconclusive
      */
 	protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
 

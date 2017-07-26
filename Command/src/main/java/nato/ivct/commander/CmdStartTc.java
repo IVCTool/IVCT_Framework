@@ -14,8 +14,6 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import java.io.File;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -58,17 +56,15 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			String paramFileName = sutHome + File.separator + sut + File.separator + badge + File.separator
-					+ "TcParam.json";
+			String paramFileName = sutHome + '/' + sut + '/' + badge + "/TcParam.json";
 			startCmd.put("commandType", "startTestCase");
 			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
-			startCmd.put("sutDir", sutHome + JSONObject.escape(File.separator) + sut);
+			startCmd.put("sutDir", sutHome + '/' + sut);
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder",
-					Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + runFolder);
-			
+			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
+
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			String tmpString = Factory.replaceMacro(paramFileContentString);
 			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
@@ -78,7 +74,7 @@ public class CmdStartTc implements Command {
 			Factory.sendToJms(startCmd.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error("error in starting test case <" + badge + File.separator + tc + ">");
+			LOGGER.error("error in starting test case <" + badge + '/' + tc + ">");
 			e.printStackTrace();
 		}
 
