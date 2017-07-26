@@ -112,7 +112,7 @@ public final class RuntimeParameters {
 	 * 
 	 */
 	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
-		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, theTestSuiteName, testCase, Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + getTsRunFolder(theTestSuiteName));
+		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, theTestSuiteName, testCase, getTsRunFolder(theTestSuiteName));
 		cmdStartTc.execute();
 		return false;
 	}
