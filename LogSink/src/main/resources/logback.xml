@@ -45,6 +45,7 @@
 	</root>
 	<!--  configure special settings for own packages -->
 	<logger name="de.fraunhofer.iosb" level="DEBUG" />
+	<logger name="nato.ivct.etc" level="INFO" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
 	
 	

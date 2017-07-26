@@ -128,8 +128,9 @@ public final class PropertyBasedClientSetup {
 
     /**
      * parse the properties and set up attributes.
+     * @return true means failure
      */
-    public synchronized void parseProperties() {
+    public synchronized boolean parseProperties() {
         this.checkAllowedState(State.CREATED, State.FAILURE);
         try {
             this.user = this.properties.getProperty(PROPERTY_USER, "admin");
@@ -143,17 +144,20 @@ public final class PropertyBasedClientSetup {
         catch (final IllegalArgumentException iae) {
             LOGGER.error("Problems during parsing of properties.", iae);
             this.state = State.FAILURE;
+            return true;
         }
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("State: {}", this.state.toString());
         }
+        return false;
     }
 
 
     /**
      * initialize the JMS connection.
+     * @return true means failure
      */
-    public synchronized void initConnection() {
+    public synchronized boolean initConnection() {
         this.checkAllowedState(State.PROPERTIES_PARSED, State.DISCONNECTED);
         try {
             this.connection = this.factory.createConnection(this.user, this.password);
@@ -163,17 +167,20 @@ public final class PropertyBasedClientSetup {
         catch (final JMSException ex) {
             LOGGER.error("Problems during initializing connection.", ex);
             this.state = State.FAILURE;
+            return true;
         }
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("State: {}", this.state.toString());
         }
+        return false;
     }
 
 
     /**
      * disconnect from the JMS broker.
+     * @return true means failure
      */
-    public synchronized void disconnect() {
+    public synchronized boolean disconnect() {
         this.checkAllowedState(State.CONNECTED, State.SESSION_ACTIVE);
         try {
             this.connection.close();
@@ -182,17 +189,20 @@ public final class PropertyBasedClientSetup {
         catch (final JMSException ex) {
             LOGGER.error("Problems during disconnect.", ex);
             this.state = State.FAILURE;
+            return true;
         }
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("State: {}", this.state.toString());
         }
+        return false;
     }
 
 
     /**
      * Initialize JMS Session.
+     * @return true means failure
      */
-    public synchronized void initSession() {
+    public synchronized boolean initSession() {
         this.checkAllowedState(State.CONNECTED);
         try {
             this.session = this.connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -201,10 +211,12 @@ public final class PropertyBasedClientSetup {
         catch (final JMSException ex) {
             LOGGER.error("Problems during initialization of Session.", ex);
             this.state = State.FAILURE;
+            return true;
         }
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("State: {}", this.state.toString());
         }
+        return false;
     }
 
 
@@ -214,8 +226,9 @@ public final class PropertyBasedClientSetup {
      *
      * @param destination The destination of the {@link Queue}
      * @param listener The {@link MessageListener} to set
+     * @return true means failure
      */
-    public synchronized void setupQueueListener(final String destination, final MessageListener listener) {
+    public synchronized boolean setupQueueListener(final String destination, final MessageListener listener) {
         this.checkAllowedState(State.SESSION_ACTIVE);
         final Destination dest = new ActiveMQQueue(destination);
         MessageConsumer consumer;
@@ -226,7 +239,9 @@ public final class PropertyBasedClientSetup {
         catch (final JMSException ex) {
             LOGGER.error("Problems during setup of QueueListener.", ex);
             this.state = State.FAILURE;
+            return true;
         }
+        return false;
     }
 
 
@@ -236,8 +251,9 @@ public final class PropertyBasedClientSetup {
      *
      * @param topic The {@link Topic} to use
      * @param listener The {@link MessageListener} to set
+     * @return true means failure
      */
-    public synchronized void setupTopicListener(final String topic, final MessageListener listener) {
+    public synchronized boolean setupTopicListener(final String topic, final MessageListener listener) {
         this.checkAllowedState(State.SESSION_ACTIVE);
         final ActiveMQTopic top = new ActiveMQTopic(topic);
         MessageConsumer consumer;
@@ -248,7 +264,9 @@ public final class PropertyBasedClientSetup {
         catch (final JMSException ex) {
             LOGGER.error("Problems during setup of TopicListener.", ex);
             this.state = State.FAILURE;
+            return true;
         }
+        return false;
     }
 
 

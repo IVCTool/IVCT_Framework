@@ -77,13 +77,13 @@ public class LogSink {
         LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // Loop until "exit", "quit" or "q" is typed
-        System.out.println("Type \"quit\" to exit JMSTopicSink.");
+        LOGGER.info("Type \"quit\" to exit JMSTopicSink.");
         while (true) {
             String s;
             try {
                 s = stdin.readLine();
                 if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
-                    System.out.println("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
+                	LOGGER.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
                     return;
                 }
             }

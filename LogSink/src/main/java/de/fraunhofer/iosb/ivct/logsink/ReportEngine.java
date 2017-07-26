@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 
 public class ReportEngine implements MessageListener, Runnable  {
-
+    Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
 	private String      LISTENER_TOPIC = "listener.topic";
     private static long count = 1;
     private static PropertyBasedClientSetup jmshelper;
@@ -50,10 +50,11 @@ public class ReportEngine implements MessageListener, Runnable  {
     private int numFailed = 0;
     private int numInconclusive = 0;
     private int numPassed = 0;
-    private BufferedWriter writer;
+    private BufferedWriter writer = null;
     private Path file = null;
     private Path path;
     private JSONParser jsonParser = new JSONParser();
+    private String knownSut = new String();
     private String baseFileName = "Report";
 	private final String dashes = "//------------------------------------------------------------------------------";
 	private final String failedStr = "FAILED";
@@ -82,32 +83,34 @@ public class ReportEngine implements MessageListener, Runnable  {
     }
     
     private void closeFile() {
-		try {
-    		writer.newLine();
-	    	writer.write(dashes, 0, dashes.length());
-    		writer.newLine();
-			String verdicts = "// Verdicts: Passed: " + numPassed + " Failed: " + numFailed + " Inconclusive: " + numInconclusive;
-			writer.write(verdicts);
-    		writer.newLine();
-	    	writer.write(dashes, 0, dashes.length());
-    		writer.newLine();
-			writer.close();
-			if (numFailed == 0 && numInconclusive == 0 && numPassed == 0) {
-				Files.deleteIfExists(path);
-			}
-			numFailed = 0;
-			numInconclusive = 0;
-			numPassed = 0;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	try {
+    		if (writer != null) {
+    			writer.newLine();
+    			writer.write(dashes, 0, dashes.length());
+    			writer.newLine();
+    			String verdicts = "// Verdicts: Passed: " + numPassed + " Failed: " + numFailed + " Inconclusive: " + numInconclusive;
+    			writer.write(verdicts);
+    			writer.newLine();
+    			writer.write(dashes, 0, dashes.length());
+    			writer.newLine();
+    			writer.close();
+    			if (numFailed == 0 && numInconclusive == 0 && numPassed == 0) {
+    				Files.deleteIfExists(path);
+    			}
+    		}
+    		numFailed = 0;
+    		numInconclusive = 0;
+    		numPassed = 0;
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
     }
+
     /**
      * perform the listener role
      */
     public void run() {
-        Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
         final Properties properties = new Properties();
         in = getClass().getResourceAsStream("/ReportEngine.properties");
         try {
@@ -125,7 +128,7 @@ public class ReportEngine implements MessageListener, Runnable  {
         //        this.jmshelper.setupTopicListener(destination, this);
         jmshelper.setupTopicListener(destination, this);
 
-        LOGGER.info("ReportEngine: Waiting for messages...");
+        LOGGER.info("ReportEngine:run: Waiting for messages...");
     }
     
     /** {@inheritDoc} */
@@ -134,7 +137,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     	inCalls++;
     	try {
 			if (message.getJMSRedelivered() ) {
-				System.out.println("MESSAGE REDELIVERED");
+				LOGGER.warn("ReportEngine:onMessage: MESSAGE REDELIVERED");
 			}
 		} catch (JMSException e1) {
 			// TODO Auto-generated catch block
@@ -145,7 +148,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     		try {
     			body = ((TextMessage) message).getText();
     			if( "SHUTDOWN".equals(body)) {
-    				System.out.println("SHUTDOWN " + count + " " + inCalls);
+    				LOGGER.info("ReportEngine:onMessage: SHUTDOWN " + count + " " + inCalls);
     		    	try {
     					Thread.sleep(10000);
     				} catch (InterruptedException e) {
@@ -155,7 +158,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     				jmshelper.disconnect();
     			} else {
         				count++;
-        				System.out.println("ReportEngine " + count + " " + body);
+        				LOGGER.trace("ReportEngine:onMessage: ReportEngine " + count + " " + body);
         	    		checkMessage(body);
     			}
     		} catch (JMSException e) {
@@ -164,7 +167,7 @@ public class ReportEngine implements MessageListener, Runnable  {
     		}
 
     	} else {
-    		System.out.println("Unexpected message type: "+message.getClass());
+    		LOGGER.warn("ReportEngine:onMessage: Unexpected message type: "+message.getClass());
     	}
     }
     
@@ -176,7 +179,12 @@ public class ReportEngine implements MessageListener, Runnable  {
 
 			switch (commandTypeName) {
 			case "announceVerdict":
-				System.out.println("checkMessage: announceVerdict");
+				LOGGER.info("ReportEngine:checkMessage: announceVerdict");
+				String sut =  (String) jsonObject.get("sutName");
+				if (sut.equals(knownSut) == false) {
+					doSutChanged(jsonObject);
+					knownSut = sut;
+				}
 				String testScheduleName = (String) jsonObject.get("testScheduleName");
 				String testcase = (String) jsonObject.get("testcase");
 				String verdict = (String) jsonObject.get("verdict");
@@ -205,34 +213,17 @@ public class ReportEngine implements MessageListener, Runnable  {
     		case "quit":
         		closeFile();
                 System.exit(0);
+            case "setLogLevel":
+    			// Should ignore
+    			break;
 			case "setSUT":
-				LocalDateTime ldt = LocalDateTime.now();
-				String formattedMM = String.format("%02d", ldt.getMonthValue());
-				String formatteddd = String.format("%02d", ldt.getDayOfMonth());
-				String formattedhh = String.format("%02d", ldt.getHour());
-				String formattedmm = String.format("%02d", ldt.getMinute());
-				System.out.println("checkMessage: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
-				String sut =  (String) jsonObject.get("sut");
-				String sutPath =  (String) jsonObject.get("sutPath");
-				System.out.println("checkMessage: sutPath: " + sutPath);
-		    	String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "_" + formattedhh + "-" + formattedmm + ".txt";
-		    	openFile(sutPath, fName);
-		    	path = FileSystems.getDefault().getPath(sutPath, fName);
-		    	writer.write(dashes, 0, dashes.length());
-	    		writer.newLine();
-				String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + ldt.getMonthValue() + "-" + ldt.getDayOfMonth() + " " + ldt.getHour() + ":" + ldt.getMinute();
-	    		writer.write(a, 0, a.length());
-	    		writer.newLine();
-		    	writer.write(dashes, 0, dashes.length());
-	    		writer.newLine();
-	    		writer.newLine();
-	    		writer.flush();
+//				doSutChanged(jsonObject);
 				break;
 			case "startTestCase":
-				System.out.println("checkMessage: startTestCase");
+				LOGGER.info("ReportEngine:checkMessage: startTestCase");
 				break;
 			default:
-				System.out.println("Unknown commandType name is: " + commandTypeName);
+				LOGGER.error("ReportEngine:checkMessage: Unknown commandType name is: " + commandTypeName);
 				break;
 			}    					
 		} catch (ParseException e) {
@@ -244,4 +235,27 @@ public class ReportEngine implements MessageListener, Runnable  {
 		}
     }
 
+    private void doSutChanged (JSONObject jsonObject) throws IOException {
+		LocalDateTime ldt = LocalDateTime.now();
+		String formattedMM = String.format("%02d", ldt.getMonthValue());
+		String formatteddd = String.format("%02d", ldt.getDayOfMonth());
+		String formattedhh = String.format("%02d", ldt.getHour());
+		String formattedmm = String.format("%02d", ldt.getMinute());
+		LOGGER.info("ReportEngine:doSutChanged: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
+		String sut =  (String) jsonObject.get("sutName");
+		String sutPath =  (String) jsonObject.get("sutDir");
+		LOGGER.info("ReportEngine:doSutChanged: sutPath: " + sutPath);
+    	String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "_" + formattedhh + "-" + formattedmm + ".txt";
+    	openFile(sutPath, fName);
+    	path = FileSystems.getDefault().getPath(sutPath, fName);
+    	writer.write(dashes, 0, dashes.length());
+		writer.newLine();
+		String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + ldt.getMonthValue() + "-" + ldt.getDayOfMonth() + " " + ldt.getHour() + ":" + ldt.getMinute();
+		writer.write(a, 0, a.length());
+		writer.newLine();
+    	writer.write(dashes, 0, dashes.length());
+		writer.newLine();
+		writer.newLine();
+		writer.flush();
+    }
 }
