@@ -51,14 +51,12 @@ public class LogSinkRunner extends HttpServlet {
 		logSink = new LogSink();
 		logSink.loadProperties();
 		logSink.init();
-		//logSink.execute();
 	}
 
 	/**
 	 * 
 	 */
 	public void destroy() {
-		System.exit(0);
 	}
 
 	/**
