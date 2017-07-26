@@ -34,6 +34,9 @@ import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 
 /*
  * The Factory is used to create Command objects to be executed by a user interface.
+ * Before any Command objects can be created, the factory object need to be initialized.
+ * The Factory is also the container for all properties and JMS elements. The life cycle is managed by the 
+ * caller of the factory
  */
 public class Factory {
 
