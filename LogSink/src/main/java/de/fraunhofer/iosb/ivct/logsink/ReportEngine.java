@@ -17,6 +17,7 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct.logsink;
 
 import java.io.BufferedWriter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -24,6 +25,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -61,6 +64,8 @@ public class ReportEngine implements MessageListener, Runnable  {
 	private final String inconclusiveStr = "INCONCLUSIVE";
 	private final String passedStr = "PASSED";
 
+	public Map<String, String> status = new HashMap<String, String>();
+	
     /**
      * 
      */
@@ -199,6 +204,8 @@ public class ReportEngine implements MessageListener, Runnable  {
 					numPassed++;
 					break;
 				}
+				status.put(testcase, verdict);
+				
 				String verdictText = (String) jsonObject.get("verdictText");
 				String announceVerdict;
 				if (testScheduleName.isEmpty()) {

@@ -15,11 +15,38 @@ public class OptionsFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
+	public BadgeHome getBadgeHome() {
+		return getFieldByClass(BadgeHome.class);
+	}
+
 	public LogLevel getLogLevel() {
 		return getFieldByClass(LogLevel.class);
 	}
 
+	public SutHome getSutHome() {
+		return getFieldByClass(SutHome.class);
+	}
+
+	public TsHome getTsHome() {
+		return getFieldByClass(TsHome.class);
+	}
+
+	public static class BadgeHome extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
 	public static class LogLevel extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class SutHome extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class TsHome extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}

@@ -46,7 +46,7 @@ public class LogSink {
      * load the properties from the file LogSink.properties in the default
      * package
      */
-    private void loadProperties() {
+    protected void loadProperties() {
         final InputStream in = this.getClass().getResourceAsStream("/LogSink.properties");
         try {
             this.properties.load(in);
@@ -61,7 +61,7 @@ public class LogSink {
     /**
      * initialize the LogSink.
      */
-    private void init() {
+    protected void init() {
         final String tcfBindingName = this.properties.getProperty("logsink.tcf.bindingname");
         final String topicBindingName = this.properties.getProperty("logsink.topic.bindingname");
         final String username = this.properties.getProperty("logsink.user");
@@ -73,7 +73,7 @@ public class LogSink {
     /**
      * execute = do wait for termination.
      */
-    private void execute() {
+    protected void execute() {
         LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // Loop until "exit", "quit" or "q" is typed

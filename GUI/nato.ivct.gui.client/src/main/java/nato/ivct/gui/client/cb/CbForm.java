@@ -270,7 +270,7 @@ public class CbForm extends AbstractForm {
 			importFormData(formData);
 			// load badge image
 			try (InputStream in = ResourceBase.class
-					.getResourceAsStream("icons" + File.separator + formData.getCbId() + ".png")) {
+					.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
 				getCbImageField().setImage(IOUtility.readBytes(in));
 				getCbImageField().setImageId(formData.getCbId());
 			} catch (Exception e) {
