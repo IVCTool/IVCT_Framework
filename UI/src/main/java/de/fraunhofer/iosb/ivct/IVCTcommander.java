@@ -249,22 +249,6 @@ public class IVCTcommander implements MessageListener {
 	        }
       }
 
-      public static String printJson(String command, final int counter) {
-   		String s = new String("{\n  \"commandType\" : \"" + command + "\"\n  \"sequence\" : \"" + counter + "\",\n}");
-   		if (cmdVerboseBool) {
-   			System.out.println(s);
-   		}
-      	return s;
-      }
-      
-      public static String printJson(String command, final int counter, String param, String value) {
-      	String s = new String("{\n  \"commandType\" : \"" + command + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"" + param + "\" : \"" + value + "\"\n}");
-      	if (cmdVerboseBool) {
-      		System.out.println(s);
-      	}
-      	return s;
-      }
-
       public static void resetSUT() {
     	  listOfVerdicts.clear();
       }
