@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 
 /**
@@ -29,12 +30,15 @@ public class LogSink {
      * @param args command line arguments
      */
     public static void main(final String[] args) {
-        // TODO Auto-generated method stub
+        MDC.put("testcase", "LogSink");
         LOGGER.info("in main");
+        final ReportEngine reportEngine = new ReportEngine();
+        new Thread(reportEngine).start();
         final LogSink instance = new LogSink();
         instance.loadProperties();
         instance.init();
         instance.execute();
+        System.exit(0);;
     }
 
 
@@ -72,14 +76,14 @@ public class LogSink {
     private void execute() {
         LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-        // Loop until the word "exit" is typed
-        System.out.println("Type \"exit\" to quit JMSTopicSink.");
+        // Loop until "exit", "quit" or "q" is typed
+        LOGGER.info("Type \"quit\" to exit JMSTopicSink.");
         while (true) {
             String s;
             try {
                 s = stdin.readLine();
-                if (s.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
+                if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
+                	LOGGER.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
                     return;
                 }
             }

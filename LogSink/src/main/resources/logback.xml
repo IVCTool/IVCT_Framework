@@ -23,7 +23,7 @@
 		</rollingPolicy>
 
 		<encoder>
-			<pattern>%date %level [%thread] %logger{36} [%file:%line] %msg%n</pattern>
+			<pattern>%X{testcase} - %date %level [%thread] %logger{36} [%file:%line] %msg%n</pattern>
 		</encoder>
 	</appender>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -32,7 +32,7 @@
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
 			<!--pattern>%d{HH:mm:ss.SSS} %-5level %logger{10} - %msg%n</pattern -->
-			<pattern>%d{HH:mm:ss} %msg%n</pattern>
+			<pattern>%X{testcase} - %d{HH:mm:ss} %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -45,6 +45,7 @@
 	</root>
 	<!--  configure special settings for own packages -->
 	<logger name="de.fraunhofer.iosb" level="DEBUG" />
+	<logger name="nato.ivct.etc" level="INFO" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
 	
 	
