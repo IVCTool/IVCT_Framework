@@ -30,7 +30,7 @@
 		</rollingPolicy>
 
 		<encoder>
-			<pattern>%date %level [%thread] %logger{36} [%file:%line] %msg%n</pattern>
+			<pattern>%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n</pattern>
 		</encoder>
 	</appender>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -39,7 +39,7 @@
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
 			<!--pattern>%d{HH:mm:ss.SSS} %-5level %logger{10} - %msg%n</pattern -->
-			<pattern>%d{HH:mm:ss} %msg%n</pattern>
+			<pattern>%date %X{testcase}: %msg%n</pattern>
 		</encoder>
 	</appender>
 

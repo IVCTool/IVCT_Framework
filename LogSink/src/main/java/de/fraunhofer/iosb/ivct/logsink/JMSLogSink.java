@@ -127,7 +127,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 			LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 			PatternLayoutEncoder ple = new PatternLayoutEncoder();
 
-			ple.setPattern("%date [%X{testcase}, %X{sutName}] - %level %logger{36} [%file:%line] %msg%n");
+			ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
 			ple.setContext(lc);
 			ple.start();
 			fileAppender = new FileAppender<ILoggingEvent>();
