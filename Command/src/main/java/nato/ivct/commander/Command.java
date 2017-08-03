@@ -14,6 +14,16 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+/**
+ * The Command interface defines the common behavior of all concrete commands. Individual Command classes
+ * may use specific constructors. 
+ * @author hzg
+ *
+ */
 public interface Command {
+	
+	/**
+	 * the execute method will run in the callers thread. 
+	 */
 	public void execute();
 }
