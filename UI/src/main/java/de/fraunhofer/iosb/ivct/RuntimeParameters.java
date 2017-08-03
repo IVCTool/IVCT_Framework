@@ -54,8 +54,6 @@ public final class RuntimeParameters {
 	private CmdListBadges cmdListBadges = null;
 	private CmdListSuT sutList = null;
 	private static List<String> suts = null;
-	public Map <String, List<String>> testsuiteTestcases = null;
-	public String paramJson;
 	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
