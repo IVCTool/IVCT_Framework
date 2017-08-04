@@ -215,10 +215,6 @@ public class IVCTcommander implements MessageListener {
 		return rtp.getTestCaseRunningBool();
 	}
 	
-	public void setTestCaseRunningBool(boolean b) {
-		rtp.setTestCaseRunningBool(b);
-	}
-
 	public boolean getTestScheduleRunningBool() {
 		return rtp.getTestScheduleRunningBool();
 	}
@@ -333,6 +329,7 @@ public class IVCTcommander implements MessageListener {
     				rtp.setTestSuiteNameUsed();
     			}
 				listOfVerdicts.addElement(verdictStr);
+				rtp.setTestCaseRunningBool(false);
     			releaseSemaphore();
     			break;
     		default:

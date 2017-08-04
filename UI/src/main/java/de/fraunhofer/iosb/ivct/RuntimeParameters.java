@@ -111,6 +111,7 @@ public final class RuntimeParameters {
 	 */
 	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
 		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, theTestSuiteName, testCase, getTsRunFolder(theTestSuiteName));
+		setTestCaseRunningBool(true);
 		cmdStartTc.execute();
 		return false;
 	}
