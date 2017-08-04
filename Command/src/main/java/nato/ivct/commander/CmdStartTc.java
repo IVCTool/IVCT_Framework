@@ -42,11 +42,16 @@ public class CmdStartTc implements Command {
 	 * following:
 	 * 
 	 * { "sequence":"0", "commandType":"startTestCase",
-	 * "testScheduleName":"HelloWorld", "sutName":"hw_iosb",
-	 * "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
-	 * "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
-	 * "tcParam":{ "rtiHostName":"localhost", "federationName":"HelloWorld",
-	 * "sutFederateName":"A" }, "testCaseId":"TC0002"}
+	 * "testScheduleName":"HelloWorld", 
+	 * "sutName":"hw_iosb",
+	 * "sutDir":"C:/projects/MSG134/IVCT_Runtime/IVCTsut/hw_iosb",
+	 * "tsRunFolder":"C:/projects/MSG134/IVCT_Runtime/Badges/HelloWorld",
+	 * "tcParam":{ 
+	 *    "rtiHostName":"localhost", 
+	 *    "federationName":"HelloWorld",
+	 *    "sutFederateName":"A" 
+	 *  }, 
+	 *  "testCaseId":"TC0002"}
 	 * 
 	 * @see nato.ivct.commander.Command#execute()
 	 */
