@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.testrunner.JMSTestRunner;
+import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
 import nato.ivct.commander.Factory;
 
 /**
@@ -56,7 +57,7 @@ public class TcRunner extends HttpServlet {
 	 * 
 	 */
 	public void init(ServletConfig config) throws ServletException {
-        //LogConfigurationHelper.configureLogging();
+        LogConfigurationHelper.configureLogging();
         try {
             runner = new JMSTestRunner();
             if (runner.listenToJms()) {

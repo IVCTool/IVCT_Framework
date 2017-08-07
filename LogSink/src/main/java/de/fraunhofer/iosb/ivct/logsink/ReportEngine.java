@@ -63,6 +63,7 @@ public class ReportEngine implements MessageListener, Runnable  {
 	private final String failedStr = "FAILED";
 	private final String inconclusiveStr = "INCONCLUSIVE";
 	private final String passedStr = "PASSED";
+	public TcChangedListener tcListener = null;
 
 	public Map<String, String> status = new HashMap<String, String>();
 	
@@ -71,6 +72,7 @@ public class ReportEngine implements MessageListener, Runnable  {
      */
     public ReportEngine() {
     }
+
 
     private void openFile(String sutPath, String fName) {
     	Charset charset = Charset.forName("ISO-8859-1");
@@ -227,6 +229,7 @@ public class ReportEngine implements MessageListener, Runnable  {
 //				doSutChanged(jsonObject);
 				break;
 			case "startTestCase":
+				if (tcListener != null) tcListener.tcChanged(jsonObject.get("testCaseId").toString());
 				LOGGER.info("ReportEngine:checkMessage: startTestCase");
 				break;
 			default:

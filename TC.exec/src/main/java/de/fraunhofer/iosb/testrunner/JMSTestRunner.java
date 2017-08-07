@@ -16,6 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
@@ -216,6 +217,9 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 							sutName = (String) jsonObject.get("sutName");
 							sutDir = (String) jsonObject.get("sutDir");
 
+					        MDC.put("sutName", sutName);
+					        MDC.put("sutDir", sutDir);
+
 							String tsRunFolder = (String) jsonObject.get("tsRunFolder");
 							logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + tsRunFolder);
 							if (setCurrentDirectory(tsRunFolder)) {
@@ -227,7 +231,9 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 							logger.info("JMSTestRunner:onMessageConsumer:run: TC DIR is " + tcDir);
 
 							testScheduleName = (String) jsonObject.get("testScheduleName");
+					        MDC.put("testScheduleName", testScheduleName);					        
 							testCaseId = (String) jsonObject.get("testCaseId");
+
 							logger.info("JMSTestRunner:onMessageConsumer:run: The test case class is: " + testCaseId);
 							testCaseParam = (JSONObject) jsonObject.get("tcParam");
 							logger.info("JMSTestRunner:onMessageConsumer:run: The test case parameters are: "

@@ -16,10 +16,10 @@
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>./logs/LogSinkTest.log</file>
+		<file>${catalina.base}/logs/IVCTtcRunner.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>./logs/LogSinkTest.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>${catalina.base}/logs/LogSinkTest.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<!-- or whenever the file size reaches 100MB -->
@@ -39,7 +39,7 @@
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
 			<!--pattern>%d{HH:mm:ss.SSS} %-5level %logger{10} - %msg%n</pattern -->
-			<pattern>%date %X{testcase}: %msg%n</pattern>
+			<pattern>%date IVCTtcRunner %X{testcase}: %msg%n</pattern>
 		</encoder>
 	</appender>
 
