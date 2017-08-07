@@ -24,7 +24,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
+import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 

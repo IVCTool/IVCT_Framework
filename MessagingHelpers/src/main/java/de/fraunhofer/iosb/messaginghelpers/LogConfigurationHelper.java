@@ -1,4 +1,4 @@
-package de.fraunhofer.iosb.testrunner;
+package de.fraunhofer.iosb.messaginghelpers;
 
 import java.net.URL;
 

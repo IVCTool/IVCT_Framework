@@ -1,0 +1,29 @@
+dependencies {
+	compile     project(':Command')
+	compile     project(':MessagingHelpers')
+
+	compile     libraries.slf4j_api
+	compile     'com.googlecode.json-simple:json-simple:1.1.1'
+
+	runtime		libraries.actimemqClient
+	runtime		libraries.logback_classic
+	runtime		libraries.logback_core
+
+	runtime     libraries.slf4j_jcl_over_slf4j
+	runtime     libraries.slf4j_jul_to_slf4j
+	runtime     libraries.slf4j_log4j_over_slf4j
+
+    switch (rti) {
+		case "prti1516e":
+			logger.warn (':TC:pRTI is used. Make sure pRTI is installed on target machine to run any test case')
+			compile files (rti_lib + "/" + rti_jar)
+			runtime fileTree (dir: rti_lib, include: '*.jar')
+			break
+		case "mak":
+			logger.warn (':TC:MAK RTI is not configure. HelloWorld will not be runnable')
+		case "IEEE1516e":
+		default:
+			logger.warn (':TC:No RTI is used. Test Engine will not be able to run test cases')
+			compile     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
+	}
+}
