@@ -69,7 +69,7 @@ public class ServerSession extends AbstractServerSession {
 	public class ResultListener implements OnResultListener {
 
 		@Override
-		public void OnResult(TcResult result) {
+		public void onResult(TcResult result) {
 			// TODO Auto-generated method stub
 			TestCaseNotification notification = new TestCaseNotification();
 			notification.setTc(result.tc);

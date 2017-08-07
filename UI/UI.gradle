@@ -5,7 +5,7 @@ mainClassName = 'de.fraunhofer.iosb.ivct.CmdLineTool'
 dependencies {
 //	compile     project(':IEEE1516e')
 	compile     project(':MessagingHelpers')
-	compile     project(':TC.lib')
+//	compile     project(':TC.lib')
 	compile     project(':Command')
 	compile     libraries.slf4j_api
 	compile 'commons-cli:commons-cli:1.3'
