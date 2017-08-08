@@ -35,7 +35,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import de.fraunhofer.iosb.tc_lib.LineUtil;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;

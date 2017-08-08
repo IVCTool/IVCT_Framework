@@ -1,5 +1,9 @@
 package de.fraunhofer.iosb.testrunner;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +49,14 @@ public class TestRunner {
         for (final String classname: classnames) {
             AbstractTestCase testCase = null;
             try {
-                testCase = (AbstractTestCase) Class.forName(classname).newInstance();
+            	URL[] urls = new URL[] {new URL("file:/C:/Projekte/MSG134/IVCT_Runtime/TestSuites/TS_HelloWorld-0.4.0/lib/TS_HelloWorld-0.4.0.jar")};
+            	URLClassLoader child = new URLClassLoader (urls, TestRunner.class.getClassLoader());
+                testCase = (AbstractTestCase) Class.forName(classname, true, child).newInstance();
+            	
+            	
+//                testCase = (AbstractTestCase) Class.forName(classname).newInstance();
             }
-            catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
+            catch (InstantiationException | IllegalAccessException | ClassNotFoundException | MalformedURLException ex) {
             	logger.error("Could not instantiate " + classname + " !", ex);
             }
             if (testCase == null) {

@@ -87,7 +87,7 @@ public class FactoryTest {
 		class OnResultListenerTest implements OnResultListener {
 
 			@Override
-			public void OnResult(TcResult result) {
+			public void onResult(TcResult result) {
 				// TODO Auto-generated method stub
 				
 			}

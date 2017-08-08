@@ -16,11 +16,11 @@ package nato.ivct.commander;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -59,7 +59,8 @@ public class Factory {
 	public void initialize() throws FileNotFoundException, IOException {
 		props = new Properties();
 		try {
-			props.load(new FileInputStream("IVCT.properties"));
+			final InputStream in = this.getClass().getResourceAsStream("/IVCT.properties");
+			props.load(in);
 			jmsHelper = new PropertyBasedClientSetup(props);
 			jmsHelper.parseProperties();
 			jmsHelper.initConnection();

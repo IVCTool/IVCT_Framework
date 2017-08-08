@@ -5,14 +5,21 @@
 	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
 		<resetJUL>false</resetJUL>
 	</contextListener>
+<!--  -->
+	<appender name="JMS" class="ch.qos.logback.classic.net.JMSTopicAppender">
+		<InitialContextFactoryName>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactoryName>
+    	<ProviderURL>tcp://localhost:61616</ProviderURL>
+    	<TopicConnectionFactoryBindingName>ConnectionFactory</TopicConnectionFactoryBindingName>
+    	<TopicBindingName>dynamicTopics/LogTopic.jms</TopicBindingName>
+	</appender>
 
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>./logs/LogSink.log</file>
+		<file>./logs/LogSinkTest.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>./logs/LogSink.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>./logs/LogSinkTest.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<!-- or whenever the file size reaches 100MB -->
@@ -42,10 +49,11 @@
 	<root level="WARN">
 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
+	<!-- -->
+		<appender-ref ref="JMS" />  
 	</root>
 	<!--  configure special settings for own packages -->
-	<logger name="de.fraunhofer.iosb" level="INFO" />
-	<logger name="nato.ivct.etc" level="INFO" />
+	<logger name="de.fraunhofer.iosb" level="DEBUG" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
 	
 	

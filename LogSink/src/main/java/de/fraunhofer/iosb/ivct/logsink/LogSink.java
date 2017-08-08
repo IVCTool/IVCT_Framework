@@ -1,11 +1,11 @@
 package de.fraunhofer.iosb.ivct.logsink;
 
-import ch.qos.logback.classic.net.JMSTopicSink;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -21,7 +21,8 @@ public class LogSink {
 
     private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
     private Properties    properties = new Properties();
-    private JMSTopicSink  jmsTopicSink;
+    //private JMSTopicSink  jmsTopicSink;
+    private JMSLogSink  jmsLogSink;
 
 
     /**
@@ -37,6 +38,7 @@ public class LogSink {
         final LogSink instance = new LogSink();
         instance.loadProperties();
         instance.init();
+        reportEngine.tcListener = instance.jmsLogSink;
         instance.execute();
         System.exit(0);;
     }
@@ -66,7 +68,7 @@ public class LogSink {
         final String topicBindingName = this.properties.getProperty("logsink.topic.bindingname");
         final String username = this.properties.getProperty("logsink.user");
         final String password = this.properties.getProperty("logsink.password");
-        this.jmsTopicSink = new JMSTopicSink(tcfBindingName, topicBindingName, username, password);
+        this.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password);
     }
 
 

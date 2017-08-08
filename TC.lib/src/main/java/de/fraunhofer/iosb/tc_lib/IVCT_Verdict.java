@@ -22,23 +22,5 @@ public class IVCT_Verdict {
 	}
 
 	public Verdict verdict;
-	public String text;
-	
-	public String toJson(final String sutName, final String sutDir, final String testScheduleName, final String testcase, int counter) {
-		String s = new String();
-		switch (verdict) {
-		case PASSED:
-			s = "PASSED";
-			text = "ok";
-			break;
-		case FAILED:
-			s = "FAILED";
-			break;
-		default:
-			s = "INCONCLUSIVE";
-			break;
-		}
-		String str = new String("{ \"commandType\" : \"announceVerdict\", \"sequence\" : \"" + counter + "\", \"sutName\" : \"" + sutName + "\",  \"sutDir\" : \"" + sutDir + "\", \"testScheduleName\" : \"" + testScheduleName + "\", \"testcase\" : \"" + testcase + "\", \"verdict\" : \"" + s + "\", \"verdictText\" : \"" + this.text + "\" }");
-		return str;
-	}
+	public String text;	
 }
