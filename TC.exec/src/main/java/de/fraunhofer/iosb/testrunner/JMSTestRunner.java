@@ -2,6 +2,10 @@ package de.fraunhofer.iosb.testrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +15,8 @@ import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import nato.ivct.commander.BadgeDescription;
+import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -26,6 +32,7 @@ import nato.ivct.commander.Factory;
  * certain test case.
  *
  * @author Manfred Schenk (Fraunhofer IOSB)
+ * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public class JMSTestRunner extends TestRunner
 		implements OnChangeLogLevelListener, OnQuitListener, OnStartTestCaseListener {
@@ -37,6 +44,8 @@ public class JMSTestRunner extends TestRunner
 	public String testCaseId = "no test case is running";
 
 	private Factory cmdFactory;
+	private CmdListBadges badges;
+	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
 	/**
 	 * disconnect from JMS
@@ -77,6 +86,10 @@ public class JMSTestRunner extends TestRunner
 		(new CmdStartChangeLogLevelListener(this)).execute();
 		(new CmdStartTcListener(this)).execute();
 		(new CmdQuitListener(this)).execute();
+
+		// get the badge descriptions
+		badges = new CmdListBadges();
+		badges.execute();
 	}
 
 	private class TestScheduleRunner implements Runnable {
@@ -116,10 +129,37 @@ public class JMSTestRunner extends TestRunner
 			return result;
 		}
 
+		private URLClassLoader getClassLoader(final String badge) {
+			URLClassLoader classLoader = classLoaders.get(badge);
+			if (classLoader == null) {
+				BadgeDescription bd = badges.badgeMap.get(badge);
+				if (bd != null) {
+					String ts_path = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
+					String lib_path = ts_path + "/" + bd.tsLibTimeFolder;
+					File dir = new File(lib_path);
+					File[] filesList = dir.listFiles();
+					URL[] urls = new URL[filesList.length];
+					for (int i = 0; i < filesList.length; i++) {
+						try {
+							urls[i] = new URL("file:/" + filesList[i]);
+						} catch (MalformedURLException e) {
+							e.printStackTrace();
+						}
+					}
+					classLoader = new URLClassLoader(urls, TestRunner.class.getClassLoader());
+					classLoaders.put(badge, classLoader);
+				} else {
+					logger.error("unknown badge " + badge);
+				}
+			}
+			return classLoader;
+		}
+
 		public void run() {
 			logger.info("JMSTestRunner:onMessageConsumer:run: " + info.testCaseId);
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
+			MDC.put("badge", info.badge);
 
 			logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + info.tsRunFolder);
 			if (setCurrentDirectory(info.tsRunFolder)) {
@@ -130,16 +170,15 @@ public class JMSTestRunner extends TestRunner
 			String tcDir = f.getAbsolutePath();
 			logger.info("JMSTestRunner:onMessageConsumer:run: TC DIR is " + tcDir);
 
-			MDC.put("testScheduleName", info.testScheduleName);
-
 			logger.info("JMSTestRunner:onMessageConsumer:run: The test case class is: " + testCaseId);
 			String[] testcases = info.testCaseId.split("\\s");
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
-			this.testRunner.executeTests(logger, info.testCaseId.split("\\s"), info.testCaseParam.toString(), verdicts);
+			URLClassLoader child = getClassLoader (info.badge);
+			this.testRunner.executeTests(logger, testcases, info.testCaseParam.toString(), verdicts, child);
 			for (int i = 0; i < testcases.length; i++) {
-				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testScheduleName, testcases[i],
-						verdicts[i].toString(), verdicts[i].text).execute();
+				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].toString(),
+						verdicts[i].text).execute();
 			}
 			logger.debug("JMSTestRunner:onMessageConsumer:run: after");
 		}
