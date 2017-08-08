@@ -29,6 +29,30 @@ import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 public class CmdListBadges implements Command {
 	public HashMap<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
 
+	/**
+	 * The structure of a badge description looks like:
+	 * 
+	 * {
+	 *   "id" 				: 	"HelloWorld",
+	 *   "name" 			: 	"HelloWorld Tutorial Badge",
+	 *   "description"		:	"This is a simple example for ...",
+	 *   "graphics"			:	"/some/icon.png",
+	 *   "tsRunTimeFolder"	:	"TS_HelloWorld/TS_HelloWorld/bin",
+	 *   "dependency"		:	["HLA-BASE-2016"],
+	 *   "requirements"		:	[
+	 *   	{
+	 *   		"id"			:	"IR-HW-0001",
+	 *   		"description"	:	"Test population growing rate",
+	 *   		"TC"			:	"de.fraunhofer.iosb.tc_helloworld.TC0001"
+	 *   	},
+	 *   	{
+	 *   		"id"			:	"IP-HW-0002",
+	 *   		"description"	:	"Test inter-country communication",
+	 *   		"TC"			:	"de.fraunhofer.iosb.tc_helloworld.TC0002"
+	 *   	}
+	 *   ] 
+	 * }
+	 */
 	@Override
 	public void execute() {
 		Factory.LOGGER.info("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
