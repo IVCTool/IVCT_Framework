@@ -129,7 +129,7 @@ public class JMSTestRunner extends TestRunner
 			return result;
 		}
 
-		private URLClassLoader getClassLoader(final String badge) {
+		private void extendThreadClassLoader(final String badge) {
 			URLClassLoader classLoader = classLoaders.get(badge);
 			if (classLoader == null) {
 				BadgeDescription bd = badges.badgeMap.get(badge);
@@ -152,7 +152,7 @@ public class JMSTestRunner extends TestRunner
 					logger.error("unknown badge " + badge);
 				}
 			}
-			return classLoader;
+			Thread.currentThread().setContextClassLoader(classLoader);
 		}
 
 		public void run() {
@@ -174,8 +174,8 @@ public class JMSTestRunner extends TestRunner
 			String[] testcases = info.testCaseId.split("\\s");
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
-			URLClassLoader child = getClassLoader (info.badge);
-			this.testRunner.executeTests(logger, testcases, info.testCaseParam.toString(), verdicts, child);
+			extendThreadClassLoader (info.badge);
+			this.testRunner.executeTests(logger, testcases, info.testCaseParam.toString(), verdicts);
 			for (int i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
 						verdicts[i].text).execute();
