@@ -177,7 +177,7 @@ public class JMSTestRunner extends TestRunner
 			URLClassLoader child = getClassLoader (info.badge);
 			this.testRunner.executeTests(logger, testcases, info.testCaseParam.toString(), verdicts, child);
 			for (int i = 0; i < testcases.length; i++) {
-				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].toString(),
+				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
 						verdicts[i].text).execute();
 			}
 			logger.debug("JMSTestRunner:onMessageConsumer:run: after");
