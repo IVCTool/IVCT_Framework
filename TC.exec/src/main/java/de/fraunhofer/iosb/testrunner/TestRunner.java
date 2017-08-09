@@ -51,39 +51,8 @@ public class TestRunner {
 		for (final String classname : classnames) {
 			AbstractTestCase testCase = null;
 			try {
-				testCase = (AbstractTestCase) Class.forName(classname).newInstance();
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-				logger.error("Could not instantiate " + classname + " !", ex);
-			}
-			if (testCase == null) {
-				verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-				verdicts[i++].text = "Could not instantiate " + classname;
-				continue;
-			}
-			verdicts[i++] = testCase.execute(paramJson, logger);
-		}
-	}
-
-	/**
-	 * execute the tests given as classnames.
-	 *
-	 * @param logger
-	 *            The explicit logger to use
-	 * @param classnames
-	 *            The classnames of the tests to execute
-	 * @param paramJson
-	 *            the test case parameters as a json value
-	 * @param verdicts
-	 *            the array of individual test case verdicts
-	 */
-	public void executeTests(final Logger logger, final String[] classnames, final String paramJson,
-			final IVCT_Verdict verdicts[], URLClassLoader child) {
-		int i = 0;
-
-		for (final String classname : classnames) {
-			AbstractTestCase testCase = null;
-			try {
-				testCase = (AbstractTestCase) Class.forName(classname, true, child).newInstance();
+				testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
+						.newInstance();
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
 				logger.error("Could not instantiate " + classname + " !", ex);
 			}
