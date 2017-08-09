@@ -23,9 +23,11 @@ public class BadgeDescription {
 	}
 
 	public String ID;
+	public String version;
 	public String name;
 	public String description;
 	public String tsRunTimeFolder;
+	public String tsLibTimeFolder;
 	public String cbVisual;
 	public String[] dependency;
 	public InteroperabilityRequirement[] requirements;

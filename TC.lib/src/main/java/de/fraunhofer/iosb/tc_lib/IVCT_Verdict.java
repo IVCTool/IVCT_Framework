@@ -18,9 +18,25 @@ package de.fraunhofer.iosb.tc_lib;
 
 public class IVCT_Verdict {
 	public enum Verdict {
-	    PASSED, FAILED, INCONCLUSIVE 
+		PASSED, FAILED, INCONCLUSIVE;
 	}
 
 	public Verdict verdict;
-	public String text;	
+	public String text = "ok";
+	
+
+	public String toString() {
+		String result;
+		switch (this.verdict) {
+		case PASSED:
+			result = "PASSED";
+		case FAILED:
+			result = "FAILED";
+		case INCONCLUSIVE:
+			result = "INCONCLUSIVE";
+		default:
+			result = "UNDEFINED";
+		}
+		return result + ": " + text;
+	}
 }

@@ -102,8 +102,8 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 				if (tc != null) {
 					String sutName = event.getMDCPropertyMap().get("sutName");
 					String sutDir = event.getMDCPropertyMap().get("sutDir");
-					String testScheduleName = event.getMDCPropertyMap().get("testScheduleName");
-					Logger log = getTestCaseLogger(tc, sutName, sutDir, testScheduleName);
+					String badge = event.getMDCPropertyMap().get("badge");
+					Logger log = getTestCaseLogger(tc, sutName, sutDir, badge);
 					log.callAppenders(event);
 				}
 			} else {

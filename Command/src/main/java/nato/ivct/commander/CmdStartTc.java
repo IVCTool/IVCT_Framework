@@ -66,7 +66,7 @@ public class CmdStartTc implements Command {
 			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
 			startCmd.put("sutDir", sutHome + '/' + sut);
-			startCmd.put("testScheduleName", badge);
+			startCmd.put("badge", badge);
 			startCmd.put("testCaseId", tc);
 			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
 
