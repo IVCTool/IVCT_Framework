@@ -20,8 +20,8 @@ import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
-import nato.ivct.commander.CmdStartChangeLogLevelListener;
-import nato.ivct.commander.CmdStartChangeLogLevelListener.OnChangeLogLevelListener;
+import nato.ivct.commander.CmdSetLogLevelListener;
+import nato.ivct.commander.CmdSetLogLevelListener.OnSetLogLevelListener;
 import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
@@ -35,7 +35,7 @@ import nato.ivct.commander.Factory;
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public class JMSTestRunner extends TestRunner
-		implements OnChangeLogLevelListener, OnQuitListener, OnStartTestCaseListener {
+		implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener {
 
 	private static Logger logger = LoggerFactory.getLogger(JMSTestRunner.class);
 	private PropertyBasedClientSetup jmshelper;
@@ -83,7 +83,7 @@ public class JMSTestRunner extends TestRunner
 		cmdFactory.initialize();
 
 		// start command listeners
-		(new CmdStartChangeLogLevelListener(this)).execute();
+		(new CmdSetLogLevelListener(this)).execute();
 		(new CmdStartTcListener(this)).execute();
 		(new CmdQuitListener(this)).execute();
 
@@ -186,7 +186,7 @@ public class JMSTestRunner extends TestRunner
 	}
 
 	@Override
-	public void onChangeLogLevel(String level) {
+	public void onSetLogLevel(String level) {
 		if (logger instanceof ch.qos.logback.classic.Logger) {
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
 			switch (level) {

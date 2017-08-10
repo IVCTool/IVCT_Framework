@@ -18,69 +18,32 @@ import nato.ivct.commander.Factory;
 public class FactoryTest {
 	@Test
 	public void testCreateCmdListBadgesMethod() {
-		Factory classUnderTest;
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			assertTrue("Factory Test createCmdListBadges should return CmdListBadges", classUnderTest.createCmdListBadges() != null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		assertTrue("Factory Test createCmdListBadges should return CmdListBadges",
+				Factory.createCmdListBadges() != null);
 	}
-	
+
 	@Test
 	public void testCreateCmdListSutMethod() {
-		Factory classUnderTest;
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			assertTrue("Factory Test createCmdListSut should return CmdListSut", classUnderTest.createCmdListSut() != null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		assertTrue("Factory Test createCmdListSut should return CmdListSut", Factory.createCmdListSut() != null);
 	}
-	
+
 	@Test
 	public void testCreateCmdQuitMethod() {
-		Factory classUnderTest;
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			assertTrue("Factory Test createCmdQuit should return CmdQuit", classUnderTest.createCmdQuit() != null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", Factory.createCmdQuit() != null);
 	}
-	
+
 	@Test
 	public void testCreateCmdSetLogLevelMethod() {
-		Factory classUnderTest;
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel", classUnderTest.createCmdSetLogLevel("debug") != null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel",
+				Factory.createCmdSetLogLevel("debug") != null);
 	}
-	
+
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		Factory classUnderTest;
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			assertTrue("Factory Test createCmdStartTc should return CmdStartTc", classUnderTest.createCmdStartTc("hw_iosb", "TS_HelloWorld", "some.test.case", "c:/tmp") != null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		assertTrue("Factory Test createCmdStartTc should return CmdStartTc",
+				Factory.createCmdStartTc("hw_iosb", "TS_HelloWorld", "some.test.case", "c:/tmp") != null);
 	}
-	
+
 	@Test
 	public void testCreateCmdStartTestResultListenerMethod() {
 		Factory classUnderTest;
@@ -89,34 +52,20 @@ public class FactoryTest {
 			@Override
 			public void onResult(TcResult result) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		}
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			OnResultListener testListener = new OnResultListenerTest();
-			assertTrue("Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener", classUnderTest.createCmdStartTestResultListener(testListener) != null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		OnResultListener testListener = new OnResultListenerTest();
+		assertTrue("Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener",
+				Factory.createCmdStartTestResultListener(testListener) != null);
 	}
-	
+
 	@Test
-	public void testHelloWorldFederate () {
-		Factory classUnderTest;
-		try {
-			classUnderTest = new Factory();
-			classUnderTest.initialize();
-			CmdListSuT cmd = classUnderTest.createCmdListSut();
-			cmd.execute();
-			assertTrue("should have a list of SuTs", cmd.sutMap != null);
-			assertTrue("hw_iosb should exist", cmd.sutMap.containsKey("hw_iosb"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void testHelloWorldFederate() {
+		CmdListSuT cmd = Factory.createCmdListSut();
+		cmd.execute();
+		assertTrue("should have a list of SuTs", cmd.sutMap != null);
+		assertTrue("hw_iosb should exist", cmd.sutMap.containsKey("hw_iosb"));
 	}
 }

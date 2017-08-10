@@ -24,16 +24,16 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
-public class CmdStartChangeLogLevelListener implements Command, MessageListener {
+public class CmdSetLogLevelListener implements Command, MessageListener {
 
-	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTestResultListener.class);
-	private OnChangeLogLevelListener listener;
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdSetLogLevelListener.class);
+	private OnSetLogLevelListener listener;
 
-	public interface OnChangeLogLevelListener {
-		public void onChangeLogLevel(String level);
+	public interface OnSetLogLevelListener {
+		public void onSetLogLevel(String level);
 	}
 
-	public CmdStartChangeLogLevelListener(OnChangeLogLevelListener listener) {
+	public CmdSetLogLevelListener(OnSetLogLevelListener listener) {
 		this.listener = listener;
 	}
 
@@ -50,7 +50,7 @@ public class CmdStartChangeLogLevelListener implements Command, MessageListener 
 
 					if (commandTypeName.equals("setLogLevel")) {
 						String logLevelId = (String) jsonObject.get("logLevelId");
-						listener.onChangeLogLevel(logLevelId);
+						listener.onSetLogLevel(logLevelId);
 					}
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -64,7 +64,7 @@ public class CmdStartChangeLogLevelListener implements Command, MessageListener 
 
 	@Override
 	public void execute() {
-		LOGGER.info("subsribing the commands listener");
+		LOGGER.info("subsribing the CmdStartChangeLogLevelListener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
