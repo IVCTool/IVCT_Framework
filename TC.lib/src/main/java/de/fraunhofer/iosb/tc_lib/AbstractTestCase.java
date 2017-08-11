@@ -19,6 +19,9 @@ package de.fraunhofer.iosb.tc_lib;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdSendTcStatus;
+import nato.ivct.commander.Factory;
+
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the three
@@ -29,6 +32,14 @@ import org.slf4j.MDC;
  * @author sen (Fraunhofer IOSB)
  */
 public abstract class AbstractTestCase {
+	
+	private CmdSendTcStatus statusCmd = Factory.createCmdSendTcStatus();
+	
+	public void sendTcStatus (String status, int percent) {
+		statusCmd.setStatus(status);
+		statusCmd.setPercentFinshed(percent);
+		statusCmd.execute();
+	}
 
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
@@ -88,6 +99,8 @@ public abstract class AbstractTestCase {
         	return ivct_Verdict;
 		}
     	
+    	sendTcStatus("initiated", 0);
+    	
     	logTestPurpose(logger);
 
         // Print out test case parameters
@@ -112,6 +125,8 @@ public abstract class AbstractTestCase {
         	ivct_Verdict.text = ex.getMessage();
         	return ivct_Verdict;
         }
+        
+    	sendTcStatus("started", 0);
 
         //test body block
         try {
@@ -141,6 +156,8 @@ public abstract class AbstractTestCase {
         	return ivct_Verdict;
         }
 
+    	sendTcStatus("done", 99);
+
         // postamble block
         try {
             // Test case phase
@@ -157,7 +174,9 @@ public abstract class AbstractTestCase {
         	ivct_Verdict.text = ex.getMessage();
         	return ivct_Verdict;
         }
-        
+
+    	sendTcStatus("finished", 100);
+
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
         return ivct_Verdict;
     }

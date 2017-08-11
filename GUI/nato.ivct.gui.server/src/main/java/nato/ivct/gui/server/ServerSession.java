@@ -1,6 +1,5 @@
 package nato.ivct.gui.server;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -19,6 +18,8 @@ import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.CmdTcStatusListener;
+import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
@@ -27,7 +28,7 @@ import nato.ivct.gui.shared.sut.TestCaseNotification;
  *
  * @author hzg
  */
-public class ServerSession extends AbstractServerSession {
+public class ServerSession extends AbstractServerSession implements OnTcStatusListener {
 
 	private IFuture<CmdListSuT> loadSuTJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
@@ -44,7 +45,7 @@ public class ServerSession extends AbstractServerSession {
 		@Override
 		public CmdListSuT call() throws Exception {
 			CmdListSuT sut;
-			sut = ivctCmdFactory.createCmdListSut();
+			sut = Factory.createCmdListSut();
 			sut.execute();
 			return sut;
 		}
@@ -159,12 +160,7 @@ public class ServerSession extends AbstractServerSession {
 	@Override
 	protected void execLoadSession() {
 		LOG.info("created a new session for {}", getUserId());
-		ivctCmdFactory = new Factory();
-		try {
-			ivctCmdFactory.initialize();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Factory.initialize();
 
 		LOG.info("load SuT Information");
 		loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());
@@ -175,6 +171,8 @@ public class ServerSession extends AbstractServerSession {
 		LOG.info("start test case Result Listener");
 		sessionResultListener = new ResultListener();
 		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
+		
+		(new CmdTcStatusListener(this)).execute();
 	}
 
 	public IFuture<CmdListSuT> getCmdJobs() {
@@ -195,6 +193,12 @@ public class ServerSession extends AbstractServerSession {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
 
+	}
+
+	@Override
+	public void onTcStatus(String status, int percent) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

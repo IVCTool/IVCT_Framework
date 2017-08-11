@@ -56,27 +56,34 @@ public class Factory {
 	/*
 	 * Factory has to be initialized before any commands are being created.
 	 */
-	public void initialize() throws FileNotFoundException, IOException {
-		props = new Properties();
-		try {
-			final InputStream in = this.getClass().getResourceAsStream("/IVCT.properties");
-			props.load(in);
-			jmsHelper = new PropertyBasedClientSetup(props);
-			jmsHelper.parseProperties();
-			jmsHelper.initConnection();
-			jmsHelper.initSession();
-			producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
+	public static void initialize() {
+		if (props == null) {
+			props = new Properties();
+			try {
+				final InputStream in = Factory.class.getResourceAsStream("/IVCT.properties");
+				props.load(in);
+				jmsHelper = new PropertyBasedClientSetup(props);
+				jmsHelper.parseProperties();
+				jmsHelper.initConnection();
+				jmsHelper.initSession();
+				producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
 
-		} catch (final FileNotFoundException e) {
-			LOGGER.warn("no properties file IVCT.properties found");
-			props.setProperty(IVCT_TS_HOME_ID, "C:/MSG134/DemoFolders/IVCTtestSuites");
-			props.setProperty(IVCT_SUT_HOME_ID, "C:/MSG134/DemoFolders/IVCTsut");
-			props.setProperty(IVCT_BADGE_HOME_ID, "C:/MSG134/DemoFolders/Badges");
-			props.setProperty(RTI_ID, "pRTI");
-			props.store(new FileOutputStream("IVCT.properties"), "IVCT Properties File");
-			LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
-			LOGGER.warn(props.toString());
-		}
+			} catch (final IOException e) {
+				LOGGER.warn("no properties file IVCT.properties found");
+				props.setProperty(IVCT_TS_HOME_ID, "C:/MSG134/DemoFolders/IVCTtestSuites");
+				props.setProperty(IVCT_SUT_HOME_ID, "C:/MSG134/DemoFolders/IVCTsut");
+				props.setProperty(IVCT_BADGE_HOME_ID, "C:/MSG134/DemoFolders/Badges");
+				props.setProperty(RTI_ID, "pRTI");
+				try {
+					props.store(new FileOutputStream("IVCT.properties"), "IVCT Properties File");
+				} catch (IOException e1) {
+					LOGGER.error("Unable to write IVCT.properties file. Please verify settings!");
+					e1.printStackTrace();
+				}
+				LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
+				LOGGER.warn(props.toString());
+			}
+		} // otherwise consider to be already initialized
 	}
 
 	public static String readWholeFile(final String filename) {
@@ -188,31 +195,44 @@ public class Factory {
 		}
 	}
 
-	public CmdListSuT createCmdListSut() {
+	// factory methods for commands
+
+	public static CmdListSuT createCmdListSut() {
+		initialize();
 		return new CmdListSuT();
 	}
 
-	public CmdListBadges createCmdListBadges() {
+	public static CmdListBadges createCmdListBadges() {
+		initialize();
 		return new CmdListBadges();
 	}
 
-	public CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _runFolder) {
+	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _runFolder) {
+		initialize();
 		return new CmdStartTc(_sut, _badge, _tc, _runFolder);
 	}
 
-	public CmdSetLogLevel createCmdSetLogLevel(String level) {
+	public static CmdSetLogLevel createCmdSetLogLevel(String level) {
+		initialize();
 		return new CmdSetLogLevel(level);
 	}
 
-	public CmdQuit createCmdQuit() {
+	public static CmdQuit createCmdQuit() {
+		initialize();
 		return new CmdQuit();
 	}
 
-	public CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
+	public static CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
+		initialize();
 		return new CmdStartTestResultListener(listener);
 	}
 
-	public static int getCmdCounter() {
+	public static CmdSendTcStatus createCmdSendTcStatus() {
+		initialize();
+		return new CmdSendTcStatus();
+	}
+
+	public  static int getCmdCounter() {
 		return cmdCounter;
 	}
 

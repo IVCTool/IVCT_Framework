@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-
 package nato.ivct.commander;
 
 import javax.jms.JMSException;
@@ -25,31 +24,22 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
-public class CmdStartTestResultListener implements MessageListener, Command {
-	private OnResultListener listener;
+public class CmdTcStatusListener implements MessageListener, Command {
+	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdTcStatusListener.class);
 
-	public class TcResult {
-		public String sutName;
-		public String sutDir;
-		public String testScheduleName;
-		public String testcase;
-		public String verdict;
-		public String verdictText;		
+	private OnTcStatusListener listener;
+
+	public interface OnTcStatusListener {
+		public void onTcStatus (String status, int percent);
 	}
-
-	public interface OnResultListener {
-		public void onResult(TcResult result);
+	
+	public CmdTcStatusListener (OnTcStatusListener listener) {
+		this.listener = listener;
 	}
-
-	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTestResultListener.class);
-
-	public CmdStartTestResultListener(OnResultListener resultListener) {
-		listener = resultListener;
-	}
-
+	
 	@Override
 	public void execute() {
-		LOGGER.info("subsribing the CmdStartTestResultListener");
+		LOGGER.info("subsribing the CmdTcStatusListener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
@@ -66,39 +56,15 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
 					String commandTypeName = (String) jsonObject.get("commandType");
 
-					if (commandTypeName.equals("announceVerdict")) {
-						TcResult tcr = new TcResult();
-						tcr.sutName = (String) jsonObject.get("sutName");
-						if (tcr.sutName == null) {
-							LOGGER.warn("Error: sutName is null");
-						}
-						tcr.sutDir = (String) jsonObject.get("sutDir");
-						if (tcr.sutDir == null) {
-							LOGGER.warn("Error: sutDir is null");
-						}
-						tcr.testScheduleName = (String) jsonObject.get("testScheduleName");
-						if (tcr.testScheduleName == null) {
-							LOGGER.warn("Error: testScheduleName is null");
-						}
-						tcr.testcase = (String) jsonObject.get("testcase");
-						if (tcr.testcase == null) {
-							LOGGER.warn("Error: testcase is null");
-						}
-						tcr.verdict = (String) jsonObject.get("verdict");
-						if (tcr.verdict == null) {
-							LOGGER.warn("Error: verdict is null");
-						}
-						tcr.verdictText = (String) jsonObject.get("verdictText");
-						if (tcr.verdictText == null) {
-							LOGGER.warn("Error: the test case verdict text is null");
-						}
-						listener.onResult(tcr);
+					if (commandTypeName.equals("TcStatus")) {
+						String status = (String) jsonObject.get("status");
+						int percentFinshed = ((Long) jsonObject.get("percentFinshed")).intValue();
+						listener.onTcStatus(status, percentFinshed);
 					}
 				} catch (ParseException e) {
 					e.printStackTrace();
 					LOGGER.error("onMessage: ", e);
 				}
-
 			} catch (final JMSException e) {
 				LOGGER.error("onMessage: problems with getText", e);
 			}
