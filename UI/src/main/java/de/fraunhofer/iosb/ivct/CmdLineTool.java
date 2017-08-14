@@ -27,6 +27,9 @@ import java.util.concurrent.Semaphore;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdStartTcListener;
+import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.Factory;
 
 /*
  * Dialog program using keyboard input.
@@ -73,9 +76,8 @@ public class CmdLineTool {
     	}
 
     	// Handle callbacks
-    	if (CmdLineTool.ivctCommander.listenToJms()) {
-        	System.exit(1);
-    	}
+		Factory.initialize();
+		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
     }
 
     class commandRunnable implements Runnable {
@@ -238,45 +240,6 @@ class Writer extends Thread {
                 	ivctCommander.rtp.setSutName(split[1]);
                 	IVCTcommander.resetSUT();
                 	break;
-                case "startConformanceTest":
-                case "sct":
-                	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("startConformanceTest", out)) {
-                		break;
-                	}
-                	// Cannot start conformance test if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
-                	// Warn for extra parameter
-                	if (split.length > 1) {
-                        out.println("startConformanceTest: Warning extra parameter: " + split[1]);
-                	}
-//                	command = new StartConformanceTest(ivctCommander);
-                    out.println("startConformanceTest: Warning start conformance test logic is NOT IMPLEMENTED yet");
-                	ivctCommander.setConformanceTestBool(true);
-                    break;
-                case "abortConformanceTest":
-                case "act":
-                	// Cannot abort conformance test if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
-                	// Cannot abort conformance test if not running
-                	if (ivctCommander.getConformanceTestBool() == false) {
-                        out.println("abortConformanceTest: Warning no conformance test is running");
-                        break;
-                	}
-                	// Warn about extra parameter
-                	if (split.length > 1) {
-                        out.println("abortConformanceTest: Warning extra parameter: " + split[1]);
-                	}
-//                	command = new AbortConformanceTest(ivctCommander);
-                    out.println("abortConformanceTest: Warning abort conformance test logic is NOT IMPLEMENTED yet");
-                	ivctCommander.setConformanceTestBool(false);
-                    break;
                 case "listTestSchedules":
                 case "lts":
                 	if (ivctCommander.checkSUTselected()) {
@@ -340,11 +303,6 @@ class Writer extends Thread {
                 	if (ivctCommander.checkSUTselected()) {
                         out.println(sutNotSelected);
                 		break;
-                	}
-                	// Cannot abort test schedule if conformance test is running
-                	if (ivctCommander.getConformanceTestBool()) {
-                        out.println("abortTestSchedule: Warning conformance test is running");
-                        break;
                 	}
                 	// Cannot abort test schedule if it is not running
                 	if (ivctCommander.getTestScheduleRunningBool() == false) {
@@ -411,11 +369,6 @@ class Writer extends Thread {
                 	if (ivctCommander.checkSUTselected()) {
                         out.println(sutNotSelected);
                 		break;
-                	}
-                	// Cannot abort test case if conformance test is running
-                	if (ivctCommander.getConformanceTestBool()) {
-                        out.println("abortTestCase: Warning conformance test is running");
-                        break;
                 	}
                 	// Cannot abort test case if it is not running
                 	if (ivctCommander.getTestCaseRunningBool() == false) {
@@ -513,8 +466,6 @@ class Writer extends Thread {
                 case "h":
                     out.println("listSUT (lsut) - list SUT folders");
                     out.println("setSUT (ssut) sut - set active SUT");
-                    out.println("startConformanceTest (sct) - start conformance test");
-                    out.println("abortConformanceTest (act) - abort conformance test");
                     out.println("listTestSchedules (lts) - list the available test schedules for the test suite");
                     out.println("startTestSchedule (sts) testSchedule - start the named test schedule");
                     out.println("abortTestSchedule (ats) - abort the running test schedule");
