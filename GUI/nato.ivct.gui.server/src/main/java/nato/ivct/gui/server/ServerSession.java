@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
@@ -73,9 +74,9 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 		public void onResult(TcResult result) {
 			// TODO Auto-generated method stub
 			TestCaseNotification notification = new TestCaseNotification();
-			notification.setTc(result.tc);
+			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);
-			notification.setText(result.text);
+			notification.setText(result.verdictText);
 			BEANS.get(ClientNotificationRegistry.class).putForAllNodes(notification);
 		}
 	}
@@ -127,10 +128,27 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 
 	public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
 
-		private String logLevel;
+		private LogLevel logLevel;
 
 		public ExecuteSetLogLevel(String level) {
-			logLevel = level;
+			switch (level) {
+			case "debug":
+				logLevel = LogLevel.DEBUG;
+				break;
+			case "info":
+				logLevel = LogLevel.INFO;
+				break;
+			case "warn":
+				logLevel = LogLevel.WARNING;
+				break;
+			case "error":
+				logLevel = LogLevel.ERROR;
+				break;
+			case "trace":
+			default:
+				logLevel = LogLevel.TRACE;
+				break;
+			}
 		}
 
 		@Override
@@ -171,7 +189,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 		LOG.info("start test case Result Listener");
 		sessionResultListener = new ResultListener();
 		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
-		
+
 		(new CmdTcStatusListener(this)).execute();
 	}
 
@@ -189,7 +207,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 
 	}
 
-	public void setLogLevel (String level) {
+	public void setLogLevel(String level) {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
 
@@ -198,7 +216,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 	@Override
 	public void onTcStatus(String status, int percent) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

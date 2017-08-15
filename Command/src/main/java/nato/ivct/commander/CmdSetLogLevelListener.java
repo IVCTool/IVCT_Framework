@@ -24,13 +24,15 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
+
 public class CmdSetLogLevelListener implements Command, MessageListener {
 
 	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdSetLogLevelListener.class);
 	private OnSetLogLevelListener listener;
 
 	public interface OnSetLogLevelListener {
-		public void onSetLogLevel(String level);
+		public void onSetLogLevel(LogLevel level);
 	}
 
 	public CmdSetLogLevelListener(OnSetLogLevelListener listener) {
@@ -49,7 +51,7 @@ public class CmdSetLogLevelListener implements Command, MessageListener {
 					String commandTypeName = (String) jsonObject.get("commandType");
 
 					if (commandTypeName.equals("setLogLevel")) {
-						String logLevelId = (String) jsonObject.get("logLevelId");
+						LogLevel logLevelId = LogLevel.valueOf((String) jsonObject.get("logLevelId"));
 						listener.onSetLogLevel(logLevelId);
 					}
 				} catch (ParseException e) {
