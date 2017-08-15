@@ -36,7 +36,6 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 	private IFuture<CmdStartTc> startTcJobs = null;
 	private IFuture<CmdStartTestResultListener> testResultListener = null;
 	private ResultListener sessionResultListener;
-	Factory ivctCmdFactory = new Factory();
 
 	/*
 	 * Load SuT descriptions job
@@ -61,7 +60,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 		public CmdListBadges call() throws Exception {
 			// TODO Auto-generated method stub
 			CmdListBadges badges;
-			badges = ivctCmdFactory.createCmdListBadges();
+			badges = Factory.createCmdListBadges();
 			badges.execute();
 			return badges;
 		}
@@ -79,6 +78,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 			notification.setText(result.verdictText);
 			BEANS.get(ClientNotificationRegistry.class).putForAllNodes(notification);
 		}
+
 	}
 
 	/*
@@ -95,7 +95,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 
 		@Override
 		public CmdStartTestResultListener call() throws Exception {
-			resultCmd = ivctCmdFactory.createCmdStartTestResultListener(resultListener);
+			resultCmd = Factory.createCmdStartTestResultListener(resultListener);
 			resultCmd.execute();
 			return resultCmd;
 		}
@@ -119,7 +119,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = ivctCmdFactory.createCmdStartTc(sut, badge, tc, runFolder);
+			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, runFolder);
 			tcCmd.execute();
 			return null;
 		}
