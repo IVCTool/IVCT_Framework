@@ -20,6 +20,8 @@ import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
+import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdSetLogLevelListener;
 import nato.ivct.commander.CmdSetLogLevelListener.OnSetLogLevelListener;
 import nato.ivct.commander.CmdStartTcListener;
@@ -186,27 +188,27 @@ public class JMSTestRunner extends TestRunner
 	}
 
 	@Override
-	public void onSetLogLevel(String level) {
+	public void onSetLogLevel(LogLevel level) {
 		if (logger instanceof ch.qos.logback.classic.Logger) {
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
 			switch (level) {
-			case "error":
+			case ERROR:
 				logger.trace("JMSTestRunner:onMessageConsumer:run: error");
 				lo.setLevel(Level.ERROR);
 				break;
-			case "warning":
+			case WARNING:
 				logger.trace("JMSTestRunner:onMessageConsumer:run: warning");
 				lo.setLevel(Level.WARN);
 				break;
-			case "info":
+			case INFO:
 				logger.trace("JMSTestRunner:onMessageConsumer:run: info");
 				lo.setLevel(Level.INFO);
 				break;
-			case "debug":
+			case DEBUG:
 				logger.trace("JMSTestRunner:onMessageConsumer:run: debug");
 				lo.setLevel(Level.INFO);
 				break;
-			case "trace":
+			case TRACE:
 				logger.trace("JMSTestRunner:onMessageConsumer:run: trace");
 				lo.setLevel(Level.TRACE);
 				break;

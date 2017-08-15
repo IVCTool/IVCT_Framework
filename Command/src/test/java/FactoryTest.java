@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import nato.ivct.commander.CmdListSuT;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
@@ -35,7 +36,7 @@ public class FactoryTest {
 	@Test
 	public void testCreateCmdSetLogLevelMethod() {
 		assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel",
-				Factory.createCmdSetLogLevel("debug") != null);
+				Factory.createCmdSetLogLevel(LogLevel.DEBUG) != null);
 	}
 
 	@Test
@@ -46,13 +47,16 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTestResultListenerMethod() {
-		Factory classUnderTest;
 		class OnResultListenerTest implements OnResultListener {
 
 			@Override
 			public void onResult(TcResult result) {
-				// TODO Auto-generated method stub
-
+				assertTrue (result.sutName != null);
+				assertTrue (result.sutDir != null);
+				assertTrue (result.testScheduleName != null);
+				assertTrue (result.testcase != null);
+				assertTrue (result.verdict != null);
+				assertTrue (result.verdictText != null);	
 			}
 
 		}

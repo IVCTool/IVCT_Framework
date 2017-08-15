@@ -30,6 +30,7 @@ import javax.jms.MessageProducer;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 
 /*
@@ -212,7 +213,7 @@ public class Factory {
 		return new CmdStartTc(_sut, _badge, _tc, _runFolder);
 	}
 
-	public static CmdSetLogLevel createCmdSetLogLevel(String level) {
+	public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {
 		initialize();
 		return new CmdSetLogLevel(level);
 	}

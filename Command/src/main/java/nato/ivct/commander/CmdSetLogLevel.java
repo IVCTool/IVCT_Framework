@@ -3,9 +3,17 @@ package nato.ivct.commander;
 import org.json.simple.JSONObject;
 
 public class CmdSetLogLevel implements Command {
-	private String logLevel= null;
+	private LogLevel logLevel= LogLevel.INFO;
+	
+	public void setLogLevel(LogLevel logLevel) {
+		this.logLevel = logLevel;
+	}
 
-	public CmdSetLogLevel (String level) {
+	public enum LogLevel {
+		TRACE, DEBUG, INFO, WARNING, ERROR
+	}
+	
+	public CmdSetLogLevel (LogLevel level) {
 		logLevel = level;
 	}
 
@@ -22,7 +30,7 @@ public class CmdSetLogLevel implements Command {
 		JSONObject startCmd = new JSONObject();
 		startCmd.put("commandType", "setLogLevel");
 		startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
-		startCmd.put("logLevelId", logLevel);
+		startCmd.put("logLevelId", logLevel.name());
 		Factory.sendToJms(startCmd.toString());
 	}
 
