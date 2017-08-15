@@ -389,8 +389,8 @@ class Writer extends Thread {
                 		out.println("setLogLevel: Error missing log level: error, warning, info, debug or trace");
                 		break;
                 	}
-                	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("info") || split[1].equals("debug") || split[1].equals("trace")) {
-                		logLevelString = split[1];
+                	if (split[1].equalsIgnoreCase("error") || split[1].equalsIgnoreCase("warning") || split[1].equalsIgnoreCase("info") || split[1].equalsIgnoreCase("debug") || split[1].equalsIgnoreCase("trace")) {
+                		logLevelString = split[1].toLowerCase();
                 		CmdSetLogLevel cmdSetLogLevel = ivctCommander.rtp.createCmdSetLogLevel(split[1]);
                 		cmdSetLogLevel.execute();
                     	command = null;

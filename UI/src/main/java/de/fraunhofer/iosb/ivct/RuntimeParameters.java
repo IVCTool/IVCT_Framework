@@ -31,6 +31,7 @@ import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 
 public final class RuntimeParameters {
 	private static boolean abortTestScheduleBool = false;
@@ -310,7 +311,9 @@ public final class RuntimeParameters {
 	}
 	
 	protected CmdSetLogLevel createCmdSetLogLevel(final String level) {
-		return Factory.createCmdSetLogLevel(level);
+		String levelUpper = level.toUpperCase();
+		LogLevel logLevel = LogLevel.valueOf(levelUpper);
+		return Factory.createCmdSetLogLevel(logLevel);
 	}
 	
 	protected CmdQuit createCmdQuit() {
