@@ -9,10 +9,10 @@
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>./logs/LogSink.log</file>
+		<file>${catalina.base}/logs/IVCTlogSink.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>./logs/LogSink.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>${catalina.base}/logs/LogSink.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<!-- or whenever the file size reaches 100MB -->
@@ -32,20 +32,20 @@
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
 			<!--pattern>%d{HH:mm:ss.SSS} %-5level %logger{10} - %msg%n</pattern -->
-			<pattern>%date %X{testcase}: %msg%n</pattern>
+			<pattern>%date IVCTlogSink %X{testcase}: %msg%n</pattern>
 		</encoder>
 	</appender>
 
 
 	<!-- TRACE < DEBUG < INFO < WARN < ERROR - ALL,OFF,NULL(=INHERITED) -->
 	<!--  configure root -->
-	<root level="WARN">
+	<root level="INFO">
 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	</root>
 	<!--  configure special settings for own packages -->
-	<logger name="de.fraunhofer.iosb" level="INFO" />
-	<logger name="nato.ivct.etc" level="INFO" />
+	<logger name="de.fraunhofer.iosb" level="WARN" />
+	<logger name="nato.ivct.etc" level="WARN" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
 	
 	

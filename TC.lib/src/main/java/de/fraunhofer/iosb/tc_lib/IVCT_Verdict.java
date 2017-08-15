@@ -18,27 +18,25 @@ package de.fraunhofer.iosb.tc_lib;
 
 public class IVCT_Verdict {
 	public enum Verdict {
-	    PASSED, FAILED, INCONCLUSIVE 
+		PASSED, FAILED, INCONCLUSIVE;
 	}
 
 	public Verdict verdict;
-	public String text;
+	public String text = "ok";
 	
-	public String toJson(final String sutName, final String sutDir, final String testScheduleName, final String testcase, int counter) {
-		String s = new String();
-		switch (verdict) {
+
+	public String toString() {
+		String result;
+		switch (this.verdict) {
 		case PASSED:
-			s = "PASSED";
-			text = "ok";
-			break;
+			result = "PASSED";
 		case FAILED:
-			s = "FAILED";
-			break;
+			result = "FAILED";
+		case INCONCLUSIVE:
+			result = "INCONCLUSIVE";
 		default:
-			s = "INCONCLUSIVE";
-			break;
+			result = "UNDEFINED";
 		}
-		String str = new String("{ \"commandType\" : \"announceVerdict\", \"sequence\" : \"" + counter + "\", \"sutName\" : \"" + sutName + "\",  \"sutDir\" : \"" + sutDir + "\", \"testScheduleName\" : \"" + testScheduleName + "\", \"testcase\" : \"" + testcase + "\", \"verdict\" : \"" + s + "\", \"verdictText\" : \"" + this.text + "\" }");
-		return str;
+		return result + ": " + text;
 	}
 }

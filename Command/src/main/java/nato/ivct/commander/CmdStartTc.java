@@ -40,19 +40,19 @@ public class CmdStartTc implements Command {
 	/*
 	 * The Structure of start test case command message looks like the
 	 * following:
-	 * 
-	 * { "sequence":"0", "commandType":"startTestCase",
-	 * "testScheduleName":"HelloWorld", 
-	 * "sutName":"hw_iosb",
-	 * "sutDir":"C:/projects/MSG134/IVCT_Runtime/IVCTsut/hw_iosb",
-	 * "tsRunFolder":"C:/projects/MSG134/IVCT_Runtime/Badges/HelloWorld",
-	 * "tcParam":{ 
-	 *    "rtiHostName":"localhost", 
-	 *    "federationName":"HelloWorld",
-	 *    "sutFederateName":"A" 
-	 *  }, 
-	 *  "testCaseId":"TC0002"}
-	 * 
+	 *
+	 * { "sequence":"0",
+	 *   "commandType":"startTestCase",
+	 *   "testScheduleName":"HelloWorld",
+	 *   "sutName":"hw_iosb",
+	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
+	 *   "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
+	 *   "tcParam":{
+	 *     "rtiHostName":"localhost",
+	 *     "federationName":"HelloWorld",
+	 *     "sutFederateName":"A" },
+	 *   "testCaseId":"TC0002"}
+	 *
 	 * @see nato.ivct.commander.Command#execute()
 	 */
 	public void execute() {
@@ -66,7 +66,7 @@ public class CmdStartTc implements Command {
 			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
 			startCmd.put("sutDir", sutHome + '/' + sut);
-			startCmd.put("testScheduleName", badge);
+			startCmd.put("badge", badge);
 			startCmd.put("testCaseId", tc);
 			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
 

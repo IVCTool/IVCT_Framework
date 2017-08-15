@@ -34,10 +34,12 @@ public class CmdListBadges implements Command {
 	 * 
 	 * {
 	 *   "id" 				: 	"HelloWorld",
+	 *   "version" 			: 	"0.4.0",
 	 *   "name" 			: 	"HelloWorld Tutorial Badge",
 	 *   "description"		:	"This is a simple example for ...",
 	 *   "graphics"			:	"/some/icon.png",
-	 *   "tsRunTimeFolder"	:	"TS_HelloWorld/TS_HelloWorld/bin",
+	 *   "tsRunTimeFolder"	:	"TS_HelloWorld-0.4.0/TS_HelloWorld/bin",
+	 *   "tsLibTimeFolder"	:	"TS_HelloWorld-0.4.0/TS_HelloWorld/lib",
 	 *   "dependency"		:	["HLA-BASE-2016"],
 	 *   "requirements"		:	[
 	 *   	{
@@ -68,9 +70,11 @@ public class CmdListBadges implements Command {
 					obj = parser.parse(new FileReader(file));
 					JSONObject jsonObj = (JSONObject) obj;
 					badge.ID = (String) jsonObj.get("id");
+					badge.version = (String) jsonObj.get("version");
 					badge.name = (String) jsonObj.get("name");
 					badge.description = (String) jsonObj.get("description");
 					badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
+					badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 					badge.cbVisual = (String) jsonObj.get("graphics");
 					JSONArray depend = (JSONArray) jsonObj.get("dependency");
 					if (depend != null) {

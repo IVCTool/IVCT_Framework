@@ -1,6 +1,5 @@
 package nato.ivct.gui.server;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -15,10 +14,13 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.CmdTcStatusListener;
+import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
@@ -27,14 +29,13 @@ import nato.ivct.gui.shared.sut.TestCaseNotification;
  *
  * @author hzg
  */
-public class ServerSession extends AbstractServerSession {
+public class ServerSession extends AbstractServerSession implements OnTcStatusListener {
 
 	private IFuture<CmdListSuT> loadSuTJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
 	private IFuture<CmdStartTc> startTcJobs = null;
 	private IFuture<CmdStartTestResultListener> testResultListener = null;
 	private ResultListener sessionResultListener;
-	Factory ivctCmdFactory = new Factory();
 
 	/*
 	 * Load SuT descriptions job
@@ -44,7 +45,7 @@ public class ServerSession extends AbstractServerSession {
 		@Override
 		public CmdListSuT call() throws Exception {
 			CmdListSuT sut;
-			sut = ivctCmdFactory.createCmdListSut();
+			sut = Factory.createCmdListSut();
 			sut.execute();
 			return sut;
 		}
@@ -59,7 +60,7 @@ public class ServerSession extends AbstractServerSession {
 		public CmdListBadges call() throws Exception {
 			// TODO Auto-generated method stub
 			CmdListBadges badges;
-			badges = ivctCmdFactory.createCmdListBadges();
+			badges = Factory.createCmdListBadges();
 			badges.execute();
 			return badges;
 		}
@@ -69,14 +70,15 @@ public class ServerSession extends AbstractServerSession {
 	public class ResultListener implements OnResultListener {
 
 		@Override
-		public void OnResult(TcResult result) {
+		public void onResult(TcResult result) {
 			// TODO Auto-generated method stub
 			TestCaseNotification notification = new TestCaseNotification();
-			notification.setTc(result.tc);
+			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);
-			notification.setText(result.text);
+			notification.setText(result.verdictText);
 			BEANS.get(ClientNotificationRegistry.class).putForAllNodes(notification);
 		}
+
 	}
 
 	/*
@@ -93,7 +95,7 @@ public class ServerSession extends AbstractServerSession {
 
 		@Override
 		public CmdStartTestResultListener call() throws Exception {
-			resultCmd = ivctCmdFactory.createCmdStartTestResultListener(resultListener);
+			resultCmd = Factory.createCmdStartTestResultListener(resultListener);
 			resultCmd.execute();
 			return resultCmd;
 		}
@@ -117,7 +119,7 @@ public class ServerSession extends AbstractServerSession {
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = ivctCmdFactory.createCmdStartTc(sut, badge, tc, runFolder);
+			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, runFolder);
 			tcCmd.execute();
 			return null;
 		}
@@ -126,10 +128,27 @@ public class ServerSession extends AbstractServerSession {
 
 	public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
 
-		private String logLevel;
+		private LogLevel logLevel;
 
 		public ExecuteSetLogLevel(String level) {
-			logLevel = level;
+			switch (level) {
+			case "debug":
+				logLevel = LogLevel.DEBUG;
+				break;
+			case "info":
+				logLevel = LogLevel.INFO;
+				break;
+			case "warn":
+				logLevel = LogLevel.WARNING;
+				break;
+			case "error":
+				logLevel = LogLevel.ERROR;
+				break;
+			case "trace":
+			default:
+				logLevel = LogLevel.TRACE;
+				break;
+			}
 		}
 
 		@Override
@@ -159,12 +178,7 @@ public class ServerSession extends AbstractServerSession {
 	@Override
 	protected void execLoadSession() {
 		LOG.info("created a new session for {}", getUserId());
-		ivctCmdFactory = new Factory();
-		try {
-			ivctCmdFactory.initialize();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Factory.initialize();
 
 		LOG.info("load SuT Information");
 		loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());
@@ -175,6 +189,8 @@ public class ServerSession extends AbstractServerSession {
 		LOG.info("start test case Result Listener");
 		sessionResultListener = new ResultListener();
 		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
+
+		(new CmdTcStatusListener(this)).execute();
 	}
 
 	public IFuture<CmdListSuT> getCmdJobs() {
@@ -191,9 +207,15 @@ public class ServerSession extends AbstractServerSession {
 
 	}
 
-	public void setLogLevel (String level) {
+	public void setLogLevel(String level) {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
+
+	}
+
+	@Override
+	public void onTcStatus(String status, int percent) {
+		// TODO Auto-generated method stub
 
 	}
 
