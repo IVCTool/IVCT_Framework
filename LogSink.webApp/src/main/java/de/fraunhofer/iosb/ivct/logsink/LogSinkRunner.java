@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nato.ivct.commander.CmdStartTestResultListener;
+
 /**
  * Servlet implementation class LogSinkRunner
  */
@@ -47,7 +49,7 @@ public class LogSinkRunner extends HttpServlet {
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		reportEngine = new ReportEngine();
-		new Thread(reportEngine).start();
+		(new CmdStartTestResultListener(reportEngine)).execute();
 		logSink = new LogSink();
 		logSink.loadProperties();
 		logSink.init();

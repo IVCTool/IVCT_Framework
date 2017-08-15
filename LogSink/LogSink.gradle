@@ -6,6 +6,7 @@ mainClassName = 'de.fraunhofer.iosb.ivct.logsink.LogSink'
 
 dependencies {
 	compile     project(':MessagingHelpers')
+	compile     project(':Command')
 	compile 	libraries.actimemqClient
 	compile 	libraries.logback_classic
 	compile     libraries.slf4j_api

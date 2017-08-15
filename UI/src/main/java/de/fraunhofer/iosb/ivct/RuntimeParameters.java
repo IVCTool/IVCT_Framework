@@ -19,21 +19,10 @@ limitations under the License.
  */
 package de.fraunhofer.iosb.ivct;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
@@ -42,10 +31,10 @@ import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 
 public final class RuntimeParameters {
 	private static boolean abortTestScheduleBool = false;
-	private boolean conformanceTestBool = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
@@ -57,15 +46,8 @@ public final class RuntimeParameters {
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private String testSuiteName = null;
-    private Factory ivctCmdFactory = null;
 
     public RuntimeParameters () {
-    	ivctCmdFactory = new Factory();
-    	try {
-    		ivctCmdFactory.initialize();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
     }
 
 	protected boolean checkSutKnown(final String sut) {
@@ -109,7 +91,7 @@ public final class RuntimeParameters {
 	 * 
 	 */
 	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
-		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, theTestSuiteName, testCase, getTsRunFolder(theTestSuiteName));
+		CmdStartTc cmdStartTc = Factory.createCmdStartTc(sutName, theTestSuiteName, testCase, getTsRunFolder(theTestSuiteName));
 		setTestCaseRunningBool(true);
 		cmdStartTc.execute();
 		return false;
@@ -119,8 +101,6 @@ public final class RuntimeParameters {
 	 * Check if the test case name occurs in the test schedule.
 	 */
 	protected boolean checkTestCaseNameKnown(final String testsuite, final String testCase) {
-		List<String> ls = new ArrayList<String>();
-		
 		getTestSuiteNames();
 		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
 			String testSuiteNameTmp = s.getKey();
@@ -155,14 +135,6 @@ public final class RuntimeParameters {
 
 	public static void setAbortTestScheduleBool(boolean b) {
 		abortTestScheduleBool = b;
-	}
-
-	public boolean getConformanceTestBool() {
-		return conformanceTestBool;
-	}
-
-	public void setConformanceTestBool(boolean b) {
-		conformanceTestBool = b;
 	}
 
 	public boolean getTestCaseRunningBool() {
@@ -206,7 +178,7 @@ public final class RuntimeParameters {
 
 	public List<String> getTestSuiteNames() {
 
-		cmdListBadges = ivctCmdFactory.createCmdListBadges();
+		cmdListBadges = Factory.createCmdListBadges();
 		cmdListBadges.execute();
 		List<String> ls = new ArrayList<String>();
 
@@ -277,7 +249,7 @@ public final class RuntimeParameters {
 	
 	private void listSUTs() {
 		suts = new LinkedList<>();
-		sutList = ivctCmdFactory.createCmdListSut();
+		sutList = Factory.createCmdListSut();
 		sutList.execute();
 	}
 
@@ -339,10 +311,12 @@ public final class RuntimeParameters {
 	}
 	
 	protected CmdSetLogLevel createCmdSetLogLevel(final String level) {
-		return ivctCmdFactory.createCmdSetLogLevel(level);
+		String levelUpper = level.toUpperCase();
+		LogLevel logLevel = LogLevel.valueOf(levelUpper);
+		return Factory.createCmdSetLogLevel(logLevel);
 	}
 	
 	protected CmdQuit createCmdQuit() {
-		return ivctCmdFactory.createCmdQuit();
+		return Factory.createCmdQuit();
 	}
 }

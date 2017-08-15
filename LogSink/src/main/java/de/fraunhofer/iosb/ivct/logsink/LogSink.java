@@ -10,6 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdQuitListener;
+import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.Factory;
+
 
 /**
  * Log sink for logging events collected via JMS or AMQP. For JMS use the
@@ -34,7 +38,9 @@ public class LogSink {
         MDC.put("testcase", "LogSink");
         LOGGER.info("in main");
         final ReportEngine reportEngine = new ReportEngine();
-        new Thread(reportEngine).start();
+		Factory.initialize();
+		(new CmdStartTestResultListener(reportEngine)).execute();
+		(new CmdQuitListener(reportEngine)).execute();
         final LogSink instance = new LogSink();
         instance.loadProperties();
         instance.init();
