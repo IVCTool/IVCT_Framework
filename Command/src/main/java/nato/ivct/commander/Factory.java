@@ -43,7 +43,6 @@ public class Factory {
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
 
-
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
 	static public PropertyBasedClientSetup jmsHelper = null;
@@ -72,18 +71,16 @@ public class Factory {
 			LOGGER.warn(props.toString());
 		}
 	}
-	
-    public static void sendToJms(final String userCommand) {
-  	  Message message = jmsHelper.createTextMessage(userCommand);
-  	  try {
-  		  producer.send(message);
-  	  } catch (JMSException e) {
-  		  LOGGER.error("could not send command: " + userCommand);
-  		  e.printStackTrace();
-  	  }
-    }
-    
-    
+
+	public static void sendToJms(final String userCommand) {
+		Message message = jmsHelper.createTextMessage(userCommand);
+		try {
+			producer.send(message);
+		} catch (JMSException e) {
+			LOGGER.error("could not send command: " + userCommand);
+			e.printStackTrace();
+		}
+	}
 
 	public CmdListSuT createCmdListSut() {
 		return new CmdListSuT();
@@ -92,15 +89,19 @@ public class Factory {
 	public CmdListBadges createCmdListBadges() {
 		return new CmdListBadges();
 	}
-	
-	public CmdStartTc createCmdStartTc () {
-		return new CmdStartTc();
+
+	public CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _runFolder) {
+		return new CmdStartTc(_sut, _badge, _tc, _runFolder);
+	}
+
+	public CmdSetLogLevel createCmdSetLogLevel(String level) {
+		return new CmdSetLogLevel(level);
 	}
 	
-//	public CmdSetLogLevel createCmdSetLogLevel () {
-//		return new CmdSetLogLevel();
-//	}
-//	
+	public CmdQuit createCmdQuit () {
+		return new CmdQuit();
+	}
+
 	public CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
 		return new CmdStartTestResultListener(listener);
 	}

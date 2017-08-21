@@ -51,6 +51,8 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		return true;
 	}
 
+	static public List<ITableRow> currentTcArray = null;
+	
 	public class Table extends AbstractTable {
 
 		@Order(1000)
@@ -78,6 +80,7 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 					public void run() throws Exception {
 						ICapabilityService cbService = BEANS.get(ICapabilityService.class);
 						List<ITableRow> tcArray = getSelectedRows();
+						currentTcArray = tcArray;
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(4, "starting");
 							tr.setBackgroundColor("FFA500");

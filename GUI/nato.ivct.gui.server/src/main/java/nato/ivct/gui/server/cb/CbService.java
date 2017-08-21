@@ -26,29 +26,35 @@ public class CbService implements ICbService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 
-	HashMap<String, BadgeDescription> cb_hm = new HashMap<String, BadgeDescription>();
-	public BadgeDescription getBadgeDescription (String cb){
+	HashMap<String, BadgeDescription> cb_hm = null;
+
+	public BadgeDescription getBadgeDescription(String cb) {
+		if (cb_hm == null) waitForBadgeLoading();
 		return cb_hm.get(cb);
 	}
-	
 
+	void waitForBadgeLoading () {
+		// wait until load badges job is finished
+		IFuture<CmdListBadges> future = ServerSession.get().getLoadBadgesJob();
+		CmdListBadges badgeCmd = (CmdListBadges) future.awaitDoneAndGet();
+		cb_hm = badgeCmd.badgeMap;		
+	}
+	
 	@Override
 	public CbTablePageData getCbTableData(SearchFilter filter) {
-		LOG.info ("getCbTableData");
+		LOG.info("getCbTableData");
 		CbTablePageData pageData = new CbTablePageData();
-		// wait until load badges job is finished 
-		IFuture<CmdListBadges> future = ServerSession.get().getLoadBadgesJob();
-		Command result = future.awaitDoneAndGet();
-		// copy results into table rows
-		CmdListBadges badgeCmd = (CmdListBadges) result;
+		// wait until load badges job is finished
+		if (cb_hm == null) waitForBadgeLoading();
+		
 		CbTableRowData row;
-		for (BadgeDescription value : badgeCmd.badgeMap.values()) {
-           row = pageData.addRow();
-           row.setCpId(value.ID);
-           row.setCapabilityName(value.name);
-           row.setCapabilityDescription(value.description);
-           row.setCbVisual(value.cbVisual);
-           cb_hm.put(value.ID, value);
+		for (BadgeDescription value : cb_hm.values()) {
+			row = pageData.addRow();
+			row.setCpId(value.ID);
+			row.setCapabilityName(value.name);
+			row.setCapabilityDescription(value.description);
+			row.setCbVisual(value.cbVisual);
+			cb_hm.put(value.ID, value);
 		}
 		return pageData;
 	}
@@ -57,14 +63,14 @@ public class CbService implements ICbService {
 	public CbTablePageData getCbTableData(SearchFilter filter, String sutId) {
 		// TODO Auto-generated method stub
 
-		LOG.info ("getCbTableData with SuT restriction");
+		LOG.info("getCbTableData with SuT restriction");
 		CbTablePageData pageData = new CbTablePageData();
 		return pageData;
 	}
 
 	@Override
 	public CbFormData prepareCreate(CbFormData formData) {
-		LOG.info ("prepareCreate");
+		LOG.info("prepareCreate");
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -74,7 +80,7 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbFormData create(CbFormData formData) {
-		LOG.info ("create");
+		LOG.info("create");
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -84,7 +90,7 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbFormData load(CbFormData formData) {
-		LOG.info ("load");
+		LOG.info("load");
 		if (!ACCESS.check(new ReadCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -95,19 +101,17 @@ public class CbService implements ICbService {
 		for (String s : cb.dependency) {
 			if (dependencies.equals("")) {
 				dependencies = s;
-			}
-			else {
-				dependencies = dependencies + ", " + s;				
+			} else {
+				dependencies = dependencies + ", " + s;
 			}
 		}
-
 		formData.getCbDependencies().setValue(dependencies);
 		return formData;
 	}
 
 	@Override
 	public CbFormData store(CbFormData formData) {
-		LOG.info ("store");
+		LOG.info("store");
 		if (!ACCESS.check(new UpdateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}

@@ -1,9 +1,10 @@
 package nato.ivct.gui.server.sut;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.scout.rt.platform.BEANS;
-import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import nato.ivct.gui.shared.sut.CapabilityTablePageData;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.ICapabilityService;
 import nato.ivct.gui.shared.sut.ISuTService;
-import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 public class CapabilityService implements ICapabilityService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
@@ -35,31 +35,48 @@ public class CapabilityService implements ICapabilityService {
 		for (int i = 0; i < sutDesc.conformanceStatment.length; i++) {
 			BadgeDescription badge = cbService.getBadgeDescription(sutDesc.conformanceStatment[i]);
 			if (badge != null) {
-				for (int j = 0; j < badge.requirements.length; j++) {
-					CapabilityTableRowData row = pageData.addRow();
-					row.setBadgeId(sutDesc.conformanceStatment[i]);
-					row.setRequirementId(badge.requirements[j].ID);
-					row.setRequirementDesc(badge.requirements[j].description);
-					row.setAbstractTC(badge.requirements[j].TC);
-					row.setTCresult("no result");
-				}
-				for (int k = 0; k < badge.dependency.length; k++) {
-					BadgeDescription dependentBadge = cbService.getBadgeDescription(badge.dependency[k]);
-					if (dependentBadge != null) {
-						for (int l = 0; l < dependentBadge.requirements.length; l++) {
-							CapabilityTableRowData row = pageData.addRow();
-							row.setBadgeId(dependentBadge.ID);
-							row.setRequirementId(dependentBadge.requirements[l].ID);
-							row.setRequirementDesc(dependentBadge.requirements[l].description);
-							row.setAbstractTC(dependentBadge.requirements[l].TC);
-							row.setTCresult("no result");
-						}
-					}
-				}
+				collectInteroperabilityRequirements(pageData, badge);
+			} else {
+				LOG.warn("badge not found: " + sutDesc.conformanceStatment[i]);			
 			}
 		}
 		cap_hm.put(sutDesc.ID, pageData);
 		return pageData;
+	}
+
+	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge,
+			Set<BadgeDescription> badgesCollected) {
+		if (badge == null) {
+			LOG.warn("invalid badge received");
+			return;
+		}
+		else if (badgesCollected.contains(badge)) {
+			LOG.warn("recursive badge dependency ignored: " + badge.name);
+			return;
+		}
+		else {
+			for (int j = 0; j < badge.requirements.length; j++) {
+				CapabilityTableRowData row = pageData.addRow();
+				row.setBadgeId(badge.ID);
+				row.setRequirementId(badge.requirements[j].ID);
+				row.setRequirementDesc(badge.requirements[j].description);
+				row.setAbstractTC(badge.requirements[j].TC);
+				row.setTCresult("no result");
+			}
+			for (int k = 0; k < badge.dependency.length; k++) {
+				CbService cbService = (CbService) BEANS.get(CbService.class);
+				BadgeDescription dependentBadge = cbService.getBadgeDescription(badge.dependency[k]);
+				if (dependentBadge != null) {
+					badgesCollected.add(badge);
+					collectInteroperabilityRequirements(pageData, dependentBadge, badgesCollected);
+				}
+			}
+		}
+	}
+
+	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge) {
+		collectInteroperabilityRequirements (pageData, badge, new HashSet<BadgeDescription>());
+
 	}
 
 	public void executeTestCase(String sut, String tc, String badge) {
@@ -72,9 +89,9 @@ public class CapabilityService implements ICapabilityService {
 		if (capPage == null) {
 			LOG.error("no capability map found for SuT: " + sut);
 		} else {
-			for (int i=0; i < capPage.getRowCount(); i++) {
+			for (int i = 0; i < capPage.getRowCount(); i++) {
 				CapabilityTableRowData row = capPage.rowAt(i);
-				if (row.getAbstractTC().equals(tc)){
+				if (row.getAbstractTC().equals(tc)) {
 					row.setTCresult("starting");
 				}
 			}

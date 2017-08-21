@@ -117,13 +117,8 @@ public class ServerSession extends AbstractServerSession {
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = ivctCmdFactory.createCmdStartTc();
-			tcCmd.setSut(sut);
-			tcCmd.setTc(tc);
-			tcCmd.setBadge(badge);
-			tcCmd.setRunFolder(runFolder);
+			CmdStartTc tcCmd = ivctCmdFactory.createCmdStartTc(sut, badge, tc, runFolder);
 			tcCmd.execute();
-
 			return null;
 		}
 
