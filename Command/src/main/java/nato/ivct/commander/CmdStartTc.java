@@ -24,20 +24,13 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
 public class CmdStartTc implements Command {
-	// private MessageProducer producer;
+//	private MessageProducer producer;
 	private String sut;
 	private String badge;
 	private String tc;
 	private String runFolder;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
-
-	public CmdStartTc(String _sut, String _badge, String _tc, String _runFolder) {
-		sut = _sut;
-		tc = _tc;
-		badge = _badge;
-		runFolder = _runFolder;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -60,16 +53,14 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			String paramFileName = sutHome + File.separator + sut + File.separator + badge + File.separator
-					+ "TcParam.json";
+			String paramFileName = sutHome + File.separator + sut + File.separator + badge + File.separator + "TcParam.json";
 			startCmd.put("commandType", "startTestCase");
 			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
-			startCmd.put("sutDir", sutHome + JSONObject.escape(File.separator) + sut);
+			startCmd.put("sutDir", sutHome + JSONObject.escape(File.separator) + sut); 
 			startCmd.put("testScheduleName", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder",
-					Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + runFolder);
+			startCmd.put("tsRunFolder", runFolder);
 			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
 			startCmd.put("tcParam", jsonParam);
 

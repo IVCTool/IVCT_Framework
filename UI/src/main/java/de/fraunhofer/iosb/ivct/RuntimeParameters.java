@@ -20,10 +20,8 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,40 +34,33 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.fraunhofer.iosb.tc_lib.LineUtil;
-import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.CmdListBadges;
-import nato.ivct.commander.CmdListSuT;
-import nato.ivct.commander.CmdQuit;
-import nato.ivct.commander.CmdSetLogLevel;
-import nato.ivct.commander.CmdStartTc;
-import nato.ivct.commander.Factory;
 
+class TestSuiteParameters {
+	String packageName;
+	String tsRunFolder;
+	TestSuiteParameters() {
+		this.packageName = null;
+		this.tsRunFolder = null;
+	}
+}
+  
 public final class RuntimeParameters {
 	private static boolean abortTestScheduleBool = false;
 	private boolean conformanceTestBool = false;
+	private boolean gotTestSuiteNames = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
+    public Document domTestsuite;
 	private int counter = 0;
-	private CmdListBadges cmdListBadges = null;
-	private CmdListSuT sutList = null;
+	public Map<String, TestSuiteParameters> ls = new HashMap <String, TestSuiteParameters>();
 	private static List<String> suts = null;
 	public Map <String, List<String>> testsuiteTestcases = null;
 	public String paramJson;
 	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
-	private String testSuiteName = null;
-    private Factory ivctCmdFactory = null;
-
-    public RuntimeParameters () {
-    	ivctCmdFactory = new Factory();
-    	try {
-    		ivctCmdFactory.initialize();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    }
+	private static String testSuiteName = null;
 
 	protected boolean checkSutKnown(final String sut) {
 		for (String entry : suts) {
@@ -90,47 +81,15 @@ public final class RuntimeParameters {
 		}
 		return false;
 	}
-	
-	protected String getFullTestcaseName(final String testsuite, final String testCase) {
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			if (testSuiteNameTmp.equals(testsuite)) {
-				for (int i = 0; i < s.getValue().requirements.length; i++) {
-					String tc = s.getValue().requirements[i].TC.substring(s.getValue().requirements[i].TC.lastIndexOf(".") + 1);
-					if(tc.equals(testCase)) {
-						return s.getValue().requirements[i].TC;
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
 
 	/*
-	 * 
+	 * Check if the test case name occurs in any test schedule.
 	 */
-	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
-		CmdStartTc cmdStartTc = ivctCmdFactory.createCmdStartTc(sutName, theTestSuiteName, testCase, Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + getTsRunFolder(theTestSuiteName));
-		cmdStartTc.execute();
-		return false;
-	}
-
-	/*
-	 * Check if the test case name occurs in the test schedule.
-	 */
-	protected boolean checkTestCaseNameKnown(final String testsuite, final String testCase) {
-		List<String> ls = new ArrayList<String>();
-		
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			if (testSuiteNameTmp.equals(testsuite)) {
-				for (int i = 0; i < s.getValue().requirements.length; i++) {
-					if(s.getValue().requirements[i].TC.equals(testCase)) {
-						return false;
-					}
+	protected boolean checkTestCaseNameKnown(final String testCase) {
+		for (Map.Entry<String, List<String>> entry : testsuiteTestcases.entrySet()) {
+			for (String entry0 : entry.getValue()) {
+				if (testCase.equals(entry0)) {
+					return false;
 				}
 			}
 		}
@@ -143,6 +102,21 @@ public final class RuntimeParameters {
 	 */
 	protected boolean checkTestSuiteNameNew() {
 		return testSuiteNameNew;
+	}
+
+	/*
+	 * Some commands have no meaning without knowing the test suite involved.
+	 */
+	protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
+		if (checkSUTselected()) {
+			System.out.println(sutNotSelected);
+			return true;
+		}
+		if (testSuiteName == null) {
+			System.out.println(tsNotSelected);
+			return true;
+		}
+		return false;
 	}
 
 	protected int fetchCounters(int n) {
@@ -186,48 +160,58 @@ public final class RuntimeParameters {
 	public void setTestSuiteNameUsed() {
 		testSuiteNameNew = false;
 	}
-	
-	public List<String> getTestcases(final String testsuite) {
-		List<String> ls = new ArrayList<String>();
 
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			if (testSuiteNameTmp.equals(testsuite)) {
-				for (int i = 0; i < s.getValue().requirements.length; i++) {
-					int ind = ls.indexOf(s.getValue().requirements[i].TC);
-					if (ind < 0) {
-						ls.add(s.getValue().requirements[i].TC);
+	public void getTestSuiteNames() {
+
+		if (gotTestSuiteNames) {
+			return;
+		}
+		Element elem = domTestsuite.getDocumentElement();
+		for (Node child = elem.getFirstChild(); child != null; child = child.getNextSibling()) {
+			String s = child.getNodeName();
+			if (s.compareTo("testSuites") == 0) {
+				for (Node child0 = child.getFirstChild(); child0 != null; child0 = child0.getNextSibling()) {
+					if (child0.getNodeName().compareTo("testSuite") == 0) {
+						TestSuiteParameters testSuiteParameters = new TestSuiteParameters();
+						testSuiteParameters.packageName = new String();
+						testSuiteParameters.tsRunFolder = new String();
+						String testSuiteNameTmp = new String();
+						for (Node child1 = child0.getFirstChild(); child1 != null; child1 = child1.getNextSibling()) {
+							if (child1.getNodeName().compareTo("name") == 0) {
+								testSuiteNameTmp = child1.getFirstChild().getNodeValue();
+							}
+							if (child1.getNodeName().compareTo("packageName") == 0) {
+								testSuiteParameters.packageName = child1.getFirstChild().getNodeValue();
+							}
+							if (child1.getNodeName().compareTo("tsRunFolder") == 0) {
+								testSuiteParameters.tsRunFolder = LineUtil.replaceMacro(child1.getFirstChild().getNodeValue());
+							}
+						}
+						ls.put(testSuiteNameTmp, testSuiteParameters);
 					}
 				}
 			}
 		}
-
-		return ls;
-	}
-
-	public List<String> getTestSuiteNames() {
-
-		cmdListBadges = ivctCmdFactory.createCmdListBadges();
-		cmdListBadges.execute();
-		List<String> ls = new ArrayList<String>();
-
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			ls.add(testSuiteNameTmp);
-		}
-
-		return ls;
+		gotTestSuiteNames = true;
 	}
     
-	private String getTsRunFolder(final String testsuite) {
+	public String getPackageName(final String testsuite) {
+		String packageName = null;
+		getTestSuiteNames();
+		for (Map.Entry<String, TestSuiteParameters> temp : ls.entrySet()) {
+			if (temp.getKey().equals(testsuite)) {
+				packageName = temp.getValue().packageName;
+			}
+		}
+		return packageName;
+	}
+	
+	public String getTsRunFolder() {
 		String tsRunFolder = null;
 		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			BadgeDescription bd = s.getValue();
-			if (bd.ID.equals(testsuite) == true) {
-				tsRunFolder = bd.tsRunTimeFolder;
-				break;
+		for (Map.Entry<String, TestSuiteParameters> temp : ls.entrySet()) {
+			if (temp.getKey().equals(testSuiteName)) {
+				tsRunFolder = temp.getValue().tsRunFolder;
 			}
 		}
 		return tsRunFolder;
@@ -237,56 +221,14 @@ public final class RuntimeParameters {
 		return suts;
 	}
 
-	protected List<String> getSutBadges(final String theSutName) {
-		List<String> badges = null;
-		listSUTs();
-		for (String it: sutList.sutMap.keySet()) {
-			int len = sutList.sutMap.get(it).conformanceStatment.length;
-			if (it.equals(theSutName)) {
-				getTestSuiteNames();
-				badges = new ArrayList<String>();
-				String[] conformanceStatment = sutList.sutMap.get(it).conformanceStatment;
-				for (int i = 0; i < len; i++) {
-					int ind = badges.indexOf(conformanceStatment[i]);
-					if (ind < 0) {
-						badges.add(conformanceStatment[i]);
-					}
-					if (getRecursiveBadges(badges, conformanceStatment[i])) {
-						return null;
-					}
-				}
-				return badges;
+	protected static void setSUTS(String pathSutDir) {
+		suts = new ArrayList<String>();
+		File dir = new File(pathSutDir);
+		File[] filesList = dir.listFiles();
+		for (File file : filesList) {
+			if (file.isDirectory()) {
+				suts.add(file.getName());
 			}
-		}
-		return badges;
-	}
-	
-	private boolean getRecursiveBadges(List<String> badges, final String currentBadge) {
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			BadgeDescription bd = s.getValue();
-			if (bd.ID.equals(currentBadge)) {
-				for (int j = 0; j < s.getValue().dependency.length; j++) {
-					int indd = badges.indexOf(s.getValue().dependency[j]);
-					if (indd < 0) {
-						badges.add(s.getValue().dependency[j]);
-						getRecursiveBadges(badges, s.getValue().dependency[j]);
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
-	private void listSUTs() {
-		suts = new LinkedList<>();
-		sutList = ivctCmdFactory.createCmdListSut();
-		sutList.execute();
-	}
-
-	protected void setSUTS() {
-		listSUTs();
-		for (String it: sutList.sutMap.keySet()) {
-			suts.add(it);
 		}
 	}
 
@@ -327,7 +269,7 @@ public final class RuntimeParameters {
 		testScheduleName = theTestScheduleName;
 	}
 
-	protected String getTestSuiteName() {
+	protected static String getTestSuiteName() {
 		return testSuiteName;
 	}
 
@@ -338,13 +280,5 @@ public final class RuntimeParameters {
 			}
 		}
 		this.testSuiteName = testSuiteName;
-	}
-	
-	protected CmdSetLogLevel createCmdSetLogLevel(final String level) {
-		return ivctCmdFactory.createCmdSetLogLevel(level);
-	}
-	
-	protected CmdQuit createCmdQuit() {
-		return ivctCmdFactory.createCmdQuit();
 	}
 }

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -70,8 +69,10 @@ public class IVCTcommander implements MessageListener {
     private static Logger            LOGGER                       = LoggerFactory.getLogger(IVCTcommander.class);
     private PropertyBasedClientSetup jmshelper;
     private String                   destination;
+    private String pathTestsuite;
     private String testSchedulePath = null;
     private MessageProducer producer;
+    private static ConfigParameters configParameters = null;
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
@@ -108,6 +109,7 @@ public class IVCTcommander implements MessageListener {
     public IVCTcommander() throws IOException {
         final Properties properties = new Properties();
         final InputStream in = this.getClass().getResourceAsStream("/CmdLineTool.properties");
+        final Document domConfig;
         properties.load(in);
         this.jmshelper = new PropertyBasedClientSetup(properties);
         if (this.jmshelper.parseProperties()) {
@@ -121,8 +123,63 @@ public class IVCTcommander implements MessageListener {
         }
         this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
         producer = jmshelper.setupTopicProducer(destination);
+        String ivct_path = System.getenv("IVCT_CONF");
+        if (ivct_path == null) {
+            System.out.println ("The global variable IVCT_CONF is NOT set");
+        	System.exit(1);
+        }
+        pathTestsuite = System.getenv("IVCT_TS_HOME");
+        if (pathTestsuite == null) {
+            System.out.println ("The global variable IVCT_TS_HOME is NOT set");
+        	System.exit(1);
+        }
+
+        domConfig = parseXmlFile(ivct_path + File.separator + "IVCTconfig.xml");
+        if (domConfig != null) {
+        	configParameters = parseConfig(domConfig);
+            File f = new File(configParameters.pathSutDir);
+            if (f.isDirectory() == false) {
+                System.out.println ("PATH SUT DIR in IVCTconfig.xml is NOT a FOLDER: " + configParameters.pathSutDir);
+            	System.exit(1);
+            }
+            File f0 = new File(pathTestsuite);
+            if (f0.isDirectory() == false) {
+                System.out.println ("Global variable IVCT_TS_HOME is NOT a FOLDER: " + pathTestsuite);
+            	System.exit(1);
+            }
+        } else {
+            System.out.println ("Cannot parse: " + ivct_path + File.separator + "IVCTconfig.xml");
+        	System.exit(1);
+        }
+        System.out.println ("pathTestsuite: " + pathTestsuite);
+        System.out.println ("pathSutDir: " + configParameters.pathSutDir);
+        rtp.domTestsuite = parseXmlFile(pathTestsuite + File.separator + "IVCTtestsuites.xml");
     }
 
+    private static Document parseXmlFile(final String fileName){
+        //get the factory
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document dom;
+
+        try {
+
+          //Using factory get an instance of document builder
+          DocumentBuilder db = dbf.newDocumentBuilder();
+
+          //parse using builder to get DOM representation of the XML file
+          dom = db.parse(fileName);
+          return dom;
+
+        }catch(ParserConfigurationException pce) {
+          pce.printStackTrace();
+        }catch(SAXException se) {
+          se.printStackTrace();
+        }catch(IOException ioe) {
+          ioe.printStackTrace();
+        }
+        return null;
+      }
+    
     public void acquireSemaphore() {
     	try {
         	countSemaphore++;
@@ -166,6 +223,13 @@ public class IVCTcommander implements MessageListener {
     	return rtp.checkSutKnown(sut);
     }
 	
+	/*
+	 * Some commands have no meaning without knowing the test suite involved.
+	 */
+	protected boolean checkSutAndTestSuiteSelected(String sutNotSelected, String tsNotSelected) {
+		return rtp.checkSutAndTestSuiteSelected(sutNotSelected, tsNotSelected);
+	}
+
     protected boolean checkSUTselected() {
     	return rtp.checkSUTselected();
     }
@@ -203,6 +267,14 @@ public class IVCTcommander implements MessageListener {
     	return rtp.fetchCounters(n);
     }
     
+    public String getTsRunFolder() {
+    	return rtp.getTsRunFolder();
+    }
+    
+	public String getPackageName(final String testsuite) {
+		return rtp.getPackageName(testsuite);
+	}
+	
 	public boolean getConformanceTestBool() {
 		return rtp.getConformanceTestBool();
 	}
@@ -227,14 +299,136 @@ public class IVCTcommander implements MessageListener {
 		rtp.setTestScheduleRunningBool(b);
 	}
 
+    public static String getSUTdir() {
+    	return configParameters.pathSutDir;
+    }
+    
+    protected String getTestSuiteName() {
+    	return RuntimeParameters.getTestSuiteName();
+    }
+    
     protected void setCmdVerboseBool(final boolean b) {
     	cmdVerboseBool = b;
     }
     
-      public List<String> listSUT() {
-    	  rtp.setSUTS();
+    protected Map <String, List<String>> readTestSuiteFiles(final String testsuite) {
+        Map <String, List<String>> xyz = new HashMap <String, List<String>>();
+    	File mine;
+    	int i;
+    	testSchedulePath = pathTestsuite + File.separator + testsuite + File.separator + "TestSchedules";
+    	String files[];
+    	mine = new File(testSchedulePath);
+    	files = mine.list ();
+    	if (files == null) {
+    		return null;
+    	}
+    	for (i = 0; i < files.length; i++) {
+    		String p = new String(testSchedulePath + File.separator + files[i]);
+    		mine = new File (p);
+    		if (mine.isFile()) {
+    	    	List<String> ls;
+    			ls = readFile(p);
+    			xyz.put(files[i], ls);
+    		}
+    	}
+    	return xyz;
+    }
+    
+    String getTestschedulePath() {
+    	return testSchedulePath;
+    }
+      
+    private static List<String> readFile(String filename)
+    {
+    	List<String> records = new ArrayList<String>();
+    	try
+    	{
+    		BufferedReader reader = new BufferedReader(new FileReader(filename));
+    		String line;
+    		while ((line = reader.readLine()) != null)
+    		{
+    			records.add(line);
+    		}
+    		reader.close();
+    	}
+    	catch (Exception e)
+    	{
+    		System.err.format("Exception occurred trying to read '%s'.", filename);
+    		e.printStackTrace();
+    	}
+		return records;
+    }
+
+    public static String readWholeFile(final String filename) {
+    	BufferedReader br = null;
+    	String everything = null;
+
+    	File myFile = new File(filename);
+    	if (myFile.isFile() == false) {
+    		return everything;
+    	}
+
+    	try {
+    		br = new BufferedReader(new FileReader(filename));
+    		StringBuilder sb = new StringBuilder();
+    		String line = br.readLine();
+
+    		while (line != null) {
+    			sb.append(line);
+    			sb.append(System.lineSeparator());
+    			line = br.readLine();
+    		}
+    		everything = sb.toString();
+    	} catch (FileNotFoundException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	} finally {
+    		if (br != null) {
+    			try {
+    				br.close();
+    			} catch (IOException e) {
+    			}
+    		}
+    	}
+
+    	return everything;
+    }
+    
+      /*
+       * The return class may be changed to hold other kinds of information as
+       * required.
+       */
+      private static ConfigParameters parseConfig(Document dom) {
+        ConfigParameters configParameters = new ConfigParameters();
+        
+        Element elem = dom.getDocumentElement();
+    	for (Node child = elem.getFirstChild(); child != null; child=child.getNextSibling())
+    	{
+          String s = child.getNodeName();
+          if (s.compareTo("pathNames") == 0) {
+            for (Node child0 = child.getFirstChild(); child0 != null; child0=child0.getNextSibling())
+            {
+              if (child0.getNodeName().compareTo("sutDir") == 0 )
+              {
+                if (child0.getNodeType() == Node.ELEMENT_NODE) {
+                	configParameters.pathSutDir = LineUtil.replaceMacro(child0.getFirstChild().getNodeValue());
+                }
+              }
+            }
+          }
+    	}
+    	
+    	return configParameters;
+      }
+      
+      public static List<String> listSUT() {
+    	  RuntimeParameters.setSUTS(configParameters.pathSutDir);
     	  
     	  List<String> suts = RuntimeParameters.getSUTS();
+    	  
     	  return suts;
       }
       
@@ -265,12 +459,19 @@ public class IVCTcommander implements MessageListener {
       	return s;
       }
 
+      public static String printTestCaseJson(final int counter, final String sutName, final String sutDir, final String testScheduleName, final String testCaseId, final String value1, final String value2) {
+	  	String s = new String("{\n  \"commandType\" : \"" + "startTestCase" + "\",\n  \"sequence\" : \"" + counter + "\",\n  \"sutName\" : \"" + sutName + "\",\n  \"sutDir\" : \"" + sutDir + "\",\n  \"testScheduleName\" : \"" + testScheduleName + "\",\n  \"testCaseId\" : \"" + testCaseId + "\",\n  \"tsRunFolder\" : \"" + value1 + "\",\n  \"tcParam\" : " + value2 + "}");
+      	if (cmdVerboseBool) {
+	    	System.out.println(s);
+      	}
+	    return s;
+	  }
+
       public static void resetSUT() {
     	  listOfVerdicts.clear();
       }
       /**
        * sendToJms
-       * @param userCommand command as a json value
        */
       public void sendToJms(final String userCommand) {
     	  Message message = jmshelper.createTextMessage(userCommand);
@@ -343,8 +544,11 @@ public class IVCTcommander implements MessageListener {
     				verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
     			}
     			if (rtp.checkTestSuiteNameNew()) {
-    				String testSuiteStr = new String("Verdicts are:");
+    				String testSuiteStr = new String("Test Suite: " + RuntimeParameters.getTestSuiteName());
     				listOfVerdicts.addElement(testSuiteStr);
+    				testSuiteStr = new String("Verdicts are:");
+    				listOfVerdicts.addElement(testSuiteStr);
+    				System.out.println("Verdicts are:");
     				addTestSessionSeparator();
     				rtp.setTestSuiteNameUsed();
     			}

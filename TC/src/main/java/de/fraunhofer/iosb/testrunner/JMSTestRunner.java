@@ -80,29 +80,27 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     }
 
     /**
-     * sendToJms
-     * @param userCommand The user command in json
-     */
-    public void sendToJms(final String userCommand) {
-    	Message message = jmshelper.createTextMessage(userCommand);
-    	logger.debug("JMSTestRunner:sendToJms");
-    	try {
-    		producer.send(message);
-    	} catch (JMSException e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
-    }
+   * sendToJms
+   */
+  public void sendToJms(final String userCommand) {
+  	Message message = jmshelper.createTextMessage(userCommand);
+	logger.debug("JMSTestRunner:sendToJms");
+  	try {
+			producer.send(message);
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+  }
 
     /**
      * Initialize the Listening on the JMS Queue
-     * @return true if error
      */
     public boolean listenToJms() {
-    	if (this.jmshelper.setupTopicListener(this.destination, this)) {
-    		return true;
-    	}
-    	return false;
+        if (this.jmshelper.setupTopicListener(this.destination, this)) {
+        	return true;
+        }
+        return false;
     }
 
     private class onMessageConsumer implements Runnable {
@@ -149,6 +147,13 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
     			String testCaseId = null;
     			String testScheduleName = null;
     			JSONObject testCaseParam = null;
+
+    			String ivctRootPath = System.getenv("IVCT_TS_HOME");
+    			if (ivctRootPath == null) {
+    	    		logger.error("JMSTestRunner:onMessageConsumer:run: IVCT_TS_HOME is not assigned");
+    			} else {
+    				logger.info("JMSTestRunner:onMessageConsumer:run: IVCT_TS_HOME is " + ivctRootPath);
+    			}
 
     			try {
     				final String content = textMessage.getText();
@@ -204,7 +209,7 @@ public class JMSTestRunner extends TestRunner implements MessageListener {
 
     						String tsRunFolder = (String) jsonObject.get("tsRunFolder");
     						logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + tsRunFolder);
-    						if (setCurrentDirectory(tsRunFolder)) {
+    						if (setCurrentDirectory(ivctRootPath + File.separator + tsRunFolder)) {
     							logger.info("JMSTestRunner:onMessageConsumer:run: setCurrentDirectory true");
     						}
 

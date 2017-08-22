@@ -9,7 +9,7 @@ ext {
         gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-		ivctVersion = '0.4.0'
+		ivctVersion = '0.3.1'
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
         junitVersion = '4.+'
@@ -20,7 +20,6 @@ ext {
         logbackVersion = '1.1.3'
         slf4jVersion = '1.7.10'
 		activemqVersion = '5.12.0'   
-		hamcrestVersion = '1.1'
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
 		
@@ -39,7 +38,6 @@ ext {
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
-                junit:                          "junit:junit:${junitVersion}",
-				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}"
+                junit:                          "junit:junit:${junitVersion}"
         ]
 }
