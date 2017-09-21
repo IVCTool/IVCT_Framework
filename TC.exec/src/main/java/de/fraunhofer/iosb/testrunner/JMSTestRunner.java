@@ -189,6 +189,7 @@ public class JMSTestRunner extends TestRunner
 
 	@Override
 	public void onSetLogLevel(LogLevel level) {
+		this.logLevelId = level.name();
 		if (logger instanceof ch.qos.logback.classic.Logger) {
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
 			switch (level) {
@@ -224,6 +225,7 @@ public class JMSTestRunner extends TestRunner
 
 	@Override
 	public void onStartTestCase(TcInfo info) {
+		this.testCaseId = new String(info.testCaseId);
 		Thread th1 = new Thread(new TestScheduleRunner(info, this));
 		th1.start();
 	}

@@ -30,6 +30,7 @@ import javax.jms.MessageProducer;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
+import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 
@@ -223,6 +224,11 @@ public class Factory {
 		return new CmdQuit();
 	}
 
+	public static CmdQuitListener createCmdQuitListener(OnQuitListener listener) {
+		initialize();
+		return new CmdQuitListener(listener);
+	}
+
 	public static CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
 		initialize();
 		return new CmdStartTestResultListener(listener);
@@ -233,7 +239,7 @@ public class Factory {
 		return new CmdSendTcStatus();
 	}
 
-	public  static int getCmdCounter() {
+	public static int getCmdCounter() {
 		return cmdCounter;
 	}
 
