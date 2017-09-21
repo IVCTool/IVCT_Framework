@@ -1,6 +1,5 @@
 package nato.ivct.gui.client.cb;
 
-import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.scout.rt.client.dto.FormData;

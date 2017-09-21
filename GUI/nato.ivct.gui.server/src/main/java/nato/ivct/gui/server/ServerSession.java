@@ -153,7 +153,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 
 		@Override
 		public CmdSetLogLevel call() throws Exception {
-			CmdSetLogLevel setCmd = new CmdSetLogLevel(logLevel);
+			CmdSetLogLevel setCmd = Factory.createCmdSetLogLevel(logLevel);
 			setCmd.execute();
 			return null;
 		}

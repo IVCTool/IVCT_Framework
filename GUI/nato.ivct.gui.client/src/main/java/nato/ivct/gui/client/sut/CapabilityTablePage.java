@@ -22,7 +22,6 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import nato.ivct.gui.client.sut.CapabilityTablePage.Table;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.ICapabilityService;
 
 @Data(CapabilityTablePageData.class)
