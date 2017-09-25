@@ -39,7 +39,10 @@ public class TestRunner {
     /**
      * execute the tests given as classnames.
      *
+     * @param logger The explicit logger to use
      * @param classnames The classnames of the tests to execute
+     * @param paramJson the test case parameters as a json value
+     * @param verdicts the array of individual test case verdicts
      */
     public void executeTests(final Logger logger, final String[] classnames, final String paramJson, final IVCT_Verdict verdicts[]) {
     	int i = 0;
