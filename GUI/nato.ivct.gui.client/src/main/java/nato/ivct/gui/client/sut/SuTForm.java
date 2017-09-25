@@ -330,6 +330,7 @@ public class SuTForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
+			getForm().setSubTitle(formData.getName().getValue());
 
 			setEnabledPermission(new UpdateSuTPermission());
 		}
