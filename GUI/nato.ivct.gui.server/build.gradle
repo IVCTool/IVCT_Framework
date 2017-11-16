@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+apply from: "../../.shared/libraries.gradle"
+apply from: "../../.shared/commons.gradle"
+
+project.group = 'msg134-ivct-framework'
+project.version = "${ivctVersion}"
+
+
+
+group = 'nato.ivct.gui'
+version = '1.0.0-SNAPSHOT'
+
+description = """IVCT Server"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+configurations.all {
+}
+
+dependencies {
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.jdbc', version:'6.1.0.M5'
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server', version:'6.1.0.M5'
+    compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.shared', version:'1.0.0-SNAPSHOT'
+    compile group: 'org.apache.geronimo.specs', name: 'geronimo-jms_1.1_spec', version:'1.1.1'
+    compile group: 'msg134-ivct-framework', name: 'Command', version:'0.4.1'
+    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.test', version:'6.1.0.M5'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+}
+//packaging tests
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

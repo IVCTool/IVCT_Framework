@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+apply from: "../../.shared/libraries.gradle"
+apply from: "../../.shared/commons.gradle"
+
+group = 'nato.ivct.gui'
+version = '1.0.0-SNAPSHOT'
+
+description = """IVCT HTML UI WAR"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+configurations.all {
+}
+
+dependencies {
+    compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.ui.html', version:'1.0.0-SNAPSHOT'
+}
+//packaging tests
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

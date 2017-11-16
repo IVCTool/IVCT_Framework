@@ -1,0 +1,15 @@
+rootProject.name = 'nato.ivct.gui'
+
+include ':nato.ivct.gui.shared'
+include ':nato.ivct.gui.server'
+include ':nato.ivct.gui.client'
+include ':nato.ivct.gui.server.app.war'
+include ':nato.ivct.gui.ui.html'
+include ':nato.ivct.gui.ui.html.app.war'
+
+project(':nato.ivct.gui.shared').projectDir = "$rootDir/../nato.ivct.gui.shared" as File
+project(':nato.ivct.gui.server').projectDir = "$rootDir/../nato.ivct.gui.server" as File
+project(':nato.ivct.gui.client').projectDir = "$rootDir/../nato.ivct.gui.client" as File
+project(':nato.ivct.gui.server.app.war').projectDir = "$rootDir/../nato.ivct.gui.server.app.war" as File
+project(':nato.ivct.gui.ui.html').projectDir = "$rootDir/../nato.ivct.gui.ui.html" as File
+project(':nato.ivct.gui.ui.html.app.war').projectDir = "$rootDir/../nato.ivct.gui.ui.html.app.war" as File
