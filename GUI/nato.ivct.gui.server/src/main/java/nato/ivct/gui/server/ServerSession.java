@@ -76,7 +76,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
-			BEANS.get(ClientNotificationRegistry.class).putForAllNodes(notification);
+			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}
 
 	}
