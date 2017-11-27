@@ -6,6 +6,7 @@ import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;
 import org.eclipse.scout.rt.testing.platform.mock.BeanMock;
 import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -31,4 +32,8 @@ public class CbFormTest {
 	}
 
 	// TODO [hzg] add test cases
+	@Test
+	public void dummyTest() {
+
+	}
 }
