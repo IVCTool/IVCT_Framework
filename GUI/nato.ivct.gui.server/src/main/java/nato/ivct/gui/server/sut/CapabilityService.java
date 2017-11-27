@@ -25,7 +25,6 @@ public class CapabilityService implements ICapabilityService {
 	@Override
 	public CapabilityTablePageData getCapabilityTableData(SearchFilter filter) {
 		CapabilityTablePageData pageData = new CapabilityTablePageData();
-		// TODO [hzg] fill pageData.
 		LOG.info("getCapabilityTableData");
 		String[] searchText = filter.getDisplayTexts();
 		SuTService sutService = (SuTService) BEANS.get(ISuTService.class);

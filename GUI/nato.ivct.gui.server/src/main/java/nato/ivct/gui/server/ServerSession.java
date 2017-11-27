@@ -22,6 +22,7 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.Factory;
+import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 /**
@@ -76,6 +77,10 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
+			
+			CapabilityTableRowData cTR = (CapabilityTableRowData) BEANS.get(CapabilityTableRowData.class);
+
+			
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}
 
