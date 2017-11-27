@@ -1,5 +1,9 @@
 package nato.ivct.gui.client.sut;
 
+import org.eclipse.scout.rt.client.context.ClientRunContexts;
+import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
@@ -14,21 +18,22 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 		if (notification.getTc() == null) {
 			return;
 		} else {
-			logger.info("Test Case Notification " + notification.getVerdict() + " received for " + notification.getTc());
+			logger.info(
+					"Test Case Notification " + notification.getVerdict() + " received for " + notification.getTc());
 			// Trigger client ui update
 
 			// according to the scout manual this should be done, but
 			// copyCurrent does not provide valid ModelJob!
-			// ModelJobs.schedule(new IRunnable() {
-			// @Override
-			// public void run() throws Exception {
-			// for (ITableRow tr : CapabilityTablePage.currentTcArray) {
-			//
-			// tr.setCellValue(4, notification.getVerdict());
-			//
-			// }
-			// }
-			// }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+			ModelJobs.schedule(new IRunnable() {
+				@Override
+				public void run() throws Exception {
+					for (ITableRow tr : CapabilityTablePage.currentTcArray) {
+
+						tr.setCellValue(4, notification.getVerdict());
+
+					}
+				}
+			}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 
 		}
 	}
