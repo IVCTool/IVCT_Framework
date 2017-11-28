@@ -23,6 +23,8 @@ import nato.ivct.commander.CmdTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
+import nato.ivct.gui.server.sut.CapabilityService;
+import nato.ivct.gui.shared.sut.CapabilityTablePageData;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 /**
@@ -74,12 +76,17 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 		public void onResult(TcResult result) {
 			// TODO Auto-generated method stub
 			TestCaseNotification notification = new TestCaseNotification();
+			notification.setSut(result.sutName);
 			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
 			
-			CapabilityTableRowData cTR = (CapabilityTableRowData) BEANS.get(CapabilityTableRowData.class);
-
+			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData (result.sutName);
+			for (CapabilityTableRowData capRow : capData.getRows()) {
+				if (capRow.getAbstractTC() == result.testcase){
+					capRow.setTCresult(result.verdict);
+				}
+			}
 			
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}

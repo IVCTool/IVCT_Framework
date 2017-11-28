@@ -20,8 +20,12 @@ import nato.ivct.gui.shared.sut.ISuTService;
 
 public class CapabilityService implements ICapabilityService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
-	HashMap<String, CapabilityTablePageData> cap_hm = new HashMap<String, CapabilityTablePageData>();
+	private static HashMap<String, CapabilityTablePageData> cap_hm = new HashMap<String, CapabilityTablePageData>();
 
+	public static CapabilityTablePageData getCapabilityTablePageData (String sut) {
+		return cap_hm.get (sut);
+	}
+	
 	@Override
 	public CapabilityTablePageData getCapabilityTableData(SearchFilter filter) {
 		CapabilityTablePageData pageData = new CapabilityTablePageData();

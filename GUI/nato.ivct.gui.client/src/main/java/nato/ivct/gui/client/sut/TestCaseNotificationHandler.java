@@ -25,22 +25,15 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 			public void run() throws Exception {
 				logger.info("Test Case Notification " + notification.getVerdict() + " received for "
 						+ notification.getTc());
-				// CapabilityTablePage cTP =
-				// BEANS.get(CapabilityTablePage.class);
-				// for (ITableRow tr : cTP.getTableRowsFor(null)) {
-				// Object value0 = tr.getCellValue(0);
-				// }
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof BadgeOutline) {
-						if (outline.getActivePage() instanceof CapabilityTablePage) {
-							CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
-							for (ITableRow tr : cTP.getTable().getRows()) {
-								tr.touch();
-//								if (tr instanceof CapabilityTableRowData) {
-//									CapabilityTableRowData cTR = (CapabilityTableRowData) tr;
-//									String bid = cTR.getBadgeId();
-//								}
+						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
+						for (ITableRow tr : cTP.getTable().getRows()) {
+							// find row with test case name
+							if (tr.getCustomValue("TC") == notification.getTc()) {
+								tr.setBackgroundColor("00FF00");
+								// tr.touch();
 							}
 						}
 					}
@@ -52,7 +45,5 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 				}
 			}
 		}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
-
 	}
-
 }
