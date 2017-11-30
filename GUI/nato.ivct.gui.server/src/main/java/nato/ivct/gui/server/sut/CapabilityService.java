@@ -26,11 +26,19 @@ public class CapabilityService implements ICapabilityService {
 		return cap_hm.get (sut);
 	}
 	
+	/*
+	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
+	 * 
+	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
+	 */
 	@Override
 	public CapabilityTablePageData getCapabilityTableData(SearchFilter filter) {
-		CapabilityTablePageData pageData = new CapabilityTablePageData();
-		LOG.info("getCapabilityTableData");
 		String[] searchText = filter.getDisplayTexts();
+		CapabilityTablePageData pageData = cap_hm.get (searchText);
+		if (pageData == null) {
+			pageData = new CapabilityTablePageData();
+		}
+		LOG.info("getCapabilityTableData");
 		SuTService sutService = (SuTService) BEANS.get(ISuTService.class);
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		SutDescription sutDesc = sutService.getSutDescription(searchText[0]);

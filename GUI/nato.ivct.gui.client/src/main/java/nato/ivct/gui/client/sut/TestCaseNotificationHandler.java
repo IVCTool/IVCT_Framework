@@ -31,19 +31,29 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
 						for (ITableRow tr : cTP.getTable().getRows()) {
 							// find row with test case name
-							if (tr.getCustomValue("TC") == notification.getTc()) {
-								tr.setBackgroundColor("00FF00");
-								// tr.touch();
+							Object oa = tr.getCustomValue("ATC");
+							oa = tr.getCellValue(3);
+							String a = oa.toString();
+							String b = notification.getTc();
+							if (tr.getCellValue(3).equals(notification.getTc())) {
+								tr.setCellValue(4, notification.getVerdict());
+								tr.setBackgroundColor(getVerdictColor(notification.getVerdict()));
 							}
 						}
 					}
 				}
-
-				for (ITableRow tr : CapabilityTablePage.currentTcArray) {
-					tr.setCellValue(4, notification.getVerdict());
-					tr.setBackgroundColor("00FF00");
-				}
 			}
 		}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+	}
+	
+	private String getVerdictColor (String verdict) {
+		if (verdict.equalsIgnoreCase("PASSED"))
+			return "00FF00";
+		else if (verdict.equalsIgnoreCase("FAILED"))
+			return "FF0000";
+		else if (verdict.equalsIgnoreCase("INCONCLUSIVE"))
+			return "7F00FF";
+		else
+			return "E0E0E0";
 	}
 }

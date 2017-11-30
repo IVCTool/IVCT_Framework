@@ -83,7 +83,7 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 			
 			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData (result.sutName);
 			for (CapabilityTableRowData capRow : capData.getRows()) {
-				if (capRow.getAbstractTC() == result.testcase){
+				if (capRow.getAbstractTC().equals(result.testcase)){
 					capRow.setTCresult(result.verdict);
 				}
 			}
