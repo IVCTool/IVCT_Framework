@@ -15,8 +15,8 @@ include 'GUI:nato.ivct.gui.shared'
 include 'GUI:nato.ivct.gui.server.app.war'
 include 'GUI:nato.ivct.gui.server.app.dev'
 include 'GUI:nato.ivct.gui.ui.html'
-include 'GUI:nato.ivct.gui.ui.html.dev'
-include 'GUI:nato.ivct.gui.ui.html.war'
+include 'GUI:nato.ivct.gui.ui.html.app.dev'
+include 'GUI:nato.ivct.gui.ui.html.app.war'
 
 rootProject.children.each { project ->
     project.buildFileName = "${project.name}.gradle"
