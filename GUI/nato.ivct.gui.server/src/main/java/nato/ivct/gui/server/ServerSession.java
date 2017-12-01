@@ -21,10 +21,12 @@ import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
+import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.server.sut.CapabilityService;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
+import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
+import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 /**
@@ -32,7 +34,7 @@ import nato.ivct.gui.shared.sut.TestCaseNotification;
  *
  * @author hzg
  */
-public class ServerSession extends AbstractServerSession implements OnTcStatusListener {
+public class ServerSession extends AbstractServerSession {
 
 	private IFuture<CmdListSuT> loadSuTJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
@@ -74,20 +76,41 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 
 		@Override
 		public void onResult(TcResult result) {
-			// TODO Auto-generated method stub
 			TestCaseNotification notification = new TestCaseNotification();
 			notification.setSut(result.sutName);
 			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
-			
-			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData (result.sutName);
+
+			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData(result.sutName);
 			for (CapabilityTableRowData capRow : capData.getRows()) {
-				if (capRow.getAbstractTC().equals(result.testcase)){
+				if (capRow.getAbstractTC().equals(result.testcase)) {
 					capRow.setTCresult(result.verdict);
 				}
 			}
-			
+
+			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+		}
+
+	}
+
+	public class StatusListener implements OnTcStatusListener {
+
+		@Override
+		public void onTcStatus(TcStatus status) {
+			TcStatusNotification notification = new TcStatusNotification();
+			notification.setSut(status.sutName);
+			notification.setTc(status.tcName);
+			notification.setPercent(status.percentFinshed);
+			notification.setStatus(status.status);
+
+			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData(status.sutName);
+			for (CapabilityTableRowData capRow : capData.getRows()) {
+				if (capRow.getAbstractTC().equals(status.tcName)) {
+					capRow.setTCresult(status.status + status.percentFinshed);
+				}
+			}
+
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}
 
@@ -202,7 +225,9 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 		sessionResultListener = new ResultListener();
 		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
 
-		(new CmdTcStatusListener(this)).execute();
+		LOG.info("start test case Status Listener");
+		(Factory.createCmdTcStatusListener(new StatusListener())).execute();;
+
 	}
 
 	public IFuture<CmdListSuT> getCmdJobs() {
@@ -222,12 +247,6 @@ public class ServerSession extends AbstractServerSession implements OnTcStatusLi
 	public void setLogLevel(String level) {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
-
-	}
-
-	@Override
-	public void onTcStatus(String status, int percent) {
-		// TODO Auto-generated method stub
 
 	}
 

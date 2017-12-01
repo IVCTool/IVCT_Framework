@@ -9,8 +9,8 @@ import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
+import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.badges.BadgeOutline;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 public class TestCaseNotificationHandler implements INotificationHandler<TestCaseNotification> {
@@ -31,29 +31,14 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
 						for (ITableRow tr : cTP.getTable().getRows()) {
 							// find row with test case name
-							Object oa = tr.getCustomValue("ATC");
-							oa = tr.getCellValue(3);
-							String a = oa.toString();
-							String b = notification.getTc();
 							if (tr.getCellValue(3).equals(notification.getTc())) {
 								tr.setCellValue(4, notification.getVerdict());
-								tr.setBackgroundColor(getVerdictColor(notification.getVerdict()));
+								tr.setBackgroundColor(ResourceBase.getVerdictColor(notification.getVerdict()));
 							}
 						}
 					}
 				}
 			}
 		}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
-	}
-	
-	private String getVerdictColor (String verdict) {
-		if (verdict.equalsIgnoreCase("PASSED"))
-			return "00FF00";
-		else if (verdict.equalsIgnoreCase("FAILED"))
-			return "FF0000";
-		else if (verdict.equalsIgnoreCase("INCONCLUSIVE"))
-			return "7F00FF";
-		else
-			return "E0E0E0";
 	}
 }

@@ -33,6 +33,7 @@ import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
+import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 
 /*
  * The Factory is used to create Command objects to be executed by a user interface.
@@ -232,6 +233,11 @@ public class Factory {
 	public static CmdStartTestResultListener createCmdStartTestResultListener(OnResultListener listener) {
 		initialize();
 		return new CmdStartTestResultListener(listener);
+	}
+
+	public static CmdTcStatusListener createCmdTcStatusListener(OnTcStatusListener listener) {
+		initialize();
+		return new CmdTcStatusListener(listener);
 	}
 
 	public static CmdSendTcStatus createCmdSendTcStatus() {

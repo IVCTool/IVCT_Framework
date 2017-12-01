@@ -20,6 +20,7 @@ import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
+import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.sut.CapabilityTablePage.Table;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
 import nato.ivct.gui.shared.sut.ICapabilityService;
@@ -79,7 +80,7 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(4, "starting");
-							tr.setBackgroundColor("FFA500");
+							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String badge = tr.getCell(0).toString();
 							String tcName = tr.getCell(3).toString();
 							cbService.executeTestCase(sutId, tcName, badge);

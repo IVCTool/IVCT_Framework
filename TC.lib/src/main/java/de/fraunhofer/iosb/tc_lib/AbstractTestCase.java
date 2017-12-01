@@ -38,8 +38,14 @@ public abstract class AbstractTestCase {
 	public void sendTcStatus (String status, int percent) {
 		statusCmd.setStatus(status);
 		statusCmd.setPercentFinshed(percent);
+		statusCmd.setTcName(tcName);
+		statusCmd.setSutName(sutName);
 		statusCmd.execute();
 	}
+	
+	private String tcName = null;
+	private String sutName = null;
+	
 
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
@@ -180,4 +186,24 @@ public abstract class AbstractTestCase {
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
         return ivct_Verdict;
     }
+
+
+	public String getTcName() {
+		return tcName;
+	}
+
+
+	public void setTcName(String tcName) {
+		this.tcName = tcName;
+	}
+
+
+	public String getSutName() {
+		return sutName;
+	}
+
+
+	public void setSutName(String sutName) {
+		this.sutName = sutName;
+	}
 }

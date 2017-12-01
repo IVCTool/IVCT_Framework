@@ -25,12 +25,18 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
 public class CmdTcStatusListener implements MessageListener, Command {
-	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdTcStatusListener.class);
-
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdTcStatusListener.class);
 	private OnTcStatusListener listener;
 
+	public class TcStatus {
+		public String status;
+		public int percentFinshed;
+		public String tcName;
+		public String sutName;
+	}
+	
 	public interface OnTcStatusListener {
-		public void onTcStatus (String status, int percent);
+		public void onTcStatus (TcStatus status);
 	}
 	
 	public CmdTcStatusListener (OnTcStatusListener listener) {
@@ -57,9 +63,12 @@ public class CmdTcStatusListener implements MessageListener, Command {
 					String commandTypeName = (String) jsonObject.get("commandType");
 
 					if (commandTypeName.equals("TcStatus")) {
-						String status = (String) jsonObject.get("status");
-						int percentFinshed = ((Long) jsonObject.get("percentFinshed")).intValue();
-						listener.onTcStatus(status, percentFinshed);
+						TcStatus status = new TcStatus();
+						status.status = (String) jsonObject.get("status");
+						status.percentFinshed = ((Long) jsonObject.get("percentFinshed")).intValue();
+						status.tcName = (String) jsonObject.get("tcName");
+						status.sutName = (String) jsonObject.get("sutName");
+						listener.onTcStatus(status);
 					}
 				} catch (ParseException e) {
 					e.printStackTrace();

@@ -28,7 +28,7 @@ public class TestRunner {
 		final Logger LOGGER = LoggerFactory.getLogger(TestRunner.class);
 		String paramJson = null;
 		IVCT_Verdict verdicts[] = new IVCT_Verdict[1];
-		new TestRunner().executeTests(LOGGER, args, paramJson, verdicts);
+		new TestRunner().executeTests(LOGGER, "SuT", args, paramJson, verdicts);
 
 	}
 
@@ -37,6 +37,8 @@ public class TestRunner {
 	 *
 	 * @param logger
 	 *            The explicit logger to use
+	 * @param sutName
+	 *            The Name of the System under Test
 	 * @param classnames
 	 *            The classnames of the tests to execute
 	 * @param paramJson
@@ -44,7 +46,7 @@ public class TestRunner {
 	 * @param verdicts
 	 *            the array of individual test case verdicts
 	 */
-	public void executeTests(final Logger logger, final String[] classnames, final String paramJson,
+	public void executeTests(final Logger logger, final String sutName, final String[] classnames, final String paramJson,
 			final IVCT_Verdict verdicts[]) {
 		int i = 0;
 
@@ -61,6 +63,8 @@ public class TestRunner {
 				verdicts[i++].text = "Could not instantiate " + classname;
 				continue;
 			}
+			testCase.setSutName(sutName);
+			testCase.setTcName(classname);
 			verdicts[i++] = testCase.execute(paramJson, logger);
 		}
 	}

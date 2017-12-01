@@ -177,7 +177,7 @@ public class JMSTestRunner extends TestRunner
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
 			extendThreadClassLoader (info.badge);
-			this.testRunner.executeTests(logger, testcases, info.testCaseParam.toString(), verdicts);
+			this.testRunner.executeTests(logger, info.sutName, testcases, info.testCaseParam.toString(), verdicts);
 			for (int i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
 						verdicts[i].text).execute();

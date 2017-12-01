@@ -19,6 +19,8 @@ import org.json.simple.JSONObject;
 public class CmdSendTcStatus implements Command {
 
 	private String status;
+	private String sutName;
+	private String tcName;
 	private int percentFinshed;
 
 	@SuppressWarnings("unchecked")
@@ -26,6 +28,8 @@ public class CmdSendTcStatus implements Command {
 	public void execute() {
 		JSONObject startCmd = new JSONObject();
 		startCmd.put("commandType", "TcStatus");
+		startCmd.put("sutName", sutName);
+		startCmd.put("tcName", tcName);
 		startCmd.put("status", status);
 		startCmd.put("percentFinshed", percentFinshed);
 
@@ -47,6 +51,22 @@ public class CmdSendTcStatus implements Command {
 
 	public void setPercentFinshed(int percentFinshed) {
 		this.percentFinshed = percentFinshed;
+	}
+
+	public String getSutName() {
+		return sutName;
+	}
+
+	public void setSutName(String sutName) {
+		this.sutName = sutName;
+	}
+
+	public String getTcName() {
+		return tcName;
+	}
+
+	public void setTcName(String tcName) {
+		this.tcName = tcName;
 	}
 
 }
