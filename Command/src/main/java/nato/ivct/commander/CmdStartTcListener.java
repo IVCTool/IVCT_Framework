@@ -58,13 +58,13 @@ public class CmdStartTcListener implements MessageListener, Command {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				Factory.LOGGER.info("JMS Message received: " + content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
 					String commandTypeName = (String) jsonObject.get("commandType");
 
 					if (commandTypeName.equals("startTestCase")) {
+						Factory.LOGGER.info("JMS Message received: " + content);
 						TcInfo info = new TcInfo();
 
 						info.sutName = (String) jsonObject.get("sutName");

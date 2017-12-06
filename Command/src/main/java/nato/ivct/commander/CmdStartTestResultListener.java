@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-
 package nato.ivct.commander;
 
 import javax.jms.JMSException;
@@ -34,7 +33,7 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 		public String testScheduleName;
 		public String testcase;
 		public String verdict;
-		public String verdictText;		
+		public String verdictText;
 	}
 
 	public interface OnResultListener {
@@ -60,13 +59,12 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				LOGGER.info("JMS Message received: " + content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
 					String commandTypeName = (String) jsonObject.get("commandType");
-
 					if (commandTypeName.equals("announceVerdict")) {
+						LOGGER.info("JMS Message received: " + content);
 						TcResult tcr = new TcResult();
 						tcr.sutName = (String) jsonObject.get("sutName");
 						if (tcr.sutName == null) {

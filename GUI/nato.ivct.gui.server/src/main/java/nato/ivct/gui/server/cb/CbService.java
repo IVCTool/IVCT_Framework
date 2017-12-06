@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
-import nato.ivct.commander.Command;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CbTablePageData;

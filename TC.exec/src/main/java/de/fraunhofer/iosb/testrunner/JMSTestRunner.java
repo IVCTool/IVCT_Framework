@@ -20,7 +20,6 @@ import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
-import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdSetLogLevelListener;
 import nato.ivct.commander.CmdSetLogLevelListener.OnSetLogLevelListener;

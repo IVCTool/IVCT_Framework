@@ -23,7 +23,7 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 		ModelJobs.schedule(new IRunnable() {
 			@Override
 			public void run() throws Exception {
-				logger.info("Test Case Notification " + notification.getVerdict() + " received for "
+				logger.trace("Test Case Notification " + notification.getVerdict() + " received for "
 						+ notification.getTc());
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {

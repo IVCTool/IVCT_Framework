@@ -25,6 +25,14 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class CmdListSuT implements Command {
+	
+	public class SutDescription {
+		public String ID;
+		public String description;
+		public String vendor;
+		public String[] conformanceStatment;
+	}
+
 
 	public HashMap<String, SutDescription> sutMap = new HashMap<String, SutDescription>();
 

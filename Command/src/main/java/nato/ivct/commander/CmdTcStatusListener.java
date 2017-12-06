@@ -56,13 +56,13 @@ public class CmdTcStatusListener implements MessageListener, Command {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				LOGGER.info("JMS Message received: " + content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
 					String commandTypeName = (String) jsonObject.get("commandType");
 
 					if (commandTypeName.equals("TcStatus")) {
+						LOGGER.info("JMS Message received: " + content);
 						TcStatus status = new TcStatus();
 						status.status = (String) jsonObject.get("status");
 						status.percentFinshed = ((Long) jsonObject.get("percentFinshed")).intValue();

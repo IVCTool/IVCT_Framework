@@ -36,8 +36,8 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 		ModelJobs.schedule(new IRunnable() {
 			@Override
 			public void run() throws Exception {
-				logger.info("Test Case Status Notification " + notification.getTc() + " is st "
-						+ notification.getPercent());
+				logger.trace("Test Case Status Notification " + notification.getTc() + " is at "
+						+ notification.getPercent() + "%");
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof BadgeOutline) {
@@ -46,7 +46,6 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 							// find row with test case name
 							if (tr.getCellValue(3).equals(notification.getTc())) {
 								tr.setCellValue(4, notification.getStatus() + ": " + notification.getPercent() + "%");
-//								tr.setBackgroundColor(ResourceBase.getVerdictColor(notification.getVerdict()));
 							}
 						}
 					}
@@ -55,6 +54,3 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 		}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 	}
 }
-
-
-
