@@ -13,17 +13,17 @@ public final class ResourceBase {
 	private ResourceBase() {
 	}
 	
-	static public String PASSED = "00FF00";
-	static public String FAILED = "FF6666";
-	static public String INCONCLUSIVE = "E5CCFF";
-	static public String RUNNING = "FFA500";
+	static public String PASSED = "CCFFCC";
+	static public String FAILED = "DD5143";
+	static public String INCONCLUSIVE = "8D6CAB";
+	static public String RUNNING = "E68523";
 	
 	static public String getVerdictColor (String verdict) {
-		if (verdict.equalsIgnoreCase("PASSED"))
+		if ("PASSED".equalsIgnoreCase(verdict))
 			return PASSED;
-		else if (verdict.equalsIgnoreCase("FAILED"))
+		else if ("FAILED".equalsIgnoreCase(verdict))
 			return FAILED;
-		else if (verdict.equalsIgnoreCase("INCONCLUSIVE"))
+		else if ("INCONCLUSIVE".equalsIgnoreCase(verdict))
 			return INCONCLUSIVE;
 		else
 			return "E0E0E0";

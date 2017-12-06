@@ -45,7 +45,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 						for (ITableRow tr : cTP.getTable().getRows()) {
 							// find row with test case name
 							if (tr.getCellValue(3).equals(notification.getTc())) {
-								tr.setCellValue(4, notification.getStatus() + " at " + notification.getPercent());
+								tr.setCellValue(4, notification.getStatus() + ": " + notification.getPercent() + "%");
 //								tr.setBackgroundColor(ResourceBase.getVerdictColor(notification.getVerdict()));
 							}
 						}

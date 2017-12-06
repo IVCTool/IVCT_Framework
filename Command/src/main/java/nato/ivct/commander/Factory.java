@@ -71,7 +71,7 @@ public class Factory {
 				jmsHelper.initSession();
 				producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
 
-			} catch (final IOException e) {
+			} catch (final Exception e) {
 				LOGGER.warn("no properties file IVCT.properties found");
 				props.setProperty(IVCT_TS_HOME_ID, "C:/MSG134/DemoFolders/IVCTtestSuites");
 				props.setProperty(IVCT_SUT_HOME_ID, "C:/MSG134/DemoFolders/IVCTsut");
