@@ -40,6 +40,7 @@ public class ServerSession extends AbstractServerSession {
 	private IFuture<CmdStartTc> startTcJobs = null;
 	private IFuture<CmdStartTestResultListener> testResultListener = null;
 	private ResultListener sessionResultListener;
+	private StatusListener statusListener;
 
 	/*
 	 * Load SuT descriptions job
@@ -225,7 +226,8 @@ public class ServerSession extends AbstractServerSession {
 		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
 
 		LOG.info("start test case Status Listener");
-		(Factory.createCmdTcStatusListener(new StatusListener())).execute();;
+		statusListener = new StatusListener();
+		(Factory.createCmdTcStatusListener(statusListener)).execute();;
 
 	}
 
