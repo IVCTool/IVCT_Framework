@@ -69,14 +69,10 @@ public class Factory {
 			if (home == null) {
 				LOGGER.error("Environment Variable <<IVCT_CONF>> not set");
 				System.exit(-1);
-			} 
+			}
 			try {
 				props.load(new FileInputStream(home + "/IVCT.properties"));
 				jmsHelper = new PropertyBasedClientSetup(props);
-				jmsHelper.parseProperties();
-				jmsHelper.initConnection();
-				jmsHelper.initSession();
-				producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
 
 			} catch (final Exception e) {
 				LOGGER.warn("no properties file IVCT.properties found");
@@ -93,6 +89,10 @@ public class Factory {
 				LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
 				LOGGER.warn(props.toString());
 			}
+			jmsHelper.parseProperties();
+			jmsHelper.initConnection();
+			jmsHelper.initSession();
+			producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
 		} // otherwise consider to be already initialized
 	}
 
