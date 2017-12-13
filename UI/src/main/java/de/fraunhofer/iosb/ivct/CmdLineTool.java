@@ -27,7 +27,6 @@ import java.util.concurrent.Semaphore;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
-import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
@@ -436,16 +435,6 @@ class Writer extends Thread {
                 	}
                 	out.println("loglevel: " + logLevelString);
                 	break;
-                case "terse":
-                case "t":
-                	ivctCommander.setCmdVerboseBool(false);
-            		out.println("Command line output is now terse.");
-                	break;
-                case "verbose":
-                case "v":
-                	ivctCommander.setCmdVerboseBool(true);
-            		out.println("Command line output is now verbose.");
-                	break;
                 case "quit":
                 case "q":
                 	// Check any critical tasks are running
@@ -475,8 +464,6 @@ class Writer extends Thread {
                     out.println("setLogLevel (sll) loglevel - set the log level for logging - error, warning, info, debug, trace");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
                     out.println("status (s) - display status information");
-                    out.println("terse (t) - display only important session information");
-                    out.println("verbose (v) - display detailed session information");
                     out.println("quit (q) - quit the program");
                     out.println("help (h) - display the help information");
                     break;

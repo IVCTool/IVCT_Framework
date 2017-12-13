@@ -17,26 +17,19 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
@@ -50,16 +43,12 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
  */
 public class IVCTcommander implements OnResultListener {
 
-    private static final String      PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
     private static Logger            LOGGER                       = LoggerFactory.getLogger(IVCTcommander.class);
-    private PropertyBasedClientSetup jmshelper;
-    private String                   destination;
-    private MessageProducer producer;
+//    private PropertyBasedClientSetup jmshelper;
 	private static Semaphore semaphore = new Semaphore(0);
 	private int countSemaphore = 0;
 	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
-	private static boolean cmdVerboseBool = false;
     public RuntimeParameters rtp = new RuntimeParameters();
     private CmdStartTestResultListener cmdStartTestResultListener;
 
@@ -69,21 +58,6 @@ public class IVCTcommander implements OnResultListener {
      * @throws IOException problems with loading properties
      */
     public IVCTcommander() throws IOException {
-        final Properties properties = new Properties();
-        final InputStream in = this.getClass().getResourceAsStream("/CmdLineTool.properties");
-        properties.load(in);
-        this.jmshelper = new PropertyBasedClientSetup(properties);
-        if (this.jmshelper.parseProperties()) {
-        	System.exit(1);
-        }
-        if (this.jmshelper.initConnection()) {
-        	System.exit(1);
-        }
-        if (this.jmshelper.initSession()) {
-        	System.exit(1);
-        }
-        this.destination = properties.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands");
-        producer = jmshelper.setupTopicProducer(destination);
         cmdStartTestResultListener = new CmdStartTestResultListener(this);
     }
 
@@ -175,9 +149,6 @@ public class IVCTcommander implements OnResultListener {
 		rtp.setTestScheduleRunningBool(b);
 	}
 
-    protected void setCmdVerboseBool(final boolean b) {
-    	cmdVerboseBool = b;
-    }
     
       public List<String> listSUT() {
     	  rtp.setSUTS();
@@ -199,19 +170,6 @@ public class IVCTcommander implements OnResultListener {
 
       public static void resetSUT() {
     	  listOfVerdicts.clear();
-      }
-      /**
-       * sendToJms
-       * @param userCommand command as a json value
-       */
-      public void sendToJms(final String userCommand) {
-    	  Message message = jmshelper.createTextMessage(userCommand);
-    	  try {
-    		  producer.send(message);
-    	  } catch (JMSException e) {
-    		  // TODO Auto-generated catch block
-    		  e.printStackTrace();
-    	  }
       }
 
     public void onResult(TcResult result) {

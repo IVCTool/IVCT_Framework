@@ -16,6 +16,7 @@ package nato.ivct.commander;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -44,6 +45,7 @@ import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 public class Factory {
 
 	public static Properties props = null;
+	public static final String IVCT_CONF = "IVCT_CONF";
 	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
 	public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
@@ -61,10 +63,15 @@ public class Factory {
 	 */
 	public static void initialize() {
 		if (props == null) {
+			String home = System.getenv(IVCT_CONF);
 			props = new Properties();
+
+			if (home == null) {
+				LOGGER.error("Environment Variable <<IVCT_CONF>> not set");
+				System.exit(-1);
+			} 
 			try {
-				final InputStream in = Factory.class.getResourceAsStream("/IVCT.properties");
-				props.load(in);
+				props.load(new FileInputStream(home + "/IVCT.properties"));
 				jmsHelper = new PropertyBasedClientSetup(props);
 				jmsHelper.parseProperties();
 				jmsHelper.initConnection();
