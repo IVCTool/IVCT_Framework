@@ -72,23 +72,27 @@ public class Factory {
 			}
 			try {
 				props.load(new FileInputStream(home + "/IVCT.properties"));
-				jmsHelper = new PropertyBasedClientSetup(props);
-
 			} catch (final Exception e) {
-				LOGGER.warn("no properties file IVCT.properties found");
+				LOGGER.warn("no properties file " + home + "/IVCT.properties found");
 				props.setProperty(IVCT_TS_HOME_ID, "C:/MSG134/DemoFolders/IVCTtestSuites");
 				props.setProperty(IVCT_SUT_HOME_ID, "C:/MSG134/DemoFolders/IVCTsut");
 				props.setProperty(IVCT_BADGE_HOME_ID, "C:/MSG134/DemoFolders/Badges");
 				props.setProperty(RTI_ID, "pRTI");
+				props.setProperty("messaging.user", "admin");
+				props.setProperty("messaging.password", "password");
+				props.setProperty("messaging.host", "localhost");
+				props.setProperty("messaging.port", "61616");
+				props.setProperty("jmstestrunner.queue", "commands");
 				try {
-					props.store(new FileOutputStream("IVCT.properties"), "IVCT Properties File");
+					props.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
 				} catch (IOException e1) {
-					LOGGER.error("Unable to write IVCT.properties file. Please verify settings!");
+					LOGGER.error("Unable to write " + home + "/IVCT.properties file. Please verify settings!");
 					e1.printStackTrace();
 				}
 				LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
 				LOGGER.warn(props.toString());
 			}
+			jmsHelper = new PropertyBasedClientSetup(props);
 			jmsHelper.parseProperties();
 			jmsHelper.initConnection();
 			jmsHelper.initSession();

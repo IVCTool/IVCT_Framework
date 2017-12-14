@@ -65,6 +65,9 @@ public class CmdListSuT implements Command {
 				}
 
 			}
+			else {
+				Factory.LOGGER.error(Factory.IVCT_SUT_HOME_ID + " folder not found");
+			}
 		}
 	}
 
