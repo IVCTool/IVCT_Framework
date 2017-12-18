@@ -48,7 +48,7 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 
 	@Override
 	public void execute() {
-		LOGGER.info("subsribing the CmdStartTestResultListener");
+		LOGGER.trace("subsribing the CmdStartTestResultListener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
@@ -64,7 +64,7 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
 					String commandTypeName = (String) jsonObject.get("commandType");
 					if (commandTypeName.equals("announceVerdict")) {
-						LOGGER.info("JMS Message received: " + content);
+						LOGGER.trace("JMS Message received: " + content);
 						TcResult tcr = new TcResult();
 						tcr.sutName = (String) jsonObject.get("sutName");
 						if (tcr.sutName == null) {

@@ -44,7 +44,7 @@ public class CmdSetLogLevelListener implements Command, MessageListener {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				LOGGER.info("JMS Message received: " + content);
+				LOGGER.trace("JMS Message received: " + content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
@@ -66,7 +66,7 @@ public class CmdSetLogLevelListener implements Command, MessageListener {
 
 	@Override
 	public void execute() {
-		LOGGER.info("subsribing the CmdStartChangeLogLevelListener");
+		LOGGER.trace("subsribing the CmdStartChangeLogLevelListener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}

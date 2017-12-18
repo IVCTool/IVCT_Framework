@@ -47,7 +47,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 
 	@Override
 	public void execute() {
-		Factory.LOGGER.info("subsribing the commands listener");
+		Factory.LOGGER.trace("subsribing the commands listener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
@@ -64,7 +64,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 					String commandTypeName = (String) jsonObject.get("commandType");
 
 					if (commandTypeName.equals("startTestCase")) {
-						Factory.LOGGER.info("JMS Message received: " + content);
+						Factory.LOGGER.trace("JMS Message received: " + content);
 						TcInfo info = new TcInfo();
 
 						info.sutName = (String) jsonObject.get("sutName");

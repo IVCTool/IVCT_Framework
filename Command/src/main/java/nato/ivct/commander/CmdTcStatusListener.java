@@ -45,7 +45,7 @@ public class CmdTcStatusListener implements MessageListener, Command {
 	
 	@Override
 	public void execute() {
-		LOGGER.info("subsribing the CmdTcStatusListener");
+		LOGGER.trace("subsribing the CmdTcStatusListener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
@@ -62,7 +62,7 @@ public class CmdTcStatusListener implements MessageListener, Command {
 					String commandTypeName = (String) jsonObject.get("commandType");
 
 					if (commandTypeName.equals("TcStatus")) {
-						LOGGER.info("JMS Message received: " + content);
+						LOGGER.trace("JMS Message received: " + content);
 						TcStatus status = new TcStatus();
 						status.status = (String) jsonObject.get("status");
 						status.percentFinshed = ((Long) jsonObject.get("percentFinshed")).intValue();

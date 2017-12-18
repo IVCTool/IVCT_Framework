@@ -44,10 +44,10 @@ public class CmdListBadges implements Command {
 	 */
 	@Override
 	public void execute() {
-		Factory.LOGGER.info("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
+		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
 		if (dir.isDirectory()) {
-			Factory.LOGGER.info("Read Badge descriptions from " + dir.getAbsolutePath());
+			Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
 			File[] filesList = dir.listFiles();
 			for (File file : filesList) {
 				Object obj;
