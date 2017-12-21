@@ -20,7 +20,7 @@
   <properties>
     <nato.ivct.gui.nato.ivct.gui.version>${project.version}</nato.ivct.gui.nato.ivct.gui.version>
     <jdk.source.version>1.8</jdk.source.version>
-    <org.eclipse.scout.rt.version>6.1.0.M5</org.eclipse.scout.rt.version>
+    <org.eclipse.scout.rt.version>7.0.100.017_Oxygen_1</org.eclipse.scout.rt.version>
   </properties>
 
   <modules>

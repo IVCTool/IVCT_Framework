@@ -24,9 +24,11 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import de.fraunhofer.iosb.testrunner.LogConfigurationHelper;
+import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.Factory;
 
 /*
  * Dialog program using keyboard input.
@@ -73,9 +75,8 @@ public class CmdLineTool {
     	}
 
     	// Handle callbacks
-    	if (CmdLineTool.ivctCommander.listenToJms()) {
-        	System.exit(1);
-    	}
+		Factory.initialize();
+		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
     }
 
     class commandRunnable implements Runnable {
@@ -238,45 +239,6 @@ class Writer extends Thread {
                 	ivctCommander.rtp.setSutName(split[1]);
                 	IVCTcommander.resetSUT();
                 	break;
-                case "startConformanceTest":
-                case "sct":
-                	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("startConformanceTest", out)) {
-                		break;
-                	}
-                	// Cannot start conformance test if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
-                	// Warn for extra parameter
-                	if (split.length > 1) {
-                        out.println("startConformanceTest: Warning extra parameter: " + split[1]);
-                	}
-//                	command = new StartConformanceTest(ivctCommander);
-                    out.println("startConformanceTest: Warning start conformance test logic is NOT IMPLEMENTED yet");
-                	ivctCommander.setConformanceTestBool(true);
-                    break;
-                case "abortConformanceTest":
-                case "act":
-                	// Cannot abort conformance test if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
-                        out.println(sutNotSelected);
-                		break;
-                	}
-                	// Cannot abort conformance test if not running
-                	if (ivctCommander.getConformanceTestBool() == false) {
-                        out.println("abortConformanceTest: Warning no conformance test is running");
-                        break;
-                	}
-                	// Warn about extra parameter
-                	if (split.length > 1) {
-                        out.println("abortConformanceTest: Warning extra parameter: " + split[1]);
-                	}
-//                	command = new AbortConformanceTest(ivctCommander);
-                    out.println("abortConformanceTest: Warning abort conformance test logic is NOT IMPLEMENTED yet");
-                	ivctCommander.setConformanceTestBool(false);
-                    break;
                 case "listTestSchedules":
                 case "lts":
                 	if (ivctCommander.checkSUTselected()) {
@@ -340,11 +302,6 @@ class Writer extends Thread {
                 	if (ivctCommander.checkSUTselected()) {
                         out.println(sutNotSelected);
                 		break;
-                	}
-                	// Cannot abort test schedule if conformance test is running
-                	if (ivctCommander.getConformanceTestBool()) {
-                        out.println("abortTestSchedule: Warning conformance test is running");
-                        break;
                 	}
                 	// Cannot abort test schedule if it is not running
                 	if (ivctCommander.getTestScheduleRunningBool() == false) {
@@ -412,11 +369,6 @@ class Writer extends Thread {
                         out.println(sutNotSelected);
                 		break;
                 	}
-                	// Cannot abort test case if conformance test is running
-                	if (ivctCommander.getConformanceTestBool()) {
-                        out.println("abortTestCase: Warning conformance test is running");
-                        break;
-                	}
                 	// Cannot abort test case if it is not running
                 	if (ivctCommander.getTestCaseRunningBool() == false) {
                         out.println("abortTestCase: no test case is running");
@@ -436,8 +388,8 @@ class Writer extends Thread {
                 		out.println("setLogLevel: Error missing log level: error, warning, info, debug or trace");
                 		break;
                 	}
-                	if (split[1].equals("error") || split[1].equals("warning") || split[1].equals("info") || split[1].equals("debug") || split[1].equals("trace")) {
-                		logLevelString = split[1];
+                	if (split[1].equalsIgnoreCase("error") || split[1].equalsIgnoreCase("warning") || split[1].equalsIgnoreCase("info") || split[1].equalsIgnoreCase("debug") || split[1].equalsIgnoreCase("trace")) {
+                		logLevelString = split[1].toLowerCase();
                 		CmdSetLogLevel cmdSetLogLevel = ivctCommander.rtp.createCmdSetLogLevel(split[1]);
                 		cmdSetLogLevel.execute();
                     	command = null;
@@ -483,16 +435,6 @@ class Writer extends Thread {
                 	}
                 	out.println("loglevel: " + logLevelString);
                 	break;
-                case "terse":
-                case "t":
-                	ivctCommander.setCmdVerboseBool(false);
-            		out.println("Command line output is now terse.");
-                	break;
-                case "verbose":
-                case "v":
-                	ivctCommander.setCmdVerboseBool(true);
-            		out.println("Command line output is now verbose.");
-                	break;
                 case "quit":
                 case "q":
                 	// Check any critical tasks are running
@@ -513,8 +455,6 @@ class Writer extends Thread {
                 case "h":
                     out.println("listSUT (lsut) - list SUT folders");
                     out.println("setSUT (ssut) sut - set active SUT");
-                    out.println("startConformanceTest (sct) - start conformance test");
-                    out.println("abortConformanceTest (act) - abort conformance test");
                     out.println("listTestSchedules (lts) - list the available test schedules for the test suite");
                     out.println("startTestSchedule (sts) testSchedule - start the named test schedule");
                     out.println("abortTestSchedule (ats) - abort the running test schedule");
@@ -524,8 +464,6 @@ class Writer extends Thread {
                     out.println("setLogLevel (sll) loglevel - set the log level for logging - error, warning, info, debug, trace");
                     out.println("listVerdicts (lv) - list the verdicts of the current session");
                     out.println("status (s) - display status information");
-                    out.println("terse (t) - display only important session information");
-                    out.println("verbose (v) - display detailed session information");
                     out.println("quit (q) - quit the program");
                     out.println("help (h) - display the help information");
                     break;

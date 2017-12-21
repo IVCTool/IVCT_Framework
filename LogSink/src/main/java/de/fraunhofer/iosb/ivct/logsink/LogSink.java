@@ -1,14 +1,18 @@
 package de.fraunhofer.iosb.ivct.logsink;
 
-import ch.qos.logback.classic.net.JMSTopicSink;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import nato.ivct.commander.CmdQuitListener;
+import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.Factory;
 
 
 /**
@@ -21,7 +25,8 @@ public class LogSink {
 
     private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
     private Properties    properties = new Properties();
-    private JMSTopicSink  jmsTopicSink;
+    //private JMSTopicSink  jmsTopicSink;
+    private JMSLogSink  jmsLogSink;
 
 
     /**
@@ -33,10 +38,13 @@ public class LogSink {
         MDC.put("testcase", "LogSink");
         LOGGER.info("in main");
         final ReportEngine reportEngine = new ReportEngine();
-        new Thread(reportEngine).start();
+		Factory.initialize();
+		(new CmdStartTestResultListener(reportEngine)).execute();
+		(new CmdQuitListener(reportEngine)).execute();
         final LogSink instance = new LogSink();
         instance.loadProperties();
         instance.init();
+        reportEngine.tcListener = instance.jmsLogSink;
         instance.execute();
         System.exit(0);;
     }
@@ -46,7 +54,7 @@ public class LogSink {
      * load the properties from the file LogSink.properties in the default
      * package
      */
-    private void loadProperties() {
+    protected void loadProperties() {
         final InputStream in = this.getClass().getResourceAsStream("/LogSink.properties");
         try {
             this.properties.load(in);
@@ -61,19 +69,19 @@ public class LogSink {
     /**
      * initialize the LogSink.
      */
-    private void init() {
+    protected void init() {
         final String tcfBindingName = this.properties.getProperty("logsink.tcf.bindingname");
         final String topicBindingName = this.properties.getProperty("logsink.topic.bindingname");
         final String username = this.properties.getProperty("logsink.user");
         final String password = this.properties.getProperty("logsink.password");
-        this.jmsTopicSink = new JMSTopicSink(tcfBindingName, topicBindingName, username, password);
+        this.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password);
     }
 
 
     /**
      * execute = do wait for termination.
      */
-    private void execute() {
+    protected void execute() {
         LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // Loop until "exit", "quit" or "q" is typed

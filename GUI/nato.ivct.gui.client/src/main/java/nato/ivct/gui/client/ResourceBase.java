@@ -12,4 +12,20 @@ package nato.ivct.gui.client;
 public final class ResourceBase {
 	private ResourceBase() {
 	}
+	
+	static public String PASSED = "CCFFCC";
+	static public String FAILED = "DD5143";
+	static public String INCONCLUSIVE = "8D6CAB";
+	static public String RUNNING = "E68523";
+	
+	static public String getVerdictColor (String verdict) {
+		if ("PASSED".equalsIgnoreCase(verdict))
+			return PASSED;
+		else if ("FAILED".equalsIgnoreCase(verdict))
+			return FAILED;
+		else if ("INCONCLUSIVE".equalsIgnoreCase(verdict))
+			return INCONCLUSIVE;
+		else
+			return "E0E0E0";
+	}
 }

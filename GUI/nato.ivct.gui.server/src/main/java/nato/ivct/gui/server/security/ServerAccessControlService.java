@@ -3,9 +3,10 @@ package nato.ivct.gui.server.security;
 import java.security.AllPermission;
 import java.security.Permissions;
 
-import nato.ivct.gui.shared.security.AccessControlService;
 import org.eclipse.scout.rt.platform.Replace;
 import org.eclipse.scout.rt.shared.security.RemoteServiceAccessPermission;
+
+import nato.ivct.gui.shared.security.AccessControlService;
 
 /**
  * <h3>{@link AccessControlService}</h3>

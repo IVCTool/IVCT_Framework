@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.SutDescription;
+import nato.ivct.commander.CmdListSuT.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
@@ -20,14 +20,25 @@ import nato.ivct.gui.shared.sut.ISuTService;
 
 public class CapabilityService implements ICapabilityService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
-	HashMap<String, CapabilityTablePageData> cap_hm = new HashMap<String, CapabilityTablePageData>();
+	private static HashMap<String, CapabilityTablePageData> cap_hm = new HashMap<String, CapabilityTablePageData>();
 
+	public static CapabilityTablePageData getCapabilityTablePageData (String sut) {
+		return cap_hm.get (sut);
+	}
+	
+	/*
+	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
+	 * 
+	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
+	 */
 	@Override
 	public CapabilityTablePageData getCapabilityTableData(SearchFilter filter) {
-		CapabilityTablePageData pageData = new CapabilityTablePageData();
-		// TODO [hzg] fill pageData.
-		LOG.info("getCapabilityTableData");
 		String[] searchText = filter.getDisplayTexts();
+		CapabilityTablePageData pageData = cap_hm.get (searchText);
+		if (pageData == null) {
+			pageData = new CapabilityTablePageData();
+		}
+		LOG.info("getCapabilityTableData");
 		SuTService sutService = (SuTService) BEANS.get(ISuTService.class);
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		SutDescription sutDesc = sutService.getSutDescription(searchText[0]);

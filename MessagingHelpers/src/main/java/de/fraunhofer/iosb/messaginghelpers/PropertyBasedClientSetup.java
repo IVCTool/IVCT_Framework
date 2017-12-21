@@ -183,6 +183,8 @@ public final class PropertyBasedClientSetup {
     public synchronized boolean disconnect() {
         this.checkAllowedState(State.CONNECTED, State.SESSION_ACTIVE);
         try {
+        	this.connection.stop();
+        	this.session.close();
             this.connection.close();
             this.state = State.DISCONNECTED;
         }

@@ -1,3 +1,17 @@
+/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.commander;
 
 import javax.jms.JMSException;
@@ -14,13 +28,16 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 	private OnResultListener listener;
 
 	public class TcResult {
-		public String tc;
+		public String sutName;
+		public String sutDir;
+		public String testScheduleName;
+		public String testcase;
 		public String verdict;
-		public String text;
+		public String verdictText;
 	}
 
 	public interface OnResultListener {
-		public void OnResult(TcResult result);
+		public void onResult(TcResult result);
 	}
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTestResultListener.class);
@@ -31,8 +48,7 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		LOGGER.info("subsribing the commands listener");
+		LOGGER.trace("subsribing the CmdStartTestResultListener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
@@ -43,39 +59,38 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				LOGGER.info("JMS Message received: " + content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
 					String commandTypeName = (String) jsonObject.get("commandType");
-
-					switch (commandTypeName) {
-					case "announceVerdict":
+					if (commandTypeName.equals("announceVerdict")) {
+						LOGGER.trace("JMS Message received: " + content);
 						TcResult tcr = new TcResult();
-						tcr.tc = (String) jsonObject.get("testcase");
-						if (tcr.tc == null) {
-							LOGGER.warn("Error: the test case name is null");
+						tcr.sutName = (String) jsonObject.get("sutName");
+						if (tcr.sutName == null) {
+							LOGGER.warn("Error: sutName is null");
+						}
+						tcr.sutDir = (String) jsonObject.get("sutDir");
+						if (tcr.sutDir == null) {
+							LOGGER.warn("Error: sutDir is null");
+						}
+						tcr.testScheduleName = (String) jsonObject.get("testScheduleName");
+						if (tcr.testScheduleName == null) {
+							LOGGER.warn("Error: testScheduleName is null");
+						}
+						tcr.testcase = (String) jsonObject.get("testcase");
+						if (tcr.testcase == null) {
+							LOGGER.warn("Error: testcase is null");
 						}
 						tcr.verdict = (String) jsonObject.get("verdict");
 						if (tcr.verdict == null) {
-							LOGGER.warn("Error: test case verdict is null");
+							LOGGER.warn("Error: verdict is null");
 						}
-						tcr.text = (String) jsonObject.get("verdictText");
-						if (tcr.text == null) {
+						tcr.verdictText = (String) jsonObject.get("verdictText");
+						if (tcr.verdictText == null) {
 							LOGGER.warn("Error: the test case verdict text is null");
 						}
-						listener.OnResult(tcr);
-						break;
-					case "quit":
-						// Should ignore
-						break;
-					case "setSUT":
-						break;
-					case "startTestCase":
-						break;
-					default:
-						System.out.println("Unknown commandType name is: " + commandTypeName);
-						break;
+						listener.onResult(tcr);
 					}
 				} catch (ParseException e) {
 					e.printStackTrace();

@@ -14,10 +14,6 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -44,14 +40,19 @@ public class CmdStartTc implements Command {
 	/*
 	 * The Structure of start test case command message looks like the
 	 * following:
-	 * 
-	 * { "sequence":"0", "commandType":"startTestCase",
-	 * "testScheduleName":"HelloWorld", "sutName":"hw_iosb",
-	 * "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
-	 * "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
-	 * "tcParam":{ "rtiHostName":"localhost", "federationName":"HelloWorld",
-	 * "sutFederateName":"A" }, "testCaseId":"TC0002"}
-	 * 
+	 *
+	 * { "sequence":"0",
+	 *   "commandType":"startTestCase",
+	 *   "testScheduleName":"HelloWorld",
+	 *   "sutName":"hw_iosb",
+	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
+	 *   "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
+	 *   "tcParam":{
+	 *     "rtiHostName":"localhost",
+	 *     "federationName":"HelloWorld",
+	 *     "sutFederateName":"A" },
+	 *   "testCaseId":"TC0002"}
+	 *
 	 * @see nato.ivct.commander.Command#execute()
 	 */
 	public void execute() {
@@ -60,24 +61,25 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			String paramFileName = sutHome + File.separator + sut + File.separator + badge + File.separator
-					+ "TcParam.json";
+			String paramFileName = sutHome + '/' + sut + '/' + badge + "/TcParam.json";
 			startCmd.put("commandType", "startTestCase");
 			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
 			startCmd.put("sutName", sut);
-			startCmd.put("sutDir", sutHome + JSONObject.escape(File.separator) + sut);
-			startCmd.put("testScheduleName", badge);
+			startCmd.put("sutDir", sutHome + '/' + sut);
+			startCmd.put("badge", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder",
-					Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + File.separator + runFolder);
-			JSONObject jsonParam = (JSONObject) parser.parse(new FileReader(paramFileName));
+			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
+
+			String paramFileContentString = Factory.readWholeFile(paramFileName);
+			String tmpString = Factory.replaceMacro(paramFileContentString);
+			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 			startCmd.put("tcParam", jsonParam);
 
 			// send the start message
 			Factory.sendToJms(startCmd.toString());
-		} catch (IOException | ParseException e) {
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error("error in starting test case <" + badge + File.separator + tc + ">");
+			LOGGER.error("error in starting test case <" + badge + '/' + tc + ">");
 			e.printStackTrace();
 		}
 

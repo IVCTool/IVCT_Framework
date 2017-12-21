@@ -20,9 +20,9 @@ import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
+import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.sut.CapabilityTablePage.Table;
 import nato.ivct.gui.shared.sut.CapabilityTablePageData;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
 import nato.ivct.gui.shared.sut.ICapabilityService;
 
 @Data(CapabilityTablePageData.class)
@@ -51,8 +51,6 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		return true;
 	}
 
-	static public List<ITableRow> currentTcArray = null;
-	
 	public class Table extends AbstractTable {
 
 		@Order(1000)
@@ -80,10 +78,9 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 					public void run() throws Exception {
 						ICapabilityService cbService = BEANS.get(ICapabilityService.class);
 						List<ITableRow> tcArray = getSelectedRows();
-						currentTcArray = tcArray;
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(4, "starting");
-							tr.setBackgroundColor("FFA500");
+							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String badge = tr.getCell(0).toString();
 							String tcName = tr.getCell(3).toString();
 							cbService.executeTestCase(sutId, tcName, badge);

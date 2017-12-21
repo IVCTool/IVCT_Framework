@@ -1,0 +1,23 @@
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile     project(':TC.exec')
+    compile     project(':MessagingHelpers')
+
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+
+	compile     libraries.slf4j_api
+	compile     'com.googlecode.json-simple:json-simple:1.1.1'
+
+	runtime		libraries.actimemqClient
+	runtime		libraries.logback_classic
+	runtime		libraries.logback_core
+
+	runtime     libraries.slf4j_jcl_over_slf4j
+	runtime     libraries.slf4j_jul_to_slf4j
+	runtime     libraries.slf4j_log4j_over_slf4j
+}

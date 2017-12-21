@@ -8,6 +8,7 @@ public class TestCaseNotification implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private String sut = null;
 	private String tc = null;
 	private String verdict = null;
 	private String text = null;
@@ -29,6 +30,12 @@ public class TestCaseNotification implements Serializable {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	public String getSut() {
+		return sut;
+	}
+	public void setSut(String sut) {
+		this.sut = sut;
 	}
 
 }
