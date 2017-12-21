@@ -44,8 +44,8 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
 						for (ITableRow tr : cTP.getTable().getRows()) {
 							// find row with test case name
-							if (tr.getCellValue(3).equals(notification.getTc())) {
-								tr.setCellValue(4, notification.getStatus() + ": " + notification.getPercent() + "%");
+							if (cTP.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
+								cTP.getTable().getTCresultColumn().setValue(tr, notification.getStatus() + ": " + notification.getPercent() + "%");
 							}
 						}
 					}
