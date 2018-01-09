@@ -24,7 +24,6 @@ public class CmdStartTc implements Command {
 	private String sut;
 	private String badge;
 	private String tc;
-	private String runFolder;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
@@ -32,7 +31,6 @@ public class CmdStartTc implements Command {
 		sut = _sut;
 		tc = _tc;
 		badge = _badge;
-		runFolder = _runFolder;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -68,7 +66,6 @@ public class CmdStartTc implements Command {
 			startCmd.put("sutDir", sutHome + '/' + sut);
 			startCmd.put("badge", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			String tmpString = Factory.replaceMacro(paramFileContentString);
@@ -107,14 +104,6 @@ public class CmdStartTc implements Command {
 
 	public void setBadge(String _badge) {
 		this.badge = _badge;
-	}
-
-	public String getRunFolder() {
-		return runFolder;
-	}
-
-	public void setRunFolder(String runFolder) {
-		this.runFolder = runFolder;
 	}
 
 }

@@ -162,8 +162,15 @@ public class JMSTestRunner extends TestRunner
 			MDC.put("sutDir", info.sutDir);
 			MDC.put("badge", info.badge);
 
-			logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + info.tsRunFolder);
-			if (setCurrentDirectory(info.tsRunFolder)) {
+			BadgeDescription b = badges.badgeMap.get(info.badge);
+			if (b == null) {
+				logger.error("JMSTestRunner:onMessageConsumer:run: unknown badge " + info.badge);
+				return;
+			}
+			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + b.tsRunTimeFolder;
+			
+			logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + runFolder);
+			if (setCurrentDirectory(runFolder)) {
 				logger.info("JMSTestRunner:onMessageConsumer:run: setCurrentDirectory true");
 			}
 
