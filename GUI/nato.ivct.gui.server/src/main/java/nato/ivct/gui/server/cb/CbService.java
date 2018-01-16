@@ -104,7 +104,7 @@ public class CbService implements ICbService {
 				dependencies = dependencies + ", " + s;
 			}
 		}
-		formData.getCbDependencies().setValue(dependencies);
+//		formData.getCbDependencies().setValue(dependencies);
 		return formData;
 	}
 

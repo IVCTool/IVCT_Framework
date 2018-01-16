@@ -1,5 +1,7 @@
 package nato.ivct.gui.shared.cb;
 
+import java.util.Set;
+
 import javax.annotation.Generated;
 
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
@@ -17,8 +19,8 @@ public class CbFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
-	public CbDependencies getCbDependencies() {
-		return getFieldByClass(CbDependencies.class);
+	public CbDependenciesTreeBox getCbDependenciesTreeBox() {
+		return getFieldByClass(CbDependenciesTreeBox.class);
 	}
 
 	public CbDescription getCbDescription() {
@@ -51,7 +53,7 @@ public class CbFormData extends AbstractFormData {
 		return getFieldByClass(IncludedCb.class);
 	}
 
-	public static class CbDependencies extends AbstractValueFieldData<String> {
+	public static class CbDependenciesTreeBox extends AbstractValueFieldData<Set<String>> {
 
 		private static final long serialVersionUID = 1L;
 	}

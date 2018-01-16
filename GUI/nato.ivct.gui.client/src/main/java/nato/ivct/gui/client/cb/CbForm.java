@@ -12,6 +12,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
+import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesTreeBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
@@ -98,8 +99,8 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(CbImageField.class);
 	}
 
-	public CbDependenciesField getCbDependenciesField() {
-		return getFieldByClass(CbDependenciesField.class);
+	public CbDependenciesTreeBox getCbDependenciesTreeField() {
+		return getFieldByClass(CbDependenciesTreeBox.class);
 	}
 
 	public OkButton getOkButton() {
@@ -176,23 +177,24 @@ public class CbForm extends AbstractForm {
 			}
 
 			@Order(2500)
-			public class CbDependenciesField extends AbstractStringField {
+			public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
 				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Dependencies");
+				protected int getConfiguredGridH() {
+					return 3;
 				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-
+				
 				@Override
 				protected int getConfiguredGridW() {
 					return 3;
 				}
-			}
+				
+				@Override 
+				protected String getConfiguredLabel() { 
+					return TEXTS.get("BadgeDependencies"); 
+				}
 
+			}
+				
 			@Order(3000)
 			public class CbImageField extends AbstractImageField {
 				@Override
@@ -207,7 +209,7 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridH() {
-					return 4;
+					return 6;
 				}
 
 				@Override
@@ -221,8 +223,7 @@ public class CbForm extends AbstractForm {
 					return false;
 				}
 			}
-
-		}
+	}
 
 		@Order(2000)
 		public class IncludedCbBox extends AbstractGroupBox {
