@@ -53,7 +53,7 @@ public class CbFormData extends AbstractFormData {
 		return getFieldByClass(IncludedCb.class);
 	}
 
-	public static class CbDependenciesTreeBox extends AbstractValueFieldData<Set<String>> {
+	public static class CbDependenciesTreeBox extends AbstractValueFieldData<Set<Integer>> {
 
 		private static final long serialVersionUID = 1L;
 	}

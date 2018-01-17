@@ -18,6 +18,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.ResourceBase;
@@ -30,6 +31,7 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
+import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
@@ -177,7 +179,7 @@ public class CbForm extends AbstractForm {
 			}
 
 			@Order(2500)
-			public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
+			public class CbDependenciesTreeBox extends AbstractTreeBox<Integer> {
 				@Override
 				protected int getConfiguredGridH() {
 					return 3;
@@ -193,6 +195,15 @@ public class CbForm extends AbstractForm {
 					return TEXTS.get("BadgeDependencies"); 
 				}
 
+		        @Override
+		        protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
+		          return CbDependenciesLookupCall.class;
+		        }
+		        
+		        @Override
+		        protected boolean getConfiguredAutoExpandAll() {
+		        	return true;
+		        }
 			}
 				
 			@Order(3000)
