@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -198,11 +199,23 @@ public class CbForm extends AbstractForm {
 		        @Override
 		        protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
 		          return CbDependenciesLookupCall.class;
-		        }
+			    }
 		        
 		        @Override
+		        protected void execPrepareLookup(ILookupCall<Integer> call, ITreeNode parent) {
+		        	// TODO Auto-generated method stub
+		        	CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
+					ICbService service = BEANS.get(ICbService.class);
+					CbFormData formData = new CbFormData();
+					exportFormData(formData);
+					String cbId = formData.getCbId();
+					c.setCbId(cbId);
+		        }
+		        
+		        // do not expand all nodes initially
+		        @Override
 		        protected boolean getConfiguredAutoExpandAll() {
-		        	return true;
+		        	return false;
 		        }
 			}
 				
