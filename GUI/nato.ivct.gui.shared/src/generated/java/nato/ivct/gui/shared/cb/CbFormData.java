@@ -4,9 +4,10 @@ import java.util.Set;
 
 import javax.annotation.Generated;
 
+import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
-import org.eclipse.scout.rt.shared.data.form.fields.treefield.AbstractTreeFieldData;
+import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 /**
@@ -49,8 +50,8 @@ public class CbFormData extends AbstractFormData {
 		return getFieldByClass(CbName.class);
 	}
 
-	public IncludedCb getIncludedCb() {
-		return getFieldByClass(IncludedCb.class);
+	public RequirmentTable getRequirmentTable() {
+		return getFieldByClass(RequirmentTable.class);
 	}
 
 	public static class CbDependenciesTreeBox extends AbstractValueFieldData<Set<String>> {
@@ -73,8 +74,77 @@ public class CbFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class IncludedCb extends AbstractTreeFieldData {
+	public static class RequirmentTable extends AbstractTableFieldBeanData {
 
 		private static final long serialVersionUID = 1L;
+
+		@Override
+		public RequirmentTableRowData addRow() {
+			return (RequirmentTableRowData) super.addRow();
+		}
+
+		@Override
+		public RequirmentTableRowData addRow(int rowState) {
+			return (RequirmentTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public RequirmentTableRowData createRow() {
+			return new RequirmentTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return RequirmentTableRowData.class;
+		}
+
+		@Override
+		public RequirmentTableRowData[] getRows() {
+			return (RequirmentTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public RequirmentTableRowData rowAt(int index) {
+			return (RequirmentTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(RequirmentTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class RequirmentTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String requirementId = "requirementId";
+			public static final String requirementDesc = "requirementDesc";
+			public static final String abstractTC = "abstractTC";
+			private String m_requirementId;
+			private String m_requirementDesc;
+			private String m_abstractTC;
+
+			public String getRequirementId() {
+				return m_requirementId;
+			}
+
+			public void setRequirementId(String newRequirementId) {
+				m_requirementId = newRequirementId;
+			}
+
+			public String getRequirementDesc() {
+				return m_requirementDesc;
+			}
+
+			public void setRequirementDesc(String newRequirementDesc) {
+				m_requirementDesc = newRequirementDesc;
+			}
+
+			public String getAbstractTC() {
+				return m_abstractTC;
+			}
+
+			public void setAbstractTC(String newAbstractTC) {
+				m_abstractTC = newAbstractTC;
+			}
+		}
 	}
 }
