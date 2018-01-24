@@ -1,16 +1,12 @@
 package nato.ivct.gui.server.cb;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
-import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +14,6 @@ import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.cb.CbFormData;
-import nato.ivct.gui.shared.cb.CbFormData.CbDependenciesTreeBox;
 import nato.ivct.gui.shared.cb.CbFormData.CbDescription;
 import nato.ivct.gui.shared.cb.CbTablePageData;
 import nato.ivct.gui.shared.cb.CbTablePageData.CbTableRowData;
@@ -34,7 +29,8 @@ public class CbService implements ICbService {
 	HashMap<String, BadgeDescription> cb_hm = null;
 
 	public BadgeDescription getBadgeDescription(String cb) {
-		if (cb_hm == null) waitForBadgeLoading();
+		if (cb_hm == null)
+			waitForBadgeLoading();
 		return cb_hm.get(cb);
 	}
 
@@ -50,7 +46,8 @@ public class CbService implements ICbService {
 		LOG.info("getCbTableData");
 		CbTablePageData pageData = new CbTablePageData();
 		// wait until load badges job is finished
-		if (cb_hm == null) waitForBadgeLoading();
+		if (cb_hm == null)
+			waitForBadgeLoading();
 		
 		CbTableRowData row;
 		for (BadgeDescription value : cb_hm.values()) {

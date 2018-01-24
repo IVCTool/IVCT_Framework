@@ -32,7 +32,7 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
-import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
+import nato.ivct.gui.shared.cb.CbDependenciesByStringLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
@@ -180,7 +180,7 @@ public class CbForm extends AbstractForm {
 			}
 
 			@Order(2500)
-			public class CbDependenciesTreeBox extends AbstractTreeBox<Integer> {
+			public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
 				@Override
 				protected int getConfiguredGridH() {
 					return 3;
@@ -197,19 +197,16 @@ public class CbForm extends AbstractForm {
 				}
 
 		        @Override
-		        protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
-		          return CbDependenciesLookupCall.class;
-			    }
+		        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+		        	return CbDependenciesByStringLookupCall.class;
+		        }
 		        
 		        @Override
-		        protected void execPrepareLookup(ILookupCall<Integer> call, ITreeNode parent) {
-		        	// TODO Auto-generated method stub
-		        	CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
-					ICbService service = BEANS.get(ICbService.class);
+		        protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
 					CbFormData formData = new CbFormData();
 					exportFormData(formData);
-					String cbId = formData.getCbId();
-					c.setCbId(cbId);
+					CbDependenciesByStringLookupCall c = (CbDependenciesByStringLookupCall) call;
+					c.setCbId(formData.getCbId());
 		        }
 		        
 		        // do not expand all nodes initially
@@ -218,6 +215,7 @@ public class CbForm extends AbstractForm {
 		        	return false;
 		        }
 			}
+			
 				
 			@Order(3000)
 			public class CbImageField extends AbstractImageField {
