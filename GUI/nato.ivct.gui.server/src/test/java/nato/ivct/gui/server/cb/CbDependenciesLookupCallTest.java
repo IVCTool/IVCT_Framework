@@ -10,20 +10,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import nato.ivct.gui.server.ServerSession;
-import nato.ivct.gui.shared.cb.CbDependenciesByStringLookupCall;
+import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 
 @RunWithSubject("anonymous")
 @RunWith(ServerTestRunner.class)
 @RunWithServerSession(ServerSession.class)
-public class CbDependenciesByStringLookupCallTest {
+public class CbDependenciesLookupCallTest {
 
-	protected CbDependenciesByStringLookupCall createLookupCall() {
-		return new CbDependenciesByStringLookupCall();
+	protected CbDependenciesLookupCall createLookupCall() {
+		return new CbDependenciesLookupCall();
 	}
 
 	@Test
 	public void testLookupByAll() {
-		CbDependenciesByStringLookupCall call = createLookupCall();
+		CbDependenciesLookupCall call = createLookupCall();
 		// TODO [the] fill call
 		List<? extends ILookupRow<String>> data = call.getDataByAll();
 		// TODO [the] verify data
@@ -31,7 +31,7 @@ public class CbDependenciesByStringLookupCallTest {
 
 	@Test
 	public void testLookupByKey() {
-		CbDependenciesByStringLookupCall call = createLookupCall();
+		CbDependenciesLookupCall call = createLookupCall();
 		// TODO [the] fill call
 		List<? extends ILookupRow<String>> data = call.getDataByKey();
 		// TODO [the] verify data
@@ -39,7 +39,7 @@ public class CbDependenciesByStringLookupCallTest {
 
 	@Test
 	public void testLookupByText() {
-		CbDependenciesByStringLookupCall call = createLookupCall();
+		CbDependenciesLookupCall call = createLookupCall();
 		// TODO [the] fill call
 		List<? extends ILookupRow<String>> data = call.getDataByText();
 		// TODO [the] verify data

@@ -32,7 +32,7 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
-import nato.ivct.gui.shared.cb.CbDependenciesByStringLookupCall;
+import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
@@ -198,14 +198,14 @@ public class CbForm extends AbstractForm {
 
 		        @Override
 		        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-		        	return CbDependenciesByStringLookupCall.class;
+		        	return CbDependenciesLookupCall.class;
 		        }
 		        
 		        @Override
 		        protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
 					CbFormData formData = new CbFormData();
 					exportFormData(formData);
-					CbDependenciesByStringLookupCall c = (CbDependenciesByStringLookupCall) call;
+					CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
 					c.setCbId(formData.getCbId());
 		        }
 		        

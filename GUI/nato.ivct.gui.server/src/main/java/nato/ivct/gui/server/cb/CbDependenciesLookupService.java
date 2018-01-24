@@ -11,12 +11,12 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
 
 import nato.ivct.commander.BadgeDescription;
-import nato.ivct.gui.shared.cb.CbDependenciesByStringLookupCall;
-import nato.ivct.gui.shared.cb.ICbDependenciesByStringLookupService;
+import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
+import nato.ivct.gui.shared.cb.ICbDependenciesLookupService;
 import nato.ivct.gui.shared.cb.ICbService;
 
-public class CbDependenciesByStringLookupService extends AbstractLookupService<String>
-		implements ICbDependenciesByStringLookupService {
+public class CbDependenciesLookupService extends AbstractLookupService<String>
+		implements ICbDependenciesLookupService {
 
 	@Override
 	public List<? extends ILookupRow<String>> getDataByKey(ILookupCall<String> call) {
@@ -39,7 +39,7 @@ public class CbDependenciesByStringLookupService extends AbstractLookupService<S
 	@Override
 	public List<? extends ILookupRow<String>> getDataByAll(ILookupCall<String> call) {
 		// get route element
-		String cbId = ((CbDependenciesByStringLookupCall) call).getCbId();
+		String cbId = ((CbDependenciesLookupCall) call).getCbId();
 
 		ArrayList<LookupRow<String>> depTreeList = CollectionUtility.emptyArrayList();
 		
