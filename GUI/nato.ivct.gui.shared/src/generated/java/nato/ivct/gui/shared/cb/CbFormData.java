@@ -50,8 +50,8 @@ public class CbFormData extends AbstractFormData {
 		return getFieldByClass(CbName.class);
 	}
 
-	public RequirmentTable getRequirmentTable() {
-		return getFieldByClass(RequirmentTable.class);
+	public CbRequirementsTable getCbRequirementsTable() {
+		return getFieldByClass(CbRequirementsTable.class);
 	}
 
 	public static class CbDependenciesTreeBox extends AbstractValueFieldData<Set<String>> {
@@ -74,45 +74,45 @@ public class CbFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class RequirmentTable extends AbstractTableFieldBeanData {
+	public static class CbRequirementsTable extends AbstractTableFieldBeanData {
 
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public RequirmentTableRowData addRow() {
-			return (RequirmentTableRowData) super.addRow();
+		public CbRequirementsTableRowData addRow() {
+			return (CbRequirementsTableRowData) super.addRow();
 		}
 
 		@Override
-		public RequirmentTableRowData addRow(int rowState) {
-			return (RequirmentTableRowData) super.addRow(rowState);
+		public CbRequirementsTableRowData addRow(int rowState) {
+			return (CbRequirementsTableRowData) super.addRow(rowState);
 		}
 
 		@Override
-		public RequirmentTableRowData createRow() {
-			return new RequirmentTableRowData();
+		public CbRequirementsTableRowData createRow() {
+			return new CbRequirementsTableRowData();
 		}
 
 		@Override
 		public Class<? extends AbstractTableRowData> getRowType() {
-			return RequirmentTableRowData.class;
+			return CbRequirementsTableRowData.class;
 		}
 
 		@Override
-		public RequirmentTableRowData[] getRows() {
-			return (RequirmentTableRowData[]) super.getRows();
+		public CbRequirementsTableRowData[] getRows() {
+			return (CbRequirementsTableRowData[]) super.getRows();
 		}
 
 		@Override
-		public RequirmentTableRowData rowAt(int index) {
-			return (RequirmentTableRowData) super.rowAt(index);
+		public CbRequirementsTableRowData rowAt(int index) {
+			return (CbRequirementsTableRowData) super.rowAt(index);
 		}
 
-		public void setRows(RequirmentTableRowData[] rows) {
+		public void setRows(CbRequirementsTableRowData[] rows) {
 			super.setRows(rows);
 		}
 
-		public static class RequirmentTableRowData extends AbstractTableRowData {
+		public static class CbRequirementsTableRowData extends AbstractTableRowData {
 
 			private static final long serialVersionUID = 1L;
 			public static final String requirementId = "requirementId";

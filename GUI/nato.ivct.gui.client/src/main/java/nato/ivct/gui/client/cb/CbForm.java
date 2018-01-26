@@ -1,16 +1,20 @@
 package nato.ivct.gui.client.cb;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.Spliterators;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
-import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
 import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -18,13 +22,16 @@ import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
-import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
+import org.eclipse.scout.rt.shared.services.lookup.LookupCall;
 import org.slf4j.LoggerFactory;
+
+import com.google.api.client.repackaged.com.google.common.base.Splitter;
 
 import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
@@ -34,14 +41,14 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
-//import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.CbRequirementsTableField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
+import nato.ivct.gui.shared.cb.CbRequirementsLookupCall;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.UpdateCbPermission;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.RequirmentTableField;
 
 @FormData(value = CbFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class CbForm extends AbstractForm {
@@ -91,10 +98,6 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(IncludedCbBox.class);
 	}
 
-//	public IncludedCbField getIncludedCbField() {
-//		return getFieldByClass(IncludedCbField.class);
-//	}
-
 	public CbNameField getCbNameField() {
 		return getFieldByClass(CbNameField.class);
 	}
@@ -111,8 +114,8 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(CbDependenciesTreeBox.class);
 	}
 
-	public RequirmentTableField getRequirmentTableField() {
-		return getFieldByClass(RequirmentTableField.class);
+	public CbRequirementsTableField getCbRequirementsTableField() {
+		return getFieldByClass(CbRequirementsTableField.class);
 	}
 
 	public OkButton getOkButton() {
@@ -153,7 +156,6 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridW() {
-					// TODO Auto-generated method stub
 					return 3;
 				}
 			}
@@ -167,7 +169,6 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridH() {
-					// TODO Auto-generated method stub
 					return 2;
 				}
 
@@ -183,7 +184,6 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected boolean getConfiguredWrapText() {
-					// TODO Auto-generated method stub
 					return true;
 				}
 			}
@@ -209,13 +209,14 @@ public class CbForm extends AbstractForm {
 		        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
 		        	return CbDependenciesLookupCall.class;
 		        }
-		        
+
 		        @Override
 		        protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
 					CbFormData formData = new CbFormData();
 					exportFormData(formData);
 					CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
 					c.setCbId(formData.getCbId());
+					super.execPrepareLookup(call, parent);
 		        }
 		        
 		        // do not expand all nodes initially
@@ -263,27 +264,15 @@ public class CbForm extends AbstractForm {
 				return TEXTS.get("InclRequirements");
 			}
 
-//			@Order(1000)
-//			public class IncludedCbField extends AbstractTreeField {
-//				public class Tree extends AbstractTree {
-//				}
-//
-//				@Override
-//				protected String getConfiguredLabel() {
-//					return TEXTS.get("Capabilities");
-//				}
-//
-//				@Override
-//				protected int getConfiguredGridH() {
-//					return 6;
-//				}
-//			}
-
-			@Order(2000)
-			public class RequirmentTableField extends AbstractTableField<RequirmentTableField.Table> {
-				public class Table extends AbstractTable {
+			@Order(1000)
+			public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
+				public class CbRequirementsTable extends AbstractTable {
 					@Order(1000)
 					public class RequirementIdColumn extends AbstractStringColumn {
+						public RequirementIdColumn() {
+							setInitialSortAscending(true);
+						}
+						
 						@Override
 						protected String getConfiguredHeaderText() {
 							return TEXTS.get("Requirement");
@@ -343,17 +332,37 @@ public class CbForm extends AbstractForm {
 				protected int getConfiguredGridH() {
 					return 6;
 				}
-				
 				@Override
-				protected void execInitField() {
-					Table table = getTable();
-					ITableRow r;
+				protected Class<? extends IValueField> getConfiguredMasterField() {
+					return CbForm.MainBox.GeneralBox.CbDependenciesTreeBox.class;
+				}
+		
+				@Override
+				protected void execChangedMasterValue(Object newMasterValue) {
+					Set<String> selectedBadges = getCbDependenciesTreeField().getCheckedKeys();
+					CbRequirementsTable table = getTable();
 					
-					// Fill a row with sample data
-					r = table.addRow(getTable().createRow());
-					table.getRequirementIdColumn().setValue(r, "Req1");
-					table.getRequirementDescColumn().setValue(r, "Requirement Description 1");
-					table.getAbstractTCColumn().setValue(r, "Abstract Test Case 1");
+					// cleanup table
+					table.deleteAllRows();
+					
+					// Execute the LookupCall (using DataByKey) to fill table
+					LookupCall<String> call = new CbRequirementsLookupCall();
+					for (String selBadge:selectedBadges) {
+						call.setKey(selBadge);
+					    List<? extends ILookupRow<String>> rows = call.getDataByKey();
+
+					    //Get the textual requirement (with a null check)
+					    if (rows != null && !rows.isEmpty()) {
+					    	for (ILookupRow<String> row:rows) {
+						    	ITableRow r = table.addRow(getTable().createRow());
+								table.getRequirementIdColumn().setValue(r, row.getKey());
+								List<String> reqText = Splitter.on(";;").splitToList(row.getText());
+								table.getRequirementDescColumn().setValue(r, reqText.get(0));
+								table.getAbstractTCColumn().setValue(r, reqText.get(1));
+					    	}
+					    }
+					}
+					super.execChangedMasterValue(newMasterValue);
 				}
 			}
 		}
