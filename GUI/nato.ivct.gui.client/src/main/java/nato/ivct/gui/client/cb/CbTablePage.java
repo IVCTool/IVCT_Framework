@@ -148,6 +148,12 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 			protected int getConfiguredWidth() {
 				return 200;
 			}
+			
+			// hide this column; can be later removed or refunctioned
+			@Override
+			public boolean isVisible() {
+				return false;
+			}
 		}
 
 	}

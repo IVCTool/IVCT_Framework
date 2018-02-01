@@ -153,7 +153,7 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		public class AbstractTCColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("ATC");
+				return TEXTS.get("TC");
 			}
 
 			@Override

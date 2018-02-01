@@ -14,6 +14,7 @@ import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm.MainBox.CloseButton;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
@@ -59,18 +60,16 @@ public class CbForm extends AbstractForm {
 	@Override
 	protected String getConfiguredTitle() {
 		// TODO [hzg] verify translation
-		return TEXTS.get("Capability");
+		return TEXTS.get("Badge");
 	}
 
 	@Override
 	protected int getConfiguredDisplayHint() {
-		// TODO Auto-generated method stub
 		return IForm.DISPLAY_HINT_VIEW;
 	}
 
 	@Override
 	public Object computeExclusiveKey() {
-		// TODO Auto-generated method stub
 		return getCbId();
 	}
 
@@ -146,7 +145,7 @@ public class CbForm extends AbstractForm {
 			protected String getConfiguredLabel() {
 				return TEXTS.get("GeneralCapabilityInformation");
 			}
-
+			
 			@Order(1000)
 			public class CbNameField extends AbstractStringField {
 				@Override
@@ -235,6 +234,11 @@ public class CbForm extends AbstractForm {
 				}
 
 				@Override
+				protected boolean getConfiguredLabelVisible() {
+					return false;
+				}
+
+				@Override
 				protected boolean getConfiguredAutoFit() {
 					return false;
 				}
@@ -246,13 +250,13 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridW() {
-					// TODO Auto-generated method stub
 					return 2;
 				}
-
+				
+				// fit the image into the field size
 				@Override
-				protected boolean getConfiguredLabelVisible() {
-					return false;
+				public boolean isAutoFit() {
+					return true;
 				}
 			}
 	}
@@ -269,13 +273,14 @@ public class CbForm extends AbstractForm {
 				public class CbRequirementsTable extends AbstractTable {
 					@Order(1000)
 					public class RequirementIdColumn extends AbstractStringColumn {
+						// set this column to sorted ascending
 						public RequirementIdColumn() {
 							setInitialSortAscending(true);
 						}
 						
 						@Override
 						protected String getConfiguredHeaderText() {
-							return TEXTS.get("Requirement");
+							return TEXTS.get("ID");
 						}
 
 						@Override
@@ -301,7 +306,7 @@ public class CbForm extends AbstractForm {
 					public class AbstractTCColumn extends AbstractStringColumn {
 						@Override
 						protected String getConfiguredHeaderText() {
-							return TEXTS.get("ATC");
+							return TEXTS.get("TC");
 						}
 
 						@Override
@@ -323,10 +328,10 @@ public class CbForm extends AbstractForm {
 					}
 				}
 
-//				@Override
-//				protected String getConfiguredLabel() {
-//					return TEXTS.get("Requirements");
-//				}
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Requirements");
+				}
 
 				@Override
 				protected int getConfiguredGridH() {
@@ -367,12 +372,14 @@ public class CbForm extends AbstractForm {
 			}
 		}
 
+
 		@Order(100000)
 		public class OkButton extends AbstractOkButton {
 		}
 
 		@Order(101000)
 		public class CancelButton extends AbstractCancelButton {
+
 		}
 	}
 
@@ -393,9 +400,7 @@ public class CbForm extends AbstractForm {
 			} catch (Exception e) {
 				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
 			}
-
 			getForm().setSubTitle(formData.getCbName().getValue());
-			
 			setEnabledPermission(new UpdateCbPermission());
 		}
 
