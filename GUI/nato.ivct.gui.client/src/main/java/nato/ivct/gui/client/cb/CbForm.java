@@ -1,10 +1,8 @@
 package nato.ivct.gui.client.cb;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.Spliterators;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -14,7 +12,6 @@ import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
-import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm.MainBox.CloseButton;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
@@ -59,7 +56,6 @@ public class CbForm extends AbstractForm {
 
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [hzg] verify translation
 		return TEXTS.get("Badge");
 	}
 
@@ -326,6 +322,19 @@ public class CbForm extends AbstractForm {
 					public AbstractTCColumn getAbstractTCColumn() {
 						return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 					}
+					
+					// add requirements to table
+					public void addRequirements(List<? extends ILookupRow<String>> requirements) {
+					    if (requirements != null && !requirements.isEmpty()) {
+					    	for (ILookupRow<String> requirement:requirements) {
+						    	ITableRow r = this.addRow(getTable().createRow());
+								this.getRequirementIdColumn().setValue(r, requirement.getKey());
+								List<String> reqText = Splitter.on(";;").splitToList(requirement.getText());
+								this.getRequirementDescColumn().setValue(r, reqText.get(0));
+								this.getAbstractTCColumn().setValue(r, reqText.get(1));
+					    	}
+					    }
+					}
 				}
 
 				@Override
@@ -350,24 +359,41 @@ public class CbForm extends AbstractForm {
 					// cleanup table
 					table.deleteAllRows();
 					
-					// Execute the LookupCall (using DataByKey) to fill table
-					LookupCall<String> call = new CbRequirementsLookupCall();
+					// fill table with requirement for the selected badge only
+					CbFormData formData = new CbFormData();
+					exportFormData(formData);
+					
+				    // add requirements to table (with a null check)
+					table.addRequirements(getRequirements(formData.getCbId()));
+					
+					// get the dependent requirements
 					for (String selBadge:selectedBadges) {
-						call.setKey(selBadge);
-					    List<? extends ILookupRow<String>> rows = call.getDataByKey();
-
-					    //Get the textual requirement (with a null check)
-					    if (rows != null && !rows.isEmpty()) {
-					    	for (ILookupRow<String> row:rows) {
-						    	ITableRow r = table.addRow(getTable().createRow());
-								table.getRequirementIdColumn().setValue(r, row.getKey());
-								List<String> reqText = Splitter.on(";;").splitToList(row.getText());
-								table.getRequirementDescColumn().setValue(r, reqText.get(0));
-								table.getAbstractTCColumn().setValue(r, reqText.get(1));
-					    	}
-					    }
+					    // add the requirements to the table
+						table.addRequirements(getRequirements(selBadge));
 					}
 					super.execChangedMasterValue(newMasterValue);
+				}
+				
+				@Override
+				protected void execInitField() {
+					CbRequirementsTable table = getTable();
+					
+					// cleanup table
+					table.deleteAllRows();
+					
+					// fill table with requirement for the selected badge only
+					CbFormData formData = new CbFormData();
+					exportFormData(formData);
+					
+				    // add requirements to table (with a null check)
+					table.addRequirements(getRequirements(formData.getCbId()));
+				}
+				
+				private List<? extends ILookupRow<String>> getRequirements (String badge) {
+					LookupCall<String> call = new CbRequirementsLookupCall();
+					call.setKey(badge);
+					List<? extends ILookupRow<String>> rows = call.getDataByKey();
+					return rows;
 				}
 			}
 		}
