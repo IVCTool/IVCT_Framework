@@ -63,8 +63,6 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbTablePageData getCbTableData(SearchFilter filter, String sutId) {
-		// TODO Auto-generated method stub
-
 		LOG.info("getCbTableData with SuT restriction");
 		CbTablePageData pageData = new CbTablePageData();
 		return pageData;
@@ -76,7 +74,6 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
 		return formData;
 	}
 
@@ -86,7 +83,6 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
 		return formData;
 	}
 
@@ -103,7 +99,6 @@ public class CbService implements ICbService {
 		formData.getCbDescription().setValue(cb.description);
 
 		// dependencies tree is built in CbDependenciesLookupService class
-		
 		return formData;
 	}
 
@@ -113,7 +108,6 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new UpdateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
 		return formData;
 	}
 }
