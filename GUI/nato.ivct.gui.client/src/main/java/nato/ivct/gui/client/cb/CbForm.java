@@ -34,11 +34,11 @@ import com.google.api.client.repackaged.com.google.common.base.Splitter;
 import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesTreeBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.CbDependenciesTreeBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.CbRequirementsTableField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
@@ -164,7 +164,7 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridH() {
-					return 2;
+					return 3;
 				}
 
 				@Override
@@ -183,7 +183,54 @@ public class CbForm extends AbstractForm {
 				}
 			}
 
-			@Order(2500)
+			@Order(3000)
+			public class CbImageField extends AbstractImageField {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("CbImage");
+				}
+
+				@Override
+				protected boolean getConfiguredLabelVisible() {
+					return false;
+				}
+
+				@Override
+				protected boolean getConfiguredAutoFit() {
+					return false;
+				}
+
+				@Override
+				protected int getConfiguredGridH() {
+					return 5;
+				}
+
+				@Override
+				protected int getConfiguredGridW() {
+					return 2;
+				}
+				
+				// fit the image into the field size
+				@Override
+				public boolean isAutoFit() {
+					return true;
+				}
+			}
+	}
+
+		@Order(2000)
+		public class IncludedCbBox extends AbstractGroupBox {
+			@Override
+			protected String getConfiguredLabel() {
+				return TEXTS.get("InclRequirements");
+			}
+
+//			@Override
+//			protected int getConfiguredGridColumnCount() {
+//				return 5;
+//			}
+
+			@Order(1000)
 			public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
 				@Override
 				protected int getConfiguredGridH() {
@@ -220,52 +267,14 @@ public class CbForm extends AbstractForm {
 		        	return false;
 		        }
 			}
-			
-				
-			@Order(3000)
-			public class CbImageField extends AbstractImageField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("CbImage");
-				}
 
-				@Override
-				protected boolean getConfiguredLabelVisible() {
-					return false;
-				}
-
-				@Override
-				protected boolean getConfiguredAutoFit() {
-					return false;
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
-				}
-
+			@Order(2000)
+			public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
 				@Override
 				protected int getConfiguredGridW() {
-					return 2;
+					return 3;
 				}
 				
-				// fit the image into the field size
-				@Override
-				public boolean isAutoFit() {
-					return true;
-				}
-			}
-	}
-
-		@Order(2000)
-		public class IncludedCbBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("InclRequirements");
-			}
-
-			@Order(1000)
-			public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
 				public class CbRequirementsTable extends AbstractTable {
 					@Order(1000)
 					public class RequirementIdColumn extends AbstractStringColumn {
@@ -294,7 +303,7 @@ public class CbForm extends AbstractForm {
 
 						@Override
 						protected int getConfiguredWidth() {
-							return 500;
+							return 400;
 						}
 					}
 
@@ -307,7 +316,7 @@ public class CbForm extends AbstractForm {
 
 						@Override
 						protected int getConfiguredWidth() {
-							return 100;
+							return 200;
 						}
 					}
 					
@@ -346,9 +355,10 @@ public class CbForm extends AbstractForm {
 				protected int getConfiguredGridH() {
 					return 6;
 				}
+				
 				@Override
 				protected Class<? extends IValueField> getConfiguredMasterField() {
-					return CbForm.MainBox.GeneralBox.CbDependenciesTreeBox.class;
+					return CbForm.MainBox.IncludedCbBox.CbDependenciesTreeBox.class;
 				}
 		
 				@Override
