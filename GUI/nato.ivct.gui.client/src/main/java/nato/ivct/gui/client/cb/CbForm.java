@@ -208,12 +208,24 @@ public class CbForm extends AbstractForm {
 
 				@Override
 				protected int getConfiguredGridH() {
-					return 5;
+					return 4;
 				}
 
 				@Override
 				protected int getConfiguredGridW() {
 					return 2;
+				}
+				
+				@Override
+				protected int getConfiguredHorizontalAlignment() {
+					// allign to left
+					return -1;
+				}
+				
+				@Override
+				protected int getConfiguredVerticalAlignment() {
+					// allign to top
+					return -1;
 				}
 				
 				// fit the image into the field size
