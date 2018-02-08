@@ -142,6 +142,12 @@ public class CbForm extends AbstractForm {
 				return TEXTS.get("GeneralCapabilityInformation");
 			}
 			
+			// set all fields of this box to read-only
+			@Override
+			public boolean isEnabled() {
+				return false;
+			}
+			
 			@Order(1000)
 			public class CbNameField extends AbstractStringField {
 				@Override
