@@ -17,6 +17,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
+import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
@@ -32,14 +33,14 @@ import org.slf4j.LoggerFactory;
 import com.google.api.client.repackaged.com.google.common.base.Splitter;
 
 import nato.ivct.gui.client.ResourceBase;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbDescriptionField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbImageField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbNameField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.CbDependenciesTreeBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.CbRequirementsTableField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.CbDependenciesTreeBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.CbRequirementsTableField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
@@ -134,297 +135,308 @@ public class CbForm extends AbstractForm {
 		protected int getConfiguredGridColumnCount() {
 			return 5;
 		}
-
+		
 		@Order(1000)
-		public class GeneralBox extends AbstractGroupBox {
+		public class BadgeHorizontalSplitBox extends AbstractSplitBox {
 			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("GeneralCapabilityInformation");
-			}
-			
-			// set all fields of this box to read-only
-			@Override
-			public boolean isEnabled() {
+			protected boolean getConfiguredSplitHorizontal() {
+				// split horizontal
 				return false;
 			}
 			
 			@Order(1000)
-			public class CbNameField extends AbstractStringField {
+			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("CapabilityName");
+					return TEXTS.get("GeneralCapabilityInformation");
 				}
-
+				
+				// set all fields of this box to read-only
 				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
-			}
-
-			@Order(2000)
-			public class CbDescriptionField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("CapabilityDescription");
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 3;
-				}
-
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
-
-				@Override
-				protected boolean getConfiguredMultilineText() {
-					return true;
-				}
-
-				@Override
-				protected boolean getConfiguredWrapText() {
-					return true;
-				}
-			}
-
-			@Order(3000)
-			public class CbImageField extends AbstractImageField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("CbImage");
-				}
-
-				@Override
-				protected boolean getConfiguredLabelVisible() {
+				public boolean isEnabled() {
 					return false;
 				}
-
-				@Override
-				protected boolean getConfiguredAutoFit() {
-					return false;
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 4;
-				}
-
-				@Override
-				protected int getConfiguredGridW() {
-					return 2;
-				}
 				
-				@Override
-				protected int getConfiguredHorizontalAlignment() {
-					// allign to left
-					return -1;
+				@Order(1000)
+				public class CbNameField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("CapabilityName");
+					}
+
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
 				}
-				
-				@Override
-				protected int getConfiguredVerticalAlignment() {
-					// allign to top
-					return -1;
+
+				@Order(2000)
+				public class CbDescriptionField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("CapabilityDescription");
+					}
+
+					@Override
+					protected int getConfiguredGridH() {
+						return 3;
+					}
+
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+
+					@Override
+					protected boolean getConfiguredMultilineText() {
+						return true;
+					}
+
+					@Override
+					protected boolean getConfiguredWrapText() {
+						return true;
+					}
 				}
-				
-				// fit the image into the field size
-				@Override
-				public boolean isAutoFit() {
-					return true;
+
+				@Order(3000)
+				public class CbImageField extends AbstractImageField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("CbImage");
+					}
+
+					@Override
+					protected boolean getConfiguredLabelVisible() {
+						return false;
+					}
+
+					@Override
+					protected boolean getConfiguredAutoFit() {
+						return false;
+					}
+
+					@Override
+					protected int getConfiguredGridH() {
+						return 4;
+					}
+
+					@Override
+					protected int getConfiguredGridW() {
+						return 2;
+					}
+					
+					@Override
+					protected int getConfiguredHorizontalAlignment() {
+						// allign to left
+						return -1;
+					}
+					
+					@Override
+					protected int getConfiguredVerticalAlignment() {
+						// allign to top
+						return -1;
+					}
+					
+					// fit the image into the field size
+					@Override
+					public boolean isAutoFit() {
+						return true;
+					}
 				}
 			}
-	}
-
-		@Order(2000)
-		public class IncludedCbBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("InclRequirements");
-			}
-
-//			@Override
-//			protected int getConfiguredGridColumnCount() {
-//				return 5;
-//			}
-
-			@Order(1000)
-			public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
-				@Override
-				protected int getConfiguredGridH() {
-					return 3;
-				}
-				
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
-				
-				@Override 
-				protected String getConfiguredLabel() { 
-					return TEXTS.get("BadgeDependencies"); 
-				}
-
-		        @Override
-		        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-		        	return CbDependenciesLookupCall.class;
-		        }
-
-		        @Override
-		        protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
-					CbFormData formData = new CbFormData();
-					exportFormData(formData);
-					CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
-					c.setCbId(formData.getCbId());
-					super.execPrepareLookup(call, parent);
-		        }
-		        
-		        // do not expand all nodes initially
-		        @Override
-		        protected boolean getConfiguredAutoExpandAll() {
-		        	return false;
-		        }
-			}
-
+			
 			@Order(2000)
-			public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
+			public class IncludedCbBox extends AbstractGroupBox {
 				@Override
-				protected int getConfiguredGridW() {
-					return 3;
+				protected String getConfiguredLabel() {
+					return TEXTS.get("InclRequirements");
 				}
-				
-				public class CbRequirementsTable extends AbstractTable {
-					@Order(1000)
-					public class RequirementIdColumn extends AbstractStringColumn {
-						// set this column to sorted ascending
-						public RequirementIdColumn() {
-							setInitialSortAscending(true);
+
+//				@Override
+//				protected int getConfiguredGridColumnCount() {
+//					return 5;
+//				}
+
+				@Order(1000)
+				public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
+					@Override
+					protected int getConfiguredGridH() {
+						return 3;
+					}
+					
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+					
+					@Override 
+					protected String getConfiguredLabel() { 
+						return TEXTS.get("BadgeDependencies"); 
+					}
+
+			        @Override
+			        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+			        	return CbDependenciesLookupCall.class;
+			        }
+
+			        @Override
+			        protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
+						CbFormData formData = new CbFormData();
+						exportFormData(formData);
+						CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
+						c.setCbId(formData.getCbId());
+						super.execPrepareLookup(call, parent);
+			        }
+			        
+			        // do not expand all nodes initially
+			        @Override
+			        protected boolean getConfiguredAutoExpandAll() {
+			        	return false;
+			        }
+				}
+
+				@Order(2000)
+				public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+					
+					public class CbRequirementsTable extends AbstractTable {
+						@Order(1000)
+						public class RequirementIdColumn extends AbstractStringColumn {
+							// set this column to sorted ascending
+							public RequirementIdColumn() {
+								setInitialSortAscending(true);
+							}
+							
+							@Override
+							protected String getConfiguredHeaderText() {
+								return TEXTS.get("ID");
+							}
+
+							@Override
+							protected int getConfiguredWidth() {
+								return 100;
+							}
+						}
+
+						@Order(2000)
+						public class RequirementDescColumn extends AbstractStringColumn {
+							@Override
+							protected String getConfiguredHeaderText() {
+								return TEXTS.get("Description");
+							}
+
+							@Override
+							protected int getConfiguredWidth() {
+								return 400;
+							}
+						}
+
+						@Order(3000)
+						public class AbstractTCColumn extends AbstractStringColumn {
+							@Override
+							protected String getConfiguredHeaderText() {
+								return TEXTS.get("TC");
+							}
+
+							@Override
+							protected int getConfiguredWidth() {
+								return 200;
+							}
 						}
 						
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("ID");
+						public RequirementIdColumn getRequirementIdColumn() {
+							return getColumnSet().getColumnByClass(RequirementIdColumn.class);
 						}
 
-						@Override
-						protected int getConfiguredWidth() {
-							return 100;
+						public RequirementDescColumn getRequirementDescColumn() {
+							return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+						}
+
+						public AbstractTCColumn getAbstractTCColumn() {
+							return getColumnSet().getColumnByClass(AbstractTCColumn.class);
+						}
+						
+						// add requirements to table
+						public void addRequirements(List<? extends ILookupRow<String>> requirements) {
+						    if (requirements != null && !requirements.isEmpty()) {
+						    	for (ILookupRow<String> requirement:requirements) {
+							    	ITableRow r = this.addRow(getTable().createRow());
+									this.getRequirementIdColumn().setValue(r, requirement.getKey());
+									List<String> reqText = Splitter.on(";;").splitToList(requirement.getText());
+									this.getRequirementDescColumn().setValue(r, reqText.get(0));
+									this.getAbstractTCColumn().setValue(r, reqText.get(1));
+						    	}
+						    }
 						}
 					}
 
-					@Order(2000)
-					public class RequirementDescColumn extends AbstractStringColumn {
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("Description");
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("Requirements");
+					}
+
+					@Override
+					protected int getConfiguredGridH() {
+						return 6;
+					}
+					
+					@Override
+					protected Class<? extends IValueField> getConfiguredMasterField() {
+						return CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.CbDependenciesTreeBox.class;
+					}
+			
+					@Override
+					protected void execChangedMasterValue(Object newMasterValue) {
+						Set<String> selectedBadges = getCbDependenciesTreeField().getCheckedKeys();
+						CbRequirementsTable table = getTable();
+						
+						// cleanup table
+						table.deleteAllRows();
+						
+						// fill table with requirement for the selected badge only
+						CbFormData formData = new CbFormData();
+						exportFormData(formData);
+						
+					    // add requirements to table (with a null check)
+						table.addRequirements(getRequirements(formData.getCbId()));
+						
+						// get the dependent requirements
+						for (String selBadge:selectedBadges) {
+						    // add the requirements to the table
+							table.addRequirements(getRequirements(selBadge));
 						}
-
-						@Override
-						protected int getConfiguredWidth() {
-							return 400;
-						}
-					}
-
-					@Order(3000)
-					public class AbstractTCColumn extends AbstractStringColumn {
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("TC");
-						}
-
-						@Override
-						protected int getConfiguredWidth() {
-							return 200;
-						}
+						super.execChangedMasterValue(newMasterValue);
 					}
 					
-					public RequirementIdColumn getRequirementIdColumn() {
-						return getColumnSet().getColumnByClass(RequirementIdColumn.class);
+					@Override
+					protected void execInitField() {
+						CbRequirementsTable table = getTable();
+						
+						// cleanup table
+						table.deleteAllRows();
+						
+						// fill table with requirement for the selected badge only
+						CbFormData formData = new CbFormData();
+						exportFormData(formData);
+						
+					    // add requirements to table (with a null check)
+						table.addRequirements(getRequirements(formData.getCbId()));
 					}
-
-					public RequirementDescColumn getRequirementDescColumn() {
-						return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+					
+					private List<? extends ILookupRow<String>> getRequirements (String badge) {
+						LookupCall<String> call = new CbRequirementsLookupCall();
+						call.setKey(badge);
+						List<? extends ILookupRow<String>> rows = call.getDataByKey();
+						return rows;
 					}
-
-					public AbstractTCColumn getAbstractTCColumn() {
-						return getColumnSet().getColumnByClass(AbstractTCColumn.class);
-					}
-					
-					// add requirements to table
-					public void addRequirements(List<? extends ILookupRow<String>> requirements) {
-					    if (requirements != null && !requirements.isEmpty()) {
-					    	for (ILookupRow<String> requirement:requirements) {
-						    	ITableRow r = this.addRow(getTable().createRow());
-								this.getRequirementIdColumn().setValue(r, requirement.getKey());
-								List<String> reqText = Splitter.on(";;").splitToList(requirement.getText());
-								this.getRequirementDescColumn().setValue(r, reqText.get(0));
-								this.getAbstractTCColumn().setValue(r, reqText.get(1));
-					    	}
-					    }
-					}
-				}
-
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Requirements");
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
-				}
-				
-				@Override
-				protected Class<? extends IValueField> getConfiguredMasterField() {
-					return CbForm.MainBox.IncludedCbBox.CbDependenciesTreeBox.class;
-				}
-		
-				@Override
-				protected void execChangedMasterValue(Object newMasterValue) {
-					Set<String> selectedBadges = getCbDependenciesTreeField().getCheckedKeys();
-					CbRequirementsTable table = getTable();
-					
-					// cleanup table
-					table.deleteAllRows();
-					
-					// fill table with requirement for the selected badge only
-					CbFormData formData = new CbFormData();
-					exportFormData(formData);
-					
-				    // add requirements to table (with a null check)
-					table.addRequirements(getRequirements(formData.getCbId()));
-					
-					// get the dependent requirements
-					for (String selBadge:selectedBadges) {
-					    // add the requirements to the table
-						table.addRequirements(getRequirements(selBadge));
-					}
-					super.execChangedMasterValue(newMasterValue);
-				}
-				
-				@Override
-				protected void execInitField() {
-					CbRequirementsTable table = getTable();
-					
-					// cleanup table
-					table.deleteAllRows();
-					
-					// fill table with requirement for the selected badge only
-					CbFormData formData = new CbFormData();
-					exportFormData(formData);
-					
-				    // add requirements to table (with a null check)
-					table.addRequirements(getRequirements(formData.getCbId()));
-				}
-				
-				private List<? extends ILookupRow<String>> getRequirements (String badge) {
-					LookupCall<String> call = new CbRequirementsLookupCall();
-					call.setKey(badge);
-					List<? extends ILookupRow<String>> rows = call.getDataByKey();
-					return rows;
 				}
 			}
+	
 		}
+
 
 
 		@Order(100000)
