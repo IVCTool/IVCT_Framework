@@ -266,7 +266,7 @@ public class CbForm extends AbstractForm {
 				public class DependenciesHorizontalSplitterBox extends AbstractSplitBox {
 					@Override
 					protected boolean getConfiguredSplitHorizontal() {
-						// TODO Auto-generated method stub
+						// split horizontal
 						return false;
 					}
 					
