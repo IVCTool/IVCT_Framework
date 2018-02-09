@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -13,8 +14,8 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.api.client.repackaged.com.google.common.base.Splitter;
 
+import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbDescriptionField;
@@ -40,8 +42,7 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbDependenciesTreeBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
-import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
+//import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
 import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CbRequirementsLookupCall;
@@ -78,10 +79,10 @@ public class CbForm extends AbstractForm {
 		startInternal(new NewHandler());
 	}
 
-	public CancelButton getCancelButton() {
-		return getFieldByClass(CancelButton.class);
-	}
-
+//	public CancelButton getCancelButton() {
+//		return getFieldByClass(CancelButton.class);
+//	}
+//
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
 	}
@@ -459,13 +460,28 @@ public class CbForm extends AbstractForm {
 
 
 		@Order(100000)
-		public class OkButton extends AbstractOkButton {
+		public class CloseButton extends AbstractButton {
+			
+			  @Override
+			  protected int getConfiguredSystemType() {
+			    return SYSTEM_TYPE_CLOSE;
+			  }
+
+			  @Override
+			  protected String getConfiguredLabel() {
+			    return TEXTS.get("OkButton");
+			  }
+
+			  @Override
+			  protected String getConfiguredKeyStroke() {
+			    return IKeyStroke.ENTER;
+			  }
 		}
 
-		@Order(101000)
-		public class CancelButton extends AbstractCancelButton {
-
-		}
+//		@Order(101000)
+//		public class CancelButton extends AbstractCancelButton {
+//
+//		}
 	}
 
 	public class ModifyHandler extends AbstractFormHandler {
@@ -475,8 +491,7 @@ public class CbForm extends AbstractForm {
 			ICbService service = BEANS.get(ICbService.class);
 			CbFormData formData = new CbFormData();
 			exportFormData(formData);
-			formData = service.load(formData);
-			importFormData(formData);
+			importFormData(service.load(formData));
 			// load badge image
 			try (InputStream in = ResourceBase.class
 					.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
