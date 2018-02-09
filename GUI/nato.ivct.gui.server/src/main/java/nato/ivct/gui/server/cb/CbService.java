@@ -1,6 +1,7 @@
 package nato.ivct.gui.server.cb;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
@@ -11,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
+import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.cb.CbFormData;
-import nato.ivct.gui.shared.cb.CbFormData.CbDescription;
+import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable;
+import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable.CbRequirementsTableRowData;
 import nato.ivct.gui.shared.cb.CbTablePageData;
 import nato.ivct.gui.shared.cb.CbTablePageData.CbTableRowData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
@@ -95,7 +98,6 @@ public class CbService implements ICbService {
 		BadgeDescription cb = cb_hm.get(formData.getCbId());
 		formData.getCbName().setValue(cb.ID);
 		
-		CbDescription cbd = formData.getCbDescription();
 		formData.getCbDescription().setValue(cb.description);
 
 		// dependencies tree is built in CbDependenciesLookupService class
@@ -109,5 +111,21 @@ public class CbService implements ICbService {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
 		return formData;
+	}
+
+	@Override
+	public CbRequirementsTable loadRequirements(final Set<String> badges) {
+		CbRequirementsTable requirementTableRows = new CbRequirementsTable();
+		for (String badge:badges) {
+			BadgeDescription bd = getBadgeDescription(badge);
+			for (InteroperabilityRequirement requirement:bd.requirements) {
+				CbRequirementsTableRowData row = requirementTableRows.addRow();
+				row.setRequirementId(requirement.ID);
+				row.setRequirementDesc(requirement.description);
+				row.setAbstractTC(requirement.TC);
+			}
+		}
+
+		return requirementTableRows;
 	}
 }

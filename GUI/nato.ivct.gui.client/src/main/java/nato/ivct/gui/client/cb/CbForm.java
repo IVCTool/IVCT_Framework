@@ -15,7 +15,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -24,11 +23,12 @@ import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
-import org.eclipse.scout.rt.shared.services.lookup.LookupCall;
 import org.slf4j.LoggerFactory;
 
 import com.google.api.client.repackaged.com.google.common.base.Splitter;
@@ -45,7 +45,6 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCb
 //import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
 import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
-import nato.ivct.gui.shared.cb.CbRequirementsLookupCall;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.UpdateCbPermission;
@@ -409,54 +408,43 @@ public class CbForm extends AbstractForm {
 				
 						@Override
 						protected void execChangedMasterValue(Object newMasterValue) {
-							Set<String> selectedBadges = getCbDependenciesTreeField().getCheckedKeys();
-							CbRequirementsTable table = getTable();
+							// get dependencies badges from the dependencies badge tree
+							Set<String> badges = getCbDependenciesTreeField().getCheckedKeys();
+							// add the selected badge
+							badges.add(getCbId());
+							
+							// get the requirements for the selected badges
+							ICbService CbService = BEANS.get(ICbService.class);
+							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirements(badges);
+							
+							CbRequirementsTable requirementsTable = getTable();
 							
 							// cleanup table
-							table.deleteAllRows();
+							requirementsTable.deleteAllRows();
 							
-							// fill table with requirement for the selected badge only
-							CbFormData formData = new CbFormData();
-							exportFormData(formData);
+							// add requirements to table
+							requirementsTable.importFromTableBeanData(requirementTableRows);
 							
-						    // add requirements to table (with a null check)
-							table.addRequirements(getRequirements(formData.getCbId()));
-							
-							// get the dependent requirements
-							for (String selBadge:selectedBadges) {
-							    // add the requirements to the table
-								table.addRequirements(getRequirements(selBadge));
-							}
 							super.execChangedMasterValue(newMasterValue);
 						}
 						
 						@Override
 						protected void execInitField() {
-							CbRequirementsTable table = getTable();
+							Set<String> badges = CollectionUtility.hashSet(getCbId());
 							
-							// cleanup table
-							table.deleteAllRows();
+							// get the requirements for the selected badges
+							ICbService CbService = BEANS.get(ICbService.class);
+							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirements(badges);
 							
-							// fill table with requirement for the selected badge only
-							CbFormData formData = new CbFormData();
-							exportFormData(formData);
+							CbRequirementsTable requirementsTable = getTable();
 							
-						    // add requirements to table (with a null check)
-							table.addRequirements(getRequirements(formData.getCbId()));
-						}
-						
-						private List<? extends ILookupRow<String>> getRequirements (String badge) {
-							LookupCall<String> call = new CbRequirementsLookupCall();
-							call.setKey(badge);
-							List<? extends ILookupRow<String>> rows = call.getDataByKey();
-							return rows;
+							// add requirements to table
+							requirementsTable.importFromTableBeanData(requirementTableRows);
 						}
 					}
 				}
 			}
-	
 		}
-
 
 
 		@Order(100000)
@@ -469,7 +457,7 @@ public class CbForm extends AbstractForm {
 
 			  @Override
 			  protected String getConfiguredLabel() {
-			    return TEXTS.get("OkButton");
+			    return TEXTS.get("CloseButton");
 			  }
 
 			  @Override
