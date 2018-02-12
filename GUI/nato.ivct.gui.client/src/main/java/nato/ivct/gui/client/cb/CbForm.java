@@ -376,19 +376,6 @@ public class CbForm extends AbstractForm {
 							public AbstractTCColumn getAbstractTCColumn() {
 								return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 							}
-							
-							// add requirements to table
-							public void addRequirements(List<? extends ILookupRow<String>> requirements) {
-							    if (requirements != null && !requirements.isEmpty()) {
-							    	for (ILookupRow<String> requirement:requirements) {
-								    	ITableRow r = this.addRow(getTable().createRow());
-										this.getRequirementIdColumn().setValue(r, requirement.getKey());
-										List<String> reqText = Splitter.on(";;").splitToList(requirement.getText());
-										this.getRequirementDescColumn().setValue(r, reqText.get(0));
-										this.getAbstractTCColumn().setValue(r, reqText.get(1));
-							    	}
-							    }
-							}
 						}
 
 						@Override
