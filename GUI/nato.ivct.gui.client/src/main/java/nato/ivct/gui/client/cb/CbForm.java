@@ -466,7 +466,8 @@ public class CbForm extends AbstractForm {
 			ICbService service = BEANS.get(ICbService.class);
 			CbFormData formData = new CbFormData();
 			exportFormData(formData);
-			importFormData(service.load(formData));
+			formData = service.load(formData);
+			importFormData(formData);
 			// load badge image
 			try (InputStream in = ResourceBase.class
 					.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
