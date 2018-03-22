@@ -1,13 +1,11 @@
 package nato.ivct.gui.client.cb;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -29,10 +27,7 @@ import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
-import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 import org.slf4j.LoggerFactory;
-
-import com.google.api.client.repackaged.com.google.common.base.Splitter;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.ResourceBase;
