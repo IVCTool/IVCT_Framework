@@ -25,6 +25,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
+import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
@@ -136,6 +137,11 @@ public class CbForm extends AbstractForm {
 			return 5;
 		}
 		
+		// main box shall not be scrollable to keep it in its size
+		@Override
+		protected TriState getConfiguredScrollable() {
+			return TriState.FALSE;
+		}
 		@Order(1000)
 		public class BadgeHorizontalSplitBox extends AbstractSplitBox {
 			@Override
@@ -148,7 +154,7 @@ public class CbForm extends AbstractForm {
 			protected double getConfiguredSplitterPosition() {
 			return 0.35;
 			}
-			
+
 			@Order(1000)
 			public class GeneralBox extends AbstractGroupBox {
 				@Override
