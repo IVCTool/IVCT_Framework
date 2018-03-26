@@ -33,13 +33,7 @@ public class OptionsFormTest {
 
 	// TODO [hzg] add test cases
 	@Test
-<<<<<<< HEAD
 	public void testDummy () {
 		
 	}
 }
-=======
-	public void dummyTest2() {
-
-	}}
->>>>>>> origin/maven2gradle
