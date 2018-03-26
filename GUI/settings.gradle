@@ -1,7 +1,7 @@
 include ':nato.ivct.gui'
+include ':nato.ivct.gui.shared'
 include ':nato.ivct.gui.client'
 include ':nato.ivct.gui.server'
-include ':nato.ivct.gui.shared'
 include ':nato.ivct.gui.server.app.war'
 include ':nato.ivct.gui.server.app.dev'
 include ':nato.ivct.gui.ui.html'
