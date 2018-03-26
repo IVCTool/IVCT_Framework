@@ -14,7 +14,13 @@ public class CbServiceTest {
 
 	// TODO [hzg] add test cases
 	@Test
+<<<<<<< HEAD
 	public void testDummy () {
 		
 	}
+=======
+	public void dummyTest1() {
+
+	}	
+>>>>>>> origin/maven2gradle
 }

@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+apply from: "../../.shared/libraries.gradle"
+apply from: "../../.shared/commons.gradle"
+
+group = 'nato.ivct.gui'
+version = '1.0.0-SNAPSHOT'
+
+description = """IVCT HTML UI"""
+
+dependencies {
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.ui.html', version:'6.1.0.M5'
+    compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.client', version:'1.0.0-SNAPSHOT'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+}

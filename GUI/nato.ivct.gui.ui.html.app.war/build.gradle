@@ -1,0 +1,16 @@
+apply plugin: "war"
+
+apply from: "../../.shared/libraries.gradle"
+apply from: "../../.shared/commons.gradle"
+
+group = 'nato.ivct.gui'
+version = '1.0.0-SNAPSHOT'
+
+description = """IVCT HTML UI WAR"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+	compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.ui.html', version:'1.0.0-SNAPSHOT'
+}
