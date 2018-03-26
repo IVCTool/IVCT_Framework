@@ -1,17 +1,13 @@
 apply plugin: 'java'
-apply plugin: 'maven'
 
 apply from: "../../.shared/libraries.gradle"
 apply from: "../../.shared/commons.gradle"
 
-group = 'nato.ivct.gui'
-version = '1.0.0-SNAPSHOT'
-
 description = """IVCT Client"""
 
 dependencies {
-	compile     project(':GUI:nato.ivct.gui.shared')
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.client', version:'6.1.0.M5'
-    compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.shared', version:'1.0.0-SNAPSHOT'
-    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.client.test', version:'6.1.0.M5'
+		compile     project(':GUI:nato.ivct.gui.shared')
+
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.client', version:'7.0.100.017_Oxygen_1'
+    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.client.test', version:'7.0.100.017_Oxygen_1'
 }

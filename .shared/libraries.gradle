@@ -4,7 +4,6 @@ ext {
 
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-		//artifactCache = "${artifactory_contextUrl}/gradle"
         gradleVersion = '2.9'
         gradleWrapperVersion = "${gradleVersion}"
 

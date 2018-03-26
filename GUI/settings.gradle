@@ -1,4 +1,3 @@
-include ':nato.ivct.gui'
 include ':nato.ivct.gui.shared'
 include ':nato.ivct.gui.client'
 include ':nato.ivct.gui.server'

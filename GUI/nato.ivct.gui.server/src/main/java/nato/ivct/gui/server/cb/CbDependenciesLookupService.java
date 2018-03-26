@@ -55,7 +55,7 @@ public class CbDependenciesLookupService extends AbstractLookupService<String>
 		for (String dep:bd.dependency) {
 			LookupRow<String> lookupRow = new LookupRow<String>(dep, cbService.getBadgeDescription(dep).name);
 			if (parentBadgeId != null)
-				lookupRow = lookupRow.withParentKey(parentBadgeId);
+				lookupRow = (LookupRow<String>) lookupRow.withParentKey(parentBadgeId);
 			treeList.add(lookupRow);
 			
 			addBadgeToTreeList (dep, treeList);

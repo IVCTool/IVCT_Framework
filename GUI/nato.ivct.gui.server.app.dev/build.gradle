@@ -1,12 +1,9 @@
 apply plugin: 'java'
-apply plugin: 'maven'
-
-group = 'nato.ivct.gui'
-version = '1.0.0-SNAPSHOT'
 
 description = """IVCT HTML UI WAR Development"""
 
 dependencies {
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.dev.jetty', version:'6.1.0.M5'
-    compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.server', version:'1.0.0-SNAPSHOT'
+  compile     project(':GUI:nato.ivct.gui.server')
+
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.dev.jetty', version:'7.0.100.017_Oxygen_1'
 }

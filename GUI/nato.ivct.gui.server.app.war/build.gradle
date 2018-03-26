@@ -3,11 +3,8 @@ apply plugin: "war"
 apply from: "../../.shared/libraries.gradle"
 apply from: "../../.shared/commons.gradle"
 
-group = 'nato.ivct.gui'
-version = '1.0.0-SNAPSHOT'
-
 description = """IVCT Server WAR"""
 
 dependencies {
-    compile group: 'nato.ivct.gui', name: 'nato.ivct.gui.server', version:'1.0.0-SNAPSHOT'
+    compile     project(':GUI:nato.ivct.gui.server')
 }

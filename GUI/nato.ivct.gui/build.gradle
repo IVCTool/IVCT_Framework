@@ -2,8 +2,6 @@
 
 allprojects  {
   apply plugin: 'maven'
-  group = 'nato.ivct.gui'
-  version = '1.0.0-SNAPSHOT'
 }
 
 subprojects {
