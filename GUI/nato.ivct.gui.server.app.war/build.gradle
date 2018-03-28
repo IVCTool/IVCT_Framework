@@ -5,6 +5,10 @@ apply from: "../../.shared/commons.gradle"
 
 description = """IVCT Server WAR"""
 
+war {
+    archiveName = 'nato.ivct.gui.nato.ivct.gui.server.war'
+}
+
 dependencies {
     compile     project(':GUI:nato.ivct.gui.server')
 }

@@ -5,6 +5,10 @@ apply from: "../../.shared/commons.gradle"
 
 description = """IVCT HTML UI WAR"""
 
+war {
+    archiveName = 'nato.ivct.gui.nato.ivct.gui.ui.html.war'
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
