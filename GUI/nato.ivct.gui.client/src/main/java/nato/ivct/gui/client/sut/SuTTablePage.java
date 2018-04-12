@@ -24,7 +24,6 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [hzg] verify translation
 		return TEXTS.get("SuTTablePage");
 	}
 
@@ -95,10 +94,6 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 			return getColumnSet().getColumnByClass(VendorColumn.class);
 		}
 
-		public BadgeColumn getBadgeColumn() {
-			return getColumnSet().getColumnByClass(BadgeColumn.class);
-		}
-
 		public SuTDescriptionColumn getSuTDescriptionColumn() {
 			return getColumnSet().getColumnByClass(SuTDescriptionColumn.class);
 		}
@@ -156,26 +151,5 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 			}
 		}
 
-		@Order(4000)
-		public class BadgeColumn extends AbstractStringColumn {
-			@Override
-			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Badge");
-			}
-
-			@Override
-			protected int getConfiguredWidth() {
-				return 300;
-			}
-		}
-		
-		
-
 	}
-
-	public void setCbId(String id) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

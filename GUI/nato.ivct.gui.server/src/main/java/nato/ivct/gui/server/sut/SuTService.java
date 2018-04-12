@@ -49,14 +49,14 @@ public class SuTService implements ISuTService {
 			row.setSuTid(value.ID);
 			row.setSuTDescription(value.description);
 			row.setVendor(value.vendor);
-			String cs = "";
-			for (int i=0; i<value.conformanceStatment.length; i++){
-				cs = cs + value.conformanceStatment[i].toString();
-				if (i < value.conformanceStatment.length - 1) {
-					cs = cs + ", ";
-				}
-			}
-			row.setBadge(cs);
+//			String cs = "";
+//			for (int i=0; i<value.conformanceStatment.length; i++){
+//				cs = cs + value.conformanceStatment[i].toString();
+//				if (i < value.conformanceStatment.length - 1) {
+//					cs = cs + ", ";
+//				}
+//			}
+//			row.setBadge(cs);
 			sut_hm.put(row.getSuTid(), value);
 
 		}

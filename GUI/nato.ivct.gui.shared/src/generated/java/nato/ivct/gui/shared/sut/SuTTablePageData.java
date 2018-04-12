@@ -55,11 +55,9 @@ public class SuTTablePageData extends AbstractTablePageData {
 		public static final String suTid = "suTid";
 		public static final String suTDescription = "suTDescription";
 		public static final String vendor = "vendor";
-		public static final String badge = "badge";
 		private String m_suTid;
 		private String m_suTDescription;
 		private String m_vendor;
-		private String m_badge;
 
 		public String getSuTid() {
 			return m_suTid;
@@ -83,14 +81,6 @@ public class SuTTablePageData extends AbstractTablePageData {
 
 		public void setVendor(String newVendor) {
 			m_vendor = newVendor;
-		}
-
-		public String getBadge() {
-			return m_badge;
-		}
-
-		public void setBadge(String newBadge) {
-			m_badge = newBadge;
 		}
 	}
 }
