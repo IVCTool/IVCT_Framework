@@ -7,7 +7,6 @@ include 'TC.webApp'
 include 'MessagingHelpers'
 include 'Command'
 include 'UI'
-/*
 include 'GUI'
 include 'GUI:nato.ivct.gui.shared'
 include 'GUI:nato.ivct.gui.client'
@@ -17,7 +16,6 @@ include 'GUI:nato.ivct.gui.server.app.dev'
 include 'GUI:nato.ivct.gui.ui.html'
 include 'GUI:nato.ivct.gui.ui.html.app.dev'
 include 'GUI:nato.ivct.gui.ui.html.app.war'
-*/
 rootProject.children.each { project ->
     project.buildFileName = "${project.name}.gradle"
     assert project.projectDir.isDirectory()
