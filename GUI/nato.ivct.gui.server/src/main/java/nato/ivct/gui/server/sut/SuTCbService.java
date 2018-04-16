@@ -13,16 +13,16 @@ import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListSuT.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
-import nato.ivct.gui.shared.sut.ICapabilityService;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
+import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTService;
 
-public class CapabilityService implements ICapabilityService {
+public class SuTCbService implements ISuTCbService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
-	private static HashMap<String, CapabilityTablePageData> cap_hm = new HashMap<String, CapabilityTablePageData>();
+	private static HashMap<String, SuTCbTablePageData> cap_hm = new HashMap<String, SuTCbTablePageData>();
 
-	public static CapabilityTablePageData getCapabilityTablePageData (String sut) {
+	public static SuTCbTablePageData getCapabilityTablePageData (String sut) {
 		return cap_hm.get (sut);
 	}
 	
@@ -32,11 +32,11 @@ public class CapabilityService implements ICapabilityService {
 	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
 	 */
 	@Override
-	public CapabilityTablePageData getCapabilityTableData(SearchFilter filter) {
+	public SuTCbTablePageData getSuTCbTableData(SearchFilter filter) {
 		String[] searchText = filter.getDisplayTexts();
-		CapabilityTablePageData pageData = cap_hm.get (searchText);
+		SuTCbTablePageData pageData = cap_hm.get (searchText);
 		if (pageData == null) {
-			pageData = new CapabilityTablePageData();
+			pageData = new SuTCbTablePageData();
 		}
 		LOG.info("getCapabilityTableData");
 		SuTService sutService = (SuTService) BEANS.get(ISuTService.class);
@@ -55,7 +55,7 @@ public class CapabilityService implements ICapabilityService {
 		return pageData;
 	}
 
-	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge,
+	private void collectInteroperabilityRequirements(SuTCbTablePageData pageData, BadgeDescription badge,
 			Set<BadgeDescription> badgesCollected) {
 		if (badge == null) {
 			LOG.warn("invalid badge received");
@@ -67,7 +67,7 @@ public class CapabilityService implements ICapabilityService {
 		}
 		else {
 			for (int j = 0; j < badge.requirements.length; j++) {
-				CapabilityTableRowData row = pageData.addRow();
+				SuTCbTableRowData row = pageData.addRow();
 				row.setBadgeId(badge.ID);
 				row.setRequirementId(badge.requirements[j].ID);
 				row.setRequirementDesc(badge.requirements[j].description);
@@ -85,7 +85,7 @@ public class CapabilityService implements ICapabilityService {
 		}
 	}
 
-	private void collectInteroperabilityRequirements(CapabilityTablePageData pageData, BadgeDescription badge) {
+	private void collectInteroperabilityRequirements(SuTCbTablePageData pageData, BadgeDescription badge) {
 		collectInteroperabilityRequirements (pageData, badge, new HashSet<BadgeDescription>());
 
 	}
@@ -96,12 +96,12 @@ public class CapabilityService implements ICapabilityService {
 		BadgeDescription b = cbService.getBadgeDescription(badge);
 		ServerSession.get().execStartTc(sut, tc, badge, b.tsRunTimeFolder);
 		// mark test cases as being started
-		CapabilityTablePageData capPage = cap_hm.get(sut);
+		SuTCbTablePageData capPage = cap_hm.get(sut);
 		if (capPage == null) {
 			LOG.error("no capability map found for SuT: " + sut);
 		} else {
 			for (int i = 0; i < capPage.getRowCount(); i++) {
-				CapabilityTableRowData row = capPage.rowAt(i);
+				SuTCbTableRowData row = capPage.rowAt(i);
 				if (row.getAbstractTC().equals(tc)) {
 					row.setTCresult("starting");
 				}

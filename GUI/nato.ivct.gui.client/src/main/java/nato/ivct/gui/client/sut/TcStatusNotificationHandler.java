@@ -41,7 +41,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof BadgeOutline) {
-						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
+						SuTCbTablePage cTP = (SuTCbTablePage) outline.getActivePage();
 						for (ITableRow tr : cTP.getTable().getRows()) {
 							// find row with test case name
 							if (cTP.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {

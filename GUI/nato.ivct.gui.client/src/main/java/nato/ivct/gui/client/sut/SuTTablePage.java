@@ -14,7 +14,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
-import nato.ivct.gui.client.cb.CbNodePage;
+import nato.ivct.gui.client.sut.SuTNodePage;
 import nato.ivct.gui.client.sut.SuTTablePage.Table;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
@@ -34,7 +34,7 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
-		CbNodePage childPage = new CbNodePage();
+		SuTNodePage childPage = new SuTNodePage();
 		childPage.setSutId(getTable().getSuTidColumn().getValue(row));
 		return childPage;
 	}

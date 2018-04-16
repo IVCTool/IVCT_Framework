@@ -1,4 +1,4 @@
-package nato.ivct.gui.client.cb;
+package nato.ivct.gui.client.sut;
 
 import java.util.List;
 
@@ -6,16 +6,16 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNode
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.shared.TEXTS;
 
-import nato.ivct.gui.client.sut.CapabilityTablePage;
+import nato.ivct.gui.client.sut.SuTCbTablePage;
 
-public class CbNodePage extends AbstractPageWithNodes {
+public class SuTNodePage extends AbstractPageWithNodes {
 
 	private String suId;
 	
 	@Override
 	protected String getConfiguredTitle() {
 		// TODO [hzg] verify translation
-		return TEXTS.get("CbNodePage");
+		return TEXTS.get("SuTNodePage");
 	}
 	
 	@Override
@@ -23,14 +23,14 @@ public class CbNodePage extends AbstractPageWithNodes {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+/*
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-		CapabilityTablePage cbTablePage = new CapabilityTablePage();
+		SuTCbTablePage cbTablePage = new SuTCbTablePage();
 		cbTablePage.setSutId(getSutId());
 		pageList.add(cbTablePage);
 	}
-
+*/
 	public String getSutId() {
 		return suId;
 	}	

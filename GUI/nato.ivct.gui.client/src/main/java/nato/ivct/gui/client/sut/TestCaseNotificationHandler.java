@@ -28,7 +28,7 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof BadgeOutline) {
-						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
+						SuTCbTablePage cTP = (SuTCbTablePage) outline.getActivePage();
 						for (ITableRow tr : cTP.getTable().getRows()) {
 							// find row with test case name
 							if (tr.getCellValue(3).equals(notification.getTc())) {

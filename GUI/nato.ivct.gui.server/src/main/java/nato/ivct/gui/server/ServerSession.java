@@ -22,9 +22,9 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
-import nato.ivct.gui.server.sut.CapabilityService;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData.CapabilityTableRowData;
+import nato.ivct.gui.server.sut.SuTCbService;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
@@ -82,8 +82,8 @@ public class ServerSession extends AbstractServerSession {
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
 
-			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData(result.sutName);
-			for (CapabilityTableRowData capRow : capData.getRows()) {
+			SuTCbTablePageData capData = SuTCbService.getCapabilityTablePageData(result.sutName);
+			for (SuTCbTableRowData capRow : capData.getRows()) {
 				if (capRow.getAbstractTC().equals(result.testcase)) {
 					capRow.setTCresult(result.verdict);
 				}
@@ -104,8 +104,8 @@ public class ServerSession extends AbstractServerSession {
 			notification.setPercent(status.percentFinshed);
 			notification.setStatus(status.status);
 
-			CapabilityTablePageData capData = CapabilityService.getCapabilityTablePageData(status.sutName);
-			for (CapabilityTableRowData capRow : capData.getRows()) {
+			SuTCbTablePageData capData = SuTCbService.getCapabilityTablePageData(status.sutName);
+			for (SuTCbTableRowData capRow : capData.getRows()) {
 				if (capRow.getAbstractTC().equals(status.tcName)) {
 					capRow.setTCresult(status.status + status.percentFinshed);
 				}

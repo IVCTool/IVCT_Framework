@@ -21,12 +21,12 @@ import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import nato.ivct.gui.client.ResourceBase;
-import nato.ivct.gui.client.sut.CapabilityTablePage.Table;
-import nato.ivct.gui.shared.sut.CapabilityTablePageData;
-import nato.ivct.gui.shared.sut.ICapabilityService;
+import nato.ivct.gui.client.sut.SuTCbTablePage.Table;
+import nato.ivct.gui.shared.sut.ISuTCbService;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 
-@Data(CapabilityTablePageData.class)
-public class CapabilityTablePage extends AbstractPageWithTable<Table> {
+@Data(SuTCbTablePageData.class)
+public class SuTCbTablePage extends AbstractPageWithTable<Table> {
 
 	private String sutId = null;
 	// private TestCaseResultHandler resultHandler = null;
@@ -42,7 +42,7 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 		String[] searchText = new String[1];
 		searchText[0] = sutId;
 		filter.setDisplayTexts(searchText);
-		importPageData(BEANS.get(ICapabilityService.class).getCapabilityTableData(filter));
+		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class CapabilityTablePage extends AbstractPageWithTable<Table> {
 
 					@Override
 					public void run() throws Exception {
-						ICapabilityService cbService = BEANS.get(ICapabilityService.class);
+						ISuTCbService cbService = BEANS.get(ISuTCbService.class);
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(4, "starting");
