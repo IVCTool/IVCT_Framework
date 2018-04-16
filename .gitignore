@@ -18,3 +18,9 @@ build
 target
 /.gradle
 /.nb-gradle/
+/GUI/nato.ivct.gui.server.app.war/.project
+/GUI/nato.ivct.gui.server.app.war/.settings
+/GUI/nato.ivct.gui.server.app.war/.classpath
+/GUI/nato.ivct.gui.ui.html.app.war/.project
+/GUI/nato.ivct.gui.ui.html.app.war/.settings
+/GUI/nato.ivct.gui.ui.html.app.war/.classpath
