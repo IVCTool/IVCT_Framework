@@ -4,7 +4,7 @@ apply from: "../../.shared/libraries.gradle"
 apply from: "../../.shared/commons.gradle"
 
 description = """IVCT Shared"""
-
+/*
 sourceSets {
 	main {
 		java {
@@ -14,6 +14,8 @@ sourceSets {
 		}
 	}
 }
+*/
+sourceSets.main.java.srcDirs += 'src/generated/java'
 
 dependencies {
     compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared', version:'7.0.100.017_Oxygen_1'
