@@ -23,14 +23,14 @@ public class SuTNodePage extends AbstractPageWithNodes {
 		// TODO Auto-generated method stub
 		return false;
 	}
-/*
+
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
 		SuTCbTablePage cbTablePage = new SuTCbTablePage();
 		cbTablePage.setSutId(getSutId());
 		pageList.add(cbTablePage);
 	}
-*/
+
 	public String getSutId() {
 		return suId;
 	}	

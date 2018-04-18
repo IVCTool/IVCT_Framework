@@ -13,6 +13,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
+import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -26,7 +27,7 @@ import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 
 @Data(SuTCbTablePageData.class)
-public class SuTCbTablePage extends AbstractPageWithTable<Table> {
+public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> {
 
 	private String sutId = null;
 	// private TestCaseResultHandler resultHandler = null;
@@ -44,11 +45,19 @@ public class SuTCbTablePage extends AbstractPageWithTable<Table> {
 		filter.setDisplayTexts(searchText);
 		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
 	}
+	
+	@Override
+	protected IPage<?> execCreateChildPage(ITableRow row) {
+		SuTCbNodePage childPage = new SuTCbNodePage();
+		childPage.setSuTCbBadgeId(getTable().getBadgeIdColumn().getValue(row));
+		return childPage;
+	}
+
 
 	@Override
 	protected boolean getConfiguredLeaf() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	public class Table extends AbstractTable {

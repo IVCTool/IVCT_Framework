@@ -20,7 +20,7 @@ import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
 
 @Data(SuTTablePageData.class)
-public class SuTTablePage extends AbstractPageWithTable<Table> {
+public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -32,9 +32,15 @@ public class SuTTablePage extends AbstractPageWithTable<Table> {
 		importPageData(BEANS.get(ISuTService.class).getSuTTableData(filter));
 	}
 
+//	@Override
+//	protected IPage<?> execCreateChildPage(ITableRow row) {
+//		SuTNodePage childPage = new SuTNodePage();
+//		childPage.setSutId(getTable().getSuTidColumn().getValue(row));
+//		return childPage;
+//	}
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
-		SuTNodePage childPage = new SuTNodePage();
+		SuTCbTablePage childPage = new SuTCbTablePage();
 		childPage.setSutId(getTable().getSuTidColumn().getValue(row));
 		return childPage;
 	}
