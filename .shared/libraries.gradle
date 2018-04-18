@@ -18,6 +18,9 @@ ext {
         slf4jVersion = '1.7.10'
 		activemqVersion = '5.12.0'
 		hamcrestVersion = '1.1'
+		scoutVersion = '7.0.100.017_Oxygen_1'
+		jsonSimpleVersion = '1.1.1'
+		
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
 		rti = "prti1516e"
@@ -55,6 +58,9 @@ ext {
                 slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
+				
+				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+				
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
                 junit:                          "junit:junit:${junitVersion}",
