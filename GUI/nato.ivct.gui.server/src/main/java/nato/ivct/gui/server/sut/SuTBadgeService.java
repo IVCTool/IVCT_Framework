@@ -1,7 +1,9 @@
 package nato.ivct.gui.server.sut;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -42,7 +44,7 @@ public class SuTBadgeService implements ISuTBadgeService {
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		SutDescription sutDesc = sutService.getSutDescription(searchText[0]);
 
-		Set<BadgeDescription> badgesCollected = CollectionUtility.emptyHashSet();
+		Set<BadgeDescription> badgesCollected = new TreeSet<>(Comparator.comparing(description -> description.name));
 		for (int i = 0; i < sutDesc.conformanceStatment.length; i++) {
 			BadgeDescription badge = cbService.getBadgeDescription(sutDesc.conformanceStatment[i]);
 			addBadgeToCollection (badge, badgesCollected);
