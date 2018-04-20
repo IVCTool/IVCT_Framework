@@ -44,13 +44,13 @@ public class SuTBadgeService implements ISuTBadgeService {
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		SutDescription sutDesc = sutService.getSutDescription(searchText[0]);
 
-		Set<BadgeDescription> badgesCollected = new TreeSet<>(Comparator.comparing(description -> description.name));
+		Set<BadgeDescription> collectedBadges = new TreeSet<>(Comparator.comparing(bdDesc -> bdDesc.name));
 		for (int i = 0; i < sutDesc.conformanceStatment.length; i++) {
 			BadgeDescription badge = cbService.getBadgeDescription(sutDesc.conformanceStatment[i]);
-			addBadgeToCollection (badge, badgesCollected);
+			addBadgeToCollection (badge, collectedBadges);
 		}
 		
-		for (BadgeDescription bd:badgesCollected) {
+		for (BadgeDescription bd:collectedBadges) {
 			SuTBadgeTableRowData row = pageData.addRow();
 			row.setBadgeId(bd.ID);
 			row.setBadgeDesc(bd.description);
