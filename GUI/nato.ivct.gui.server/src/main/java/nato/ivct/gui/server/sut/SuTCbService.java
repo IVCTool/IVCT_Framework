@@ -13,10 +13,10 @@ import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListSuT.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
-import nato.ivct.gui.shared.sut.SuTCbTablePageData;
-import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTService;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData;
+import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 
 public class SuTCbService implements ISuTCbService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);

@@ -1,9 +1,6 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.List;
-
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
-import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.shared.TEXTS;
 
 public class SuTCbNodePage extends AbstractPageWithNodes {

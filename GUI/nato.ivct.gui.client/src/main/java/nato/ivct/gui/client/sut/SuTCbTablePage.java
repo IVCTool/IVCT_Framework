@@ -22,7 +22,6 @@ import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import nato.ivct.gui.client.ResourceBase;
-import nato.ivct.gui.client.sut.SuTCbTablePage.Table;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 
@@ -52,7 +51,6 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 		childPage.setSuTCbBadgeId(getTable().getBadgeIdColumn().getValue(row));
 		return childPage;
 	}
-
 
 	@Override
 	protected boolean getConfiguredLeaf() {
@@ -183,7 +181,6 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 				return 100;
 			}
 		}
-
 	}
 
 	public void setSutId(String _sutId) {
@@ -193,5 +190,4 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	public String getSutId() {
 		return sutId;
 	}
-
 }
