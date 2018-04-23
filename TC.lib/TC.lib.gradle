@@ -15,7 +15,6 @@ dependencies {
 
     switch (rti) {
 		case "prti1516e":
-			logger.warn (':TC:pRTI is used. Make sure pRTI is installed on target machine to run any test case')
 			compile files (rti_lib + "/" + rti_jar)
 			runtime fileTree (dir: rti_lib, include: '*.jar')
 			break

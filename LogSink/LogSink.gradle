@@ -10,7 +10,7 @@ dependencies {
 	compile 	libraries.actimemqClient
 	compile 	libraries.logback_classic
 	compile     libraries.slf4j_api
-	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile		libraries.jsonSimple
 	
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core

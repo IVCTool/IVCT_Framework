@@ -9,9 +9,6 @@ war {
     archiveName = 'nato.ivct.gui.nato.ivct.gui.ui.html.war'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 dependencies {
 	compile     project(':GUI:nato.ivct.gui.ui.html')
 }
