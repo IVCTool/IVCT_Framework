@@ -8,5 +8,5 @@ description = """IVCT HTML UI"""
 dependencies {
     compile     project(':GUI:nato.ivct.gui.client')
     compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.ui.html', version:"${scoutVersion}"
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
 }

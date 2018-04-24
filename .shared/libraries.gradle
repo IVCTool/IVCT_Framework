@@ -20,6 +20,9 @@ ext {
 		hamcrestVersion = '1.1'
 		scoutVersion = '7.0.100.017_Oxygen_1'
 		jsonSimpleVersion = '1.1.1'
+		javaxServletVersion = '3.0.1'
+		geronimoJmsVersion = '1.1.1'
+
 		
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
@@ -60,6 +63,7 @@ ext {
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
 				
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+
 				
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing

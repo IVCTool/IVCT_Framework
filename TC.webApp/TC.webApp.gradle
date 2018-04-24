@@ -8,7 +8,7 @@ dependencies {
 	compile     project(':TC.exec')
     compile     project(':MessagingHelpers')
 
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
 
 	compile     libraries.slf4j_api
 	compile     libraries.jsonSimple
