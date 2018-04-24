@@ -8,7 +8,7 @@ dependencies {
 	compile     project(':TC.lib')
 
 	compile     libraries.slf4j_api
-	compile     'com.googlecode.json-simple:json-simple:1.1.1'
+	compile     libraries.jsonSimple
 
 	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
