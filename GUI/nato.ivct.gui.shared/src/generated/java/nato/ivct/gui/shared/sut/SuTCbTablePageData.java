@@ -55,11 +55,11 @@ public class SuTCbTablePageData extends AbstractTablePageData {
 		public static final String requirementId = "requirementId";
 		public static final String requirementDesc = "requirementDesc";
 		public static final String abstractTC = "abstractTC";
-		public static final String tCresult = "tCresult";
+		public static final String tCstatus = "tCstatus";
 		private String m_requirementId;
 		private String m_requirementDesc;
 		private String m_abstractTC;
-		private String m_tCresult;
+		private String m_tCstatus;
 
 		public String getRequirementId() {
 			return m_requirementId;
@@ -85,12 +85,12 @@ public class SuTCbTablePageData extends AbstractTablePageData {
 			m_abstractTC = newAbstractTC;
 		}
 
-		public String getTCresult() {
-			return m_tCresult;
+		public String getTCstatus() {
+			return m_tCstatus;
 		}
 
-		public void setTCresult(String newTCresult) {
-			m_tCresult = newTCresult;
+		public void setTCstatus(String newTCstatus) {
+			m_tCstatus = newTCstatus;
 		}
 	}
 }

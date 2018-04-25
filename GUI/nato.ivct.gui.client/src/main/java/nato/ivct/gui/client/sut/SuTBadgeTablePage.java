@@ -44,6 +44,7 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<Table> {
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		SuTCbTablePage childPage = new SuTCbTablePage();
 		childPage.setBadgeId(getTable().getBadgeIdColumn().getValue(row));
+		childPage.setSutId(getSutId());
 		return childPage;
 	}
 

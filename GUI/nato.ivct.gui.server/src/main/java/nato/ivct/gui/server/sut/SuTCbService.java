@@ -1,8 +1,6 @@
 package nato.ivct.gui.server.sut;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
@@ -10,11 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.CmdListSuT.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
-import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 
@@ -47,27 +43,27 @@ public class SuTCbService implements ISuTCbService {
 			row.setRequirementId(badge.requirements[j].ID);
 			row.setRequirementDesc(badge.requirements[j].description);
 			row.setAbstractTC(badge.requirements[j].TC);
-			row.setTCresult("no result");
+			row.setTCstatus("no result");
 		}
 		
 		cap_hm.put(badge.ID, pageData);
 		return pageData;
 	}
 
-	public void executeTestCase(String sut, String tc, String badge) {
+	public void executeTestCase(String sutId, String tc, String badgeId) {
 		// execute the CmdStartTc commands
 		CbService cbService = (CbService) BEANS.get(CbService.class);
-		BadgeDescription b = cbService.getBadgeDescription(badge);
-		ServerSession.get().execStartTc(sut, tc, badge, b.tsRunTimeFolder);
+		BadgeDescription b = cbService.getBadgeDescription(badgeId);
+		ServerSession.get().execStartTc(sutId, tc, badgeId, b.tsRunTimeFolder);
 		// mark test cases as being started
-		SuTCbTablePageData capPage = cap_hm.get(sut);
+		SuTCbTablePageData capPage = cap_hm.get(badgeId);
 		if (capPage == null) {
-			LOG.error("no capability map found for SuT: " + sut);
+			LOG.error("no capability map found for badge: " + badgeId);
 		} else {
 			for (int i = 0; i < capPage.getRowCount(); i++) {
 				SuTCbTableRowData row = capPage.rowAt(i);
 				if (row.getAbstractTC().equals(tc)) {
-					row.setTCresult("starting");
+					row.setTCstatus("starting");
 				}
 			}
 		}

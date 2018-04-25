@@ -28,6 +28,8 @@ import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 @Data(SuTCbTablePageData.class)
 public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> {
 
+	private String sutId = null;
+	
 	private String badgeId = null;
 	// private TestCaseResultHandler resultHandler = null;
 
@@ -49,6 +51,8 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		SuTCbNodePage childPage = new SuTCbNodePage();
 		childPage.setSuTCapabilityId(getTable().getCapabilityIdColumn().getValue(row));
+		childPage.setBadgeId(badgeId);
+		childPage.setSutId(sutId);
 		return childPage;
 	}
 
@@ -86,11 +90,10 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 						ISuTCbService cbService = BEANS.get(ISuTCbService.class);
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
-							tr.setCellValue(4, "starting");
+							tr.setCellValue(3, "starting");
 							tr.setBackgroundColor(ResourceBase.RUNNING);
-							String badge = tr.getCell(0).toString();
-							String tcName = tr.getCell(3).toString();
-							cbService.executeTestCase(badgeId, tcName, badge);
+							String tcName = tr.getCell(2).toString();
+							cbService.executeTestCase(sutId, tcName, badgeId);
 						}
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
@@ -101,8 +104,8 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 			return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 		}
 
-		public TCresultColumn getTCresultColumn() {
-			return getColumnSet().getColumnByClass(TCresultColumn.class);
+		public TCstatusColumn getTCresultColumn() {
+			return getColumnSet().getColumnByClass(TCstatusColumn.class);
 		}
 
 		public RequirementDescColumn getRequirementDescColumn() {
@@ -153,10 +156,10 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 		}
 
 		@Order(4000)
-		public class TCresultColumn extends AbstractStringColumn {
+		public class TCstatusColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("TCResult");
+				return TEXTS.get("TCStatus");
 			}
 
 			@Override
@@ -172,5 +175,13 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 
 	public String getBadgeId() {
 		return badgeId;
+	}
+
+	public String getSutId() {
+		return sutId;
+	}
+
+	public void setSutId(String sutId) {
+		this.sutId = sutId;
 	}
 }

@@ -22,9 +22,6 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
-import nato.ivct.gui.server.sut.SuTCbService;
-import nato.ivct.gui.shared.sut.SuTCbTablePageData;
-import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
