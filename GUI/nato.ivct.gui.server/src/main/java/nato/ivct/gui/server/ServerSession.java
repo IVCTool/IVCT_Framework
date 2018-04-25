@@ -82,12 +82,12 @@ public class ServerSession extends AbstractServerSession {
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
 
-			SuTCbTablePageData capData = SuTCbService.getCapabilityTablePageData(result.sutName);
-			for (SuTCbTableRowData capRow : capData.getRows()) {
-				if (capRow.getAbstractTC().equals(result.testcase)) {
-					capRow.setTCresult(result.verdict);
-				}
-			}
+//			SuTCbTablePageData capData = SuTCbService.getCapabilityTablePageData(result.sutName);
+//			for (SuTCbTableRowData capRow : capData.getRows()) {
+//				if (capRow.getAbstractTC().equals(result.testcase)) {
+//					capRow.setTCresult(result.verdict);
+//				}
+//			}
 
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}
@@ -104,12 +104,12 @@ public class ServerSession extends AbstractServerSession {
 			notification.setPercent(status.percentFinshed);
 			notification.setStatus(status.status);
 
-			SuTCbTablePageData capData = SuTCbService.getCapabilityTablePageData(status.sutName);
-			for (SuTCbTableRowData capRow : capData.getRows()) {
-				if (capRow.getAbstractTC().equals(status.tcName)) {
-					capRow.setTCresult(status.status + status.percentFinshed);
-				}
-			}
+//			SuTCbTablePageData capData = SuTCbService.getCapabilityTablePageData(status.sutName);
+//			for (SuTCbTableRowData capRow : capData.getRows()) {
+//				if (capRow.getAbstractTC().equals(status.tcName)) {
+//					capRow.setTCresult(status.status + status.percentFinshed);
+//				}
+//			}
 
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}

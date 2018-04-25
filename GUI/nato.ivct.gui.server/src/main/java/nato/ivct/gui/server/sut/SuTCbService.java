@@ -22,9 +22,9 @@ public class SuTCbService implements ISuTCbService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 	private static HashMap<String, SuTCbTablePageData> cap_hm = new HashMap<String, SuTCbTablePageData>();
 
-	public static SuTCbTablePageData getCapabilityTablePageData (String sut) {
-		return cap_hm.get (sut);
-	}
+//	public static SuTCbTablePageData getCapabilityTablePageData (String sut) {
+//		return cap_hm.get (sut);
+//	}
 	
 	/*
 	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
@@ -38,56 +38,20 @@ public class SuTCbService implements ISuTCbService {
 		if (pageData == null) {
 			pageData = new SuTCbTablePageData();
 		}
+
 		LOG.info("getCapabilityTableData");
-		SuTService sutService = (SuTService) BEANS.get(ISuTService.class);
 		CbService cbService = (CbService) BEANS.get(CbService.class);
-		SutDescription sutDesc = sutService.getSutDescription(searchText[0]);
-
-		for (int i = 0; i < sutDesc.conformanceStatment.length; i++) {
-			BadgeDescription badge = cbService.getBadgeDescription(sutDesc.conformanceStatment[i]);
-			if (badge != null) {
-				collectInteroperabilityRequirements(pageData, badge);
-			} else {
-				LOG.warn("badge not found: " + sutDesc.conformanceStatment[i]);			
-			}
+		BadgeDescription badge = cbService.getBadgeDescription(searchText[0]);
+		for (int j = 0; j < badge.requirements.length; j++) {
+			SuTCbTableRowData row = pageData.addRow();
+			row.setRequirementId(badge.requirements[j].ID);
+			row.setRequirementDesc(badge.requirements[j].description);
+			row.setAbstractTC(badge.requirements[j].TC);
+			row.setTCresult("no result");
 		}
-		cap_hm.put(sutDesc.ID, pageData);
+		
+		cap_hm.put(badge.ID, pageData);
 		return pageData;
-	}
-
-	private void collectInteroperabilityRequirements(SuTCbTablePageData pageData, BadgeDescription badge,
-			Set<BadgeDescription> badgesCollected) {
-		if (badge == null) {
-			LOG.warn("invalid badge received");
-			return;
-		}
-		else if (badgesCollected.contains(badge)) {
-			LOG.warn("recursive badge dependency ignored: " + badge.name);
-			return;
-		}
-		else {
-			for (int j = 0; j < badge.requirements.length; j++) {
-				SuTCbTableRowData row = pageData.addRow();
-				row.setBadgeId(badge.ID);
-				row.setRequirementId(badge.requirements[j].ID);
-				row.setRequirementDesc(badge.requirements[j].description);
-				row.setAbstractTC(badge.requirements[j].TC);
-				row.setTCresult("no result");
-			}
-			for (int k = 0; k < badge.dependency.length; k++) {
-				CbService cbService = (CbService) BEANS.get(CbService.class);
-				BadgeDescription dependentBadge = cbService.getBadgeDescription(badge.dependency[k]);
-				if (dependentBadge != null) {
-					badgesCollected.add(badge);
-					collectInteroperabilityRequirements(pageData, dependentBadge, badgesCollected);
-				}
-			}
-		}
-	}
-
-	private void collectInteroperabilityRequirements(SuTCbTablePageData pageData, BadgeDescription badge) {
-		collectInteroperabilityRequirements (pageData, badge, new HashSet<BadgeDescription>());
-
 	}
 
 	public void executeTestCase(String sut, String tc, String badge) {
@@ -107,6 +71,5 @@ public class SuTCbService implements ISuTCbService {
 				}
 			}
 		}
-
 	}
 }

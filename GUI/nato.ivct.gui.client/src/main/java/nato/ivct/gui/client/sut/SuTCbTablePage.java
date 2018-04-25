@@ -28,7 +28,7 @@ import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 @Data(SuTCbTablePageData.class)
 public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> {
 
-	private String sutId = null;
+	private String badgeId = null;
 	// private TestCaseResultHandler resultHandler = null;
 
 	@Override
@@ -40,7 +40,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	@Override
 	protected void execLoadData(SearchFilter filter) {
 		String[] searchText = new String[1];
-		searchText[0] = sutId;
+		searchText[0] = badgeId;
 		filter.setDisplayTexts(searchText);
 		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
 	}
@@ -48,7 +48,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		SuTCbNodePage childPage = new SuTCbNodePage();
-		childPage.setSuTCbBadgeId(getTable().getBadgeIdColumn().getValue(row));
+		childPage.setSuTCapabilityId(getTable().getCapabilityIdColumn().getValue(row));
 		return childPage;
 	}
 
@@ -90,7 +90,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String badge = tr.getCell(0).toString();
 							String tcName = tr.getCell(3).toString();
-							cbService.executeTestCase(sutId, tcName, badge);
+							cbService.executeTestCase(badgeId, tcName, badge);
 						}
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
@@ -109,28 +109,11 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 			return getColumnSet().getColumnByClass(RequirementDescColumn.class);
 		}
 
-		public BadgeIdColumn getBadgeIdColumn() {
-			return getColumnSet().getColumnByClass(BadgeIdColumn.class);
-		}
-
 		public RequirementIdColumn getCapabilityIdColumn() {
 			return getColumnSet().getColumnByClass(RequirementIdColumn.class);
 		}
 
 		@Order(1000)
-		public class BadgeIdColumn extends AbstractStringColumn {
-			@Override
-			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Badge");
-			}
-
-			@Override
-			protected int getConfiguredWidth() {
-				return 200;
-			}
-		}
-
-		@Order(2000)
 		public class RequirementIdColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
@@ -143,7 +126,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 			}
 		}
 
-		@Order(3000)
+		@Order(2000)
 		public class RequirementDescColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
@@ -156,7 +139,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 			}
 		}
 
-		@Order(4000)
+		@Order(3000)
 		public class AbstractTCColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
@@ -169,7 +152,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 			}
 		}
 
-		@Order(5000)
+		@Order(4000)
 		public class TCresultColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
@@ -183,11 +166,11 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 		}
 	}
 
-	public void setSutId(String _sutId) {
-		sutId = _sutId;
+	public void setBadgeId(String _badgeId) {
+		badgeId = _badgeId;
 	}
 
-	public String getSutId() {
-		return sutId;
+	public String getBadgeId() {
+		return badgeId;
 	}
 }

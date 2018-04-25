@@ -5,7 +5,7 @@ import org.eclipse.scout.rt.shared.TEXTS;
 
 public class SuTCbNodePage extends AbstractPageWithNodes {
 
-	private String sutCbBadgeId;
+	private String sutCapabilityId;
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -25,11 +25,10 @@ public class SuTCbNodePage extends AbstractPageWithNodes {
 //		super.execCreateChildPages(pageList);
 //	}
 
-	public String getSuTCbBadgeId() {
-		return sutCbBadgeId;
+	public String getSuTCapabilityId() {
+		return sutCapabilityId;
 	}	
-	public void setSuTCbBadgeId(String Id) {
-		this.sutCbBadgeId = Id;
+	public void setSuTCapabilityId(String Id) {
+		this.sutCapabilityId = Id;
 	}
-
 }

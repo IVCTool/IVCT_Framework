@@ -27,7 +27,7 @@ public class SuTNodePage extends AbstractPageWithNodes {
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
 		SuTCbTablePage cbTablePage = new SuTCbTablePage();
-		cbTablePage.setSutId(getSutId());
+		cbTablePage.setBadgeId(getSutId());
 		pageList.add(cbTablePage);
 	}
 

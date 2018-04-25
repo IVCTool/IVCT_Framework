@@ -6,9 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.scout.rt.platform.BEANS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
-import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
