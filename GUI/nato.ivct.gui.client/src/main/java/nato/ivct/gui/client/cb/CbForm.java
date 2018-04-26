@@ -167,7 +167,7 @@ public class CbForm extends AbstractForm {
 				public class CbNameField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CapabilityName");
+						return TEXTS.get("CbName");
 					}
 
 					@Override
@@ -180,7 +180,7 @@ public class CbForm extends AbstractForm {
 				public class CbDescriptionField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CapabilityDescription");
+						return TEXTS.get("CbDescription");
 					}
 
 					@Override

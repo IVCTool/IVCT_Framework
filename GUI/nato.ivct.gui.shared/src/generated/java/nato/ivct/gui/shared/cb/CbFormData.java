@@ -30,7 +30,6 @@ public class CbFormData extends AbstractFormData {
 
 	/**
 	 * access method for property CbId.
-	 * @return returns CbId
 	 */
 	public String getCbId() {
 		return getCbIdProperty().getValue();
@@ -38,7 +37,6 @@ public class CbFormData extends AbstractFormData {
 
 	/**
 	 * access method for property CbId.
-	 * @param cbId is the Id for the Capability
 	 */
 	public void setCbId(String cbId) {
 		getCbIdProperty().setValue(cbId);

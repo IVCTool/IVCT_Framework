@@ -4,8 +4,10 @@ import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
+import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.client.ui.form.FormEvent;
 import org.eclipse.scout.rt.client.ui.form.FormListener;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -14,6 +16,7 @@ import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import nato.ivct.gui.client.cb.CbTablePage.Table;
+import nato.ivct.gui.client.sut.SuTCbTablePage;
 import nato.ivct.gui.shared.cb.CbTablePageData;
 import nato.ivct.gui.shared.cb.ICbService;
 
@@ -30,10 +33,19 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 	protected void execLoadData(SearchFilter filter) {
 		importPageData(BEANS.get(ICbService.class).getCbTableData(filter));
 	}
+	
+	@Override
+	protected IPage<?> execCreateChildPage(ITableRow row) {
+		CbNodePage childPage = new CbNodePage();
+//		childPage.setBadgeId(getTable().getBadgeIdColumn().getValue(row));
+//		childPage.setSutId(getSutId());
+		return childPage;
+	}
 
 	@Override
 	protected boolean getConfiguredLeaf() {
-		return true;
+		//show children if any
+		return false;
 	}
 
 	public class Table extends AbstractTable {
