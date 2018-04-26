@@ -120,7 +120,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 		public class RequirementIdColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Requirement");
+				return TEXTS.get("RequirementId");
 			}
 
 			@Override
@@ -133,7 +133,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 		public class RequirementDescColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Description");
+				return TEXTS.get("RequirementDescription");
 			}
 
 			@Override

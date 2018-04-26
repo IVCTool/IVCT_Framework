@@ -49,6 +49,10 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<Table> {
 	}
 
 	public class Table extends AbstractTable {
+		public BadgeNameColumn getBadgeNameColumn() {
+			return getColumnSet().getColumnByClass(BadgeNameColumn.class);
+		}
+
 		public SuTBadgeResultColumn getSuTBadgeResultColumn() {
 			return getColumnSet().getColumnByClass(SuTBadgeResultColumn.class);
 		}
@@ -65,12 +69,25 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<Table> {
 		public class BadgeIdColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Badge");
+				return TEXTS.get("BadgeId");
 			}
 
 			@Override
 			protected int getConfiguredWidth() {
 				return 200;
+			}
+		}
+
+		@Order(1500)
+		public class BadgeNameColumn extends AbstractStringColumn {
+			@Override
+			protected String getConfiguredHeaderText() {
+				return TEXTS.get("BadgeName");
+			}
+
+			@Override
+			protected int getConfiguredWidth() {
+				return 100;
 			}
 		}
 

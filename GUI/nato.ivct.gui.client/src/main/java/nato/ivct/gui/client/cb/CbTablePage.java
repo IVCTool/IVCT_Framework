@@ -97,7 +97,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 			@Override
 			protected String getConfiguredHeaderText() {
 				// TODO Auto-generated method stub
-				return TEXTS.get("ID");
+				return TEXTS.get("CbID");
 			}
 
 			@Override
@@ -115,7 +115,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 		public class CapabilityNameColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("CapabilityName");
+				return TEXTS.get("CbName");
 			}
 
 			@Override
@@ -128,7 +128,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 		public class CapabilityDescriptionColumn extends AbstractStringColumn {
 			@Override
 			protected String getConfiguredHeaderText() {
-				return TEXTS.get("Description");
+				return TEXTS.get("CbDescription");
 			}
 
 			@Override

@@ -51,6 +51,7 @@ public class SuTBadgeService implements ISuTBadgeService {
 		for (BadgeDescription bd:collectedBadges) {
 			SuTBadgeTableRowData row = pageData.addRow();
 			row.setBadgeId(bd.ID);
+			row.setBadgeName(bd.name);
 			row.setBadgeDesc(bd.description);
 			row.setSuTBadgeResult("no result");
 		}

@@ -53,9 +53,11 @@ public class SuTBadgeTablePageData extends AbstractTablePageData {
 
 		private static final long serialVersionUID = 1L;
 		public static final String badgeId = "badgeId";
+		public static final String badgeName = "badgeName";
 		public static final String badgeDesc = "badgeDesc";
 		public static final String suTBadgeResult = "suTBadgeResult";
 		private String m_badgeId;
+		private String m_badgeName;
 		private String m_badgeDesc;
 		private String m_suTBadgeResult;
 
@@ -65,6 +67,14 @@ public class SuTBadgeTablePageData extends AbstractTablePageData {
 
 		public void setBadgeId(String newBadgeId) {
 			m_badgeId = newBadgeId;
+		}
+
+		public String getBadgeName() {
+			return m_badgeName;
+		}
+
+		public void setBadgeName(String newBadgeName) {
+			m_badgeName = newBadgeName;
 		}
 
 		public String getBadgeDesc() {
