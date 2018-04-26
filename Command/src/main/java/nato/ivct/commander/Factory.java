@@ -255,6 +255,11 @@ public class Factory {
 		return new CmdSendTcStatus();
 	}
 
+	public static CmdSendTcVerdict createCmdSendTcVerdict(String sutName, String sutDir, String testScheduleName, String testcase, String verdict, String verdictText) {
+		initialize();
+		return new CmdSendTcVerdict(sutName, sutDir, testScheduleName, testcase, verdict, verdictText);
+	}
+
 	public static int getCmdCounter() {
 		return cmdCounter;
 	}
