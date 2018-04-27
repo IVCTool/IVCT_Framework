@@ -4,7 +4,6 @@ mainClassName = 'de.fraunhofer.iosb.testrunner.JMSTestRunner'
 
 dependencies {
 	compile     project(':Command')
-	compile     project(':MessagingHelpers')
 	compile     project(':TC.lib')
 
 	compile     libraries.slf4j_api

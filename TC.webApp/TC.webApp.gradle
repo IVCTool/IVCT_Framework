@@ -6,7 +6,6 @@ repositories {
 
 dependencies {
 	compile     project(':TC.exec')
-    compile     project(':MessagingHelpers')
 
 	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
 

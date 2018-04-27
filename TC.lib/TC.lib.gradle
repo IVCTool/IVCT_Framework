@@ -1,6 +1,5 @@
 dependencies {
 	compile     project(':Command')
-	compile     project(':MessagingHelpers')
 
 	compile     libraries.slf4j_api
 	compile     libraries.jsonSimple

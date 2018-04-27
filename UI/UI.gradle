@@ -3,7 +3,6 @@ apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.ivct.CmdLineTool'
 
 dependencies {
-	compile     project(':MessagingHelpers')
 	compile     project(':Command')
 	compile     libraries.slf4j_api
 	compile     libraries.jsonSimple
@@ -12,9 +11,8 @@ dependencies {
 	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
-	
+
 	runtime     libraries.slf4j_jcl_over_slf4j
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 }
-
