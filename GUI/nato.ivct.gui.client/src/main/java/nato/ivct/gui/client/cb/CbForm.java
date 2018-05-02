@@ -331,7 +331,7 @@ public class CbForm extends AbstractForm {
 								
 								@Override
 								protected String getConfiguredHeaderText() {
-									return TEXTS.get("ID");
+									return TEXTS.get("RequirementId");
 								}
 
 								@Override
@@ -344,7 +344,7 @@ public class CbForm extends AbstractForm {
 							public class RequirementDescColumn extends AbstractStringColumn {
 								@Override
 								protected String getConfiguredHeaderText() {
-									return TEXTS.get("Description");
+									return TEXTS.get("RequirementDescription");
 								}
 
 								@Override
