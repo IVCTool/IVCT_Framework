@@ -37,7 +37,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		CbNodePage childPage = new CbNodePage();
-//		childPage.setBadgeId(getTable().getBadgeIdColumn().getValue(row));
+		childPage.setBadgeId(getTable().getCpIdColumn().getValue(row));
 //		childPage.setSutId(getSutId());
 		return childPage;
 	}
@@ -89,10 +89,6 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 		public CapabilityDescriptionColumn getCapabilityDescriptionColumn() {
 			return getColumnSet().getColumnByClass(CapabilityDescriptionColumn.class);
-		}
-
-		public CbVisualColumn getCbVisualColumn() {
-			return getColumnSet().getColumnByClass(CbVisualColumn.class);
 		}
 
 		public CpIdColumn getCpIdColumn() {
@@ -148,25 +144,5 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 				return 400;
 			}
 		}
-
-		@Order(4000)
-		public class CbVisualColumn extends AbstractStringColumn {
-			@Override
-			protected String getConfiguredHeaderText() {
-				return TEXTS.get("CbVisual");
-			}
-
-			@Override
-			protected int getConfiguredWidth() {
-				return 200;
-			}
-			
-			// hide this column; can be later removed or refunctioned
-			@Override
-			public boolean isVisible() {
-				return false;
-			}
-		}
-
 	}
 }

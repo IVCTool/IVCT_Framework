@@ -55,11 +55,9 @@ public class CbTablePageData extends AbstractTablePageData {
 		public static final String cpId = "cpId";
 		public static final String capabilityName = "capabilityName";
 		public static final String capabilityDescription = "capabilityDescription";
-		public static final String cbVisual = "cbVisual";
 		private String m_cpId;
 		private String m_capabilityName;
 		private String m_capabilityDescription;
-		private String m_cbVisual;
 
 		public String getCpId() {
 			return m_cpId;
@@ -83,14 +81,6 @@ public class CbTablePageData extends AbstractTablePageData {
 
 		public void setCapabilityDescription(String newCapabilityDescription) {
 			m_capabilityDescription = newCapabilityDescription;
-		}
-
-		public String getCbVisual() {
-			return m_cbVisual;
-		}
-
-		public void setCbVisual(String newCbVisual) {
-			m_cbVisual = newCbVisual;
 		}
 	}
 }

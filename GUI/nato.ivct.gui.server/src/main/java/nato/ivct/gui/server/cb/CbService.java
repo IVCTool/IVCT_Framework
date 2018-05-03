@@ -58,7 +58,6 @@ public class CbService implements ICbService {
 			row.setCpId(value.ID);
 			row.setCapabilityName(value.name);
 			row.setCapabilityDescription(value.description);
-			row.setCbVisual(value.cbVisual);
 			cb_hm.put(value.ID, value);
 		}
 		return pageData;
