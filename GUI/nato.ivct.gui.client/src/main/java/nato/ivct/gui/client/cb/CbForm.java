@@ -21,6 +21,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
@@ -62,10 +63,19 @@ public class CbForm extends AbstractForm {
 	}
 
 	@Override
+	protected String getConfiguredDisplayViewId() {
+	  return IForm.VIEW_ID_CENTER;
+	}
+
+	@Override
 	public Object computeExclusiveKey() {
 		return getCbId();
 	}
 
+	public void startView() throws ProcessingException {
+		 startInternalExclusive(new ViewHandler());
+	}
+	
 	public void startModify() {
 		startInternalExclusive(new ModifyHandler());
 	}
@@ -458,6 +468,28 @@ public class CbForm extends AbstractForm {
 //		public class CancelButton extends AbstractCancelButton {
 //
 //		}
+	}
+
+	public class ViewHandler extends AbstractFormHandler {
+
+		@Override
+		protected void execLoad() {
+			ICbService service = BEANS.get(ICbService.class);
+			CbFormData formData = new CbFormData();
+			exportFormData(formData);
+			formData = service.load(formData);
+			importFormData(formData);
+			// load badge image
+			try (InputStream in = ResourceBase.class
+					.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
+				getCbImageField().setImage(IOUtility.readBytes(in));
+				getCbImageField().setImageId(formData.getCbId());
+			} catch (Exception e) {
+				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
+			}
+			getForm().setSubTitle(formData.getCbName().getValue());
+			setEnabledPermission(new UpdateCbPermission());
+		}
 	}
 
 	public class ModifyHandler extends AbstractFormHandler {

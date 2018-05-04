@@ -8,7 +8,6 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
 
 import nato.ivct.gui.client.cb.CbTablePage;
-import nato.ivct.gui.client.sut.SuTTablePage;
 import nato.ivct.gui.shared.Icons;
 
 /**

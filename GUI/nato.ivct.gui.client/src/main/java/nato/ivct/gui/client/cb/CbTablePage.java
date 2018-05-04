@@ -16,7 +16,6 @@ import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import nato.ivct.gui.client.cb.CbTablePage.Table;
-import nato.ivct.gui.client.sut.SuTCbTablePage;
 import nato.ivct.gui.shared.cb.CbTablePageData;
 import nato.ivct.gui.shared.cb.ICbService;
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
-import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 
@@ -46,7 +45,7 @@ public class CbNodePage extends AbstractPageWithNodes {
 	    form.setCbId(getBadgeId());
 	    setDetailForm(form);
 //	    form.startView();
-	    form.startModify();
+	    form.startView();
 	  }
 	}
 	
