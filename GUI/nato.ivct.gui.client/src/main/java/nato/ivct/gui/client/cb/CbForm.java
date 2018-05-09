@@ -243,13 +243,13 @@ public class CbForm extends AbstractForm {
 					
 					@Override
 					protected int getConfiguredHorizontalAlignment() {
-						// allign to left
+						// align to left
 						return -1;
 					}
 					
 					@Override
 					protected int getConfiguredVerticalAlignment() {
-						// allign to top
+						// align to top
 						return -1;
 					}
 					
@@ -460,7 +460,7 @@ public class CbForm extends AbstractForm {
 
 			  @Override
 			  protected String getConfiguredKeyStroke() {
-			    return IKeyStroke.ENTER;
+			    return IKeyStroke.ESCAPE;
 			  }
 		}
 
@@ -489,6 +489,7 @@ public class CbForm extends AbstractForm {
 			}
 			getForm().setSubTitle(formData.getCbName().getValue());
 			setEnabledPermission(new UpdateCbPermission());
+			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
 		}
 	}
 

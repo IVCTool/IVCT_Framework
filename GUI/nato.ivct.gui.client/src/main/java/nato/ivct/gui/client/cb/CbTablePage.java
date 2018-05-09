@@ -1,6 +1,7 @@
 package nato.ivct.gui.client.cb;
 
 import org.eclipse.scout.rt.client.dto.Data;
+import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -15,6 +16,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
+import nato.ivct.gui.client.cb.CbForm.MainBox;
 import nato.ivct.gui.client.cb.CbTablePage.Table;
 import nato.ivct.gui.shared.cb.CbTablePageData;
 import nato.ivct.gui.shared.cb.ICbService;
@@ -51,11 +53,17 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 		@Override
 		protected Class<? extends IMenu> getConfiguredDefaultMenu() {
-			return EditMenu.class;
+			return ViewMenu.class;
 		}
 
 		@Order(1000)
 		public class EditMenu extends AbstractMenu {
+			@Override
+			public boolean isVisible() {
+				// do not show this menu yet
+				return false;
+			}	
+			
 			@Override
 			protected String getConfiguredText() {
 				return TEXTS.get("Edit");
@@ -67,6 +75,34 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 				form.setCbId(getCpIdColumn().getSelectedValue());
 				form.addFormListener(new CbFormListener());
 				form.startModify();
+			}
+			
+//			@Override
+//			protected String getConfiguredKeyStroke() {
+//				// TODO Auto-generated method stub
+//				return IKeyStroke.ENTER;
+//			}
+		}
+
+		@Order(2000)
+		public class ViewMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("Open");
+			}
+
+			@Override
+			protected void execAction() {
+				CbForm form = new CbForm();
+				form.setCbId(getCpIdColumn().getSelectedValue());
+				form.startView();
+				form.getFieldByClass(MainBox.CloseButton.class).setVisible(true);
+			}
+			
+			@Override
+			protected String getConfiguredKeyStroke() {
+				// TODO Auto-generated method stub
+				return IKeyStroke.ENTER;
 			}
 		}
 
@@ -103,7 +139,6 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 			@Override
 			protected String getConfiguredHeaderText() {
-				// TODO Auto-generated method stub
 				return TEXTS.get("CbID");
 			}
 
