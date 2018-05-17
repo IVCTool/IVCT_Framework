@@ -28,7 +28,6 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [hzg] verify translation
 		return TEXTS.get("CbTablePage");
 	}
 
@@ -41,7 +40,6 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		CbNodePage childPage = new CbNodePage();
 		childPage.setBadgeId(getTable().getCpIdColumn().getValue(row));
-//		childPage.setSutId(getSutId());
 		return childPage;
 	}
 

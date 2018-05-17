@@ -111,7 +111,6 @@ public class Desktop extends AbstractDesktop {
 
 		@Override
 		protected String getConfiguredIconId() {
-			// TODO Auto-generated method stub
 			return AbstractIcons.Gear;
 		}
 		

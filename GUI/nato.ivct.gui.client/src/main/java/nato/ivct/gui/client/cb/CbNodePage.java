@@ -12,13 +12,11 @@ public class CbNodePage extends AbstractPageWithNodes {
 	
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [the] verify translation
 		return TEXTS.get("CbNodePage");
 	}
 
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-		// TODO [the] Auto-generated method stub.
 		super.execCreateChildPages(pageList);
 	}
 

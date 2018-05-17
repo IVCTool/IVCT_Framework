@@ -21,7 +21,6 @@ public class BadgeOutline extends AbstractOutline {
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
 		pageList.add(new CbTablePage());
-//		pageList.add(new SuTTablePage());
 	}
 
 	@Override
