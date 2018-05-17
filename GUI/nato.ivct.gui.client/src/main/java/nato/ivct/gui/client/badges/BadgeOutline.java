@@ -33,4 +33,5 @@ public class BadgeOutline extends AbstractOutline {
 	protected String getConfiguredIconId() {
 		return Icons.Category;
 	}
+	
 }

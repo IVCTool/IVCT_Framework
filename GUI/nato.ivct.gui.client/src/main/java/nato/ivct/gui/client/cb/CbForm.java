@@ -87,7 +87,7 @@ public class CbForm extends AbstractForm {
 //	public CancelButton getCancelButton() {
 //		return getFieldByClass(CancelButton.class);
 //	}
-//
+
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
 	}

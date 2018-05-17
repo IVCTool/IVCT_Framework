@@ -1,5 +1,7 @@
 package nato.ivct.gui.client.cb;
 
+import java.awt.Desktop;
+
 import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -53,6 +55,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 		@Override
 		protected Class<? extends IMenu> getConfiguredDefaultMenu() {
+			// set the ViewMenu to open on ENTER button
 			return ViewMenu.class;
 		}
 
@@ -101,8 +104,9 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 			
 			@Override
 			protected String getConfiguredKeyStroke() {
-				// TODO Auto-generated method stub
-				return IKeyStroke.ENTER;
+				// open form in view mode
+				// TODO: use a different keystroke later
+				return /*IKeyStroke.ALT+"-"+*/ IKeyStroke.ENTER;
 			}
 		}
 
