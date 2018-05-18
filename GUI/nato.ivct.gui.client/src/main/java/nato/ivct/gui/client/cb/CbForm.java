@@ -399,7 +399,7 @@ public class CbForm extends AbstractForm {
 						}
 						
 						@Override
-						protected Class<? extends IValueField> getConfiguredMasterField() {
+						protected Class<? extends IValueField<Set<String>>> getConfiguredMasterField() {
 							return CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbDependenciesTreeBox.class;
 						}
 				
