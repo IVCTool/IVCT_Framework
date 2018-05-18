@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
 import nato.ivct.gui.client.ResourceBase;
-import nato.ivct.gui.client.badges.BadgeOutline;
+import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 public class TestCaseNotificationHandler implements INotificationHandler<TestCaseNotification> {

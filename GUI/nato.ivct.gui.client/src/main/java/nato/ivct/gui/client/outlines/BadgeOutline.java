@@ -1,4 +1,4 @@
-package nato.ivct.gui.client.badges;
+package nato.ivct.gui.client.outlines;
 
 import java.util.List;
 

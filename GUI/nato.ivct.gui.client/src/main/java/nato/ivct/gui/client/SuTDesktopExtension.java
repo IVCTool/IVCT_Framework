@@ -1,4 +1,4 @@
-package nato.ivct.gui.client.sut;
+package nato.ivct.gui.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,11 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.platform.Order;
 
-public class DesktopExtension extends AbstractDesktopExtension {
+import nato.ivct.gui.client.outlines.SuTOutline;
 
-	public DesktopExtension() {
+public class SuTDesktopExtension extends AbstractDesktopExtension {
+
+	public SuTDesktopExtension() {
 		
 	}
 

@@ -23,7 +23,7 @@ import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
-import nato.ivct.gui.client.badges.BadgeOutline;
+import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
 public class TcStatusNotificationHandler implements INotificationHandler<TcStatusNotification> {
