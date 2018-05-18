@@ -142,7 +142,7 @@ public class JMSTestRunner extends TestRunner
 					URL[] urls = new URL[filesList.length];
 					for (int i = 0; i < filesList.length; i++) {
 						try {
-							urls[i] = new URL(filesList[i].toURI().toString());
+							urls[i] = filesList[i].toURI().toURL();
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
