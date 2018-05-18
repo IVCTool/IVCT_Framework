@@ -1,11 +1,8 @@
 package nato.ivct.gui.client.cb;
 
-import java.awt.Desktop;
-
 import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -51,11 +48,11 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 	public class Table extends AbstractTable {
 
-		@Override
-		protected Class<? extends IMenu> getConfiguredDefaultMenu() {
-			// set the ViewMenu to open on ENTER button
-			return ViewMenu.class;
-		}
+//		@Override
+//		protected Class<? extends IMenu> getConfiguredDefaultMenu() {
+//			// set the ViewMenu to open on ENTER button
+//			return ViewMenu.class;
+//		}
 
 		@Order(1000)
 		public class EditMenu extends AbstractMenu {
@@ -77,7 +74,6 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 				form.addFormListener(new CbFormListener());
 				form.startModify();
 			}
-			
 //			@Override
 //			protected String getConfiguredKeyStroke() {
 //				// TODO Auto-generated method stub
@@ -104,7 +100,8 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 			protected String getConfiguredKeyStroke() {
 				// open form in view mode
 				// TODO: use a different keystroke later
-				return /*IKeyStroke.ALT+"-"+*/ IKeyStroke.ENTER;
+				return IKeyStroke.ENTER;
+//				return combineKeyStrokes(IKeyStroke.ALT,IKeyStroke.ENTER);
 			}
 		}
 
