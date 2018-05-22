@@ -66,6 +66,9 @@ public class CmdLineTool {
     	// LogConfigurationHelper.configureLogging(JMSTestRunner.class);
     	LogConfigurationHelper.configureLogging();
 
+        // Handle callbacks
+		Factory.initialize();
+
     	try {
     		new CmdLineTool();
     	} catch (IOException e) {
@@ -73,9 +76,6 @@ public class CmdLineTool {
     		System.out.println("CmdLineTool: new IVCTcommander: " + e);
     		return;
     	}
-
-    	// Handle callbacks
-		Factory.initialize();
 		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
     }
 
@@ -180,13 +180,12 @@ class Writer extends Thread {
         PrintStream out = null;
         String logLevelString = "default";
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
-    	String tsNotSelected = new String("Testsuite not selected yet: use setTestSuite command first");
 
     	try {
             String line;
             in = new BufferedReader(new InputStreamReader(System.in));
             out = new PrintStream(System.out);
-            out.println ("Enter command: or help (h)");
+            out.println ("\nEnter command: or help (h)");
             out.print("> ");
             while(true) {
                 line = in.readLine();
@@ -201,7 +200,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> suts1 = ivctCommander.listSUT();
+                    List<String> suts1 = ivctCommander.rtp.getSUTS();
                 	if (suts1.isEmpty()) {
                 		System.out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
@@ -215,7 +214,7 @@ class Writer extends Thread {
                 case "setSUT":
                 case "ssut":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("setSUT", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("setSUT")) {
                 		break;
                 	}
 
@@ -226,22 +225,22 @@ class Writer extends Thread {
                 	}
 
                 	// get SUT list
-                	List<String> suts2 = ivctCommander.listSUT();
+                    List<String> suts2 = ivctCommander.rtp.getSUTS();
                 	if (suts2.isEmpty()) {
                 		out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
                 	}
                 	// check if SUT entered exists in SUT list
-                	if (ivctCommander.checkSutKnown(split[1])) {
+                    if (ivctCommander.rtp.checkSutNotKnown(split[1])) {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}
                 	ivctCommander.rtp.setSutName(split[1]);
-                	IVCTcommander.resetSUT();
+                    ivctCommander.resetSUT();
                 	break;
                 case "listTestSchedules":
                 case "lts":
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                 		System.out.println(sutNotSelected);
                 		break;
                 	}
@@ -257,10 +256,10 @@ class Writer extends Thread {
                 case "startTestSchedule":
                 case "sts":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("startTestSchedule", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("startTestSchedule")) {
                 		break;
                 	}
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -299,12 +298,12 @@ class Writer extends Thread {
                 case "abortTestSchedule":
                 case "ats":
                 	// Cannot abort test schedule if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
                 	// Cannot abort test schedule if it is not running
-                	if (ivctCommander.getTestScheduleRunningBool() == false) {
+                    if (ivctCommander.rtp.getTestScheduleRunningBool() == false) {
                         out.println("abortTestSchedule: no test schedule is running");
                 		break;
                 	}
@@ -318,7 +317,7 @@ class Writer extends Thread {
                     break;
                 case "listTestCases":
                 case "ltc":
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -338,10 +337,10 @@ class Writer extends Thread {
                 case "startTestCase":
                 case "stc":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("startTestCase", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("startTestCase")) {
                 		break;
                 	}
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -365,12 +364,12 @@ class Writer extends Thread {
                 case "abortTestCase":
                 case "atc":
                 	// Cannot abort test case if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
                 	// Cannot abort test case if it is not running
-                	if (ivctCommander.getTestCaseRunningBool() == false) {
+                    if (ivctCommander.rtp.getTestCaseRunningBool() == false) {
                         out.println("abortTestCase: no test case is running");
                         break;
                 	}
@@ -399,7 +398,7 @@ class Writer extends Thread {
                 	break;
                 case "listVerdicts":
                 case "lv":
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -438,7 +437,7 @@ class Writer extends Thread {
                 case "quit":
                 case "q":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("quit", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("quit")) {
                 		out.println("Do you want to quit anyway? (answer yes to quit UI)");
                         line = in.readLine();
                         if (line == null) break;

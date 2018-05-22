@@ -17,16 +17,10 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,11 +37,6 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
  */
 public class IVCTcommander implements OnResultListener {
 
-    private static Logger            LOGGER                       = LoggerFactory.getLogger(IVCTcommander.class);
-//    private PropertyBasedClientSetup jmshelper;
-	private static Semaphore semaphore = new Semaphore(0);
-	private int countSemaphore = 0;
-	private Set<Long> setSequence = new HashSet<Long>();
 	private static Vector<String> listOfVerdicts = new Vector<String>();
     public RuntimeParameters rtp = new RuntimeParameters();
     private CmdStartTestResultListener cmdStartTestResultListener;
@@ -61,102 +50,11 @@ public class IVCTcommander implements OnResultListener {
         cmdStartTestResultListener = new CmdStartTestResultListener(this);
     }
 
-    public void acquireSemaphore() {
-    	try {
-        	countSemaphore++;
-    		semaphore.acquire();
-    	} catch (InterruptedException e) {
-    		e.printStackTrace();
-            LOGGER.error("acquireSemaphore: ", e);
-    	}
-    }
-
-    public void releaseSemaphore() {
-    	if (countSemaphore > 0) {
-    		semaphore.release();
-    		countSemaphore--;
-    	}
-    }
-    
     public void addTestSessionSeparator() {
     	String blank = new String(" ");
 		listOfVerdicts.addElement(blank);    	
     }
-	/*
-	 * JMS will deliver multiple messages. Need to check if the message was already
-	 *  seen
-	 */
-	private boolean checkDuplicateSequenceNumber(final JSONObject jsonObject) {
-		Long temp = Long.valueOf((String)jsonObject.get("sequence"));
-		if (temp == null) {
-			System.out.println("The sequence number is: null");
-		} else {
-			if (setSequence.contains(temp)) {
-				return true;
-			} else {
-				setSequence.add(temp);
-			}
-		}
-		return false;
-	}
 
-    public boolean checkSutKnown(final String sut) {
-    	return rtp.checkSutKnown(sut);
-    }
-	
-    protected boolean checkSUTselected() {
-    	return rtp.checkSUTselected();
-    }
-    
-    /*
-     * Check if a test case or test schedule are running.
-     * 
-     * @param theCaller name of the calling method
-     * @param out the calling method
-     * 
-     * @return whether a critical task is running
-     */
-    protected boolean checkCtTcTsRunning(final String theCaller, PrintStream out) {
-    	if (rtp.getTestCaseRunningBool()) {
-    		out.println(theCaller + ": Warning test case is running - command not allowed");
-    		return true;
-    	}
-    	if (rtp.getTestScheduleRunningBool()) {
-    		out.println(theCaller + ": Warning test schedule is running - command not allowed");
-    		return true;
-    	}
-    	return false;
-    }
-    
-    protected int fetchCounter() {
-    	int i = 1;
-    	return rtp.fetchCounters(i);
-    }
-    
-    protected int fetchCounters(int n) {
-    	return rtp.fetchCounters(n);
-    }
-    
-	public boolean getTestCaseRunningBool() {
-		return rtp.getTestCaseRunningBool();
-	}
-	
-	public boolean getTestScheduleRunningBool() {
-		return rtp.getTestScheduleRunningBool();
-	}
-	
-	public void setTestScheduleRunningBool(boolean b) {
-		rtp.setTestScheduleRunningBool(b);
-	}
-
-    
-      public List<String> listSUT() {
-    	  rtp.setSUTS();
-    	  
-    	  List<String> suts = RuntimeParameters.getSUTS();
-    	  return suts;
-      }
-      
       public void listVerdicts() {
 			System.out.println("SUT: " + rtp.getSutName());
 			if (listOfVerdicts.isEmpty()) {
@@ -168,7 +66,7 @@ public class IVCTcommander implements OnResultListener {
 	        }
       }
 
-      public static void resetSUT() {
+      public void resetSUT() {
     	  listOfVerdicts.clear();
       }
 
@@ -195,9 +93,7 @@ public class IVCTcommander implements OnResultListener {
 		}
 		listOfVerdicts.addElement(verdictStr);
 		rtp.setTestCaseRunningBool(false);
-		releaseSemaphore();
+		rtp.releaseSemaphore();
     }
-
-    private JSONParser jsonParser = new JSONParser();
 
 }

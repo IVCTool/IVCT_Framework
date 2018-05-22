@@ -159,19 +159,36 @@ public final class PropertyBasedClientSetup {
      */
     public synchronized boolean initConnection() {
         this.checkAllowedState(State.PROPERTIES_PARSED, State.DISCONNECTED);
-        try {
-            this.connection = this.factory.createConnection(this.user, this.password);
-            this.connection.start();
-            this.state = State.CONNECTED;
+        boolean tryAgain = true;
+        int count = 1;
+        LOGGER.info("initConnection: connect to activemq please wait...");
+        for (;tryAgain;) {
+            try {
+                this.connection = this.factory.createConnection(this.user, this.password);
+                this.connection.start();
+                tryAgain = false;
+                this.state = State.CONNECTED;
+            }
+            catch (final JMSException ex) {
+                if (count > 10) {
+                    LOGGER.error("Problems during initializing connection.", ex);
+                    tryAgain = false;
+                    this.state = State.FAILURE;
+                    LOGGER.error("initConnection: failed to connect to activemq.");
+                    System.exit(-1);
+                }
+            }
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("State: {}", this.state.toString());
+            }
+            try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+                LOGGER.error("initConnection: sleep interrupted: ", e);
+			}
+			count++;
         }
-        catch (final JMSException ex) {
-            LOGGER.error("Problems during initializing connection.", ex);
-            this.state = State.FAILURE;
-            return true;
-        }
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("State: {}", this.state.toString());
-        }
+        LOGGER.info("initConnection: connect to activemq OK");
         return false;
     }
 
