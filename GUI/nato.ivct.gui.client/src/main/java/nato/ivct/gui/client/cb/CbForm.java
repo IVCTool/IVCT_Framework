@@ -469,8 +469,7 @@ public class CbForm extends AbstractForm {
 //		}
 	}
 
-	public class ViewHandler extends AbstractFormHandler {
-
+	protected abstract class AbstractCbFormHandler extends AbstractFormHandler {
 		@Override
 		protected void execLoad() {
 			ICbService service = BEANS.get(ICbService.class);
@@ -488,29 +487,23 @@ public class CbForm extends AbstractForm {
 			}
 			getForm().setSubTitle(formData.getCbName().getValue());
 			setEnabledPermission(new UpdateCbPermission());
+		}
+	}
+	
+	public class ViewHandler extends AbstractCbFormHandler {
+
+		@Override
+		protected void execLoad() {
+			super.execLoad();
 			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
 		}
 	}
 
-	public class ModifyHandler extends AbstractFormHandler {
+	public class ModifyHandler extends AbstractCbFormHandler {
 
 		@Override
 		protected void execLoad() {
-			ICbService service = BEANS.get(ICbService.class);
-			CbFormData formData = new CbFormData();
-			exportFormData(formData);
-			formData = service.load(formData);
-			importFormData(formData);
-			// load badge image
-			try (InputStream in = ResourceBase.class
-					.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
-				getCbImageField().setImage(IOUtility.readBytes(in));
-				getCbImageField().setImageId(formData.getCbId());
-			} catch (Exception e) {
-				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
-			}
-			getForm().setSubTitle(formData.getCbName().getValue());
-			setEnabledPermission(new UpdateCbPermission());
+			super.execLoad();
 		}
 
 		@Override
