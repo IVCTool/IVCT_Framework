@@ -6,6 +6,8 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
@@ -16,7 +18,7 @@ import nato.ivct.gui.shared.sut.ISuTBadgeService;
 import nato.ivct.gui.shared.sut.SuTBadgeTablePageData;
 
 @Data(SuTBadgeTablePageData.class)
-public class SuTBadgeTablePage extends AbstractPageWithTable<Table> {
+public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.Table> {
 
 	private String sutId = null;
 
@@ -47,7 +49,7 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<Table> {
 		childPage.setSutId(getSutId());
 		return childPage;
 	}
-
+	
 	public class Table extends AbstractTable {
 		public BadgeNameColumn getBadgeNameColumn() {
 			return getColumnSet().getColumnByClass(BadgeNameColumn.class);
