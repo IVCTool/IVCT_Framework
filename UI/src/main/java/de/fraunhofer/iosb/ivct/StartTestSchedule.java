@@ -33,7 +33,7 @@ public class StartTestSchedule implements Command {
 			}
 			ivctCommander.rtp.startTestCase(commandCache.getTestschedule(), tc);
 
-			this.ivctCommander.acquireSemaphore();
+			this.ivctCommander.rtp.acquireSemaphore();
 		}
 		ivctCommander.addTestSessionSeparator();
 		RuntimeParameters.setAbortTestScheduleBool(false);
