@@ -74,6 +74,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 				form.addFormListener(new CbFormListener());
 				form.startModify();
 			}
+			
 //			@Override
 //			protected String getConfiguredKeyStroke() {
 //				// TODO Auto-generated method stub

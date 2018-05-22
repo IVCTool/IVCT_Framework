@@ -93,10 +93,9 @@ public class Desktop extends AbstractDesktop {
 				ClientSessionProvider.currentSession(ClientSession.class).stop();
 			}
 		}
-		
-		
 	}
 
+	
 	@Order(1500)
 	public class OptionsMenu extends AbstractFormMenu<OptionsForm> {
 		@Override
