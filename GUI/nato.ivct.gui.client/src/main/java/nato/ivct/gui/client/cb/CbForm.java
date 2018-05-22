@@ -515,7 +515,7 @@ public class CbForm extends AbstractForm {
 		}
 	}
 
-	public class NewHandler extends AbstractFormHandler {
+	public class NewHandler extends AbstractCbFormHandler {
 
 		@Override
 		protected void execLoad() {
