@@ -43,7 +43,6 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 	}
 
 	public class Table extends AbstractTable {
-
 		
 		@Order(1000)
 		public class EditMenu extends AbstractMenu {

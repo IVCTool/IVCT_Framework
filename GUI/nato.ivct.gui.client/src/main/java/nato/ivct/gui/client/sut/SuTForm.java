@@ -206,9 +206,7 @@ public class SuTForm extends AbstractForm {
 					return 128;
 				}
 			}
-			
-			
-			
+
 		}
 
 		@Order(2000)
@@ -259,7 +257,6 @@ public class SuTForm extends AbstractForm {
 					return 6;
 				}
 			}
-
 		}
 
 		@Order(3000)
@@ -308,7 +305,6 @@ public class SuTForm extends AbstractForm {
 					return 6;
 				}
 			}
-
 		}
 
 		@Order(100000)
