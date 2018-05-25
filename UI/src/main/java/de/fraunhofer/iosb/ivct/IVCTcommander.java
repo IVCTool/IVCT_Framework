@@ -19,10 +19,6 @@ package de.fraunhofer.iosb.ivct;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.concurrent.Semaphore;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
@@ -39,7 +35,6 @@ public class IVCTcommander implements OnResultListener {
 
 	private static Vector<String> listOfVerdicts = new Vector<String>();
     public RuntimeParameters rtp = new RuntimeParameters();
-    private CmdStartTestResultListener cmdStartTestResultListener;
 
     /**
      * public constructor.
@@ -47,7 +42,7 @@ public class IVCTcommander implements OnResultListener {
      * @throws IOException problems with loading properties
      */
     public IVCTcommander() throws IOException {
-        cmdStartTestResultListener = new CmdStartTestResultListener(this);
+        new CmdStartTestResultListener(this);
     }
 
     public void addTestSessionSeparator() {

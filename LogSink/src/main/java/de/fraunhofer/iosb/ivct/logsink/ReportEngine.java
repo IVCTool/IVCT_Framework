@@ -18,7 +18,6 @@ package de.fraunhofer.iosb.ivct.logsink;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -26,12 +25,10 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
@@ -40,8 +37,6 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 
 public class ReportEngine implements OnResultListener, OnQuitListener, OnStartTestCaseListener {
     Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
-	private String      LISTENER_TOPIC = "listener.topic";
-    private static InputStream in;
     private boolean havePrevFile = false;
     private int numFailed = 0;
     private int numInconclusive = 0;

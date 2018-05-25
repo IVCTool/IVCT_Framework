@@ -44,7 +44,6 @@ public class JMSTestRunner extends TestRunner
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
 
-	private Factory cmdFactory;
 	private CmdListBadges badges;
 	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
@@ -80,8 +79,7 @@ public class JMSTestRunner extends TestRunner
 	public JMSTestRunner() throws IOException {
 
 		// initialize the IVCT Commander Factory
-		cmdFactory = new Factory();
-		cmdFactory.initialize();
+		Factory.initialize();
 
 		// start command listeners
 		(new CmdSetLogLevelListener(this)).execute();

@@ -21,7 +21,12 @@ package de.fraunhofer.iosb.tc_lib;
  * @author mul (Fraunhofer IOSB)
  */
 public class TcFailed  extends Exception {
-    public TcFailed(String msg)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public TcFailed(String msg)
     {
        super(msg);
     }

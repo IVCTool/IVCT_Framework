@@ -32,7 +32,6 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.apache.log4j.MDC;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
