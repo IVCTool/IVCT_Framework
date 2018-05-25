@@ -52,7 +52,20 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 		try {
 			Properties env = new Properties();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-			env.put(Context.PROVIDER_URL, "tcp://localhost:61616");
+            String host = System.getenv("ACTIVEMQ_HOST");
+            if (host == null) {
+                host = "localhost";
+                logger.warn("Environment variable ACTIVEMQ_HOST not found: using default ", host);
+            }
+            String portString;
+            portString = System.getenv("ACTIVEMQ_PORT");
+            if (portString == null) {
+                portString = "61616";
+                logger.warn("Environment variable ACTIVEMQ_PORT not found: using default ", portString);
+            }
+            int port = Integer.parseInt(portString);
+            String hostPort = new String("tcp://" + host + ":" + port);
+			env.put(Context.PROVIDER_URL, hostPort);
 			Context ctx = new InitialContext(env);
 			TopicConnectionFactory topicConnectionFactory;
 			topicConnectionFactory = (TopicConnectionFactory) lookup(ctx, tcfBindingName);
