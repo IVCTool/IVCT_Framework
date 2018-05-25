@@ -72,7 +72,7 @@ public class CbForm extends AbstractForm {
 	}
 
 	public void startView() throws ProcessingException {
-		 startInternalExclusive(new ViewHandler());
+		 startInternal(new ViewHandler());
 	}
 	
 	public void startModify() {
