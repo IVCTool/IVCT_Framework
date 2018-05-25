@@ -42,7 +42,7 @@ public class CbTablePage extends AbstractPageWithTable<Table> {
 
 	@Override
 	protected boolean getConfiguredLeaf() {
-		// hide children if any
+		// show children if any
 		return false;
 	}
 

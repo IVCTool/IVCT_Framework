@@ -22,6 +22,7 @@ public class CbNodePage extends AbstractPageWithNodes {
 
 	@Override
 	protected boolean getConfiguredLeaf() {
+		// do not show child notes
 		return true;
 	}
 
