@@ -8,7 +8,6 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTabl
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
@@ -22,7 +21,6 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [the] verify translation
 		return TEXTS.get("SuTBadgeTablePage");
 	}
 
