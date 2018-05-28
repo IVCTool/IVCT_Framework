@@ -15,4 +15,10 @@ dependencies {
 	runtime     libraries.slf4j_jcl_over_slf4j
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
+	
+	testCompile libraries.junit
+	testCompile libraries.hamcrest_core
+	
+	testRuntime libraries.junit
+	testRuntime libraries.hamcrest_core
 }
