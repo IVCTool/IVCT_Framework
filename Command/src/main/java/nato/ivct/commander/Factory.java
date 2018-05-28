@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -254,6 +253,11 @@ public class Factory {
 	public static CmdSendTcStatus createCmdSendTcStatus() {
 		initialize();
 		return new CmdSendTcStatus();
+	}
+
+	public static CmdSendTcVerdict createCmdSendTcVerdict(String sutName, String sutDir, String testScheduleName, String testcase, String verdict, String verdictText) {
+		initialize();
+		return new CmdSendTcVerdict(sutName, sutDir, testScheduleName, testcase, verdict, verdictText);
 	}
 
 	public static int getCmdCounter() {

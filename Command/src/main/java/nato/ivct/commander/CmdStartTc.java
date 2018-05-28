@@ -68,9 +68,13 @@ public class CmdStartTc implements Command {
 			startCmd.put("testCaseId", tc);
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
+			if (paramFileContentString != null) {
 			String tmpString = Factory.replaceMacro(paramFileContentString);
 			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 			startCmd.put("tcParam", jsonParam);
+			} else {
+				LOGGER.error("File not found: " + paramFileName);
+			}
 
 			// send the start message
 			Factory.sendToJms(startCmd.toString());

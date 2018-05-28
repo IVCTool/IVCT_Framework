@@ -135,8 +135,17 @@ public final class PropertyBasedClientSetup {
         try {
             this.user = this.properties.getProperty(PROPERTY_USER, "admin");
             this.password = this.properties.getProperty(PROPERTY_PASSWORD, "password");
-            this.host = this.properties.getProperty(PROPERTY_HOST, "localhost");
-            final String portString = this.properties.getProperty(PROPERTY_PORT, "61616");
+            this.host = System.getenv("ACTIVEMQ_HOST");
+            if (this.host == null) {
+                this.host = "localhost";
+                LOGGER.warn("Environment variable ACTIVEMQ_HOST not found: using default ", this.host);
+            }
+            String portString;
+            portString = System.getenv("ACTIVEMQ_PORT");
+            if (portString == null) {
+                portString = "61616";
+                LOGGER.warn("Environment variable ACTIVEMQ_PORT not found: using default ", portString);
+            }
             this.port = Integer.parseInt(portString);
             this.factory = new ActiveMQConnectionFactory("tcp://" + this.host + ":" + this.port);
             this.state = State.PROPERTIES_PARSED;
@@ -159,19 +168,36 @@ public final class PropertyBasedClientSetup {
      */
     public synchronized boolean initConnection() {
         this.checkAllowedState(State.PROPERTIES_PARSED, State.DISCONNECTED);
-        try {
-            this.connection = this.factory.createConnection(this.user, this.password);
-            this.connection.start();
-            this.state = State.CONNECTED;
+        boolean tryAgain = true;
+        int count = 1;
+        LOGGER.info("initConnection: connect to activemq please wait...");
+        for (;tryAgain;) {
+            try {
+                this.connection = this.factory.createConnection(this.user, this.password);
+                this.connection.start();
+                tryAgain = false;
+                this.state = State.CONNECTED;
+            }
+            catch (final JMSException ex) {
+                if (count > 10) {
+                    LOGGER.error("Problems during initializing connection.", ex);
+                    tryAgain = false;
+                    this.state = State.FAILURE;
+                    LOGGER.error("initConnection: failed to connect to activemq.");
+                    System.exit(-1);
+                }
+            }
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("State: {}", this.state.toString());
+            }
+            try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+                LOGGER.error("initConnection: sleep interrupted: ", e);
+			}
+			count++;
         }
-        catch (final JMSException ex) {
-            LOGGER.error("Problems during initializing connection.", ex);
-            this.state = State.FAILURE;
-            return true;
-        }
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("State: {}", this.state.toString());
-        }
+        LOGGER.info("initConnection: connect to activemq OK");
         return false;
     }
 

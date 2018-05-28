@@ -90,7 +90,11 @@ public class LogSink {
             String s;
             try {
                 s = stdin.readLine();
-                if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
+                if(s == null) {
+                	// ignore - probably running in a container so we don't have system in
+                	// LogSink will be killed when the container is killed.
+                }
+                else if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
                 	LOGGER.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
                     return;
                 }

@@ -19,10 +19,15 @@ limitations under the License.
  */
 package de.fraunhofer.iosb.ivct;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
@@ -34,14 +39,18 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 
 public final class RuntimeParameters {
+    private static Logger LOGGER = LoggerFactory.getLogger(RuntimeParameters.class);
 	private static boolean abortTestScheduleBool = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
 	private int counter = 0;
+	private int countSemaphore = 0;
 	private CmdListBadges cmdListBadges = null;
 	private CmdListSuT sutList = null;
 	private static List<String> suts = null;
+	private PrintStream printStream = new PrintStream(System.out);
+	private static Semaphore semaphore = new Semaphore(0);
 	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
@@ -50,7 +59,52 @@ public final class RuntimeParameters {
     public RuntimeParameters () {
     }
 
-	protected boolean checkSutKnown(final String sut) {
+    public void acquireSemaphore() {
+        try {
+            countSemaphore++;
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            LOGGER.error("acquireSemaphore: ", e);
+        }
+    }
+
+    public void releaseSemaphore() {
+        if (countSemaphore > 0) {
+            semaphore.release();
+            countSemaphore--;
+        }
+    }
+
+    /*
+     * Check if a test case or test schedule are running.
+     *
+     * @param theCaller name of the calling method
+     * @param out the calling method
+     *
+     * @return whether a critical task is running
+     */
+    protected boolean checkCtTcTsRunning(final String theCaller) {
+        if (theCaller == null) {
+            printStream.println("checkCtTcTsRunning: theCaller: null pointer found");
+            return true;
+        }
+        if (testCaseRunningBool) {
+            printStream.println(theCaller + ": Warning test case is running - command not allowed");
+            return true;
+        }
+        if (testScheduleRunningBool) {
+            printStream.println(theCaller + ": Warning test schedule is running - command not allowed");
+            return true;
+        }
+        return false;
+    }
+
+	protected boolean checkSutNotKnown(final String sut) {
+        if (sut == null) {
+            printStream.println("checkSutNotKnown: SUT: null pointer found");
+            return true;
+        }
 		for (String entry : suts) {
 			if (sut.equals(entry)) {
 				return false;
@@ -63,11 +117,11 @@ public final class RuntimeParameters {
 	/*
 	 * Some commands have no meaning without knowing the SUT involved.
 	 */
-	protected boolean checkSUTselected() {
-		if (sutName == null) {
-			return true;
-		}
-		return false;
+	protected boolean checkSutNotSelected() {
+	    if (sutName == null) {
+	        return true;
+	    }
+	    return false;
 	}
 	
 	protected String getFullTestcaseName(final String testsuite, final String testCase) {
@@ -203,7 +257,8 @@ public final class RuntimeParameters {
 		return tsRunFolder;
 	}
 	
-	protected static List<String> getSUTS() {
+	protected List<String> getSUTS() {
+		setSUTS();
 		return suts;
 	}
 

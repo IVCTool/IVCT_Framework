@@ -1,9 +1,8 @@
 dependencies {
 	compile     project(':Command')
-	compile     project(':MessagingHelpers')
 
 	compile     libraries.slf4j_api
-	compile     'com.googlecode.json-simple:json-simple:1.1.1'
+	compile     libraries.jsonSimple
 
 	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
@@ -15,7 +14,6 @@ dependencies {
 
     switch (rti) {
 		case "prti1516e":
-			logger.warn (':TC:pRTI is used. Make sure pRTI is installed on target machine to run any test case')
 			compile files (rti_lib + "/" + rti_jar)
 			runtime fileTree (dir: rti_lib, include: '*.jar')
 			break

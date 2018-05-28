@@ -1,8 +1,5 @@
 apply plugin: 'java'
 
-apply from: "../../.shared/libraries.gradle"
-apply from: "../../.shared/commons.gradle"
-
 project.group = 'msg134-ivct-framework'
 project.version = "${ivctVersion}"
 
@@ -12,9 +9,9 @@ dependencies {
 	compile     project(':Command')
 	compile     project(':GUI:nato.ivct.gui.shared')
 
-  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.jdbc', version:'7.0.100.017_Oxygen_1'
-  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server', version:'7.0.100.017_Oxygen_1'
-  compile group: 'org.apache.geronimo.specs', name: 'geronimo-jms_1.1_spec', version:'1.1.1'
-  compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
-	testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.test', version:'7.0.100.017_Oxygen_1'
+  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.jdbc', version:"${scoutVersion}"
+  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server', version:"${scoutVersion}"
+  compile group: 'org.apache.geronimo.specs', name: 'geronimo-jms_1.1_spec', version:"${geronimoJmsVersion}"
+  compile group: 'javax.servlet', name: 'javax.servlet-api', version:"${javaxServletVersion}"
+	testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.test', version:"${scoutVersion}"
 }

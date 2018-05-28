@@ -68,6 +68,7 @@ subprojects { subProject ->
 		
 		javadoc {
 			options.encoding = "UTF-8"
+			options.tags = [ "noinspection" ]
 		}
 
 

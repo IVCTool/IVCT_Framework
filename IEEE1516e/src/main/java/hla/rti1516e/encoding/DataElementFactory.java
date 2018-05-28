@@ -11,7 +11,7 @@ package hla.rti1516e.encoding;
 
 /**
  * Interface used to populate arrays.
- * <p/>
+ * 
  * This example decodes a variable array of HLAinteger32BE using
  * a factory.
  * <pre>

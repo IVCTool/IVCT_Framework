@@ -8,5 +8,6 @@ LICENSE
 ------------
 
 Copyright 2015 NATO MSG-134.
+Copyright 2018 NATO MSG-163.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

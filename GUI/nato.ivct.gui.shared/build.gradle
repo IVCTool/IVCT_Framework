@@ -18,8 +18,8 @@ sourceSets {
 sourceSets.main.java.srcDirs += 'src/generated/java'
 
 dependencies {
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared', version:'7.0.100.017_Oxygen_1'
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version:'1.7.12'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.3'
-    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared.test', version:'7.0.100.017_Oxygen_1'
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared', version:"${scoutVersion}"
+    compile libraries.slf4j_jul_to_slf4j
+    compile libraries.logback_classic
+    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared.test', version:"${scoutVersion}"
 }

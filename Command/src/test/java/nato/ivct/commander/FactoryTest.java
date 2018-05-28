@@ -14,7 +14,6 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -24,34 +23,72 @@ import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 
-
 public class FactoryTest {
 	@Test
 	public void testCreateCmdListBadgesMethod() {
-		assertTrue("Factory Test createCmdListBadges should return CmdListBadges",
-				Factory.createCmdListBadges() != null);
+		CmdListBadges lb = Factory.createCmdListBadges();
+		assertTrue("Factory Test createCmdListBadges should return CmdListBadges", lb != null);
+		lb.execute();
+		assertTrue("Some Badges should be found", lb.badgeMap.size() > 0);
 	}
 
 	@Test
 	public void testCreateCmdListSutMethod() {
-		assertTrue("Factory Test createCmdListSut should return CmdListSut", Factory.createCmdListSut() != null);
+		CmdListSuT cl = Factory.createCmdListSut();
+		assertTrue("Factory Test createCmdListSut should return CmdListSut", cl != null);
+		cl.execute();
+		assertTrue("Some SuT's should be found", cl.sutMap.size() > 0);
 	}
 
 	@Test
 	public void testCreateCmdQuitMethod() {
-		assertTrue("Factory Test createCmdQuit should return CmdQuit", Factory.createCmdQuit() != null);
+		CmdQuit qc = Factory.createCmdQuit();
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", qc != null);
+		qc.execute();
+	}
+
+	@Test
+	public void testCmdSendTcStatus() {
+		CmdSendTcStatus cmd = Factory.createCmdSendTcStatus();
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", cmd != null);
+		cmd.execute();
+	}
+
+	@Test
+	public void testCmdSendTcVerdict() {
+		CmdSendTcVerdict cmd = Factory.createCmdSendTcVerdict("sut", "sutDir", "testScheduleName", "testcase", "verdict", "verdictText");
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", cmd != null);
+		cmd.execute();
 	}
 
 	@Test
 	public void testCreateCmdSetLogLevelMethod() {
-		assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel",
-				Factory.createCmdSetLogLevel(LogLevel.DEBUG) != null);
+		CmdSetLogLevel sll = Factory.createCmdSetLogLevel(LogLevel.DEBUG);
+		assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel", sll != null);
+		sll.setLogLevel(LogLevel.TRACE);
+		sll.execute();
+		sll.setLogLevel(LogLevel.DEBUG);
+		sll.execute();
+		sll.setLogLevel(LogLevel.INFO);
+		sll.execute();
+		sll.setLogLevel(LogLevel.WARNING);
+		sll.execute();
+		sll.setLogLevel(LogLevel.ERROR);
+		sll.execute();
 	}
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		assertTrue("Factory Test createCmdStartTc should return CmdStartTc",
-				Factory.createCmdStartTc("hw_iosb", "TS_HelloWorld", "some.test.case", "c:/tmp") != null);
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-1.0.0", "some.test.case", "c:/tmp");
+		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
+		stc.execute();
+		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
+		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-1.0.0"));
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "c:/tmp");
+		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
+		stc.execute();
+		assertTrue("Get SuT name", stc.getSut() != null);
+		assertTrue("Get Badge name", stc.getBadge() != null);
 	}
 
 	@Test
@@ -60,12 +97,12 @@ public class FactoryTest {
 
 			@Override
 			public void onResult(TcResult result) {
-				assertTrue (result.sutName != null);
-				assertTrue (result.sutDir != null);
-				assertTrue (result.testScheduleName != null);
-				assertTrue (result.testcase != null);
-				assertTrue (result.verdict != null);
-				assertTrue (result.verdictText != null);	
+				assertTrue(result.sutName != null);
+				assertTrue(result.sutDir != null);
+				assertTrue(result.testScheduleName != null);
+				assertTrue(result.testcase != null);
+				assertTrue(result.verdict != null);
+				assertTrue(result.verdictText != null);
 			}
 
 		}

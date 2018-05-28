@@ -1,12 +1,9 @@
 apply plugin: 'java'
 
-apply from: "../../.shared/libraries.gradle"
-apply from: "../../.shared/commons.gradle"
-
 description = """IVCT HTML UI Server Development"""
 
 dependencies {
   compile     project(':GUI:nato.ivct.gui.ui.html')
 
-  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.dev.jetty', version:'7.0.100.017_Oxygen_1'
+  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.dev.jetty', version:"${scoutVersion}"
 }
