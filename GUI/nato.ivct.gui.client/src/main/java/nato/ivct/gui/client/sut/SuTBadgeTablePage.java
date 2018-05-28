@@ -1,7 +1,6 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.Data;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -13,7 +12,6 @@ import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
-import nato.ivct.gui.client.sut.SuTForm.MainBox;
 import nato.ivct.gui.shared.sut.ISuTBadgeService;
 import nato.ivct.gui.shared.sut.SuTBadgeTablePageData;
 
@@ -121,23 +119,23 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 		}
 	}
 
-	@Override
-	protected void execPageActivated() throws ProcessingException {
-	  if (getDetailForm() == null) {
-	    SuTForm form = new SuTForm("");
-	    form.setSutId(getSutId());
-	    setDetailForm(form);
-	    form.startView();
-	  }
-	}
-	
-	@Override
-	protected void execPageDeactivated() throws ProcessingException {
-	  if (getDetailForm() != null) {
-	    getDetailForm().doClose();
-	    setDetailForm(null);
-	  }
-	}
+//	@Override
+//	protected void execPageActivated() throws ProcessingException {
+//	  if (getDetailForm() == null) {
+//	    SuTForm form = new SuTForm("");
+//	    form.setSutId(getSutId());
+//	    setDetailForm(form);
+//	    form.startView();
+//	  }
+//	}
+//	
+//	@Override
+//	protected void execPageDeactivated() throws ProcessingException {
+//	  if (getDetailForm() != null) {
+//	    getDetailForm().doClose();
+//	    setDetailForm(null);
+//	  }
+//	}
 
 	public void setSutId(String _sutId) {
 		sutId = _sutId;

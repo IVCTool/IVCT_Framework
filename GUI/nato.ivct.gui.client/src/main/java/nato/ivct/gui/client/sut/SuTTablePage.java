@@ -12,7 +12,6 @@ import org.eclipse.scout.rt.client.ui.form.FormEvent;
 import org.eclipse.scout.rt.client.ui.form.FormListener;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
@@ -35,8 +34,8 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
-		SuTBadgeTablePage childPage = new SuTBadgeTablePage();
-//		SuTNodePage childPage = new SuTNodePage();
+//		SuTBadgeTablePage childPage = new SuTBadgeTablePage();
+		SuTDetailsNodePage childPage = new SuTDetailsNodePage();
 		childPage.setSutId(getTable().getSuTIdColumn().getValue(row));
 		return childPage;
 	}

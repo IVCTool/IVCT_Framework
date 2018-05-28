@@ -7,14 +7,14 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 
-public class SuTNodePage extends AbstractPageWithNodes {
+public class SuTDetailsNodePage extends AbstractPageWithNodes {
 
 	private String sutId = null;
 
 	@Override
 	protected String getConfiguredTitle() {
 		// TODO [the] verify translation
-		return TEXTS.get("SuTBadgeTablePage");
+		return TEXTS.get("SuTDetailsNodePage");
 	}
 
 	@Override
@@ -23,11 +23,12 @@ public class SuTNodePage extends AbstractPageWithNodes {
 		return false;
 	}
 
-//	@Override
-//	protected void execCreateChildPages(List<IPage<?>> pageList) {
-//		SuTBadgeTablePage sutBadgeTablePage = new SuTBadgeTablePage();
-//		pageList.add(sutBadgeTablePage);
-//	}
+	@Override
+	protected void execCreateChildPages(List<IPage<?>> pageList) {
+		SuTBadgeTablePage sutBadgeTablePage = new SuTBadgeTablePage();
+		sutBadgeTablePage.setSutId(getSutId());
+		pageList.add(sutBadgeTablePage);
+	}
 	
 	@Override
 	protected void execPageActivated() throws ProcessingException {
