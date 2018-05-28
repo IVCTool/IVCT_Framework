@@ -1,19 +1,19 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.Data;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
-import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
-import nato.ivct.gui.client.sut.SuTBadgeTablePage.Table;
+import nato.ivct.gui.client.sut.SuTForm.MainBox;
 import nato.ivct.gui.shared.sut.ISuTBadgeService;
 import nato.ivct.gui.shared.sut.SuTBadgeTablePageData;
 
@@ -51,6 +51,7 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 	}
 	
 	public class Table extends AbstractTable {
+
 		public BadgeNameColumn getBadgeNameColumn() {
 			return getColumnSet().getColumnByClass(BadgeNameColumn.class);
 		}
@@ -118,6 +119,24 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 				return 100;
 			}
 		}
+	}
+
+	@Override
+	protected void execPageActivated() throws ProcessingException {
+	  if (getDetailForm() == null) {
+	    SuTForm form = new SuTForm("");
+	    form.setSutId(getSutId());
+	    setDetailForm(form);
+	    form.startView();
+	  }
+	}
+	
+	@Override
+	protected void execPageDeactivated() throws ProcessingException {
+	  if (getDetailForm() != null) {
+	    getDetailForm().doClose();
+	    setDetailForm(null);
+	  }
 	}
 
 	public void setSutId(String _sutId) {

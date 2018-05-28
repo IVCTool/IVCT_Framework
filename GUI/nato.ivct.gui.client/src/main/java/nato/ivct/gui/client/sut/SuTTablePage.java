@@ -1,6 +1,7 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.Data;
+import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -11,9 +12,11 @@ import org.eclipse.scout.rt.client.ui.form.FormEvent;
 import org.eclipse.scout.rt.client.ui.form.FormListener;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
+import nato.ivct.gui.client.sut.SuTForm.MainBox;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
 
@@ -33,19 +36,51 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		SuTBadgeTablePage childPage = new SuTBadgeTablePage();
-		childPage.setSutId(getTable().getSuTidColumn().getValue(row));
+//		SuTNodePage childPage = new SuTNodePage();
+		childPage.setSutId(getTable().getSuTIdColumn().getValue(row));
 		return childPage;
 	}
 
 	@Override
 	protected boolean getConfiguredLeaf() {
+		// show child pages
 		return false;
 	}
 
 	public class Table extends AbstractTable {
-		
+
 		@Order(1000)
+		public class ViewMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("Open");
+			}
+
+			@Override
+			protected void execAction() {
+				SuTForm form = new SuTForm(getSuTIdColumn().getSelectedValue());
+				form.setSutId(getSuTIdColumn().getSelectedValue());
+				form.startView();
+				form.getFieldByClass(MainBox.CloseButton.class).setVisible(true);
+			}
+
+			@Override
+			protected String getConfiguredKeyStroke() {
+				// open form in view mode
+				// TODO: use a different keystroke later
+				return IKeyStroke.ENTER;
+//				return combineKeyStrokes(IKeyStroke.ALT,IKeyStroke.ENTER);
+			}
+		}
+		
+		@Order(2000)
 		public class EditMenu extends AbstractMenu {
+			@Override
+			public boolean isVisible() {
+				// do not show this menu yet
+				return false;
+			}	
+			
 			@Override
 			protected String getConfiguredText() {
 				return TEXTS.get("Edit");
@@ -53,15 +88,21 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 
 			@Override
 			protected void execAction() {
-				SuTForm form = new SuTForm(getSuTidColumn().getSelectedValue());
-				form.setSutId(getSuTidColumn().getSelectedValue());
+				SuTForm form = new SuTForm(getSuTIdColumn().getSelectedValue());
+				form.setSutId(getSuTIdColumn().getSelectedValue());
 				form.addFormListener(new SuTFormListener());
 				form.startModify();
 			}
 		}
 
-		@Order(2000)
+		@Order(3000)
 		public class NewMenu extends AbstractMenu {
+			@Override
+			public boolean isVisible() {
+				// do not show this menu yet
+				return false;
+			}	
+			
 			@Override
 			protected String getConfiguredText() {
 				return TEXTS.get("New");
@@ -69,9 +110,14 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 
 			@Override
 			protected void execAction() {
-				SuTForm form = new SuTForm(getSuTidColumn().getSelectedValue());
+				SuTForm form = new SuTForm(getSuTIdColumn().getSelectedValue());
 				form.addFormListener(new SuTFormListener());
 				form.startNew();
+			}
+			
+			@Override
+			protected String getConfiguredKeyStroke() {
+				return combineKeyStrokes(IKeyStroke.CONTROL,"N");
 			}
 		}
 
@@ -95,7 +141,7 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 			return getColumnSet().getColumnByClass(SuTDescriptionColumn.class);
 		}
 
-		public SuTidColumn getSuTidColumn() {
+		public SuTidColumn getSuTIdColumn() {
 			return getColumnSet().getColumnByClass(SuTidColumn.class);
 		}
 
@@ -147,6 +193,5 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 				return 200;
 			}
 		}
-
 	}
 }

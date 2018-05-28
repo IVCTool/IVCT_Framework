@@ -3,12 +3,13 @@ package nato.ivct.gui.client.sut;
 import java.util.List;
 
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
@@ -18,27 +19,40 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 
-import nato.ivct.gui.client.sut.SuTForm.MainBox.CloseButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.CapabilitiesBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.TestResultsField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.CapabilitiesField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.DescrField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.NameField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.SutVendorField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.CancelButton;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.DetailsBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.DetailsBox.CapabilitiesBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.DetailsBox.TestResultsField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.ExecutionBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.ExecutionBox.EventsField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.ExecutionBox.ExecuteButton;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.ExecutionBox.TerminateButton;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.CapabilitiesField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.DescrField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.NameField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.SutVendorField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.OkButton;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
+
+
+/*
+ * 
+ **** Copy of SuTForm class file
+ *
+ */
+
 @FormData(value = SuTFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
-public class SuTForm extends AbstractForm {
+public class SuTTcExecutionForm extends AbstractForm {
 
 	private String sutId = null;
 	private String title = null;
 
-	public SuTForm(String formTitle) {
+	public SuTTcExecutionForm(String formTitle) {
 		title = formTitle;
 	}
 
@@ -50,10 +64,6 @@ public class SuTForm extends AbstractForm {
 			return TEXTS.get("SuT");
 	}
 
-	public void startView() {
-		startInternal/*Exclusive*/(new ViewHandler());
-	}
-
 	public void startModify() {
 		startInternalExclusive(new ModifyHandler());
 	}
@@ -62,17 +72,9 @@ public class SuTForm extends AbstractForm {
 		startInternal(new NewHandler());
 	}
 
-	public CloseButton getCloseButton() {
-		return getFieldByClass(CloseButton.class);
+	public CancelButton getCancelButton() {
+		return getFieldByClass(CancelButton.class);
 	}
-
-//	public CancelButton getCancelButton() {
-//		return getFieldByClass(CancelButton.class);
-//	}
-//
-//	public OkButton getOkButton() {
-//		return getFieldByClass(OkButton.class);
-//	}
 
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
@@ -102,12 +104,32 @@ public class SuTForm extends AbstractForm {
 		return getFieldByClass(DetailsBox.class);
 	}
 
+	public ExecutionBox getExecutionBox() {
+		return getFieldByClass(ExecutionBox.class);
+	}
+
+	public ExecuteButton getExecuteButton() {
+		return getFieldByClass(ExecuteButton.class);
+	}
+
+	public TerminateButton getTerminateButton() {
+		return getFieldByClass(TerminateButton.class);
+	}
+
+	public EventsField getEventsField() {
+		return getFieldByClass(EventsField.class);
+	}
+
 	public CapabilitiesField getCapabilitiesField() {
 		return getFieldByClass(CapabilitiesField.class);
 	}
 
 	public NameField getNameField() {
 		return getFieldByClass(NameField.class);
+	}
+
+	public OkButton getOkButton() {
+		return getFieldByClass(OkButton.class);
 	}
 
 	@FormData
@@ -133,7 +155,7 @@ public class SuTForm extends AbstractForm {
 
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
-		
+
 		@Order(1000)
 		public class GeneralBox extends AbstractGroupBox {
 			@Override
@@ -245,47 +267,65 @@ public class SuTForm extends AbstractForm {
 			}
 		}
 
-		@Order(100000)
-		public class CloseButton extends AbstractButton {
-			
-			public CloseButton() {
-				super();
-				// set button invisible by default
-				setVisible(false);
-			}
-			
-			@Override
-			protected int getConfiguredSystemType() {
-			    return SYSTEM_TYPE_CLOSE;
-			}
-			
+		@Order(3000)
+		public class ExecutionBox extends AbstractGroupBox {
 			@Override
 			protected String getConfiguredLabel() {
-			    return TEXTS.get("CloseButton");
+				return TEXTS.get("Execution");
 			}
-			
-			@Override
-			protected String getConfiguredKeyStroke() {
-			    return IKeyStroke.ESCAPE;
+
+			@Order(1000)
+			public class ExecuteButton extends AbstractButton {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Execute");
+				}
+
+				@Override
+				protected void execClickAction() {
+				}
 			}
-			  
-			@Override
-			public boolean isVisible() {
-				// TODO Auto-generated method stub
-				return super.isVisible();
+
+			@Order(2000)
+			public class TerminateButton extends AbstractButton {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Terminate");
+				}
+
+				@Override
+				protected void execClickAction() {
+				}
+			}
+
+			@Order(3000)
+			public class EventsField extends AbstractTreeField {
+				public class Tree extends AbstractTree {
+				}
+
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Logging");
+				}
+
+				@Override
+				protected int getConfiguredGridH() {
+					return 6;
+				}
 			}
 		}
 
-//		@Order(101000)
-//		public class CancelButton extends AbstractCancelButton {
-//		}
-//
-//		@Order(100000)
-//		public class OkButton extends AbstractOkButton {
-//		}
+		@Order(100000)
+		public class OkButton extends AbstractOkButton {
+		}
+
+		@Order(101000)
+		public class CancelButton extends AbstractCancelButton {
+		}
 	}
 
-	protected abstract class AbstractSuTFormHandler extends AbstractFormHandler {
+	public class ModifyHandler extends AbstractFormHandler {
+
 		@Override
 		protected void execLoad() {
 			ISuTService service = BEANS.get(ISuTService.class);
@@ -296,24 +336,6 @@ public class SuTForm extends AbstractForm {
 			getForm().setSubTitle(formData.getName().getValue());
 
 			setEnabledPermission(new UpdateSuTPermission());
-		}
-	}
-
-	
-	public class ViewHandler extends AbstractSuTFormHandler {
-		
-		@Override
-		protected void execLoad() {
-			super.execLoad();
-//			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
-		}
-	}
-	
-	public class ModifyHandler extends AbstractSuTFormHandler {
-
-		@Override
-		protected void execLoad() {
-			super.execLoad();
 		}
 
 		@Override

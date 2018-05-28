@@ -31,17 +31,12 @@ public class SuTFormData extends AbstractFormData {
 		return getFieldByClass(Descr.class);
 	}
 
-	public Events getEvents() {
-		return getFieldByClass(Events.class);
-	}
-
 	public Name getName() {
 		return getFieldByClass(Name.class);
 	}
 
 	/**
 	 * access method for property SutId.
-	 * @return SutId System under Test Identification
 	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
@@ -49,7 +44,6 @@ public class SuTFormData extends AbstractFormData {
 
 	/**
 	 * access method for property SutId.
-	 * @param sutId	System under Test Identification
 	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
@@ -78,11 +72,6 @@ public class SuTFormData extends AbstractFormData {
 	}
 
 	public static class Descr extends AbstractValueFieldData<String> {
-
-		private static final long serialVersionUID = 1L;
-	}
-
-	public static class Events extends AbstractTreeFieldData {
 
 		private static final long serialVersionUID = 1L;
 	}

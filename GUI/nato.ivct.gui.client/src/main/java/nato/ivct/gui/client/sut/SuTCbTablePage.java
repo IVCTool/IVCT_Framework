@@ -58,7 +58,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 
 	@Override
 	protected boolean getConfiguredLeaf() {
-		// TODO Auto-generated method stub
+		// show child notes
 		return false;
 	}
 
