@@ -181,7 +181,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 		return sutId;
 	}
 
-	public void setSutId(String sutId) {
-		this.sutId = sutId;
+	public void setSutId(String _sutId) {
+		this.sutId = _sutId;
 	}
 }
