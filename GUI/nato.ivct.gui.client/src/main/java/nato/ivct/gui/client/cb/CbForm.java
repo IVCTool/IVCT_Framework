@@ -331,13 +331,10 @@ public class CbForm extends AbstractForm {
 						}
 						
 						public class CbRequirementsTable extends AbstractTable {
+
 							@Order(1000)
 							public class RequirementIdColumn extends AbstractStringColumn {
-								// set this column to sorted ascending
-								public RequirementIdColumn() {
-									setInitialSortAscending(true);
-								}
-								
+
 								@Override
 								protected String getConfiguredHeaderText() {
 									return TEXTS.get("RequirementId");
@@ -421,6 +418,12 @@ public class CbForm extends AbstractForm {
 							
 							// add requirements to table
 							requirementsTable.importFromTableBeanData(requirementTableRows);
+							// sort the table
+							boolean tableSortEnable = requirementsTable.isSortEnabled();
+							requirementsTable.setSortEnabled(true);
+							requirementsTable.getColumnSet().addSortColumn(requirementsTable.getRequirementIdColumn(), true);
+							requirementsTable.sort();
+							requirementsTable.setSortEnabled(tableSortEnable);
 							
 							super.execChangedMasterValue(newMasterValue);
 						}
