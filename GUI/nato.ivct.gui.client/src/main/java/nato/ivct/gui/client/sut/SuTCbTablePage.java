@@ -42,7 +42,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	@Override
 	protected void execLoadData(SearchFilter filter) {
 		String[] searchText = new String[1];
-		searchText[0] = badgeId;
+		searchText[0] = getBadgeId();
 		filter.setDisplayTexts(searchText);
 		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
 	}
@@ -93,7 +93,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 							tr.setCellValue(3, "starting");
 							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String tcName = tr.getCell(2).toString();
-							cbService.executeTestCase(sutId, tcName, badgeId);
+							cbService.executeTestCase(getSutId(), tcName, getBadgeId());
 						}
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));

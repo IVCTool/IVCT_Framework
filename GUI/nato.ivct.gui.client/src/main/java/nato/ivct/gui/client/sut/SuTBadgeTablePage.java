@@ -33,7 +33,7 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 	@Override
 	protected void execLoadData(SearchFilter filter) {
 		String[] searchText = new String[1];
-		searchText[0] = sutId;
+		searchText[0] = getSutId();
 		filter.setDisplayTexts(searchText);
 		importPageData(BEANS.get(ISuTBadgeService.class).getSuTBadgeTableData(filter));
 	}

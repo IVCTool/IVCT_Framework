@@ -40,6 +40,7 @@ public class SuTBadgeDetailsNodePage extends AbstractPageWithNodes {
 	    form.setCbId(getBadgeId());
 	    setDetailForm(form);
 	    form.startView();
+	    form.getCbDependenciesTreeField().checkAllKeys();
 	  }
 	}
 	
