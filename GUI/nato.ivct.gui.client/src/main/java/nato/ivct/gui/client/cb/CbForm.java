@@ -321,6 +321,12 @@ public class CbForm extends AbstractForm {
 				        protected boolean getConfiguredAutoExpandAll() {
 				        	return false;
 				        }
+				        
+				        // check all child notes if their parent is checked
+				        @Override
+				        protected boolean getConfiguredAutoCheckChildNodes() {
+				        	return true;
+				        }
 					}
 
 					@Order(2000)
