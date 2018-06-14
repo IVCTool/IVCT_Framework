@@ -1,8 +1,13 @@
 language: java
-
-jdk:
-  - oraclejdk8
+sudo: true
+jdk: oraclejdk8
 
 install: true
-  
-script: gradle install
+
+jobs:
+  include:
+    - stage: build distributions
+      script: gradle install
+    - stage: build LogSink Docker image
+      before_script: cd LogSink
+      script: docker build --build-arg version=1.0.1 -t msg134/logsink:latest .
