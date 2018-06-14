@@ -8,17 +8,10 @@ install: true
 env:
   - CI=true
 
-jobs:
-  include:
-    - stage: build distributions
-      script:
-        - pwd      
-        - gradle install
-    - stage: build LogSink Docker image
-      before_script: cd LogSink
-      script: 
-        - pwd
-        - docker build --build-arg version=1.0.1 -t msg134/logsink:latest .
+script:
+  - gradle install
+  - cd LogSink
+  - docker build --build-arg version=1.0.1 -t msg134/logsink:latest .
       
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
