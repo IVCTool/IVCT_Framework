@@ -1,16 +1,8 @@
-sudo: required
-
 language: java
-
-services: docker
 
 jdk:
   - oraclejdk8
 
-install:
-  - gradle install
+install: true
   
-before_script:
-  - docker pull rmohr/activemq:5.14.5-alpine
-  - docker run -d -p 127.0.0.1:61616:61616 rmohr/activemq:5.14.5-alpine
-  - docker ps -a
+script: gradle install
