@@ -26,8 +26,8 @@ ext {
 		
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		rti = "prti1516e"
-		//rti = "IEEE1516e"
+		//rti = "prti1516e"
+		rti = "IEEE1516e"
 		//rti = "mak"
 
 		switch (rti) {
