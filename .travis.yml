@@ -1,8 +1,12 @@
 language: java
+jdk: 
+  - oraclejdk8
 sudo: true
-jdk: oraclejdk8
 
 install: true
+
+env:
+  - CI=true
 
 jobs:
   include:
@@ -11,3 +15,12 @@ jobs:
     - stage: build LogSink Docker image
       before_script: cd LogSink
       script: docker build --build-arg version=1.0.1 -t msg134/logsink:latest .
+      
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
