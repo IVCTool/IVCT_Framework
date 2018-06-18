@@ -18,3 +18,17 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 }
+
+distributions {
+    main {
+        contents {
+            from('src/conf/logback.xml') {
+                into 'lib'
+            }
+        }
+    }
+}
+
+tasks.withType(CreateStartScripts) {
+    classpath += files('lib/logback.xml')
+}
