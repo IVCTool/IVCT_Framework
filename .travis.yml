@@ -14,15 +14,18 @@ env:
 jobs:
   include:
   - stage: installation
+    install: true
     script:
     - gradle install
   - stage: docker-logsink
+    install: true
     before_script: cd LogSink
     script:
     - docker build --build-arg version=$VERSION -t msg134/logsink:latest -t msg134/logsink:$VERSION .
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker push msg134/logsink
   - stage: docker-tc-runner
+    install: true
     before_script: cd TC.exec
     script:
     - echo "$TNO_DOCKER_PASSWORD" | docker login -u "$TNO_DOCKER_USERNAME" --password-stdin
