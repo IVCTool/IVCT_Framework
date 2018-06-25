@@ -11,27 +11,18 @@ env:
   - secure: CtSpQK4gQXiEk8w/SNIvf9gpROqa6w7vj3Q6dK4f90aJOMm4mNUgH8xqvBT9RsVqJYDLpBz+BFLzNiMYJEEbFkMKOISY4TJkgZ73NoIbl1iawFiophgfLtgp3PN7KNQ2GbC9doB8Lkzdb4LYdEx15Cu6enZuOp7oPYQhEFG+nBl5+D7tf6AsBwdays33oPA+ifxZCWBYNSr3Bd5D6GvLueQcf80u+HEwizwA78BKsKLuTz30/7UB8YWYizPuvlOrGakDPcdVH8bFsgLjGliVwK6pNew5I39s2EcDBdXf2L2iy8+I9BjTky+sUovJj8CwKkj0wlLY0KMpJ//16yW3aShfs+SXDSQlxiH9y3vAZkelO1ueuXHO6esaow1lBZRYQqeWB0Ei1sVxns8xDMFsPzYoVsYeWLZzE06Cd5KxdCVFLPW2VJRyqO48XcUe4MBWpCr+9Avo3HEZX0W66wpKhQXx90D+CgM8L1+umbPZm9j8ryJ101Q7xjFlAuTEEPaT++QtR6NUbzO+Th4OJpzQJhnbFmzqrRxtLpCFFSSFCtkqq+wXl3QU3cOBQZn6jfij6nvKGedFY5zgGrCRncjdb9HvE8YoYlao5d7TVa+44mCXQTWIkTjFT6/Rb9hfvgRZEjZHIPRy52LYVWCObi9orgqqIZ2vOprTE6y9bwoITYY=
   - secure: HgOUcDxME+OhJk/uQbtP+cKssihLPYPA0KpqX8h+fKH+CmdBRE9yT3IF37WBp9bhBDGVAEk0ZtHEMPchsGLhZ89lC1wWgzkdEy1aRKTV3/VdmTJlzpzRHG0saWyxxXEndfx2GOtiaapE+EPeCJC2xqTqEh1uaBNXqt0O/OD7K9QPfZTWH7XmkAiJp//drMKdonEK0DpiaNH1XAREAwZ180ugTeTsekkU2Yl24BrOwzGxZPXPstmne7t2dRfF1H0bdJtKLopRCXZ63W0nX+nkt2ayP72x+9g+cZx2gjEnHCc9aWQ4H7F5fG9v1soiNVpEd5+q0sgIuab5FtKbvpl4KO3k60GY8ZUMhXYcYv2H86ABbi/Cc3GDYfov0bmY5zfkr9Z2mmc3jdGPD9kLt5qpxibNiBUQmRPLA53PF5gAu2Ef6J2T+8gMF+8aaVMk/wTKXmRSD7qGC/D2M8QpHIVuwykhZx6SRgbrD/xtrF+kKi1xdxO5uknMVSiRztz8zaVG2/hB7Kn0l1zzWUguL5Jdht8E1VTXa8tuMW/k/HEb6sUEX6EUo4M6etwlkpmsEsUiBSKeXAEbmziqYdOi2rKMctdpZBrZQohKGHh74HtBiTC1eyValiIpvLpDvAldMS4lmtxxU2w931iUulpy0rlAywTsyQLEwAxxDI7Gf126dJM=
 
-jobs:
-  include:
-  - stage: installation
-    install: true
-    script:
-    - gradle install
-  - stage: docker-logsink
-    install: true
-    before_script: cd LogSink
-    script:
-    - docker build --build-arg version=$VERSION -t msg134/logsink:latest -t msg134/logsink:$VERSION .
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker push msg134/logsink
-  - stage: docker-tc-runner
-    install: true
-    before_script: cd TC.exec
-    script:
-    - echo "$TNO_DOCKER_PASSWORD" | docker login -u "$TNO_DOCKER_USERNAME" --password-stdin
-    - docker build --build-arg version=$VERSION -t msg134/tc-runner:latest -t msg134/tc-runner:$VERSION .
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker push msg134/tc-runner
+install: gradle install
+
+script: 
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$TNO_DOCKER_PASSWORD" | docker login -u "$TNO_DOCKER_USERNAME" --password-stdin
+  - cd LogSink
+  - docker build --build-arg version=$VERSION -t msg134/logsink:latest -t msg134/logsink:$VERSION .
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push msg134/logsink
+  - cd ../TC.exec
+  - docker build --build-arg version=$VERSION -t msg134/tc-runner:latest -t msg134/tc-runner:$VERSION .
+  - docker push msg134/tc-runner
 
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
