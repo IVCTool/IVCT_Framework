@@ -1,23 +1,40 @@
 language: java
-jdk: 
-  - oraclejdk8
-sudo: true
-
-install: true
+jdk:
+- oraclejdk8
 
 env:
-  - CI=true
+  matrix:
+  - VERSION=1.0.1
+  global:
+  - secure: i/CbDnYSsimc775bdwtGdIRgd1jy+3jqJMZs86j4uKnxA1VtraNyNvtZTxf/9y9WEwSMa9V4rwRc7XiytntLyChsReQQb1LrTLhyxDbRoJrOqrcdKtRnHH+6RmkrfATY4KlEPeGPugTcN91NYRarsX/vEJH8VBYAUZo3hJ6LvIHiCU/kh3UXgeU23mT4nXhzIGOlpDLZgz+INcq8f3FhCoeB0CIwGWw0Lf6D3pq4uiPxvX8+nhbrbqoWj9rDJcV4r+Ivl2XVcpjuzLult7rZZ5C3hYky4N+rP0Gqa4b2Drz8L2QlF7/rvjrjelF8ixEkwjaJPRAJCgg1o0esB16qyn2D0yw3Jmny/CeoR/Tj/3y+HYO5CODAr4+OwVsdny/3TAtCmWVgvoEGjJE+dmTbZg/1Jk+7ztpfMB4IxyhCsi44Q0zuVgNX8VUtA+kQb/cwxt6Qs7o+is8GV0Za/C7oaKHu+OQjs5J3QSQqZHarzAei3IRnlehtUGg9hQ7zQPpDFUZwoQ0vHB81QPGLKcsxqaCRvu+9FyesQyWoCRG7eiqxPJOuqiGLW8ZCmteKGTiQ13ECH8/si6uoguimzyOceRCNxnrFCiphi1Anc1gQoL5+otEW4p/reEWBZ2cECu7+qz3pOm0Urtu11EAN1+D8JvapnS0RtVe73QcloPvKWQ8=
+  - secure: ZP9slmzBETlHVZU2YSZO793PymtIA3G5T9xMK8VbKvEkyveYfnp/5Tzyjte1I8w9N+YT9Az4hDAOgzhoz+qKTu07YLGaTrqOPidE7WtQI0SMGIaal+KQxXGRn9Ds5sh75FI98HU/qsED01zhXO1y5DJlQr78FWrUBBjZzupA3wJvSYf0CWOdMKrRJ6E3/e3xmaY5jdUZgx7mHAvGycaeKzoiOXNo7CcIyIuqY7VF2TIsyS+40W8V9O6lFJWQOYGJCNM0NteQMaPcX3eddyUhp/HERPoRmGECJfC4ydxwHVMQHbZ53OrUtqp6+ZCTrnX4H8oIThNxV79pzeHnWTVblo9saEq5eoBHLOj5gQepR1eQUry7JzCp4/H/0WN28j6qH1e7+TqueL1FJnx5pcILJmpjpvBFPRIdp6ZLMJ/BS+c9dA1OM1bmNnEkyoCNecZNGkscolLFOVa5V/qIW0MI7eY100NarrL+j17FrwfRp9j+fYXcdcDOneM8VcX9RFsCzjVgcrfudOL8hDBzyBCu7zFQ71JUlM7a0k8vICAJ2yvZZE+wmdXdblHvJDsFHp8QhWNvpPdTLmh8MR250d4EYED1U9oyOCWMkJ+jKBgZgmrrDIbYvuH6V2jXMNOZbAWy0C1sH76Pb6/+76ve+luosnBNB8eTG/IADypTKlj9Gk8=
+  - secure: CtSpQK4gQXiEk8w/SNIvf9gpROqa6w7vj3Q6dK4f90aJOMm4mNUgH8xqvBT9RsVqJYDLpBz+BFLzNiMYJEEbFkMKOISY4TJkgZ73NoIbl1iawFiophgfLtgp3PN7KNQ2GbC9doB8Lkzdb4LYdEx15Cu6enZuOp7oPYQhEFG+nBl5+D7tf6AsBwdays33oPA+ifxZCWBYNSr3Bd5D6GvLueQcf80u+HEwizwA78BKsKLuTz30/7UB8YWYizPuvlOrGakDPcdVH8bFsgLjGliVwK6pNew5I39s2EcDBdXf2L2iy8+I9BjTky+sUovJj8CwKkj0wlLY0KMpJ//16yW3aShfs+SXDSQlxiH9y3vAZkelO1ueuXHO6esaow1lBZRYQqeWB0Ei1sVxns8xDMFsPzYoVsYeWLZzE06Cd5KxdCVFLPW2VJRyqO48XcUe4MBWpCr+9Avo3HEZX0W66wpKhQXx90D+CgM8L1+umbPZm9j8ryJ101Q7xjFlAuTEEPaT++QtR6NUbzO+Th4OJpzQJhnbFmzqrRxtLpCFFSSFCtkqq+wXl3QU3cOBQZn6jfij6nvKGedFY5zgGrCRncjdb9HvE8YoYlao5d7TVa+44mCXQTWIkTjFT6/Rb9hfvgRZEjZHIPRy52LYVWCObi9orgqqIZ2vOprTE6y9bwoITYY=
+  - secure: HgOUcDxME+OhJk/uQbtP+cKssihLPYPA0KpqX8h+fKH+CmdBRE9yT3IF37WBp9bhBDGVAEk0ZtHEMPchsGLhZ89lC1wWgzkdEy1aRKTV3/VdmTJlzpzRHG0saWyxxXEndfx2GOtiaapE+EPeCJC2xqTqEh1uaBNXqt0O/OD7K9QPfZTWH7XmkAiJp//drMKdonEK0DpiaNH1XAREAwZ180ugTeTsekkU2Yl24BrOwzGxZPXPstmne7t2dRfF1H0bdJtKLopRCXZ63W0nX+nkt2ayP72x+9g+cZx2gjEnHCc9aWQ4H7F5fG9v1soiNVpEd5+q0sgIuab5FtKbvpl4KO3k60GY8ZUMhXYcYv2H86ABbi/Cc3GDYfov0bmY5zfkr9Z2mmc3jdGPD9kLt5qpxibNiBUQmRPLA53PF5gAu2Ef6J2T+8gMF+8aaVMk/wTKXmRSD7qGC/D2M8QpHIVuwykhZx6SRgbrD/xtrF+kKi1xdxO5uknMVSiRztz8zaVG2/hB7Kn0l1zzWUguL5Jdht8E1VTXa8tuMW/k/HEb6sUEX6EUo4M6etwlkpmsEsUiBSKeXAEbmziqYdOi2rKMctdpZBrZQohKGHh74HtBiTC1eyValiIpvLpDvAldMS4lmtxxU2w931iUulpy0rlAywTsyQLEwAxxDI7Gf126dJM=
 
-script:
-  - gradle install
-  - cd LogSink
-  - docker build --build-arg version=1.0.1 -t msg134/logsink:latest .
-      
+jobs:
+  include:
+  - stage: installation
+    script:
+    - gradle install
+  - stage: docker-logsink
+    before_script: cd LogSink
+    script:
+    - docker build --build-arg version=$VERSION -t msg134/logsink:latest -t msg134/logsink:$VERSION .
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push msg134/logsink
+  - stage: docker-tc-runner
+    before_script: cd TC.exec
+    script:
+    - echo "$TNO_DOCKER_PASSWORD" | docker login -u "$TNO_DOCKER_USERNAME" --password-stdin
+    - docker build --build-arg version=$VERSION -t msg134/tc-runner:latest -t msg134/tc-runner:$VERSION .
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push msg134/tc-runner
+
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-      
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
