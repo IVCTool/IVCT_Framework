@@ -22,6 +22,12 @@ script:
   - cd ../TC.exec
   - docker build --build-arg version=$VERSION -t msg134/tc-runner:latest -t msg134/tc-runner:$VERSION .
   - docker push msg134/tc-runner
+  - cd ../GUI
+  - docker build --build-arg version=$VERSION -t msg134/ivct-gui:latest -t msg134/ivct-gui:$VERSION .
+  - docker push msg134/ivct-gui
+  - cd ../RuntimeConfig
+  - docker build --build-arg version=$VERSION -t msg134/runtime-config:latest -t msg134/runtime-config:$VERSION .
+  - docker push msg134/runtime-config
 
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

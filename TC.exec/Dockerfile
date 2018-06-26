@@ -1,4 +1,4 @@
-FROM app-docker136.hex.tno.nl/pitch/lrc:5.4.0.0-alpine
+FROM app-docker136.hex.tno.nl/pitch/lrc:5.3.2.1-alpine
 
 ARG version
 
