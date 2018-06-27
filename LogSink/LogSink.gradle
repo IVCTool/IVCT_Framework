@@ -30,5 +30,10 @@ distributions {
 }
 
 tasks.withType(CreateStartScripts) {
-    classpath += files('lib/logback.xml')
-}
+    classpath += files('lib')
+doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
+    }}
