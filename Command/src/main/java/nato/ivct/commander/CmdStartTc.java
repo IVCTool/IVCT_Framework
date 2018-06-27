@@ -39,17 +39,19 @@ public class CmdStartTc implements Command {
 	 * The Structure of start test case command message looks like the
 	 * following:
 	 *
-	 * { "sequence":"0",
+	 * { 
 	 *   "commandType":"startTestCase",
+	 *   "sequence":"0",
 	 *   "testScheduleName":"HelloWorld",
 	 *   "sutName":"hw_iosb",
-	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
-	 *   "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
+	 *   "sutDir":"C:/projects/IVCT_Runtime/IVCTsut/hw_iosb",
+	 *   "badge":"C:/projects/IVCT_Runtime/Badges/HelloWorld-1.0.0",
+	 *   "testCaseId":"TC0002",
 	 *   "tcParam":{
 	 *     "rtiHostName":"localhost",
 	 *     "federationName":"HelloWorld",
-	 *     "sutFederateName":"A" },
-	 *   "testCaseId":"TC0002"}
+	 *     "sutFederateName":"A" }
+	 *   }
 	 *
 	 * @see nato.ivct.commander.Command#execute()
 	 */
