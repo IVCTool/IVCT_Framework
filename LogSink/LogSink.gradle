@@ -18,3 +18,22 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 }
+
+distributions {
+    main {
+        contents {
+            from('src/conf/logback.xml') {
+                into 'lib'
+            }
+        }
+    }
+}
+
+tasks.withType(CreateStartScripts) {
+    classpath += files('lib')
+doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
+    }}
