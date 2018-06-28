@@ -24,7 +24,6 @@ import nato.ivct.commander.Factory;
 public class LogSink {
 
     private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
-    private Properties    properties = new Properties();
     //private JMSTopicSink  jmsTopicSink;
     private JMSLogSink  jmsLogSink;
 
@@ -42,7 +41,6 @@ public class LogSink {
 		(new CmdStartTestResultListener(reportEngine)).execute();
 		(new CmdQuitListener(reportEngine)).execute();
         final LogSink instance = new LogSink();
-        instance.loadProperties();
         instance.init();
         reportEngine.tcListener = instance.jmsLogSink;
         instance.execute();
@@ -51,29 +49,13 @@ public class LogSink {
 
 
     /**
-     * load the properties from the file LogSink.properties in the default
-     * package
-     */
-    protected void loadProperties() {
-        final InputStream in = this.getClass().getResourceAsStream("/LogSink.properties");
-        try {
-            this.properties.load(in);
-            in.close();
-        }
-        catch (final IOException ex) {
-            LOGGER.error("Could not load properties. ", ex);
-        }
-    }
-
-
-    /**
      * initialize the LogSink.
      */
     protected void init() {
-        final String tcfBindingName = this.properties.getProperty("logsink.tcf.bindingname");
-        final String topicBindingName = this.properties.getProperty("logsink.topic.bindingname");
-        final String username = this.properties.getProperty("logsink.user");
-        final String password = this.properties.getProperty("logsink.password");
+		final String tcfBindingName = Factory.props.getProperty(Factory.LOGSINK_TCF_BINDINGNAME_ID);
+        final String topicBindingName = Factory.props.getProperty(Factory.LOGSINK_TOPIC_BINDINGNAME_ID);
+        final String username = Factory.props.getProperty(Factory.LOGSINK_USER_ID);
+        final String password = Factory.props.getProperty(Factory.LOGSINK_PASSWORD_ID);
         this.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password);
     }
 
@@ -82,7 +64,7 @@ public class LogSink {
      * execute = do wait for termination.
      */
     protected void execute() {
-        LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
+        LOGGER.debug("successfully initialized for topic {} .", Factory.props.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // Loop until "exit", "quit" or "q" is typed
         LOGGER.info("Type \"quit\" to exit JMSTopicSink.");

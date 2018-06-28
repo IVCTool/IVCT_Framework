@@ -135,17 +135,9 @@ public final class PropertyBasedClientSetup {
         try {
             this.user = this.properties.getProperty(PROPERTY_USER, "admin");
             this.password = this.properties.getProperty(PROPERTY_PASSWORD, "password");
-            this.host = System.getenv("ACTIVEMQ_HOST");
-            if (this.host == null) {
-                this.host = "localhost";
-                LOGGER.warn("Environment variable ACTIVEMQ_HOST not found: using default ", this.host);
-            }
+            this.host = this.properties.getProperty(PROPERTY_HOST);
             String portString;
-            portString = System.getenv("ACTIVEMQ_PORT");
-            if (portString == null) {
-                portString = "61616";
-                LOGGER.warn("Environment variable ACTIVEMQ_PORT not found: using default ", portString);
-            }
+            portString = this.properties.getProperty(PROPERTY_PORT);
             this.port = Integer.parseInt(portString);
             this.factory = new ActiveMQConnectionFactory("tcp://" + this.host + ":" + this.port);
             this.state = State.PROPERTIES_PARSED;

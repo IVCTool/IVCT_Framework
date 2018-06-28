@@ -45,11 +45,42 @@ public class Factory {
 
 	public static Properties props = null;
 	public static final String IVCT_CONF = "IVCT_CONF";
+
 	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
+	public static final String IVCT_TS_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/IVCTtestSuites";
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
+	public static final String IVCT_SUT_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/IVCTsut";
 	public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
+	public static final String IVCT_BADGE_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/Badges";
+
 	public static final String RTI_ID = "RTI_ID";
+	public static final String RTI_ID_DEFLT = "pRTI";
 	public static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
+	public static final String MESSAGING_USER_ID = PropertyBasedClientSetup.PROPERTY_USER;
+	public static final String MESSAGING_USER_DEFLT = "admin";
+	public static final String MESSAGING_PASSWORD_ID = PropertyBasedClientSetup.PROPERTY_PASSWORD;
+	public static final String MESSAGING_PASSWORD_DEFLT = "password";
+	public static final String MESSAGING_HOST_ID = PropertyBasedClientSetup.PROPERTY_HOST;
+	public static final String MESSAGING_HOST_DEFLT = "localhost";
+	public static final String MESSAGING_PORT_ID = PropertyBasedClientSetup.PROPERTY_PORT;
+	public static final String MESSAGING_PORT_DEFLT = "61616";
+	public static final String JMS_QUEUE_ID = "jmstestrunner.queue";
+	public static final String JMS_QUEUE_DEFLT = "commands";
+
+	public static final String JAVA_NAMING_FACTORY_ID = "java.naming.factory.initial";
+	public static final String JAVA_NAMING_FACTORY_DEFLT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";	
+	public static final String JAVA_NAMING_PROVIDER_ID = "java.naming.provider.url";
+	public static final String JAVA_NAMING_PROVIDER_DEFLT = "tcp://localhost:61616";
+	
+	public static final String LOGSINK_TCF_BINDINGNAME_ID = "logsink.tcf.bindingname";
+	public static final String LOGSINK_TCF_BINDINGNAME_DEFLT = "ConnectionFactory";
+	public static final String LOGSINK_TOPIC_BINDINGNAME_ID = "logsink.topic.bindingname";
+	public static final String LOGSINK_TOPIC_BINDINGNAME_DEFLT = "dynamicTopics/LogTopic.jms";
+	public static final String LOGSINK_USER_ID = "logsink.user";
+	public static final String LOGSINK_USER_DEFLT = "";
+	public static final String LOGSINK_PASSWORD_ID = "logsink.password";
+	public static final String LOGSINK_PASSWORD_DEFLT = "";
+	
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
 
@@ -58,39 +89,92 @@ public class Factory {
 	static public PropertyBasedClientSetup jmsHelper = null;
 
 	/*
+	 * read string environment variable if defined, otherwise return default
+	 */
+	public static String getEnv(String key, String deflt) {
+		String value = System.getenv(key);
+		if (value == null) {
+			return deflt;
+		}
+		LOGGER.error("Environment Variable {} = {} found", key, value);
+		return value;
+	}
+	
+	/*
+	 * overwrite properties list if given key is found in system environment
+	 */
+	private static void overwriteWithEnv (String key) {
+		String value = System.getenv(key);
+		if (value != null) {
+			LOGGER.error("Environment Variable {} = {} found", key, value);
+			props.setProperty(key, value);
+		}
+	}
+
+	/*
 	 * Factory has to be initialized before any commands are being created.
 	 */
 	public static void initialize() {
+		boolean updatePropertiesFile = false;
+		
 		if (props == null) {
-			String home = System.getenv(IVCT_CONF);
-			props = new Properties();
+			Properties fallback = new Properties();
+			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
+			fallback.put(IVCT_SUT_HOME_ID, IVCT_SUT_HOME_ID_DEFLT);
+			fallback.put(IVCT_BADGE_HOME_ID, IVCT_BADGE_HOME_ID_DEFLT);
+			fallback.put(RTI_ID, RTI_ID_DEFLT);
+			fallback.put(MESSAGING_USER_ID, MESSAGING_USER_DEFLT);
+			fallback.put(MESSAGING_PASSWORD_ID, MESSAGING_PASSWORD_DEFLT);
+			fallback.put(MESSAGING_HOST_ID, MESSAGING_HOST_DEFLT);
+			fallback.put(MESSAGING_PORT_ID, MESSAGING_PORT_DEFLT);
+			fallback.put(JMS_QUEUE_ID, JMS_QUEUE_DEFLT);
+			fallback.put(JAVA_NAMING_FACTORY_ID, JAVA_NAMING_FACTORY_DEFLT);
+			fallback.put(JAVA_NAMING_PROVIDER_ID, JAVA_NAMING_PROVIDER_DEFLT);			
+			fallback.put(LOGSINK_TCF_BINDINGNAME_ID, LOGSINK_TCF_BINDINGNAME_DEFLT);
+			fallback.put(LOGSINK_TOPIC_BINDINGNAME_ID, LOGSINK_TOPIC_BINDINGNAME_DEFLT);
+			fallback.put(LOGSINK_USER_ID, LOGSINK_USER_DEFLT);
+			fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);			
+			
+			props = new Properties(fallback);
 
-			if (home == null) {
-				LOGGER.error("Environment Variable <<IVCT_CONF>> not set");
-				System.exit(-1);
+			String home = System.getenv(IVCT_CONF);
+			if (home != null) {
+				try {
+					props.load(new FileInputStream(home + "/IVCT.properties"));
+					LOGGER.error("Properties file loaded");
+				} catch (final Exception e) {
+					LOGGER.error("Environment Variable IVCT_CONF = {} not found - using default values", IVCT_CONF);
+					updatePropertiesFile = true;
+				}
 			}
-			try {
-				props.load(new FileInputStream(home + "/IVCT.properties"));
-			} catch (final Exception e) {
-				LOGGER.warn("no properties file " + home + "/IVCT.properties found");
-				props.setProperty(IVCT_TS_HOME_ID, "C:/MSG134/DemoFolders/IVCTtestSuites");
-				props.setProperty(IVCT_SUT_HOME_ID, "C:/MSG134/DemoFolders/IVCTsut");
-				props.setProperty(IVCT_BADGE_HOME_ID, "C:/MSG134/DemoFolders/Badges");
-				props.setProperty(RTI_ID, "pRTI");
-				props.setProperty("messaging.user", "admin");
-				props.setProperty("messaging.password", "password");
-				props.setProperty("messaging.host", "localhost");
-				props.setProperty("messaging.port", "61616");
-				props.setProperty("jmstestrunner.queue", "commands");
+
+			// overwrite with environment settings
+			overwriteWithEnv(IVCT_TS_HOME_ID);
+			overwriteWithEnv(IVCT_SUT_HOME_ID);
+			overwriteWithEnv(IVCT_BADGE_HOME_ID);
+			overwriteWithEnv(RTI_ID);
+			overwriteWithEnv(MESSAGING_USER_ID);
+			overwriteWithEnv(MESSAGING_PASSWORD_ID);
+			overwriteWithEnv(MESSAGING_HOST_ID);
+			overwriteWithEnv(MESSAGING_PORT_ID);
+			overwriteWithEnv(JMS_QUEUE_ID);
+			overwriteWithEnv(JAVA_NAMING_FACTORY_ID);
+			overwriteWithEnv(LOGSINK_TCF_BINDINGNAME_ID);
+			overwriteWithEnv(LOGSINK_TOPIC_BINDINGNAME_ID);
+			overwriteWithEnv(LOGSINK_USER_ID);
+			overwriteWithEnv(LOGSINK_PASSWORD_ID);			
+			
+			if (updatePropertiesFile) {
 				try {
 					props.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
+					LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
+					LOGGER.warn(props.toString());
 				} catch (IOException e1) {
 					LOGGER.error("Unable to write " + home + "/IVCT.properties file. Please verify settings!");
 					e1.printStackTrace();
 				}
-				LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
-				LOGGER.warn(props.toString());
 			}
+
 			jmsHelper = new PropertyBasedClientSetup(props);
 			jmsHelper.parseProperties();
 			jmsHelper.initConnection();
@@ -255,7 +339,8 @@ public class Factory {
 		return new CmdSendTcStatus();
 	}
 
-	public static CmdSendTcVerdict createCmdSendTcVerdict(String sutName, String sutDir, String testScheduleName, String testcase, String verdict, String verdictText) {
+	public static CmdSendTcVerdict createCmdSendTcVerdict(String sutName, String sutDir, String testScheduleName,
+			String testcase, String verdict, String verdictText) {
 		initialize();
 		return new CmdSendTcVerdict(sutName, sutDir, testScheduleName, testcase, verdict, verdictText);
 	}
