@@ -96,7 +96,7 @@ public class Factory {
 		if (value == null) {
 			return deflt;
 		}
-		LOGGER.error("Environment Variable {} = {} found", key, value);
+		LOGGER.info("Environment Variable {} = {} found", key, value);
 		return value;
 	}
 	
@@ -106,7 +106,7 @@ public class Factory {
 	private static void overwriteWithEnv (String key) {
 		String value = System.getenv(key);
 		if (value != null) {
-			LOGGER.error("Environment Variable {} = {} found", key, value);
+			LOGGER.info("Environment Variable {} = {} found", key, value);
 			props.setProperty(key, value);
 		}
 	}
@@ -141,11 +141,13 @@ public class Factory {
 			if (home != null) {
 				try {
 					props.load(new FileInputStream(home + "/IVCT.properties"));
-					LOGGER.error("Properties file loaded");
+					LOGGER.info("Properties file loaded");
 				} catch (final Exception e) {
 					LOGGER.error("Environment Variable IVCT_CONF = {} not found - using default values", IVCT_CONF);
 					updatePropertiesFile = true;
 				}
+			} else {
+				LOGGER.info("no Properties file loaded");
 			}
 
 			// overwrite with environment settings
@@ -174,6 +176,8 @@ public class Factory {
 					e1.printStackTrace();
 				}
 			}
+			
+			LOGGER.info("Properties used: {}", props);
 
 			jmsHelper = new PropertyBasedClientSetup(props);
 			jmsHelper.parseProperties();
