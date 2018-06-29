@@ -54,7 +54,6 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 			Properties env = new Properties();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, Factory.props.getProperty(Factory.JAVA_NAMING_FACTORY_ID));
             String host = Factory.props.getProperty(Factory.MESSAGING_HOST_ID);
-            logger.warn("Environment variable {} not found: using default {}", Factory.MESSAGING_HOST_ID, host);
             if (host == null) {
                 host = "localhost";
                 logger.warn("Environment variable {} not found: using default {}", Factory.MESSAGING_HOST_ID, host);
