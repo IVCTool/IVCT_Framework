@@ -68,10 +68,10 @@ public class Factory {
 	public static final String JMS_QUEUE_DEFLT = "commands";
 
 	public static final String JAVA_NAMING_FACTORY_ID = "java.naming.factory.initial";
-	public static final String JAVA_NAMING_FACTORY_DEFLT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";	
+	public static final String JAVA_NAMING_FACTORY_DEFLT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
 	public static final String JAVA_NAMING_PROVIDER_ID = "java.naming.provider.url";
 	public static final String JAVA_NAMING_PROVIDER_DEFLT = "tcp://localhost:61616";
-	
+
 	public static final String LOGSINK_TCF_BINDINGNAME_ID = "logsink.tcf.bindingname";
 	public static final String LOGSINK_TCF_BINDINGNAME_DEFLT = "ConnectionFactory";
 	public static final String LOGSINK_TOPIC_BINDINGNAME_ID = "logsink.topic.bindingname";
@@ -80,7 +80,7 @@ public class Factory {
 	public static final String LOGSINK_USER_DEFLT = "";
 	public static final String LOGSINK_PASSWORD_ID = "logsink.password";
 	public static final String LOGSINK_PASSWORD_DEFLT = "";
-	
+
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
 
@@ -99,11 +99,11 @@ public class Factory {
 		LOGGER.info("Environment Variable {} = {} found", key, value);
 		return value;
 	}
-	
+
 	/*
 	 * overwrite properties list if given key is found in system environment
 	 */
-	private static void overwriteWithEnv (String key) {
+	private static void overwriteWithEnv(String key) {
 		String value = System.getenv(key);
 		if (value != null) {
 			LOGGER.info("Environment Variable {} = {} found", key, value);
@@ -115,7 +115,7 @@ public class Factory {
 	 * Factory has to be initialized before any commands are being created.
 	 */
 	public static void initialize() {
-		
+
 		if (props == null) {
 			Properties fallback = new Properties();
 			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
@@ -128,24 +128,33 @@ public class Factory {
 			fallback.put(MESSAGING_PORT_ID, MESSAGING_PORT_DEFLT);
 			fallback.put(JMS_QUEUE_ID, JMS_QUEUE_DEFLT);
 			fallback.put(JAVA_NAMING_FACTORY_ID, JAVA_NAMING_FACTORY_DEFLT);
-			fallback.put(JAVA_NAMING_PROVIDER_ID, JAVA_NAMING_PROVIDER_DEFLT);			
+			fallback.put(JAVA_NAMING_PROVIDER_ID, JAVA_NAMING_PROVIDER_DEFLT);
 			fallback.put(LOGSINK_TCF_BINDINGNAME_ID, LOGSINK_TCF_BINDINGNAME_DEFLT);
 			fallback.put(LOGSINK_TOPIC_BINDINGNAME_ID, LOGSINK_TOPIC_BINDINGNAME_DEFLT);
 			fallback.put(LOGSINK_USER_ID, LOGSINK_USER_DEFLT);
-			fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);			
-			
+			fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);
+
 			props = new Properties(fallback);
 
 			String home = System.getenv(IVCT_CONF);
+
 			if (home != null) {
 				try {
-					props.load(new FileInputStream(home + "/IVCT.properties"));
-					LOGGER.info("Properties file loaded");
+					File f = new File(home);
+					// test if IVCT_CONF is already a filename
+					if (f.exists() && !f.isDirectory()) {
+						props.load(new FileInputStream(f));
+					} else {
+						// if not, just try to read the properties file with the default name
+						props.load(new FileInputStream(home + "/IVCT.properties"));
+						LOGGER.info("Properties file loaded");
+					}
 				} catch (final Exception e) {
 					LOGGER.error("Environment Variable IVCT_CONF = {} not found - creating default values", IVCT_CONF);
 					try {
 						fallback.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
-						LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
+						LOGGER.warn(
+								"New IVCT.properties file has been created with default values. Please verify settings!");
 						LOGGER.warn(props.toString());
 					} catch (IOException e1) {
 						LOGGER.error("Unable to write " + home + "/IVCT.properties file. Please verify settings!");
@@ -170,8 +179,8 @@ public class Factory {
 			overwriteWithEnv(LOGSINK_TCF_BINDINGNAME_ID);
 			overwriteWithEnv(LOGSINK_TOPIC_BINDINGNAME_ID);
 			overwriteWithEnv(LOGSINK_USER_ID);
-			overwriteWithEnv(LOGSINK_PASSWORD_ID);			
-			
+			overwriteWithEnv(LOGSINK_PASSWORD_ID);
+
 			LOGGER.info("Properties used: {}", props);
 
 			jmsHelper = new PropertyBasedClientSetup(props);
