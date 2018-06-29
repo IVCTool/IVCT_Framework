@@ -115,7 +115,6 @@ public class Factory {
 	 * Factory has to be initialized before any commands are being created.
 	 */
 	public static void initialize() {
-		boolean updatePropertiesFile = false;
 		
 		if (props == null) {
 			Properties fallback = new Properties();
@@ -143,8 +142,15 @@ public class Factory {
 					props.load(new FileInputStream(home + "/IVCT.properties"));
 					LOGGER.info("Properties file loaded");
 				} catch (final Exception e) {
-					LOGGER.error("Environment Variable IVCT_CONF = {} not found - using default values", IVCT_CONF);
-					updatePropertiesFile = true;
+					LOGGER.error("Environment Variable IVCT_CONF = {} not found - creating default values", IVCT_CONF);
+					try {
+						fallback.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
+						LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
+						LOGGER.warn(props.toString());
+					} catch (IOException e1) {
+						LOGGER.error("Unable to write " + home + "/IVCT.properties file. Please verify settings!");
+						e1.printStackTrace();
+					}
 				}
 			} else {
 				LOGGER.info("no Properties file loaded");
@@ -165,17 +171,6 @@ public class Factory {
 			overwriteWithEnv(LOGSINK_TOPIC_BINDINGNAME_ID);
 			overwriteWithEnv(LOGSINK_USER_ID);
 			overwriteWithEnv(LOGSINK_PASSWORD_ID);			
-			
-			if (updatePropertiesFile) {
-				try {
-					props.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
-					LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
-					LOGGER.warn(props.toString());
-				} catch (IOException e1) {
-					LOGGER.error("Unable to write " + home + "/IVCT.properties file. Please verify settings!");
-					e1.printStackTrace();
-				}
-			}
 			
 			LOGGER.info("Properties used: {}", props);
 
