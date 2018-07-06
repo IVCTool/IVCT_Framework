@@ -30,3 +30,22 @@ dependencies {
 			compile     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
 	}
 }
+distributions {
+    main {
+        contents {
+            from('src/conf/JMSTestRunner_logback.xml') {
+                into 'lib'
+            }
+        }
+    }
+}
+
+tasks.withType(CreateStartScripts) {
+    classpath += files('lib')
+doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
+    }
+}
