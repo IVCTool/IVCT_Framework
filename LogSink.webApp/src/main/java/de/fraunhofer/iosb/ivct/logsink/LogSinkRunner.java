@@ -52,7 +52,6 @@ public class LogSinkRunner extends HttpServlet {
 		(Factory.createCmdStartTestResultListener(reportEngine)).execute();
 		(Factory.createCmdQuitListener(reportEngine)).execute();
 		logSink = new LogSink();
-		logSink.loadProperties();
 		logSink.init();
 	}
 
