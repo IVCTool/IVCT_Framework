@@ -1,0 +1,17 @@
+{
+	"id" 			: 	"TS_HLA_EncodingRulesTester-2017",
+	"version"		:	"1.0.0",
+	"name" 			: 	"TS_HLA_EncodingRulesTester Test 2017",
+	"description"	:	"This is a test to verify whether the HLA encoding rules are being used correctly.",
+	"graphics"		:	"/some/icon.png",
+	"tsRunTimeFolder":	"TS_HLA_EncodingRulesTester-1.0.0/bin",
+	"tsLibTimeFolder":	"TS_HLA_EncodingRulesTester-1.0.0/lib",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IP-EN-0001",
+			"description"	:	"HLA Encoding Rules Tester",
+			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0001"
+		}
+	] 
+}

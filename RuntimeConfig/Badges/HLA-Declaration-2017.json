@@ -1,0 +1,52 @@
+{
+	"id" 			: 	"HLA-Declaration-2017",
+	"version"		:	"0.0.2",
+	"name" 			: 	"HLA Declaration Test 2017",
+	"description"	:	"This badge verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM.",
+	"graphics"		:	"/some/icon.png",
+	"tsRunTimeFolder":	"TS_HLA_Declaration-0.0.1/bin",
+	"tsLibTimeFolder":	"TS_HLA_Declaration-0.0.1/lib",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-SOM-0003",
+			"description"	:	"SuT shall publish all object class attributes defined as published in CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0004",
+			"description"	:	"SuT shall not publish any object class attribute that is not defined as published in CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0005",
+			"description"	:	"SuT shall publish all interaction classes defined as published is CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0006",
+			"description"	:	"SuT shall not publish any interaction class that is not defined as published is CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0007",
+			"description"	:	"SuT shall subscribe to all object class attributes defined as subscribed in CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0008",
+			"description"	:	"SuT shall not subscribe to any object class attribute that is not defined as subscribed in CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0009",
+			"description"	:	"SuT shall subscribe to all interaction classes defined as subscribed in CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0010",
+			"description"	:	"SuT shall not subscribe to any interaction class that is not defined as subscribed in CS/SOM",
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
+		}
+	]
+}
