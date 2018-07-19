@@ -2,6 +2,11 @@ language: java
 jdk:
 - oraclejdk8
 
+branches:
+  only:
+  - master
+  - development
+
 env:
   global:
   - secure: i/CbDnYSsimc775bdwtGdIRgd1jy+3jqJMZs86j4uKnxA1VtraNyNvtZTxf/9y9WEwSMa9V4rwRc7XiytntLyChsReQQb1LrTLhyxDbRoJrOqrcdKtRnHH+6RmkrfATY4KlEPeGPugTcN91NYRarsX/vEJH8VBYAUZo3hJ6LvIHiCU/kh3UXgeU23mT4nXhzIGOlpDLZgz+INcq8f3FhCoeB0CIwGWw0Lf6D3pq4uiPxvX8+nhbrbqoWj9rDJcV4r+Ivl2XVcpjuzLult7rZZ5C3hYky4N+rP0Gqa4b2Drz8L2QlF7/rvjrjelF8ixEkwjaJPRAJCgg1o0esB16qyn2D0yw3Jmny/CeoR/Tj/3y+HYO5CODAr4+OwVsdny/3TAtCmWVgvoEGjJE+dmTbZg/1Jk+7ztpfMB4IxyhCsi44Q0zuVgNX8VUtA+kQb/cwxt6Qs7o+is8GV0Za/C7oaKHu+OQjs5J3QSQqZHarzAei3IRnlehtUGg9hQ7zQPpDFUZwoQ0vHB81QPGLKcsxqaCRvu+9FyesQyWoCRG7eiqxPJOuqiGLW8ZCmteKGTiQ13ECH8/si6uoguimzyOceRCNxnrFCiphi1Anc1gQoL5+otEW4p/reEWBZ2cECu7+qz3pOm0Urtu11EAN1+D8JvapnS0RtVe73QcloPvKWQ8=
