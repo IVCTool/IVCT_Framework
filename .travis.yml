@@ -17,19 +17,19 @@ script:
   - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
   - cd LogSink
   - docker build --build-arg version=$VERSION -t msg134/logsink:$TRAVIS_BRANCH-latest -t msg134/logsink:$TRAVIS_BRANCH-$VERSION -t msg134/logsink:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
-  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:$VERSION && docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:latest
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:$VERSION && docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:latest; fi
   - docker push msg134/logsink
   - cd ../TC.exec
   - docker build --build-arg version=$VERSION -t msg134/tc-runner:$TRAVIS_BRANCH-latest -t msg134/tc-runner:$TRAVIS_BRANCH-$VERSION -t msg134/tc-runner:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
-  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:$VERSION && docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:latest
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:$VERSION && docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:latest; fi
   - docker push msg134/tc-runner
   - cd ../GUI
   - docker build --build-arg version=$VERSION -t msg134/ivct-gui:$TRAVIS_BRANCH-latest -t msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION -t msg134/ivct-gui:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
-  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:$VERSION && docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:latest
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:$VERSION && docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:latest; fi
   - docker push msg134/ivct-gui
   - cd ../RuntimeConfig
   - docker build --build-arg version=$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-latest -t msg134/runtime-config:$TRAVIS_BRANCH-$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-$TRAVIS_COMMIT.
-  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:$VERSION && docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:latest
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:$VERSION && docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:latest; fi
   - docker push msg134/runtime-config
 
 before_cache:
