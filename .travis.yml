@@ -3,8 +3,6 @@ jdk:
 - oraclejdk8
 
 env:
-  matrix:
-  - VERSION=1.0.1
   global:
   - secure: i/CbDnYSsimc775bdwtGdIRgd1jy+3jqJMZs86j4uKnxA1VtraNyNvtZTxf/9y9WEwSMa9V4rwRc7XiytntLyChsReQQb1LrTLhyxDbRoJrOqrcdKtRnHH+6RmkrfATY4KlEPeGPugTcN91NYRarsX/vEJH8VBYAUZo3hJ6LvIHiCU/kh3UXgeU23mT4nXhzIGOlpDLZgz+INcq8f3FhCoeB0CIwGWw0Lf6D3pq4uiPxvX8+nhbrbqoWj9rDJcV4r+Ivl2XVcpjuzLult7rZZ5C3hYky4N+rP0Gqa4b2Drz8L2QlF7/rvjrjelF8ixEkwjaJPRAJCgg1o0esB16qyn2D0yw3Jmny/CeoR/Tj/3y+HYO5CODAr4+OwVsdny/3TAtCmWVgvoEGjJE+dmTbZg/1Jk+7ztpfMB4IxyhCsi44Q0zuVgNX8VUtA+kQb/cwxt6Qs7o+is8GV0Za/C7oaKHu+OQjs5J3QSQqZHarzAei3IRnlehtUGg9hQ7zQPpDFUZwoQ0vHB81QPGLKcsxqaCRvu+9FyesQyWoCRG7eiqxPJOuqiGLW8ZCmteKGTiQ13ECH8/si6uoguimzyOceRCNxnrFCiphi1Anc1gQoL5+otEW4p/reEWBZ2cECu7+qz3pOm0Urtu11EAN1+D8JvapnS0RtVe73QcloPvKWQ8=
   - secure: ZP9slmzBETlHVZU2YSZO793PymtIA3G5T9xMK8VbKvEkyveYfnp/5Tzyjte1I8w9N+YT9Az4hDAOgzhoz+qKTu07YLGaTrqOPidE7WtQI0SMGIaal+KQxXGRn9Ds5sh75FI98HU/qsED01zhXO1y5DJlQr78FWrUBBjZzupA3wJvSYf0CWOdMKrRJ6E3/e3xmaY5jdUZgx7mHAvGycaeKzoiOXNo7CcIyIuqY7VF2TIsyS+40W8V9O6lFJWQOYGJCNM0NteQMaPcX3eddyUhp/HERPoRmGECJfC4ydxwHVMQHbZ53OrUtqp6+ZCTrnX4H8oIThNxV79pzeHnWTVblo9saEq5eoBHLOj5gQepR1eQUry7JzCp4/H/0WN28j6qH1e7+TqueL1FJnx5pcILJmpjpvBFPRIdp6ZLMJ/BS+c9dA1OM1bmNnEkyoCNecZNGkscolLFOVa5V/qIW0MI7eY100NarrL+j17FrwfRp9j+fYXcdcDOneM8VcX9RFsCzjVgcrfudOL8hDBzyBCu7zFQ71JUlM7a0k8vICAJ2yvZZE+wmdXdblHvJDsFHp8QhWNvpPdTLmh8MR250d4EYED1U9oyOCWMkJ+jKBgZgmrrDIbYvuH6V2jXMNOZbAWy0C1sH76Pb6/+76ve+luosnBNB8eTG/IADypTKlj9Gk8=
@@ -14,19 +12,24 @@ env:
 install: gradle install
 
 script: 
+  - export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
   - cd LogSink
-  - docker build --build-arg version=$VERSION -t msg134/logsink:latest -t msg134/logsink:$VERSION .
+  - docker build --build-arg version=$VERSION -t msg134/logsink:$TRAVIS_BRANCH-latest -t msg134/logsink:$TRAVIS_BRANCH-$VERSION -t msg134/logsink:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
+  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:$VERSION && docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:latest
   - docker push msg134/logsink
   - cd ../TC.exec
-  - docker build --build-arg version=$VERSION -t msg134/tc-runner:latest -t msg134/tc-runner:$VERSION .
+  - docker build --build-arg version=$VERSION -t msg134/tc-runner:$TRAVIS_BRANCH-latest -t msg134/tc-runner:$TRAVIS_BRANCH-$VERSION -t msg134/tc-runner:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
+  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:$VERSION && docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:latest
   - docker push msg134/tc-runner
   - cd ../GUI
-  - docker build --build-arg version=$VERSION -t msg134/ivct-gui:latest -t msg134/ivct-gui:$VERSION .
+  - docker build --build-arg version=$VERSION -t msg134/ivct-gui:$TRAVIS_BRANCH-latest -t msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION -t msg134/ivct-gui:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
+  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:$VERSION && docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:latest
   - docker push msg134/ivct-gui
   - cd ../RuntimeConfig
-  - docker build --build-arg version=$VERSION -t msg134/runtime-config:latest -t msg134/runtime-config:$VERSION .
+  - docker build --build-arg version=$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-latest -t msg134/runtime-config:$TRAVIS_BRANCH-$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-$TRAVIS_COMMIT.
+  - if [ $TRAVIS_BRANCH -eq "master" ] then docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:$VERSION && docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:latest
   - docker push msg134/runtime-config
 
 before_cache:
