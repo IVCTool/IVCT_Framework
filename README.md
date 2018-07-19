@@ -1,6 +1,6 @@
-Master [![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=travis-ci)](https://travis-ci.org/MSG134/IVCT_Framework)
+[![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=travis-ci)](https://travis-ci.org/MSG134/IVCT_Framework) Master
 
-Development [![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=development)](https://travis-ci.org/MSG134/IVCT_Framework)
+[![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=development)](https://travis-ci.org/MSG134/IVCT_Framework) Development
 
 # IVCT README
 
