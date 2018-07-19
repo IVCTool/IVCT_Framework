@@ -169,6 +169,7 @@ public final class PropertyBasedClientSetup {
                 this.connection.start();
                 tryAgain = false;
                 this.state = State.CONNECTED;
+                continue;
             }
             catch (final JMSException ex) {
                 if (count > 10) {
