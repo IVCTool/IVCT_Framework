@@ -28,7 +28,7 @@ script:
   - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:$VERSION && docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:latest; fi
   - docker push msg134/ivct-gui
   - cd ../RuntimeConfig
-  - docker build --build-arg version=$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-latest -t msg134/runtime-config:$TRAVIS_BRANCH-$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-$TRAVIS_COMMIT.
+  - docker build --build-arg version=$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-latest -t msg134/runtime-config:$TRAVIS_BRANCH-$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-$TRAVIS_COMMIT .
   - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:$VERSION && docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:latest; fi
   - docker push msg134/runtime-config
 
