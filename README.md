@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=travis-ci)](https://travis-ci.org/MSG134/IVCT_Framework)
+
 # IVCT README
 
 Integration, Verification and Certification Tool for HLA Federates
