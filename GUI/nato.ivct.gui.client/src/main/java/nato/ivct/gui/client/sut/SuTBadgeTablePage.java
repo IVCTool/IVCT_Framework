@@ -8,6 +8,7 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTabl
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.shared.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
@@ -40,12 +41,35 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 	
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
-//		SuTCbTablePage childPage = new SuTCbTablePage();
-		SuTBadgeDetailsNodePage childPage = new SuTBadgeDetailsNodePage();
+		SuTCbTablePage childPage = new SuTCbTablePage();
+//		SuTBadgeDetailsNodePage childPage = new SuTBadgeDetailsNodePage();
 		childPage.setBadgeId(getTable().getBadgeIdColumn().getValue(row));
 		childPage.setSutId(getSutId());
 		return childPage;
 	}
+	
+// Test Begin if SuTBadgeTablePage class is called in SuTTabePage.execChildPage instead of SuTDetailsNodePage class
+	
+	@Override
+	protected void execPageActivated() throws ProcessingException {
+	  if (getDetailForm() == null) {
+	    SuTForm form = new SuTForm("");
+	    form.setSutId(getSutId());
+	    setDetailForm(form);
+	    form.startView();
+	  }
+	}
+	
+	@Override
+	protected void execPageDeactivated() throws ProcessingException {
+	  if (getDetailForm() != null) {
+	    getDetailForm().doClose();
+	    setDetailForm(null);
+	  }
+	}
+	
+// Test End
+	
 	
 	public class Table extends AbstractTable {
 

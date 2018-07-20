@@ -34,8 +34,8 @@ public class SuTTablePage extends AbstractPageWithTable<SuTTablePage.Table> {
 
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
-//		SuTBadgeTablePage childPage = new SuTBadgeTablePage();
-		SuTDetailsNodePage childPage = new SuTDetailsNodePage();
+		SuTBadgeTablePage childPage = new SuTBadgeTablePage();
+//		SuTDetailsNodePage childPage = new SuTDetailsNodePage();
 		childPage.setSutId(getTable().getSuTIdColumn().getValue(row));
 		return childPage;
 	}

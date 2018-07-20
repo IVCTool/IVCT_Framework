@@ -1,12 +1,11 @@
 package nato.ivct.gui.shared.sut;
 
-import java.util.Set;
-
 import javax.annotation.Generated;
 
+import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
-import org.eclipse.scout.rt.shared.data.form.fields.treefield.AbstractTreeFieldData;
+import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 /**
@@ -19,20 +18,16 @@ public class SuTFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
-	public Capabilities getCapabilities() {
-		return getFieldByClass(Capabilities.class);
-	}
-
-	public CapabilitiesBox getCapabilitiesBox() {
-		return getFieldByClass(CapabilitiesBox.class);
-	}
-
 	public Descr getDescr() {
 		return getFieldByClass(Descr.class);
 	}
 
 	public Name getName() {
 		return getFieldByClass(Name.class);
+	}
+
+	public SutCapabilityStatusTable getSutCapabilityStatusTable() {
+		return getFieldByClass(SutCapabilityStatusTable.class);
 	}
 
 	/**
@@ -57,18 +52,8 @@ public class SuTFormData extends AbstractFormData {
 		return getFieldByClass(SutVendor.class);
 	}
 
-	public TestResults getTestResults() {
-		return getFieldByClass(TestResults.class);
-	}
-
-	public static class Capabilities extends AbstractValueFieldData<String> {
-
-		private static final long serialVersionUID = 1L;
-	}
-
-	public static class CapabilitiesBox extends AbstractValueFieldData<Set<String>> {
-
-		private static final long serialVersionUID = 1L;
+	public TestReportTable getTestReportTable() {
+		return getFieldByClass(TestReportTable.class);
 	}
 
 	public static class Descr extends AbstractValueFieldData<String> {
@@ -81,6 +66,70 @@ public class SuTFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
+	public static class SutCapabilityStatusTable extends AbstractTableFieldBeanData {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public SutCapabilityStatusTableRowData addRow() {
+			return (SutCapabilityStatusTableRowData) super.addRow();
+		}
+
+		@Override
+		public SutCapabilityStatusTableRowData addRow(int rowState) {
+			return (SutCapabilityStatusTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public SutCapabilityStatusTableRowData createRow() {
+			return new SutCapabilityStatusTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return SutCapabilityStatusTableRowData.class;
+		}
+
+		@Override
+		public SutCapabilityStatusTableRowData[] getRows() {
+			return (SutCapabilityStatusTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public SutCapabilityStatusTableRowData rowAt(int index) {
+			return (SutCapabilityStatusTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(SutCapabilityStatusTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class SutCapabilityStatusTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String cbBadgeID = "cbBadgeID";
+			public static final String cbBadgeStatus = "cbBadgeStatus";
+			private String m_cbBadgeID;
+			private String m_cbBadgeStatus;
+
+			public String getCbBadgeID() {
+				return m_cbBadgeID;
+			}
+
+			public void setCbBadgeID(String newCbBadgeID) {
+				m_cbBadgeID = newCbBadgeID;
+			}
+
+			public String getCbBadgeStatus() {
+				return m_cbBadgeStatus;
+			}
+
+			public void setCbBadgeStatus(String newCbBadgeStatus) {
+				m_cbBadgeStatus = newCbBadgeStatus;
+			}
+		}
+	}
+
 	public static class SutIdProperty extends AbstractPropertyData<String> {
 
 		private static final long serialVersionUID = 1L;
@@ -91,8 +140,57 @@ public class SuTFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class TestResults extends AbstractTreeFieldData {
+	public static class TestReportTable extends AbstractTableFieldBeanData {
 
 		private static final long serialVersionUID = 1L;
+
+		@Override
+		public TestReportTableRowData addRow() {
+			return (TestReportTableRowData) super.addRow();
+		}
+
+		@Override
+		public TestReportTableRowData addRow(int rowState) {
+			return (TestReportTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public TestReportTableRowData createRow() {
+			return new TestReportTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return TestReportTableRowData.class;
+		}
+
+		@Override
+		public TestReportTableRowData[] getRows() {
+			return (TestReportTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public TestReportTableRowData rowAt(int index) {
+			return (TestReportTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(TestReportTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class TestReportTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String testReport = "testReport";
+			private String m_testReport;
+
+			public String getTestReport() {
+				return m_testReport;
+			}
+
+			public void setTestReport(String newTestReport) {
+				m_testReport = newTestReport;
+			}
+		}
 	}
 }

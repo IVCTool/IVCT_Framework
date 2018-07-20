@@ -146,6 +146,7 @@ public class CbForm extends AbstractForm {
 		protected TriState getConfiguredScrollable() {
 			return TriState.FALSE;
 		}
+		
 		@Order(1000)
 		public class BadgeHorizontalSplitBox extends AbstractSplitBox {
 			@Override

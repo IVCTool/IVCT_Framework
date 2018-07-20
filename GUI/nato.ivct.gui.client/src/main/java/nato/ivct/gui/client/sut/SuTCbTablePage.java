@@ -16,6 +16,7 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTabl
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.TEXTS;
@@ -49,8 +50,9 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
-		SuTCbNodePage childPage = new SuTCbNodePage();
-		childPage.setSuTCapabilityId(getTable().getCapabilityIdColumn().getValue(row));
+		SuTTcNodePage childPage = new SuTTcNodePage();
+		childPage.setCbTestCase(getTable().getAbstractTCColumn().getValue(row));
+		childPage.setRequirementId(getTable().getCapabilityIdColumn().getValue(row));
 		childPage.setBadgeId(badgeId);
 		childPage.setSutId(sutId);
 		return childPage;
@@ -60,6 +62,25 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	protected boolean getConfiguredLeaf() {
 		// show child notes
 		return false;
+	}
+
+	@Override
+	protected void execPageActivated() throws ProcessingException {
+	  if (getDetailForm() == null) {
+	    SuTCbForm form = new SuTCbForm();
+	    form.setSutId(getSutId());
+	    form.setCbId(getBadgeId());
+	    setDetailForm(form);
+	    form.startView();
+	  }
+	}
+	
+	@Override
+	protected void execPageDeactivated() throws ProcessingException {
+	  if (getDetailForm() != null) {
+	    getDetailForm().doClose();
+	    setDetailForm(null);
+	  }
 	}
 
 	public class Table extends AbstractTable {

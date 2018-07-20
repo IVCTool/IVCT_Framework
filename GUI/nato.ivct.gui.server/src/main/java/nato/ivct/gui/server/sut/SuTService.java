@@ -91,22 +91,16 @@ public class SuTService implements ISuTService {
 		}
 		// find the SuT description by selected SuTid.
 		SutDescription sut = sutMap.get(formData.getSutId());
-		// fill the form data
+		// fill the form data: GeneralBox
 		formData.setSutId(sut.ID);
 		formData.getName().setValue(sut.ID);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
-		//formData.getCapabilities().setValue (String.join(",", Arrays.asList(sut.conformanceStatment))); this causes API check failure !?!
-		String caps = "";
-		for (String s : sut.conformanceStatment) {
-			if (caps.equals("")) {
-				caps = s;
-			}
-			else {
-				caps = caps + ", " + s;				
-			}
-		}
-		formData.getCapabilities().setValue(caps);
+
+		// fill the form data: SuTCapabilities
+
+		// fill the form data: SuTReports
+		
 		return formData;
 	}
 

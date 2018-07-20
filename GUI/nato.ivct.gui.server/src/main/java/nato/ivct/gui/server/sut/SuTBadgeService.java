@@ -24,6 +24,8 @@ public class SuTBadgeService implements ISuTBadgeService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 	private static HashMap<String, SuTBadgeTablePageData> badge_hm = new HashMap<String, SuTBadgeTablePageData>();
+	
+	private static Set<BadgeDescription> m_collectedBadges = new TreeSet<>(Comparator.comparing(bdDesc -> bdDesc.name));
 
 	
 	/*
@@ -38,26 +40,28 @@ public class SuTBadgeService implements ISuTBadgeService {
 		}
 
 		LOG.info("getBadgeTableData");
-		SuTService sutService = (SuTService) BEANS.get(ISuTService.class);
-		CbService cbService = (CbService) BEANS.get(CbService.class);
-		SutDescription sutDesc = sutService.getSutDescription(searchText[0]);
-
-		Set<BadgeDescription> collectedBadges = new TreeSet<>(Comparator.comparing(bdDesc -> bdDesc.name));
-		for (int i = 0; i < sutDesc.conformanceStatment.length; i++) {
-			BadgeDescription badge = cbService.getBadgeDescription(sutDesc.conformanceStatment[i]);
-			addBadgeToCollection (badge, collectedBadges);
-		}
+		SutDescription sutDesc = ((SuTService) BEANS.get(ISuTService.class)).getSutDescription(searchText[0]);
+		m_collectedBadges.clear();
+		collectBadgesForSut (sutDesc);
 		
-		for (BadgeDescription bd:collectedBadges) {
+		for (BadgeDescription bd:m_collectedBadges) {
 			SuTBadgeTableRowData row = pageData.addRow();
 			row.setBadgeId(bd.ID);
 			row.setBadgeName(bd.name);
 			row.setBadgeDesc(bd.description);
 			row.setSuTBadgeResult("no result");
 		}
-
+		
 		badge_hm.put(sutDesc.ID, pageData);
 		return pageData;
+	}
+	
+	private void collectBadgesForSut(final SutDescription _sutDesc) {
+		CbService cbService = (CbService) BEANS.get(CbService.class);
+		for (int i = 0; i < _sutDesc.conformanceStatment.length; i++) {
+			BadgeDescription badge = cbService.getBadgeDescription(_sutDesc.conformanceStatment[i]);
+			addBadgeToCollection (badge, m_collectedBadges);
+		}
 	}
 	
 	private void addBadgeToCollection (final BadgeDescription parentBadge, final Set<BadgeDescription> badgeCollection) {
@@ -73,4 +77,5 @@ public class SuTBadgeService implements ISuTBadgeService {
 			}
 		}
 	}
+	
 }

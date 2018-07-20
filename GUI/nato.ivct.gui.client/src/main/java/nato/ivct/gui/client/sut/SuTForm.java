@@ -1,32 +1,27 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.List;
-
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
-import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
+import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
+import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.shared.TEXTS;
-import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.CloseButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.CapabilitiesBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.TestResultsField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.CapabilitiesField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.DescrField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.NameField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.SutVendorField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
@@ -90,20 +85,8 @@ public class SuTForm extends AbstractForm {
 		return getFieldByClass(SutVendorField.class);
 	}
 
-	public CapabilitiesBox getCapabilitiesBox() {
-		return getFieldByClass(CapabilitiesBox.class);
-	}
-
-	public TestResultsField getTestResultsField() {
-		return getFieldByClass(TestResultsField.class);
-	}
-
-	public DetailsBox getDetailsBox() {
-		return getFieldByClass(DetailsBox.class);
-	}
-
-	public CapabilitiesField getCapabilitiesField() {
-		return getFieldByClass(CapabilitiesField.class);
+	public CapabilityStatusBox getDetailsBox() {
+		return getFieldByClass(CapabilityStatusBox.class);
 	}
 
 	public NameField getNameField() {
@@ -116,8 +99,8 @@ public class SuTForm extends AbstractForm {
 	}
 
 	@FormData
-	public void setSutId(String sutId) {
-		this.sutId = sutId;
+	public void setSutId(final String _sutId) {
+		this.sutId = _sutId;
 	}
 
 	@Override
@@ -135,116 +118,185 @@ public class SuTForm extends AbstractForm {
 	public class MainBox extends AbstractGroupBox {
 		
 		@Order(1000)
-		public class GeneralBox extends AbstractGroupBox {
+		public class MainBoxHorizontalSplitBox extends AbstractSplitBox {
 			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("GeneralSuTInformation");
+			protected boolean getConfiguredSplitHorizontal() {
+				// split horizontal
+				return false;
+			}
+			
+			@Override
+			protected double getConfiguredSplitterPosition() {
+			return 0.35;
 			}
 
 			@Order(1000)
-			public class NameField extends AbstractStringField {
+			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTName");
+					return TEXTS.get("GeneralSuTInformation");
 				}
-
+				
+				// set all fields of this box to read-only
 				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
+				public boolean isEnabled() {
+					return false;
+				}
+	
+				@Order(1000)
+				public class NameField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("SuTName");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 128;
+					}
+				}
+	
+				@Order(2000)
+				public class SutVendorField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("SuTVendor");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 128;
+					}
+				}
+	
+				@Order(3000)
+				public class DescrField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("SuTDescription");
+					}
+	
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+	
+					@Override
+					protected int getConfiguredGridH() {
+						return 2;
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 256;
+					}
+					
+					// set to multi-line
+					@Override
+					protected boolean getConfiguredMultilineText() {
+						return true;
+					}
 				}
 			}
 
 			@Order(2000)
-			public class DescrField extends AbstractStringField {
+			public class DetailsHorizontalSplitterBox extends AbstractSplitBox {
 				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTDescription");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-			@Order(3000)
-			public class SutVendorField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTVendor");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-			@Order(4000)
-			public class CapabilitiesField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Capabilities");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-		}
-
-		@Order(2000)
-		public class DetailsBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("Details");
-			}
-
-			@Order(4000)
-			public class CapabilitiesBox extends AbstractListBox<String> {
-
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Capabilities");
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
-				}
-
-				@Override
-				protected void execInitField() {
-					// TODO Auto-generated method stub
-					super.execInitField();
-				}
-				@Override
-				protected List<? extends ILookupRow<String>> execLoadTableData() {
-					// TODO Auto-generated method stub
-					return super.execLoadTableData();
+				protected boolean getConfiguredSplitHorizontal() {
+					// split horizontal
+					return false;
 				}
 				
-			}
+				@Override
+				protected double getConfiguredSplitterPosition() {
+				return 0.35;
+				}
+				
+				@Order(1000)
+				public class CapabilityStatusBox extends AbstractGroupBox {
+					
+					@Order(1000)
+					public class SutCapabilityStatusTableField extends AbstractTableField<SutCapabilityStatusTableField.SutCapabilityStatusTable> {
+						@Override
+						protected int getConfiguredGridW() {
+							return 3;
+						}
+						
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("CapabilityStatus");
+						}
 
-			@Order(5000)
-			public class TestResultsField extends AbstractTreeField {
-				public class Tree extends AbstractTree {
+						public class SutCapabilityStatusTable extends AbstractTable {
+							@Order(1000)
+							public class CbBadgeID extends AbstractColumn<String> {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("BadgeId");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 200;
+								}
+							}
+							
+							@Order(2000)
+							public class CbBadgeStatus extends AbstractColumn<String> {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("BadgeConformanceStatus");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 100;
+								}
+							}
+						}
+					}
 				}
 
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTResults");
-				}
+				@Order(2000)
+				public class TestReportBox extends AbstractGroupBox {
+					
 
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
+					@Order(2000)
+					public class TestReportTableField extends AbstractTableField<TestReportTableField.TestReportTable> {
+						
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("TestReports");
+						}
+
+						@Override
+						protected int getConfiguredGridW() {
+							return 3;
+						}
+						
+						@Order(1000)
+						public class TestReportTable extends AbstractTable {
+							@Order(1000)
+							public class TestReport extends AbstractColumn<String> {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("FileName");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 400;
+								}
+
+							}
+						}
+					}
 				}
 			}
 		}
-
+		
+		
+		
 		@Order(100000)
 		public class CloseButton extends AbstractButton {
 			
@@ -293,12 +345,11 @@ public class SuTForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-			getForm().setSubTitle(formData.getName().getValue());
+//			getForm().setSubTitle(formData.getName().getValue());
 
 			setEnabledPermission(new UpdateSuTPermission());
 		}
 	}
-
 	
 	public class ViewHandler extends AbstractSuTFormHandler {
 		
