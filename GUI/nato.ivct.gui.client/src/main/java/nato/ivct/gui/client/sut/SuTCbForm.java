@@ -1,10 +1,18 @@
 package nato.ivct.gui.client.sut;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ColumnSet;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -39,6 +47,9 @@ public class SuTCbForm extends AbstractForm {
 	private String sutId = null;
 	private String cbId = null;
 	org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
+	
+	// unique table row ID generator
+	private AtomicLong m_nextRowId = new AtomicLong();
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -280,8 +291,113 @@ public class SuTCbForm extends AbstractForm {
 						protected String getConfiguredLabel() { 
 							return TEXTS.get("BadgeParameterSettings"); 
 						}
+
+				        @Override
+				        protected void execInitField() {
+				          getTable().replaceRows(createInitialRows());
+//				          getTable()BORDER_DECORATION_AUTO.expandAll(null);
+				        }
+
+				        private List<ITableRow> createInitialRows() {
+				          List<ITableRow> rows = new ArrayList<>();
+				          ITableRow javaRow = createRow(null, "JavaKey", "JavaValue");
+				          rows.add(javaRow);
+
+				          ITableRow eclipseRow = createRow(null, "EclipseKey", null);
+				          rows.add(eclipseRow);
+				          ITableRow usaRow = createRow(eclipseRow, "USAKey", "USAValue");
+				          rows.add(usaRow);
+				          ITableRow jsRow = createRow(null, "JavaScriptKey", "JavaScriptValue");
+				          rows.add(jsRow);
+				          return rows;
+				        }
 						
-						public class SuTCbParameterTable extends AbstractTable {
+				        private ITableRow createRow(ITableRow parentRow, String key, String value) {
+				            SuTCbParameterTable table = getTable();
+				            ITableRow row = table.createRow();
+				            table.getIdColumn().setValue(row, m_nextRowId.getAndIncrement());
+				            table.getParentIdColumn().setValue(row, Optional.ofNullable(parentRow).map(r -> table.getIdColumn().getValue(parentRow)).orElse(null));
+				            table.getParameterNameColumn().setValue(row, key);
+				            table.getParameterValueColumn().setValue(row, value);
+//				            table.getNameColumn().setValue(row, name);
+//				            table.getLocationColumn().setValue(row, location);
+//				            table.getDateColumn().setValue(row, date);
+//				            table.getStartColumn().setValue(row, startTime);
+//				            table.getEndDateTimeColumn().setValue(row, endDateTime);
+//				            table.getIndustryColumn().setValue(row, industery);
+				            return row;
+				          }
+
+				          private void newRow() {
+				            newRowWithParent(null);
+				          }
+
+				          private void newRowWithParent(ITableRow parent) {
+				            SuTCbParameterTable table = getTable();
+				            ColumnSet cols = table.getColumnSet();
+				            ITableRow row = new TableRow(cols);
+
+				            row.getCellForUpdate(table.getIdColumn()).setValue(m_nextRowId.getAndIncrement());
+				            row.getCellForUpdate(table.getParentIdColumn()).setValue(Optional.ofNullable(table.getIdColumn().getValue(parent)).orElse(null));
+//				            row.getCellForUpdate(table.getNameColumn()).setValue("New Row");
+//				            row.getCellForUpdate(table.getTrendColumn()).setValue(AbstractIcons.LongArrowUp);
+//				            ExampleBean bean = new ExampleBean();
+//				            bean.setHeader("header property");
+//				            row.getCellForUpdate(table.getCustomColumn()).setValue(bean);
+
+				            table.addRow(row, true);
+				          }
+				          
+				          public class SuTCbParameterTable extends AbstractTable {
+				        	  
+						  public ParentIdColumn getParentIdColumn() {
+						      return getColumnSet().getColumnByClass(ParentIdColumn.class);
+						  }
+
+						  public IdColumn getIdColumn() {
+							    return getColumnSet().getColumnByClass(IdColumn.class);
+						  }
+							
+						  public ParameterNameColumn getParameterNameColumn() {
+						    return getColumnSet().getColumnByClass(ParameterNameColumn.class);
+						  }
+							
+						  public ParameterValueColumn getParameterValueColumn() {
+						    return getColumnSet().getColumnByClass(ParameterValueColumn.class);
+						  }
+
+				          @Override
+				          protected void execDecorateRow(ITableRow row) {
+				            if (getParameterValueColumn().getValue(row) == null) {
+				              row.setIconId("font:\uE001");
+				            }
+				          }
+
+						  @Order(10)
+						  public class IdColumn extends AbstractLongColumn {
+						
+						    @Override
+						    protected boolean getConfiguredDisplayable() {
+						      return false;
+						    }
+						
+						    @Override
+						    protected boolean getConfiguredPrimaryKey() {
+						      return true;
+						    }
+						
+						  }
+						
+					  	  @Order(15)
+						  public class ParentIdColumn extends AbstractLongColumn {
+						
+							    @Override
+							    protected boolean getConfiguredDisplayable() {
+							      return false;
+							    }
+						  	}
+
+							
 							@Order(1000)
 							public class ParameterNameColumn extends AbstractStringColumn {
 

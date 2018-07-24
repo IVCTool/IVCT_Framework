@@ -95,36 +95,85 @@ public class SuTCbService implements ISuTCbService {
 		}
 
 		CbService cbService = BEANS.get(CbService.class);
-		BadgeDescription bd = cbService.getBadgeDescription(formData.getCbId());
-		formData.getCbName().setValue(bd.name);
-		formData.getCbDescription().setValue(bd.description);
+		BadgeDescription badgeDescription = cbService.getBadgeDescription(formData.getCbId());
+		formData.getCbName().setValue(badgeDescription.name);
+		formData.getCbDescription().setValue(badgeDescription.description);
 		
 		// TODO fill parameter table of this form
-		Path paramFile = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID, "TcParam.json");
+		Path paramFile = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), badgeDescription.ID, "TcParam.json");
+		importBadgeParams(formData, paramFile);
+		importBadgeParamsHierachical(formData, paramFile);
+		
+		
+		// fill requirement table of this form
+		importRequirements(formData, badgeDescription);
+
+		return formData;
+	}
+	
+	private SuTCbFormData importBadgeParams (final SuTCbFormData fd, final Path paramFilePath) {
 		JSONParser parser = new JSONParser();
 		try {
-			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFile.toString()));
+			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFilePath.toString()));
 			LOG.trace(jsonObj.toString());
 			
-			jsonObj.forEach((key, value) -> {
-				SuTCbParameterTableRowData row = formData.getSuTCbParameterTable().addRow();
-				row.setParameterName(key.toString());
-				row.setParameterValue(value.toString());
-			});
+//			jsonObj.forEach((key, value) -> {
+//				SuTCbParameterTableRowData row = fd.getSuTCbParameterTable().addRow();
+//				row.setParameterName(key.toString());
+//				row.setParameterValue(value.toString());
+//			});
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		// fill requirement table of this form
+		return fd;
+	}
+
+	private SuTCbFormData importBadgeParamsHierachical (final SuTCbFormData fd, final Path paramFilePath) {
+		JSONParser parser = new JSONParser();
+		try {
+			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFilePath.toString()));
+			LOG.trace(jsonObj.toString());
+//			jsonObj.forEach((key, value) -> {
+//				LOG.trace("Import " + key.toString() + ": " + value.getClass().toString());
+//				SuTCbParameterTableRowData row = fd.getSuTCbParameterTable().addRow();
+//				importJsonElement(row, key, value);
+//			});		
+			
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return fd;
+	}
+	
+	SuTCbParameterTableRowData importJsonElement(final SuTCbParameterTableRowData r, final String k, final Object v) {
+		r.setParameterName(k);
+		if (v instanceof String) {
+			// simple element type
+			r.setParameterValue(v.toString());
+		}
+		else {
+			//structured hierarchical element type
+//			SuTCbParameterTableRowData child = r.;
+//			SuTCbParameterTableRowData
+		}
+			
+			
+		return r;
+	}
+
+	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {
 		for (InteroperabilityRequirement requirement:bd.requirements) {
-			CbRequirementsTableRowData row = formData.getCbRequirementsTable().addRow();
+			CbRequirementsTableRowData row = fd.getCbRequirementsTable().addRow();
 			row.setRequirementId(requirement.ID);
 			row.setRequirementDesc(requirement.description);
 			row.setAbstractTC(requirement.TC);
 		}
-
-		return formData;
+		
+		return fd;
 	}
 
 	@Override

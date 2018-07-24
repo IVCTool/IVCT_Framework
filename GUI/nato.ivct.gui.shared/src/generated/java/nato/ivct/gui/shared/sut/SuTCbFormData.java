@@ -200,10 +200,30 @@ public class SuTCbFormData extends AbstractFormData {
 		public static class SuTCbParameterTableRowData extends AbstractTableRowData {
 
 			private static final long serialVersionUID = 1L;
+			public static final String id = "id";
+			public static final String parentId = "parentId";
 			public static final String parameterName = "parameterName";
 			public static final String parameterValue = "parameterValue";
+			private Long m_id;
+			private Long m_parentId;
 			private String m_parameterName;
 			private String m_parameterValue;
+
+			public Long getId() {
+				return m_id;
+			}
+
+			public void setId(Long newId) {
+				m_id = newId;
+			}
+
+			public Long getParentId() {
+				return m_parentId;
+			}
+
+			public void setParentId(Long newParentId) {
+				m_parentId = newParentId;
+			}
 
 			public String getParameterName() {
 				return m_parameterName;
