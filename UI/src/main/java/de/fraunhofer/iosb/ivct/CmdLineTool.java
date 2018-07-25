@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
+import nato.ivct.commander.BadgeTcParam;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
@@ -36,7 +37,7 @@ import nato.ivct.commander.Factory;
 public class CmdLineTool {
     Thread writer;
 	private boolean keepGoing = true;
-    private Command command = null;
+    private nato.ivct.commander.Command command = null;
 	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
@@ -99,7 +100,10 @@ public class CmdLineTool {
     			} catch (InterruptedException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
-    			}
+    			} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
     		}
     	}
@@ -194,6 +198,173 @@ class Writer extends Thread {
                 switch(split[0]) {
                 case "":
                 	break;
+                case "addSUT":
+                case "asut":
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("addSUT: need SUT name");
+                        break;
+                	}
+                	String sutName = split[1];
+                	int posSutName = sutName.indexOf("\"");
+                	if (posSutName != -1) {
+                		out.println("addSUT: SUT name must NOT be quoted: " + line);
+                		break;
+                	}
+                	// check if SUT entered exists in SUT list
+                    if (ivctCommander.rtp.checkSutNotKnown(sutName) == false) {
+                		out.println("addSUT: SUT already exists: " + sutName);
+                		break;
+                	}
+                    int posDesc = line.indexOf("\"");
+                    if (posDesc == -1) {
+                		out.println("addSUT: no description start quote: " + line);
+                		break;
+                    }
+                    int posDescEnd = line.indexOf("\"", posDesc + 1);
+                    if (posDescEnd == -1) {
+                		out.println("addSUT: no description end quote: " + line);
+                		break;
+                    }
+                	if (posDescEnd == posDesc + 1) {
+                		out.println("addSUT: no description: " + line);
+                		break;
+                	}
+                	String sutDescription = line.substring(posDesc + 1, posDescEnd);
+                    int posVen = line.indexOf("\"", posDescEnd + 1);
+                    if (posVen == -1) {
+                		out.println("addSUT: no quoted vendor: " + line);
+                		break;
+                    }
+                    int posVenEnd = line.indexOf("\"", posVen + 1);
+                    if (posVenEnd == -1) {
+                		out.println("addSUT: no vendor start quote: " + sutName);
+                		break;
+                    }
+                	if (posVenEnd == posVen + 1) {
+                		out.println("addSUT: no vendor: " + line);
+                		break;
+                	}
+                	String vendorName = line.substring(posVen + 1, posVenEnd);
+                	command = Factory.createCmdUpdateSUT(sutName, sutDescription, vendorName, null);
+                	try {
+						command.execute();
+					} catch (Exception e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                    List<String> sutsAsut = ivctCommander.rtp.getSUTS();
+                	if (sutsAsut.isEmpty()) {
+                		out.println("No SUT found. Please load a SUT onto the file system.");
+                		break;
+                	}
+                	ivctCommander.rtp.setSutName(split[1]);
+                    ivctCommander.resetSUT();
+                	break;
+                case "listBadges":
+                case "lbg":
+                	// Warn about extra parameter
+                	if (split.length > 1) {
+                        out.println("listBadges: Warning extra parameter: " + split[1]);
+                	}
+            		List<String> badges = null;
+            		badges = ivctCommander.rtp.getTestSuiteNames();
+            		for (String entry  : badges) {
+                        out.println(entry);
+            		}
+                	break;
+                case "addBadge":
+                case "abg":
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
+                		out.println(sutNotSelected);
+                		break;
+                	}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("addBadge: need badge name");
+                        break;
+                	}
+                	List<String> allBadges = ivctCommander.rtp.getTestSuiteNames();
+                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), false);
+                	boolean errorOccurred = false;
+                	String newBadge = null;
+                	for (int i = 0; i < split.length - 1; i++) {
+                		newBadge = split[i + 1];
+                		if (allBadges.contains(newBadge) == false) {
+                            out.println("addBadge: unknown badge name: " + newBadge);
+                            errorOccurred = true;
+                            break;
+                		}
+                		if (sutBadges.contains(newBadge) == false) {
+                		sutBadges.add(newBadge);
+                		}
+                	}
+                	BadgeTcParam[] badgeTcParams = new BadgeTcParam[sutBadges.size()];
+                	int ind = 0;
+                	for (String Entry : sutBadges) {
+                		if (allBadges.contains(newBadge) == false) {
+                            out.println("addBadge: unknown badge name: " + newBadge);
+                            errorOccurred = true;
+                            break;
+                		}
+                    	badgeTcParams[ind] = new BadgeTcParam();
+                		badgeTcParams[ind].id = new String (Entry);
+                		badgeTcParams[ind].tcParam = null;
+                		ind += 1;
+                	}
+                	if (errorOccurred) {
+                		break;
+                	}
+                	command = Factory.createCmdUpdateSUT(ivctCommander.rtp.getSutName(), ivctCommander.rtp.getSutDescription(), ivctCommander.rtp.getVendorName(), badgeTcParams);
+                	try {
+						command.execute();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                	command = null;
+                	break;
+                case "deleteBadge":
+                case "dbg":
+                	if (ivctCommander.rtp.checkSutNotSelected()) {
+                		out.println(sutNotSelected);
+                		break;
+                	}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                		out.println("deleteBadge: need badge name(s)");
+                		break;
+                	}
+                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), false);
+                	String newBadgeDbg = null;
+                	for (int i = 0; i < split.length - 1; i++) {
+                		newBadgeDbg = split[i + 1];
+                		if (sutBadgesDbg.contains(newBadgeDbg) == false) {
+                			out.println("deleteBadge: unknown badge name: " + newBadgeDbg);
+                			break;
+                		}
+            			sutBadgesDbg.remove(newBadgeDbg);
+                	}
+                	BadgeTcParam[] badgeTcParamsDbg = new BadgeTcParam[sutBadgesDbg.size()];
+                	int indDbg = 0;
+                	for (String Entry : sutBadgesDbg) {
+                		badgeTcParamsDbg[indDbg] = new BadgeTcParam();
+                		badgeTcParamsDbg[indDbg].id = new String (Entry);
+                		badgeTcParamsDbg[indDbg].tcParam = null;
+                		indDbg += 1;
+                	}
+                	command = Factory.createCmdUpdateSUT(ivctCommander.rtp.getSutName(), ivctCommander.rtp.getSutDescription(), ivctCommander.rtp.getVendorName(), badgeTcParamsDbg);
+                	try {
+						command.execute();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                	command = null;
+                	break;
                 case "listSUT":
                 case "lsut":
                 	// Warn about extra parameter
@@ -248,7 +419,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls2 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	List<String> ls2 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
                 	for (String temp : ls2) {
                 		System.out.println(temp);
                 	}
@@ -268,7 +439,7 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	List<String> ls1 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	List<String> ls1 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
                 	boolean gotTestSchedule = false;
         			for (String entry : ls1) {
                 		if (split[1].equals(entry)) {
@@ -325,7 +496,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls3 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	List<String> ls3 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
                 	for (String temp : ls3) {
                 		System.out.println(temp);
                     	List<String> testcases1 = ivctCommander.rtp.getTestcases(temp);
@@ -452,6 +623,10 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
+                    out.println("addSUT (asut) sut \"description text quoted\" \"vendor text quoted\"- add an SUT");
+                    out.println("listBadges (lbg) - list all available badges");
+                    out.println("addBadge (abg) badge ... badge - add one or more badges to SUT");
+                    out.println("deleteBadge (dbg) badge ... badge - delete one or more badges from SUT");
                     out.println("listSUT (lsut) - list SUT folders");
                     out.println("setSUT (ssut) sut - set active SUT");
                     out.println("listTestSchedules (lts) - list the available test schedules for the test suite");
@@ -479,7 +654,11 @@ class Writer extends Thread {
             }
         }
         catch (IOException e) { System.err.println("Writer: " + e); }
-        finally { if (out != null) out.close(); }
+        finally {
+        	if (out != null) {
+        		out.close();
+        	}
+        }
         System.exit(0);
     }
 }

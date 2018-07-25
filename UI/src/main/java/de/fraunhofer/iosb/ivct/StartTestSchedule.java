@@ -16,7 +16,7 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
-public class StartTestSchedule implements Command {
+public class StartTestSchedule implements nato.ivct.commander.Command {
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
 

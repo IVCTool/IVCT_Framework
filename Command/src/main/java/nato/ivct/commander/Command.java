@@ -25,5 +25,5 @@ public interface Command {
 	/**
 	 * the execute method will run in the callers thread. 
 	 */
-	public void execute();
+	public void execute() throws Exception;
 }
