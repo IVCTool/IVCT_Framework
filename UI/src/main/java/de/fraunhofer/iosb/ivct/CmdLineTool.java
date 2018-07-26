@@ -165,6 +165,11 @@ class TcRunnable implements Runnable {
   	}
 }
 
+class SutDescriptionVendor {
+	String sutName;
+	String sutDescription;
+	String vendorName;
+}
 
 // This thread reads user input from the console and sends it to the server.
 class Writer extends Thread {
@@ -175,6 +180,65 @@ class Writer extends Thread {
         ivctCommander = i;
     }
     
+    /**
+     * This method will get the sut name, sut description and vendor from the user input
+     * @param out the logging stream
+     * @param line the user input
+     * @param addMode whether add or modify mode
+     * @return the sut name, sut description and vendor in a class structure or
+     *         null when error
+     */
+    private SutDescriptionVendor getSutDescriptionVendor(final PrintStream out, final String line, final boolean addMode) {
+        String split[]= line.trim().split("\\s+");
+    	String sutName = split[1];
+    	int posSutName = sutName.indexOf("\"");
+    	if (posSutName != -1) {
+    		out.println("getSutDescriptionVendor: SUT name must NOT be quoted: " + line);
+    		return null;
+    	}
+    	// check if SUT entered exists in SUT list
+    	if (addMode) {
+    		if (ivctCommander.rtp.checkSutNotKnown(sutName) == false) {
+    			out.println("getSutDescriptionVendor: SUT already exists: " + sutName);
+    			return null;
+    		}
+    	}
+        int posDesc = line.indexOf("\"");
+        if (posDesc == -1) {
+    		out.println("getSutDescriptionVendor: missing description start quote: " + line);
+    		return null;
+        }
+        int posDescEnd = line.indexOf("\"", posDesc + 1);
+        if (posDescEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing description end quote: " + line);
+    		return null;
+        }
+    	if (posDescEnd == posDesc + 1) {
+    		out.println("getSutDescriptionVendor: no description: " + line);
+    		return null;
+    	}
+    	String sutDescription = line.substring(posDesc + 1, posDescEnd);
+        int posVen = line.indexOf("\"", posDescEnd + 1);
+        if (posVen == -1) {
+    		out.println("getSutDescriptionVendor: missing vendor start quote: " + line);
+    		return null;
+        }
+        int posVenEnd = line.indexOf("\"", posVen + 1);
+        if (posVenEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing vendor end quote: " + line);
+    		return null;
+        }
+    	if (posVenEnd == posVen + 1) {
+    		out.println("getSutDescriptionVendor: no vendor: " + line);
+    		return null;
+    	}
+    	String vendorName = line.substring(posVen + 1, posVenEnd);
+    	SutDescriptionVendor sutDescriptionVendor = new SutDescriptionVendor();
+    	sutDescriptionVendor.sutName = sutName;
+    	sutDescriptionVendor.sutDescription = sutDescription;
+    	sutDescriptionVendor.vendorName = vendorName;
+    	return sutDescriptionVendor;
+    }
     /*
      * Read user input and execute valid commands.
      */
@@ -205,48 +269,11 @@ class Writer extends Thread {
                         out.println("addSUT: need SUT name");
                         break;
                 	}
-                	String sutName = split[1];
-                	int posSutName = sutName.indexOf("\"");
-                	if (posSutName != -1) {
-                		out.println("addSUT: SUT name must NOT be quoted: " + line);
+                	SutDescriptionVendor sutDescriptionVendorAdd = getSutDescriptionVendor(out, line, true);
+                	if (sutDescriptionVendorAdd == null) {
                 		break;
                 	}
-                	// check if SUT entered exists in SUT list
-                    if (ivctCommander.rtp.checkSutNotKnown(sutName) == false) {
-                		out.println("addSUT: SUT already exists: " + sutName);
-                		break;
-                	}
-                    int posDesc = line.indexOf("\"");
-                    if (posDesc == -1) {
-                		out.println("addSUT: no description start quote: " + line);
-                		break;
-                    }
-                    int posDescEnd = line.indexOf("\"", posDesc + 1);
-                    if (posDescEnd == -1) {
-                		out.println("addSUT: no description end quote: " + line);
-                		break;
-                    }
-                	if (posDescEnd == posDesc + 1) {
-                		out.println("addSUT: no description: " + line);
-                		break;
-                	}
-                	String sutDescription = line.substring(posDesc + 1, posDescEnd);
-                    int posVen = line.indexOf("\"", posDescEnd + 1);
-                    if (posVen == -1) {
-                		out.println("addSUT: no quoted vendor: " + line);
-                		break;
-                    }
-                    int posVenEnd = line.indexOf("\"", posVen + 1);
-                    if (posVenEnd == -1) {
-                		out.println("addSUT: no vendor start quote: " + sutName);
-                		break;
-                    }
-                	if (posVenEnd == posVen + 1) {
-                		out.println("addSUT: no vendor: " + line);
-                		break;
-                	}
-                	String vendorName = line.substring(posVen + 1, posVenEnd);
-                	command = Factory.createCmdUpdateSUT(sutName, sutDescription, vendorName, null);
+                	command = Factory.createCmdUpdateSUT(sutDescriptionVendorAdd.sutName, sutDescriptionVendorAdd.sutDescription, sutDescriptionVendorAdd.vendorName, null);
                 	try {
 						command.execute();
 					} catch (Exception e2) {
@@ -258,7 +285,36 @@ class Writer extends Thread {
                 	command = null;
                     List<String> sutsAsut = ivctCommander.rtp.getSUTS();
                 	if (sutsAsut.isEmpty()) {
-                		out.println("No SUT found. Please load a SUT onto the file system.");
+                		out.println("addSUT: cannot load SUT onto the file system.");
+                		break;
+                	}
+                	ivctCommander.rtp.setSutName(split[1]);
+                    ivctCommander.resetSUT();
+                	break;
+                case "modifySUT":
+                case "msut":
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUT: need SUT name");
+                        break;
+                	}
+                	SutDescriptionVendor sutDescriptionVendorModify = getSutDescriptionVendor(out, line, false);
+                	if (sutDescriptionVendorModify == null) {
+                		break;
+                	}
+                	command = Factory.createCmdUpdateSUT(sutDescriptionVendorModify.sutName, sutDescriptionVendorModify.sutDescription, sutDescriptionVendorModify.vendorName, null);
+                	try {
+						command.execute();
+					} catch (Exception e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                    List<String> sutsAsutModify = ivctCommander.rtp.getSUTS();
+                	if (sutsAsutModify.isEmpty()) {
+                		out.println("modifySUT: cannot find SUT on the file system.");
                 		break;
                 	}
                 	ivctCommander.rtp.setSutName(split[1]);
@@ -343,7 +399,7 @@ class Writer extends Thread {
                 	for (int i = 0; i < split.length - 1; i++) {
                 		newBadgeDbg = split[i + 1];
                 		if (sutBadgesDbg.contains(newBadgeDbg) == false) {
-                			out.println("deleteBadge: unknown badge name: " + newBadgeDbg);
+                			out.println("deleteBadge: badge name not in SUT list: " + newBadgeDbg);
                 			break;
                 		}
             			sutBadgesDbg.remove(newBadgeDbg);
@@ -624,6 +680,7 @@ class Writer extends Thread {
                 case "help":
                 case "h":
                     out.println("addSUT (asut) sut \"description text quoted\" \"vendor text quoted\"- add an SUT");
+                    out.println("modifySUT (msut) sut \"description text quoted\" \"vendor text quoted\"- modify an SUT");
                     out.println("listBadges (lbg) - list all available badges");
                     out.println("addBadge (abg) badge ... badge - add one or more badges to SUT");
                     out.println("deleteBadge (dbg) badge ... badge - delete one or more badges from SUT");

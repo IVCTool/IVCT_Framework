@@ -326,18 +326,21 @@ public class CmdUpdateSUT implements Command {
 				}
 				// get badge files list from the JSON object
 				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
-				if (badgeTcParams.length > 0) {
+				if (badgeTcParams != null) {
 					if (badgeArray != null) {
-						if (badgeTcParams != null) {
-							for (int i = 0; i < badgeTcParams.length; i++) {
-								if (badgeArray.contains(badgeTcParams[i].id)) {
-									continue;
+						if (badgeTcParams.length == badgeArray.size()) {
+							if (badgeTcParams.length > 0) {
+								for (int i = 0; i < badgeTcParams.length; i++) {
+									if (badgeArray.contains(badgeTcParams[i].id)) {
+										continue;
+									}
+									dataChanged = true;
 								}
-								dataChanged = true;
 							}
+						} else {
+							dataChanged = true;
 						}
 					}
-					String entry;
 					for (int i = 0; i < badgeArray.size(); i++) {
 						for (int j = 0; j < badgeTcParams.length; j++) {
 							if (badgeTcParams[j].id.equals(badgeArray.get(i))) {
