@@ -44,11 +44,13 @@ public class CmdListSuT implements Command {
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			if (file.isDirectory()) {
+				FileReader fReader = null;
 				Object obj;
 				JSONParser parser = new JSONParser();
 				try {
 					SutDescription sut = new SutDescription();
-					obj = parser.parse(new FileReader(file + "/CS.json"));
+					fReader = new FileReader(file + "/CS.json");
+					obj = parser.parse(fReader);
 					JSONObject jsonObj = (JSONObject) obj;
 					sut.ID = (String) jsonObj.get("id");
 					sut.description = (String) jsonObj.get("description");
@@ -62,6 +64,15 @@ public class CmdListSuT implements Command {
 				} catch (IOException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} finally {
+					if (fReader != null) {
+						try {
+							fReader.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 
 			}
