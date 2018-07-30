@@ -163,7 +163,7 @@ public class Factory {
 								"New IVCT.properties file has been created with default values. Please verify settings!");
 						LOGGER.warn(props.toString());
 					} catch (IOException e1) {
-						LOGGER.error("Unable to write " + home + "/IVCT.properties file. Please verify settings!");
+						LOGGER.error("Unable to write " + home + "/IVCT.properties file.");
 						e1.printStackTrace();
 					}
 				}

@@ -330,6 +330,7 @@ public final class RuntimeParameters {
 		}
 
 		// Set the sut name.
+		listSUTs();
 		sutName = theSutName;
 		sutDescription = sutList.sutMap.get(sutName);
 
