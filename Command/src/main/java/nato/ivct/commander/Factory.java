@@ -142,6 +142,12 @@ public class Factory {
 				try {
 					File f = new File(home);
 					// test if IVCT_CONF is already a filename
+					if (f.exists()) {
+						LOGGER.debug(home + " exists");
+					}
+					if (f.isDirectory()) {
+						LOGGER.debug(home + " is directory");
+					}
 					if (f.exists() && !f.isDirectory()) {
 						props.load(new FileInputStream(f));
 					} else {

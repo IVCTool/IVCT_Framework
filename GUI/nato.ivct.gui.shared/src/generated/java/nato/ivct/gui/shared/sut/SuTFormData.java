@@ -39,18 +39,10 @@ public class SuTFormData extends AbstractFormData {
 		return getFieldByClass(Name.class);
 	}
 
-	/**
-	 * access method for property SutId.
-	 * @return SutId System under Test Identification
-	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property SutId.
-	 * @param sutId System under Test Identification
-	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
 	}
