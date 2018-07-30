@@ -231,6 +231,7 @@ public class CmdUpdateSUT implements Command {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute() throws Exception {
 		// The SUT is placed in a known folder
