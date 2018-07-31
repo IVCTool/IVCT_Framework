@@ -1,14 +1,17 @@
 package nato.ivct.gui.client.outlines;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutline;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
-import nato.ivct.gui.client.cb.CbTablePage;
+import nato.ivct.gui.client.cb.CbNodePage;
 import nato.ivct.gui.shared.Icons;
+import nato.ivct.gui.shared.cb.ICbService;
 
 /**
  * <h3>{@link BadgeOutline}</h3>
@@ -20,7 +23,9 @@ public class BadgeOutline extends AbstractOutline {
 
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-		pageList.add(new CbTablePage());
+//		pageList.add(new CbTablePage());
+		Set<String> badges = BEANS.get(ICbService.class).loadBadges();
+		badges.forEach(s -> pageList.add(new CbNodePage(s)));
 	}
 
 	@Override

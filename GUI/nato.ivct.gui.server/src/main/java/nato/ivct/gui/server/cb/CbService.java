@@ -2,6 +2,7 @@ package nato.ivct.gui.server.cb;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
@@ -31,6 +32,15 @@ public class CbService implements ICbService {
 
 	HashMap<String, BadgeDescription> cb_hm = null;
 
+	@Override
+	public Set<String> loadBadges() {
+		if (cb_hm == null)
+			// load badge descriptions
+			waitForBadgeLoading(); 
+
+		return new TreeSet<>(cb_hm.keySet());
+	}
+
 	public BadgeDescription getBadgeDescription(String cb) {
 		if (cb_hm == null)
 			waitForBadgeLoading();
@@ -43,7 +53,7 @@ public class CbService implements ICbService {
 		CmdListBadges badgeCmd = (CmdListBadges) future.awaitDoneAndGet();
 		cb_hm = badgeCmd.badgeMap;		
 	}
-	
+
 	@Override
 	public CbTablePageData getCbTableData(SearchFilter filter) {
 		LOG.info("getCbTableData");

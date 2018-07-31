@@ -1,6 +1,8 @@
 package nato.ivct.gui.server.sut;
 
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
@@ -28,21 +30,42 @@ public class SuTService implements ISuTService {
 
 	HashMap<String, SutDescription> sut_hm = new HashMap<String, SutDescription>();
 	
+	@Override
+	public Set<String> loadSuts() {
+		if (sutMap == null)
+			// load SuT descriptions
+			waitForSutLoading(); 
+
+		return new TreeSet<>(sutMap.keySet());
+	}
+	
 	public SutDescription getSutDescription(String sutId) {
 		return sutMap.get(sutId);
 	}
-
-	@Override
-	public SuTTablePageData getSuTTableData(SearchFilter filter) {
-		LOG.info ("getSuTTableData");
-		SuTTablePageData pageData = new SuTTablePageData();
-		// wait until collect SuT Descriptions Job has finished
+	
+	private void waitForSutLoading() {
 		IFuture<CmdListSuT> future1 = ServerSession.get().getCmdJobs();
 		ServerSession.get().getLoadBadgesJob().awaitDone();
 		Command resultSuT = future1.awaitDoneAndGet();
 		// copy sut descriptions into table rows
 		CmdListSuT sutCmd = (CmdListSuT) resultSuT;
 		sutMap = sutCmd.sutMap;
+	}
+
+	@Override
+	public SuTTablePageData getSuTTableData(SearchFilter filter) {
+		LOG.info ("getSuTTableData");
+		SuTTablePageData pageData = new SuTTablePageData();
+		if (sutMap == null) {
+			// wait until collect SuT Descriptions Job has finished
+			waitForSutLoading();
+		}
+//		IFuture<CmdListSuT> future1 = ServerSession.get().getCmdJobs();
+//		ServerSession.get().getLoadBadgesJob().awaitDone();
+//		Command resultSuT = future1.awaitDoneAndGet();
+//		// copy sut descriptions into table rows
+//		CmdListSuT sutCmd = (CmdListSuT) resultSuT;
+//		sutMap = sutCmd.sutMap;
 		for (SutDescription value : sutMap.values()) {
 			SuTTableRowData row;
 			row = pageData.addRow();

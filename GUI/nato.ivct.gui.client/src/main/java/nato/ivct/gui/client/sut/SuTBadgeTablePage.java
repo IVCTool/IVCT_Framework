@@ -18,11 +18,20 @@ import nato.ivct.gui.shared.sut.SuTBadgeTablePageData;
 @Data(SuTBadgeTablePageData.class)
 public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.Table> {
 
-	private String sutId = null;
+	private String m_sutId = null;
+	private String m_pageTitle = null;
 
+	public SuTBadgeTablePage() {
+		m_pageTitle = TEXTS.get("SuTBadgeTablePage");
+	}
+	
+	public SuTBadgeTablePage(final String sutId) {
+		m_pageTitle = m_sutId = sutId;
+	}
+	
 	@Override
 	protected String getConfiguredTitle() {
-		return TEXTS.get("SuTBadgeTablePage");
+		return m_pageTitle;
 	}
 
 	@Override
@@ -161,10 +170,10 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 //	}
 
 	public void setSutId(String _sutId) {
-		sutId = _sutId;
+		m_sutId = _sutId;
 	}
 
 	public String getSutId() {
-		return sutId;
+		return m_sutId;
 	}
 }

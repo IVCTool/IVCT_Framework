@@ -8,11 +8,20 @@ import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 public class CbNodePage extends AbstractPageWithNodes {
-	private String badgeId = null;
+	private String m_badgeId = null;
+	private String m_pageTitle = null;
+
+	public CbNodePage() {
+		m_pageTitle = TEXTS.get("CbNodePage");
+	}
+	
+	public CbNodePage(final String badgeId) {
+		m_pageTitle = m_badgeId = badgeId;
+	}
 	
 	@Override
 	protected String getConfiguredTitle() {
-		return TEXTS.get("CbNodePage");
+		return m_pageTitle;
 	}
 
 	@Override
@@ -45,10 +54,10 @@ public class CbNodePage extends AbstractPageWithNodes {
 	}
 
 	public String getBadgeId() {
-		return badgeId;
+		return m_badgeId;
 	}
 
 	public void setBadgeId(String badgeId) {
-		this.badgeId = badgeId;
+		this.m_badgeId = badgeId;
 	}
 }

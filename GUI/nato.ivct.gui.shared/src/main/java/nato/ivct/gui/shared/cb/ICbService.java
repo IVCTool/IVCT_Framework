@@ -24,4 +24,6 @@ public interface ICbService extends IService {
 	CbFormData store(CbFormData formData);
 	
 	CbRequirementsTable loadRequirements(Set<String> badges);
+
+	Set<String> loadBadges();
 }
