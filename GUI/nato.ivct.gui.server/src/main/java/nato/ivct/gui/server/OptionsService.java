@@ -1,7 +1,7 @@
 package nato.ivct.gui.server;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 
 import nato.ivct.gui.shared.CreateOptionsPermission;

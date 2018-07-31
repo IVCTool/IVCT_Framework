@@ -16,7 +16,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringFiel
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;

@@ -2,7 +2,7 @@ package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
 public class SuTTcNodePage extends AbstractPageWithNodes {
 

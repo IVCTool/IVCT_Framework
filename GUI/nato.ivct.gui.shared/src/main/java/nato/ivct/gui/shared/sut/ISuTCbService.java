@@ -4,8 +4,6 @@ import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
-import nato.ivct.gui.shared.sut.SuTCbFormData;
-
 @TunnelToServer
 public interface ISuTCbService extends IService {
 
@@ -17,4 +15,6 @@ public interface ISuTCbService extends IService {
 	
 	SuTCbFormData prepareCreate(SuTCbFormData formData);
 	SuTCbFormData create(SuTCbFormData formData);
+	
+	String loadBadgeParams (String sutId, String badgeId);
 }

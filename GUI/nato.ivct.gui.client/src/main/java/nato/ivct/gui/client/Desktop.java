@@ -15,7 +15,7 @@ import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.client.search.SearchOutline;
@@ -125,7 +125,7 @@ public class Desktop extends AbstractDesktop {
 
 		@Override
 		protected String getConfiguredIconId() {
-			return AbstractIcons.Person;
+			return AbstractIcons.PersonSolid;
 		}
 		
 		@Order(1000)

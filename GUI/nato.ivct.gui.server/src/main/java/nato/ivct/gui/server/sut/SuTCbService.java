@@ -1,19 +1,16 @@
 package nato.ivct.gui.server.sut;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +97,8 @@ public class SuTCbService implements ISuTCbService {
 		formData.getCbDescription().setValue(badgeDescription.description);
 		
 		// TODO fill parameter table of this form
-		Path paramFile = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), badgeDescription.ID, "TcParam.json");
-		importBadgeParams(formData, paramFile);
-		importBadgeParamsHierachical(formData, paramFile);
-		
+//		Path paramFile =  getParamFile(formData.getSutId(), badgeDescription.ID);
+//		importBadgeParams(formData, paramFile);
 		
 		// fill requirement table of this form
 		importRequirements(formData, badgeDescription);
@@ -111,43 +106,24 @@ public class SuTCbService implements ISuTCbService {
 		return formData;
 	}
 	
-	private SuTCbFormData importBadgeParams (final SuTCbFormData fd, final Path paramFilePath) {
-		JSONParser parser = new JSONParser();
-		try {
-			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFilePath.toString()));
-			LOG.trace(jsonObj.toString());
-			
+//	private SuTCbFormData importBadgeParams (final SuTCbFormData fd, final Path paramFilePath) {
+//		JSONParser parser = new JSONParser();
+//		try {
+//			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFilePath.toString()));
+//			LOG.trace(jsonObj.toString());
+//			
 //			jsonObj.forEach((key, value) -> {
 //				SuTCbParameterTableRowData row = fd.getSuTCbParameterTable().addRow();
 //				row.setParameterName(key.toString());
 //				row.setParameterValue(value.toString());
 //			});
-		} catch (IOException | ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return fd;
-	}
-
-	private SuTCbFormData importBadgeParamsHierachical (final SuTCbFormData fd, final Path paramFilePath) {
-		JSONParser parser = new JSONParser();
-		try {
-			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFilePath.toString()));
-			LOG.trace(jsonObj.toString());
-//			jsonObj.forEach((key, value) -> {
-//				LOG.trace("Import " + key.toString() + ": " + value.getClass().toString());
-//				SuTCbParameterTableRowData row = fd.getSuTCbParameterTable().addRow();
-//				importJsonElement(row, key, value);
-//			});		
-			
-		} catch (IOException | ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return fd;
-	}
+//		} catch (IOException | ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return fd;
+//	}
 	
 	SuTCbParameterTableRowData importJsonElement(final SuTCbParameterTableRowData r, final String k, final Object v) {
 		r.setParameterName(k);
@@ -161,8 +137,24 @@ public class SuTCbService implements ISuTCbService {
 //			SuTCbParameterTableRowData
 		}
 			
-			
 		return r;
+	}
+
+	@Override
+	public String loadBadgeParams(String sutId, String badgeId) {
+		Path paramFile = getParamFile(sutId, badgeId);
+		try {
+			LOG.debug("load badge parameters from file " + paramFile.toString());
+			return new String(Files.readAllBytes(paramFile));
+		} catch (IOException e) {
+			LOG.error("could not read badge parameters from file " + paramFile.toString());
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private Path getParamFile (String sutId, String badgeId) {
+		return Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), sutId, badgeId, "TcParam.json");
 	}
 
 	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {

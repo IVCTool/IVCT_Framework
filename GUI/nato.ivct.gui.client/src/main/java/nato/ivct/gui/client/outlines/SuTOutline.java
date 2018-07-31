@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutline;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.sut.SuTTablePage;
 import nato.ivct.gui.shared.Icons;
