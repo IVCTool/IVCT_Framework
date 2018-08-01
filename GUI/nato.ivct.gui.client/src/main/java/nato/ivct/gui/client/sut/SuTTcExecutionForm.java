@@ -8,8 +8,6 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
@@ -18,11 +16,9 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ReqDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseNameField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.OkButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
 import nato.ivct.gui.shared.sut.ISuTTcService;
@@ -74,7 +70,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 	public void startView() {
 		startInternal(new ViewHandler());
 	}
-
+	
 //	public void startModify() {
 //		startInternalExclusive(new ModifyHandler());
 //	}
@@ -83,9 +79,9 @@ public class SuTTcExecutionForm extends AbstractForm {
 //		startInternal(new NewHandler());
 //	}
 
-	public CancelButton getCancelButton() {
-		return getFieldByClass(CancelButton.class);
-	}
+//	public CancelButton getCancelButton() {
+//		return getFieldByClass(CancelButton.class);
+//	}
 
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
@@ -111,9 +107,9 @@ public class SuTTcExecutionForm extends AbstractForm {
 		return getFieldByClass(TcExecutionLogField.class);
 	}
 
-	public OkButton getOkButton() {
-		return getFieldByClass(OkButton.class);
-	}
+//	public OkButton getOkButton() {
+//		return getFieldByClass(OkButton.class);
+//	}
 
 	@Order(10000)
 	public class MainBox extends AbstractGroupBox {
@@ -310,13 +306,13 @@ public class SuTTcExecutionForm extends AbstractForm {
 			}
 		}
 
-		@Order(100000)
-		public class OkButton extends AbstractOkButton {
-		}
-
-		@Order(101000)
-		public class CancelButton extends AbstractCancelButton {
-		}
+//		@Order(100000)
+//		public class OkButton extends AbstractOkButton {
+//		}
+//
+//		@Order(101000)
+//		public class CancelButton extends AbstractCancelButton {
+//		}
 	}
 
 	public class ViewHandler extends AbstractFormHandler {
