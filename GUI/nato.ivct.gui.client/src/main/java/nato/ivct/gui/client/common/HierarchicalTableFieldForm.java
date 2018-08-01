@@ -38,7 +38,6 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIconColumn;
@@ -62,22 +61,15 @@ import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.platform.status.IStatus;
 import org.eclipse.scout.rt.platform.status.Status;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.NumberUtility;
 import org.eclipse.scout.rt.platform.util.TuningUtility;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
-import org.eclipse.scout.rt.shared.TEXTS;
-import org.eclipse.scout.rt.shared.services.common.code.ICodeType;
-import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 import org.eclipse.scout.rt.shared.services.lookup.LocalLookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
-//import org.eclipse.scout.widgets.client.services.lookup.IconIdLookupCall;
-//import org.eclipse.scout.widgets.client.services.lookup.LocaleLookupCall;
-//import org.eclipse.scout.widgets.client.ui.forms.BooleanFieldForm.MainBox.ExamplesBox.DefaultField;
-//import org.eclipse.scout.widgets.shared.services.code.IndustryICBCodeType;
-//import org.eclipse.scout.widgets.shared.services.code.IndustryICBCodeType.ICB9000.ICB9500.ICB9530.ICB9537;
 
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.CloseButton;
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ConfigurationBox;
@@ -99,14 +91,13 @@ import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.Configurat
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox;
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField;
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField.Table;
-import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField.Table.CustomColumn;
+//import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField.Table.CustomColumn;
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField.Table.LocationColumn;
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField.Table.TableStatusVisibleMenu;
 import nato.ivct.gui.client.common.HierarchicalTableFieldForm.MainBox.ExamplesBox.TableField.Table.TrendColumn;
-import nato.ivct.gui.shared.Icons;
 
 @Order(5010.0)
-public class HierarchicalTableFieldForm extends AbstractForm {
+public class HierarchicalTableFieldForm extends AbstractForm implements IPageForm {
 
   static final String[] LOCATIONS = {"San Francisco, USA", "Bruehl, Germany"};
 
@@ -136,9 +127,9 @@ public class HierarchicalTableFieldForm extends AbstractForm {
     return getFieldByClass(CloseButton.class);
   }
 
-  public DefaultField getDefaultField() {
-    return getFieldByClass(DefaultField.class);
-  }
+//  public DefaultField getDefaultField() {
+//	    return getFieldByClass(DefaultField.class);
+//	  }
 
   public ExamplesBox getExamplesBox() {
     return getFieldByClass(ExamplesBox.class);
@@ -343,9 +334,9 @@ public class HierarchicalTableFieldForm extends AbstractForm {
         @Order(1000)
         public class Table extends AbstractTable {
 
-          public CustomColumn getCustomColumn() {
-            return getColumnSet().getColumnByClass(CustomColumn.class);
-          }
+//          public CustomColumn getCustomColumn() {
+//            return getColumnSet().getColumnByClass(CustomColumn.class);
+//          }
 
           public ParentIdColumn getParentIdColumn() {
             return getColumnSet().getColumnByClass(ParentIdColumn.class);
@@ -583,10 +574,10 @@ public class HierarchicalTableFieldForm extends AbstractForm {
               return true;
             }
 
-            @Override
-            protected Class<? extends ICodeType<?, Long>> getConfiguredCodeType() {
-              return IndustryICBCodeType.class;
-            }
+//            @Override
+//            protected Class<? extends ICodeType<?, Long>> getConfiguredCodeType() {
+//              return IndustryICBCodeType.class;
+//            }
 
             @Override
             protected String getConfiguredHeaderText() {
@@ -618,10 +609,10 @@ public class HierarchicalTableFieldForm extends AbstractForm {
               return 80;
             }
 
-            @Override
-            protected Class<? extends ILookupCall<Locale>> getConfiguredLookupCall() {
-              return (Class<? extends ILookupCall<Locale>>) LocaleLookupCall.class;
-            }
+//            @Override
+//            protected Class<? extends ILookupCall<Locale>> getConfiguredLookupCall() {
+//              return (Class<? extends ILookupCall<Locale>>) LocaleLookupCall.class;
+//            }
 
           }
 
@@ -746,10 +737,10 @@ public class HierarchicalTableFieldForm extends AbstractForm {
               return TEXTS.get("Phone");
             }
 
-            @Override
-            protected void execDecorateCell(Cell cell, ITableRow row) {
-              cell.setIconId(Icons.Phone);
-            }
+//            @Override
+//            protected void execDecorateCell(Cell cell, ITableRow row) {
+//              cell.setIconId(Icons.Phone);
+//            }
 
             @Override
             protected int getConfiguredWidth() {
@@ -846,39 +837,39 @@ public class HierarchicalTableFieldForm extends AbstractForm {
             }
           }
 
-          @Order(137)
-          public class CustomColumn extends AbstractColumn<ExampleBean> {
-            @Override
-            protected String getConfiguredHeaderText() {
-              return "Custom";
-            }
-
-            @Override
-            protected String getConfiguredHeaderTooltipText() {
-              return "This column uses a pojo as data type with a custom formatting. The value is not sent to client.";
-            }
-
-            @Override
-            protected int getConfiguredWidth() {
-              return 100;
-            }
-
-            @Override
-            protected String formatValueInternal(ITableRow row, ExampleBean value) {
-              if (value == null) {
-                return null;
-              }
-              return value.getHeader();
-            }
-
-            @Override
-            protected void execDecorateCell(Cell cell, ITableRow row) {
-              if (row.getRowIndex() == 1) {
-                cell.setBackgroundColor("f99494");
-              }
-            }
-
-          }
+//          @Order(137)
+//          public class CustomColumn extends AbstractColumn<ExampleBean> {
+//            @Override
+//            protected String getConfiguredHeaderText() {
+//              return "Custom";
+//            }
+//
+//            @Override
+//            protected String getConfiguredHeaderTooltipText() {
+//              return "This column uses a pojo as data type with a custom formatting. The value is not sent to client.";
+//            }
+//
+//            @Override
+//            protected int getConfiguredWidth() {
+//              return 100;
+//            }
+//
+//            @Override
+//            protected String formatValueInternal(ITableRow row, ExampleBean value) {
+//              if (value == null) {
+//                return null;
+//              }
+//              return value.getHeader();
+//            }
+//
+//            @Override
+//            protected void execDecorateCell(Cell cell, ITableRow row) {
+//              if (row.getRowIndex() == 1) {
+//                cell.setBackgroundColor("f99494");
+//              }
+//            }
+//
+//          }
 
           @Order(140)
           public class LegacyHeaderColumn extends AbstractStringColumn {
@@ -1379,10 +1370,10 @@ public class HierarchicalTableFieldForm extends AbstractForm {
           return "ITALIC";
         }
 
-        @Override
-        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-          return (Class<? extends ILookupCall<String>>) IconIdLookupCall.class;
-        }
+//        @Override
+//        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+//          return (Class<? extends ILookupCall<String>>) IconIdLookupCall.class;
+//        }
 
         @Override
         protected void execChangedValue() {
@@ -1585,7 +1576,7 @@ public class HierarchicalTableFieldForm extends AbstractForm {
           @Override
           protected void execChangedValue() {
             for (IColumn<?> column : getTableField().getTable().getColumns()) {
-              if (column instanceof TrendColumn || column instanceof CustomColumn) {
+              if (column instanceof TrendColumn /*|| column instanceof CustomColumn*/) {
                 continue;
               }
               column.setEditable(getValue());
@@ -1897,7 +1888,7 @@ public class HierarchicalTableFieldForm extends AbstractForm {
 
           @Override
           protected void execClickAction() {
-            for (IColumn column : getTableField().getTable().getColumns()) {
+            for (IColumn<?> column : getTableField().getTable().getColumns()) {
               int newAlignment = column.getHorizontalAlignment() + 1;
               if (newAlignment > 1) {
                 newAlignment = -1;
@@ -1941,3 +1932,4 @@ public class HierarchicalTableFieldForm extends AbstractForm {
     }
   }
 }
+
