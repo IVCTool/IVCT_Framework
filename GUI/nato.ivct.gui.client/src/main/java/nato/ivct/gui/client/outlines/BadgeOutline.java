@@ -25,7 +25,7 @@ public class BadgeOutline extends AbstractOutline {
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
 //		pageList.add(new CbTablePage());
 		Set<String> badges = BEANS.get(ICbService.class).loadBadges();
-		badges.forEach(s -> pageList.add(new CbNodePage(s)));
+		badges.forEach(s -> {CbNodePage np = new CbNodePage(s); np.setOverviewIconId(Icons.CategoryBold);pageList.add(np);});
 	}
 
 	@Override
