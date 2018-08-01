@@ -108,13 +108,13 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 
 					@Override
 					public void run() throws Exception {
-						ISuTCbService cbService = BEANS.get(ISuTCbService.class);
+						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(3, "starting");
 							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String tcName = tr.getCell(2).toString();
-							cbService.executeTestCase(getSutId(), tcName, getBadgeId());
+							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
 						}
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
