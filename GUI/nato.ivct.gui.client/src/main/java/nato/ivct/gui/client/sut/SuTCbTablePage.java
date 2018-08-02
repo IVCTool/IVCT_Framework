@@ -111,7 +111,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
-							tr.setCellValue(3, "starting");
+							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
 							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String tcName = tr.getCell(2).toString();
 							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
