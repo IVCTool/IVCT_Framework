@@ -243,7 +243,7 @@ public class CmdUpdateSUT implements Command {
 			}
 		}
 
-		Set<String> testsuites = new HashSet<>();
+		Set<String> testsuites = new HashSet<String>();
 		// Check if no badges
 		if (this.badgeTcParams != null) {
 			

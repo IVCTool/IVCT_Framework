@@ -264,6 +264,18 @@ class Writer extends Thread {
                 	break;
                 case "addSUT":
                 case "asut":
+            		// If property is not set, do not have any access to any SUTs
+            		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+            			out.println("No IVCT_SUT_HOME_ID environment variable found: cannot add SUT");
+            			break;
+            		}
+            		// The SUT is placed in a known folder
+            		String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+            		File f = new File(sutsDir);
+            		if (f.exists() == false) {
+            			out.println("No SUT directory found");
+            			break;
+            		}
                 	// Need an input parameter
                 	if (split.length < 2) {
                         out.println("addSUT: need SUT name");
@@ -716,7 +728,6 @@ class Writer extends Thread {
         		out.close();
         	}
         }
-        System.exit(0);
     }
 }
 }

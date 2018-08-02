@@ -40,6 +40,10 @@ public class CmdListSuT implements Command {
 	public void execute() {
 		// file loader to read the JSON descriptions of SuT's
 
+		// If property is not set, do not have any access to any SUTs
+		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+			return;
+		}
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
