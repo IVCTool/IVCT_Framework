@@ -113,7 +113,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
 							tr.setBackgroundColor(ResourceBase.RUNNING);
-							String tcName = tr.getCell(2).toString();
+							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
 							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
 						}
 					}
