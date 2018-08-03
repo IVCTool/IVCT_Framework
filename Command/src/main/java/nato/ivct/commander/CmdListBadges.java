@@ -53,9 +53,11 @@ public class CmdListBadges implements Command {
 				Object obj;
 				JSONParser parser = new JSONParser();
 				if (file.isFile()) {
+					FileReader fr = null;
 					try {
 						BadgeDescription badge = new BadgeDescription();
-						obj = parser.parse(new FileReader(file));
+						fr = new FileReader(file);
+						obj = parser.parse(fr);
 						JSONObject jsonObj = (JSONObject) obj;
 						badge.ID = (String) jsonObj.get("id");
 						badge.version = (String) jsonObj.get("version");
@@ -88,6 +90,8 @@ public class CmdListBadges implements Command {
 						}
 
 						badgeMap.put(badge.ID, badge);
+						fr.close();
+						fr = null;
 					} catch (IOException | ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

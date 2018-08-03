@@ -14,8 +14,8 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.internal.AssumptionViolatedException;
 
 import org.junit.Test;
 
@@ -118,6 +118,49 @@ public class FactoryTest {
 		OnResultListener testListener = new OnResultListenerTest();
 		assertTrue("Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener",
 				Factory.createCmdStartTestResultListener(testListener) != null);
+	}
+
+	@Test
+	public void testCreateCmdUpdateSUTMethod() {
+
+		// If property is not set, do not have any access to any SUTs
+		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+			return;
+		}
+		String sutName = "hw_iosb";
+		String sutDescription = "HelloWorld system under federate for IVCT demonstration";
+		String vendorName = "Fraunhofer IOSB";
+		BadgeTcParam[] badgeTcParams = new BadgeTcParam[2];
+    	badgeTcParams[0] = new BadgeTcParam();
+		badgeTcParams[0].id = "HLA-BASE-2017";
+		badgeTcParams[0].tcParam = null;
+    	badgeTcParams[1] = new BadgeTcParam();
+		badgeTcParams[1].id = "TS_HLA_EncodingRulesTester-2017";
+		badgeTcParams[1].tcParam = null;
+		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutName, sutDescription, vendorName, badgeTcParams);
+		try {
+			cus.execute();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutName + "/" + "CS.json";
+		try {
+			// The parameters should be the same. Thus expected false.
+			assertFalse("CS.json values should be equal", CmdUpdateSUT.compareCSdata(csJsonFilename, sutName, sutDescription, vendorName, badgeTcParams));
+			// The sut name is changed. Thus expected true.
+			assertTrue("CS.json sut name change should be detected", CmdUpdateSUT.compareCSdata(csJsonFilename, "dummy", sutDescription, vendorName, badgeTcParams));
+			// The description is changed. Thus expected true.
+			assertTrue("CS.json sut description change should be detected", CmdUpdateSUT.compareCSdata(csJsonFilename, sutName, "dummy", vendorName, badgeTcParams));
+			// The vendor has changed. Thus expected true.
+			assertTrue("CS.json vendor change should be detected", CmdUpdateSUT.compareCSdata(csJsonFilename, sutName, sutDescription, "dummy", badgeTcParams));
+			// The badges have changed. Thus expected true.
+			badgeTcParams[0].id = "dummy";
+			assertTrue("CS.json badge change should be detected", CmdUpdateSUT.compareCSdata(csJsonFilename, sutName, sutDescription, vendorName, badgeTcParams));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test

@@ -59,6 +59,116 @@ public class CmdUpdateSUT implements Command {
 	}
 
 	/**
+	 * This method will check the parameter values are different to those already in the CS.json file
+	 * 
+	 * @param csJsonFileName the full name of the CS.json file
+	 * @param sutId the new sut identifier
+	 * @param sutDescription the new sut description
+	 * @param vendorName the new vendor name
+	 * @param badgeTcParams the new list of badges supported
+	 * @return true means some data is different, false means all data is the same
+	 */
+	public static boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, BadgeTcParam[] badgeTcParams) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		File cs = new File(csJsonFileName);
+		if (cs.exists() && cs.isFile()) {
+			FileReader fr = null;
+			try {
+				fr = new FileReader(csJsonFileName);
+				BufferedReader br = new BufferedReader(fr);
+				String s;
+				while((s = br.readLine()) != null) {
+					sb.append(s);
+				}
+				fr.close(); 
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new Exception("execute: IOException" + csJsonFileName);
+			} finally {
+				if (fr != null) {
+					try {
+						fr.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+						throw new Exception("execute: file close: IOException");
+					}
+				}
+			}
+			JSONParser jsonParser = new JSONParser();
+			JSONObject jsonObject;
+			try {
+				jsonObject = (JSONObject) jsonParser.parse(sb.toString());
+				// get a String from the JSON object
+				String oldSUTname = (String) jsonObject.get("id");
+				if (oldSUTname != null) {
+					if (oldSUTname.equals(sutId) == false) {
+						return true;
+					}
+				}
+				// get a String from the JSON object
+				String oldDescription = (String) jsonObject.get("description");
+				if (oldDescription != null) {
+					if (oldDescription.equals(sutDescription) == false) {
+						return true;
+					}
+				}
+				// get a String from the JSON object
+				String oldVendor = (String) jsonObject.get("vendor");
+				if (oldVendor != null) {
+					if (oldVendor.equals(vendorName) == false) {
+						return true;
+					}
+				}
+				// get badge files list from the JSON object
+				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
+				if (badgeTcParams != null) {
+					if (badgeArray != null) {
+						if (badgeTcParams.length == badgeArray.size()) {
+							if (badgeTcParams.length > 0) {
+								for (int i = 0; i < badgeTcParams.length; i++) {
+									if (badgeArray.contains(badgeTcParams[i].id)) {
+										continue;
+									}
+									return true;
+								}
+							}
+						} else {
+							return true;
+						}
+					}
+					boolean dataFound  = false;
+					for (int i = 0; i < badgeArray.size(); i++) {
+						for (int j = 0; j < badgeTcParams.length; j++) {
+							if (badgeTcParams[j].id.equals(badgeArray.get(i))) {
+								dataFound = true;
+								break;
+							}
+						}
+						if (dataFound == false) {
+							return true;
+						}
+					}
+				} else {
+					if (badgeArray.size() > 0) {
+						return true;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new Exception("execute: Exception");
+			}
+		} else {
+			if (cs.isDirectory()) {
+				return false;
+			} else {
+				// New data
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 
 	 * @param badge the required badge
 	 */
@@ -274,103 +384,7 @@ public class CmdUpdateSUT implements Command {
 		// If CS.json exists, only change what is different
 		boolean dataChanged = false;
 		String csJsonFileName = new String(sutDir + "/" + "CS.json");
-		StringBuilder sb = new StringBuilder();
-		File cs = new File(csJsonFileName);
-		if (cs.exists() && cs.isFile()) {
-			FileReader fr = null;
-			try {
-				fr = new FileReader(csJsonFileName);
-				BufferedReader br = new BufferedReader(fr);
-				String s;
-				while((s = br.readLine()) != null) {
-					sb.append(s);
-				}
-				fr.close(); 
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new Exception("execute: IOException" + csJsonFileName);
-			} finally {
-				if (fr != null) {
-					try {
-						fr.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-						throw new Exception("execute: file close: IOException");
-					}
-				}
-			}
-			JSONParser jsonParser = new JSONParser();
-			JSONObject jsonObject;
-			try {
-				jsonObject = (JSONObject) jsonParser.parse(sb.toString());
-				// get a String from the JSON object
-				String oldSUTname = (String) jsonObject.get("id");
-				if (oldSUTname != null) {
-					if (oldSUTname.equals(this.sutId) == false) {
-						dataChanged = true;
-					}
-				}
-				// get a String from the JSON object
-				String oldDescription = (String) jsonObject.get("description");
-				if (oldDescription != null) {
-					if (oldDescription.equals(this.sutDescription) == false) {
-						dataChanged = true;
-					}
-				}
-				// get a String from the JSON object
-				String oldVendor = (String) jsonObject.get("vendor");
-				if (oldVendor != null) {
-					if (oldVendor.equals(this.vendorName) == false) {
-						dataChanged = true;
-					}
-				}
-				// get badge files list from the JSON object
-				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
-				if (badgeTcParams != null) {
-					if (badgeArray != null) {
-						if (badgeTcParams.length == badgeArray.size()) {
-							if (badgeTcParams.length > 0) {
-								for (int i = 0; i < badgeTcParams.length; i++) {
-									if (badgeArray.contains(badgeTcParams[i].id)) {
-										continue;
-									}
-									dataChanged = true;
-								}
-							}
-						} else {
-							dataChanged = true;
-						}
-					}
-					for (int i = 0; i < badgeArray.size(); i++) {
-						for (int j = 0; j < badgeTcParams.length; j++) {
-							if (badgeTcParams[j].id.equals(badgeArray.get(i))) {
-								continue;
-							}
-							dataChanged = true;
-							break;
-						}
-						if (dataChanged) {
-							break;
-						}
-
-					}
-				} else {
-					if (badgeArray.size() > 0) {
-						dataChanged = true;
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new Exception("execute: Exception");
-			}
-		} else {
-			if (cs.isDirectory()) {
-				return;
-			} else {
-				// New data
-				dataChanged = true;
-			}
-		}
+		dataChanged = compareCSdata(csJsonFileName, this.sutId, this.sutDescription, this.vendorName, this.badgeTcParams);
 		
 		if (dataChanged == false) {
 			return;
@@ -387,9 +401,6 @@ public class CmdUpdateSUT implements Command {
         	int len = this.badgeTcParams.length;
         	for (int i = 0; i < len; i++) {
                 list.add(this.badgeTcParams[i].id);
-//        list.add("msg 1");
-//        list.add("msg 2");
-//        list.add("msg 3");
         	}
         }
 
@@ -414,6 +425,6 @@ public class CmdUpdateSUT implements Command {
         	}
         }
 
-        System.out.print(obj);
+//        System.out.print(obj);
 	}
 }
