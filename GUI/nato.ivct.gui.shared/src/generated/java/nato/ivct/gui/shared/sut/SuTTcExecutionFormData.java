@@ -84,6 +84,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getFieldByClass(TcExecutionLog.class);
 	}
 
+	public TestCaseExecutionStatus getTestCaseExecutionStatus() {
+		return getFieldByClass(TestCaseExecutionStatus.class);
+	}
+
 	public TestCaseName getTestCaseName() {
 		return getFieldByClass(TestCaseName.class);
 	}
@@ -173,6 +177,11 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 	}
 
 	public static class TcExecutionLog extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class TestCaseExecutionStatus extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}

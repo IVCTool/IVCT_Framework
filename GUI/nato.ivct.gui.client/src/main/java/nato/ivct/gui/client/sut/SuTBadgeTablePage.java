@@ -51,13 +51,10 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 	@Override
 	protected IPage<?> execCreateChildPage(ITableRow row) {
 		SuTCbTablePage childPage = new SuTCbTablePage();
-//		SuTBadgeDetailsNodePage childPage = new SuTBadgeDetailsNodePage();
 		childPage.setBadgeId(getTable().getBadgeIdColumn().getValue(row));
 		childPage.setSutId(getSutId());
 		return childPage;
 	}
-	
-// Test Begin if SuTBadgeTablePage class is called in SuTTabePage.execChildPage instead of SuTDetailsNodePage class
 	
 	@Override
 	protected void execPageActivated() throws ProcessingException {
@@ -76,9 +73,6 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 	    setDetailForm(null);
 	  }
 	}
-	
-// Test End
-	
 	
 	public class Table extends AbstractTable {
 

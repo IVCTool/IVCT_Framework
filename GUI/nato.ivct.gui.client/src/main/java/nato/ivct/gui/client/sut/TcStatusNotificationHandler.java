@@ -14,6 +14,8 @@ limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
+import java.time.LocalTime;
+
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -23,7 +25,7 @@ import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
-import nato.ivct.gui.client.outlines.BadgeOutline;
+import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
 public class TcStatusNotificationHandler implements INotificationHandler<TcStatusNotification> {
@@ -38,16 +40,21 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 			public void run() throws Exception {
 				logger.trace("Test Case Status Notification " + notification.getTc() + " is at "
 						+ notification.getPercent() + "%");
-
+System.out.println("Test Case Status Notification " + notification.getTc() + " is at " + LocalTime.now().getSecond() + "." + LocalTime.now().getNano()/1000000+") : " + notification.getPercent() + "%");
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
-					if (outline instanceof BadgeOutline) {
-						SuTCbTablePage cTP = (SuTCbTablePage) outline.getActivePage();
-						for (ITableRow tr : cTP.getTable().getRows()) {
+					if (outline instanceof SuTOutline) {
+						SuTTcNodePage tcNP = (SuTTcNodePage) outline.getSelectedNode();
+						SuTCbTablePage cbNode = (SuTCbTablePage) tcNP.getParentNode();
+						// set TC execution notification in table
+						for (ITableRow tr : cbNode.getTable().getRows()) {
 							// find row with test case name
-							if (cTP.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
-								cTP.getTable().getTCresultColumn().setValue(tr, notification.getStatus() + ": " + notification.getPercent() + "%");
+							if (cbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
+								cbNode.getTable().getTCresultColumn().setValue(tr, notification.getStatus() + ": " + notification.getPercent() + "%");
 							}
 						}
+						// set TC execution notification in detail form
+//						((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusField().setValue(notification.getStatus() + " (" + LocalTime.now().getSecond() + "." + LocalTime.now().getNano()/1000000+") : " + notification.getPercent() + "%");
+						((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusField().setValue(notification.getStatus() + " : " + notification.getPercent() + "%");
 					}
 				}
 			}

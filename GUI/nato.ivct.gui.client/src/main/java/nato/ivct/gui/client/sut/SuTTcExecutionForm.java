@@ -18,6 +18,7 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ReqDescrField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseNameField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
@@ -98,6 +99,10 @@ public class SuTTcExecutionForm extends AbstractForm {
 	public TestCaseNameField getTestCaseNameField() {
 		return getFieldByClass(TestCaseNameField.class);
 	}
+	
+	public TestCaseExecutionStatusField getTestCaseExecutionStatusField() {
+		return getFieldByClass(TestCaseExecutionStatusField.class);
+	}
 
 	public TcExecutionDetailsBox getTcExecutionDetailsBox() {
 		return getFieldByClass(TcExecutionDetailsBox.class);
@@ -138,7 +143,6 @@ public class SuTTcExecutionForm extends AbstractForm {
 				protected int getConfiguredGridW() {
 					return 3;
 				}
-				
 
 				@Override
 				protected boolean getConfiguredMultilineText() {
@@ -173,13 +177,36 @@ public class SuTTcExecutionForm extends AbstractForm {
 					return 128;
 				}
 			}
+			@Order(1030)
+			public class TestCaseExecutionStatusField extends AbstractStringField {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("TCStatus");
+				}
+				
+				@Override
+				protected int getConfiguredGridH() {
+					return 1;
+				}
+				
+				@Override
+				protected int getConfiguredGridW() {
+					return 1;
+				}
+
+				@Override
+				protected int getConfiguredMaxLength() {
+					return 128;
+				}
+			}
+			
 		}
 		
 		@Order(2000)
 		public class TcExecutionDetailsBox extends AbstractGroupBox {
 			@Override
 			protected String getConfiguredLabel() {
-				return TEXTS.get("TestCaseExecutionDetails");
+				return TEXTS.get("TCExecutionDetails");
 			}
 			
 			@Order(1000)
@@ -192,9 +219,9 @@ public class SuTTcExecutionForm extends AbstractForm {
 				
 				@Override
 				protected double getConfiguredSplitterPosition() {
-				return 0.35;
+				return 0.4;
 				}
-				
+
 				@Order(1000)
 				public class TcExecutionHistoryTableField extends AbstractTableField<TcExecutionHistoryTableField.TcExecutionHistoryTable> {
 
@@ -202,6 +229,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 					protected String getConfiguredLabel() {
 						return TEXTS.get("TcExecutionHistory");
 					}
+					
 					@Override
 					protected int getConfiguredGridH() {
 						return 3;
