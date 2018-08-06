@@ -33,6 +33,18 @@ distributions {
     }
 }
 
+sourceSets {
+  test {
+    resources {
+      srcDir "src/conf"
+    }
+  }
+}
+
+test {
+classpath = sourceSets.test.runtimeClasspath + files('src/conf')
+}
+
 tasks.withType(CreateStartScripts) {
     classpath += files('lib')
 doLast {

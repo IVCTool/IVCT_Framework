@@ -76,6 +76,7 @@ public class CmdStartTc implements Command {
 			startCmd.put("tcParam", jsonParam);
 			} else {
 				LOGGER.error("File not found: " + paramFileName);
+				return;
 			}
 
 			// send the start message
