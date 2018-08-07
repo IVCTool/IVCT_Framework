@@ -40,15 +40,21 @@ public class CmdListSuT implements Command {
 	public void execute() {
 		// file loader to read the JSON descriptions of SuT's
 
+		// If property is not set, do not have any access to any SUTs
+		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+			return;
+		}
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			if (file.isDirectory()) {
+				FileReader fReader = null;
 				Object obj;
 				JSONParser parser = new JSONParser();
 				try {
 					SutDescription sut = new SutDescription();
-					obj = parser.parse(new FileReader(file + "/CS.json"));
+					fReader = new FileReader(file + "/CS.json");
+					obj = parser.parse(fReader);
 					JSONObject jsonObj = (JSONObject) obj;
 					sut.ID = (String) jsonObj.get("id");
 					sut.description = (String) jsonObj.get("description");
@@ -62,6 +68,15 @@ public class CmdListSuT implements Command {
 				} catch (IOException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} finally {
+					if (fReader != null) {
+						try {
+							fReader.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 
 			}

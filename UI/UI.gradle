@@ -15,4 +15,42 @@ dependencies {
 	runtime     libraries.slf4j_jcl_over_slf4j
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
+	
+	testCompile libraries.junit
+	testCompile libraries.hamcrest_core
+	
+	testRuntime libraries.junit
+	testRuntime libraries.hamcrest_core
+}
+
+distributions {
+    main {
+        contents {
+            from('src/conf/CmdLineTool_logback.xml') {
+                into 'lib'
+            }
+        }
+    }
+}
+
+sourceSets {
+  test {
+    resources {
+      srcDir "src/conf"
+    }
+  }
+}
+
+test {
+classpath = sourceSets.test.runtimeClasspath + files('src/conf')
+}
+
+tasks.withType(CreateStartScripts) {
+    classpath += files('lib')
+doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
+    }
 }

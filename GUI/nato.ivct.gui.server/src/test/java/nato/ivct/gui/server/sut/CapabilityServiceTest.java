@@ -7,8 +7,8 @@ import org.eclipse.scout.rt.testing.server.runner.ServerTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWithSubject("anonymous")
-@RunWith(ServerTestRunner.class)
+//@RunWithSubject("anonymous")
+//@RunWith(ServerTestRunner.class)
 @RunWithServerSession(AbstractServerSession.class)
 public class CapabilityServiceTest {
 

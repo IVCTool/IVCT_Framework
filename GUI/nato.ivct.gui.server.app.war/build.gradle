@@ -6,7 +6,7 @@ apply from: "../../.shared/commons.gradle"
 description = """IVCT Server WAR"""
 
 war {
-    archiveName = 'nato.ivct.gui.nato.ivct.gui.server.war'
+    archiveName = 'ivct.gui.server.war'
 }
 
 dependencies {

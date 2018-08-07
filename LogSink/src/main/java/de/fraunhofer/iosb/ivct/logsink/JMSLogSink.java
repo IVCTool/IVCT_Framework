@@ -40,6 +40,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
+import nato.ivct.commander.Factory;
 
 public class JMSLogSink implements MessageListener, TcChangedListener {
 
@@ -51,17 +52,17 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 
 		try {
 			Properties env = new Properties();
-			env.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-            String host = System.getenv("ACTIVEMQ_HOST");
+			env.put(Context.INITIAL_CONTEXT_FACTORY, Factory.props.getProperty(Factory.JAVA_NAMING_FACTORY_ID));
+            String host = Factory.props.getProperty(Factory.MESSAGING_HOST_ID);
             if (host == null) {
                 host = "localhost";
-                logger.warn("Environment variable ACTIVEMQ_HOST not found: using default ", host);
+                logger.warn("Environment variable {} not found: using default {}", Factory.MESSAGING_HOST_ID, host);
             }
             String portString;
-            portString = System.getenv("ACTIVEMQ_PORT");
+            portString = Factory.props.getProperty(Factory.MESSAGING_PORT_ID);
             if (portString == null) {
                 portString = "61616";
-                logger.warn("Environment variable ACTIVEMQ_PORT not found: using default ", portString);
+                logger.warn("Environment variable {} not found: using default {}", Factory.MESSAGING_PORT_ID, portString);
             }
             int port = Integer.parseInt(portString);
             String hostPort = new String("tcp://" + host + ":" + port);

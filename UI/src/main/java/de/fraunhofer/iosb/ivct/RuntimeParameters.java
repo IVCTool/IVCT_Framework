@@ -55,6 +55,7 @@ public final class RuntimeParameters {
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private String testSuiteName = null;
+	private CmdListSuT.SutDescription sutDescription;
 
     public RuntimeParameters () {
     }
@@ -101,6 +102,7 @@ public final class RuntimeParameters {
     }
 
 	protected boolean checkSutNotKnown(final String sut) {
+		setSUTS();
         if (sut == null) {
             printStream.println("checkSutNotKnown: SUT: null pointer found");
             return true;
@@ -262,7 +264,7 @@ public final class RuntimeParameters {
 		return suts;
 	}
 
-	protected List<String> getSutBadges(final String theSutName) {
+	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
 		List<String> badges = null;
 		listSUTs();
 		for (String it: sutList.sutMap.keySet()) {
@@ -276,8 +278,10 @@ public final class RuntimeParameters {
 					if (ind < 0) {
 						badges.add(conformanceStatment[i]);
 					}
-					if (getRecursiveBadges(badges, conformanceStatment[i])) {
-						return null;
+					if (recursive) {
+						if (getRecursiveBadges(badges, conformanceStatment[i])) {
+							return null;
+						}
 					}
 				}
 				return badges;
@@ -326,12 +330,22 @@ public final class RuntimeParameters {
 		}
 
 		// Set the sut name.
+		listSUTs();
 		sutName = theSutName;
+		sutDescription = sutList.sutMap.get(sutName);
 
 		// Reset values.
 		testCaseName = null;
 		testScheduleName = null;
 		testSuiteName = null;
+	}
+
+	protected String getSutDescription() {
+		return this.sutDescription.description;
+	}
+
+	protected String getVendorName() {
+		return this.sutDescription.vendor;
 	}
 
 	protected static String getTestCaseName() {
