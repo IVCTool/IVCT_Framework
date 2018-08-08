@@ -4,7 +4,6 @@ dependencies {
 	compile     libraries.slf4j_api
 	compile     libraries.jsonSimple
 
-	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
 
@@ -19,6 +18,8 @@ dependencies {
 			break
 		case "mak":
 			logger.warn (':TC:MAK RTI is not configure. HelloWorld will not be runnable')
+			compileOnly     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
+			break
 		case "IEEE1516e":
 		default:
 			logger.warn (':TC:No RTI is used. Test Engine will not be able to run test cases')

@@ -23,12 +23,22 @@ ext {
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 
+		rti = "IEEE1516e"
+		rtiDirMAK = System.getenv('MAK_RTIDIR')
+		if (rtiDirMAK != null) {
+			logger.warn ('MAK_RTIDIR')
+			logger.warn (rtiDirMAK)
+			rti = "mak"
+		}
+		rtiDirPitch = System.getenv('PRTI1516E_HOME')
+		if (rtiDirPitch != null) {
+			logger.warn ('PRTI1516E_HOME')
+			logger.warn (rtiDirPitch)
+			rti = "prti1516e"
+		}
 		
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		//rti = "prti1516e"
-		rti = "IEEE1516e"
-		//rti = "mak"
 
 		switch (rti) {
 			case "prti1516e":
