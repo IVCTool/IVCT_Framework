@@ -1,5 +1,6 @@
 package nato.ivct.gui.client.sut;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -9,14 +10,18 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.IOUtility;
 
+import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ProgressImageField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ReqDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseNameField;
@@ -104,6 +109,9 @@ public class SuTTcExecutionForm extends AbstractForm {
 		return getFieldByClass(TestCaseExecutionStatusField.class);
 	}
 
+	public ProgressImageField getProgressImageField() {
+		return getFieldByClass(ProgressImageField.class);
+	}
 	public TcExecutionDetailsBox getTcExecutionDetailsBox() {
 		return getFieldByClass(TcExecutionDetailsBox.class);
 	}
@@ -199,7 +207,54 @@ public class SuTTcExecutionForm extends AbstractForm {
 					return 128;
 				}
 			}
-			
+
+			@Order(1040)
+			public class ProgressImageField extends AbstractImageField {
+				@Override
+				protected String getConfiguredLabel() {
+					return TEXTS.get("Progress");
+				}
+
+				@Override
+				protected boolean getConfiguredAutoFit() {
+					return false;
+				}
+
+				@Override
+				protected int getConfiguredGridH() {
+					return 2;
+				}
+				
+				@Override
+				protected int getConfiguredGridW() {
+					return 3;
+				}
+
+				@Override
+				protected boolean getConfiguredLabelVisible() {
+					return true;
+				}
+				@Override
+				protected int getConfiguredHorizontalAlignment() {
+					// TODO Auto-generated method stub
+					return -1;
+				}
+				@Override
+				public boolean isAutoFit() {
+					// TODO Auto-generated method stub
+					return false;
+				}
+				@Override
+				protected void execInitField() {
+					try (InputStream in = ResourceBase.class
+							.getResourceAsStream("icons/" + "NATO_logo" + ".png")) {
+						setImage(IOUtility.readBytes(in));
+						setImageId("NATO_logo");
+						doRotate(-45.0); 
+					} catch (Exception e) {
+					}
+				}
+			}
 		}
 		
 		@Order(2000)

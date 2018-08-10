@@ -14,18 +14,23 @@ limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
+import java.io.InputStream;
 import java.time.LocalTime;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
+import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.outlines.SuTOutline;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ProgressImageField;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
 public class TcStatusNotificationHandler implements INotificationHandler<TcStatusNotification> {
@@ -40,7 +45,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 			public void run() throws Exception {
 				logger.trace("Test Case Status Notification " + notification.getTc() + " is at "
 						+ notification.getPercent() + "%");
-System.out.println("Test Case Status Notification " + notification.getTc() + " is at " + LocalTime.now().getSecond() + "." + LocalTime.now().getNano()/1000000+") : " + notification.getPercent() + "%");
+//				System.out.println("Test Case Status Notification " + notification.getTc() + " is at " + LocalTime.now().getSecond() + "." + LocalTime.now().getNano()/1000000+") : " + notification.getPercent() + "%");
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof SuTOutline) {
 						SuTTcNodePage tcNP = (SuTTcNodePage) outline.getSelectedNode();
@@ -55,6 +60,21 @@ System.out.println("Test Case Status Notification " + notification.getTc() + " i
 						// set TC execution notification in detail form
 //						((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusField().setValue(notification.getStatus() + " (" + LocalTime.now().getSecond() + "." + LocalTime.now().getNano()/1000000+") : " + notification.getPercent() + "%");
 						((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusField().setValue(notification.getStatus() + " : " + notification.getPercent() + "%");
+						
+						// Test for a progress bar
+//						try (InputStream in = ResourceBase.class
+//								.getResourceAsStream("icons/" + "NATO_logo" + ".png")) {
+//							SuTTcExecutionForm df = (SuTTcExecutionForm) tcNP.getDetailForm();
+//							ProgressImageField pif = ((SuTTcExecutionForm) tcNP.getDetailForm()).getProgressImageField();
+//							pif.setImage(IOUtility.readBytes(in));
+//							pif.setImageId("NATO_logo");
+//							pif.doRotate(notification.getPercent());
+////							pif.doZoom(notification.getPercent(), notification.getPercent());
+////						getCbImageField().setImageId(formData.getCbId());
+//						} catch (Exception e) {
+//							logger.warn("Could not load progress image file");
+//						}
+
 					}
 				}
 			}
