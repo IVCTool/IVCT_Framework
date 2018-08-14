@@ -35,6 +35,18 @@ dependencies {
 distributions {
     main {
         contents {
+            from('src/conf/TC.execPitch.bat') {
+                into 'bin'
+            }
+            from('src/conf/TC.execPitch') {
+                into 'bin'
+            }
+            from('src/conf/TC.execMAK.bat') {
+                into 'bin'
+            }
+            from('src/conf/TC.execMAK') {
+                into 'bin'
+            }
             from('src/conf/JMSTestRunner_logback.xml') {
                 into 'lib'
             }
@@ -43,23 +55,47 @@ distributions {
 }
 
 tasks.withType(CreateStartScripts) {
+	/*
+	 * Want to have the lib folder (for the logback xml file) included in classpath,
+	 * but gradle makes lib/lib out of that.
+	 * Thus need to edit the script to only have a single lib level.
+	 * A second piece of logic is that separate scripts are made for the various RTIs
+	 * using the standard environment variables for each RTI. A script is needed for
+	 * each of UNIX and Windows for each RTI.
+	 */
     classpath += files('lib')
 doLast {
+		/*
+		* Get the default scripts from the gradle task.
+		*/
         def windowsScriptFile = file getWindowsScript()
         def unixScriptFile = file getUnixScript()
-		switch (rti) {
-			case "prti1516e":
-				windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%PRTI1516E_HOME%\\lib\\prti1516e.jar')
-				unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib/$PRTI1516E_HOME/lib/prti1516e.jar')
-				break
-			case "mak":
-				windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%MAK_RTIDIR%\\lib\\java\\*')
-				unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib/$MAK_RTIDIR/lib/java/*')
-				break
-			case "IEEE1516e":
-			default:
-				logger.warn ('No RTI is used. Compiled with empty interface')
+		def myName = project.name
 
-		}
+		/*
+		 * Prepare the various script file names.
+		 */
+		def file1 = new File(myName, '/src/conf/TC.execPitch.bat')
+		def file2 = new File(myName, '/src/conf/TC.execMAK.bat')
+		def file3 = new File(myName, '/src/conf/TC.execPitch')
+		def file4 = new File(myName, '/src/conf/TC.execMAK')
+
+		/*
+		 * Produce the script files by editing the default files by locating the %APP_HOME%/lib/lib string.
+		 * At that point modify the string to %APP_HOME%/lib for the logback file and add the
+		 * necessary jar files for MAK or Pitch from the external folders located by the standard
+		 * environment variables for each RTI respectively.
+		 */
+		file1.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%PRTI1516E_HOME%\\lib\\prti1516e.jar')
+		file2.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%MAK_RTIDIR%\\lib\\java\\*')
+		file3.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib/$PRTI1516E_HOME/lib/prti1516e.jar')
+		file4.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib/$MAK_RTIDIR/lib/java/*')
+
+		/*
+		 * These files are not needed, but fix the lib/lib to lib anyway for consistency. Maybe these files
+		 * can deleted at the end of the build.
+		 */
+		windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
+		unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
     }
 }
