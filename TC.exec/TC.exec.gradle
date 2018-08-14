@@ -88,8 +88,8 @@ doLast {
 		 */
 		file1.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%PRTI1516E_HOME%\\lib\\prti1516e.jar')
 		file2.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%MAK_RTIDIR%\\lib\\java\\*')
-		file3.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib/$PRTI1516E_HOME/lib/prti1516e.jar')
-		file4.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib/$MAK_RTIDIR/lib/java/*')
+		file3.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib;$PRTI1516E_HOME/lib/prti1516e.jar')
+		file4.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib;$MAK_RTIDIR/lib/java/*')
 
 		/*
 		 * These files are not needed, but fix the lib/lib to lib anyway for consistency. Maybe these files
