@@ -1,29 +1,25 @@
 package nato.ivct.gui.client.sut;
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.IOUtility;
 
-import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ProgressImageField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ReqDescrField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseNameField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
@@ -37,7 +33,16 @@ public class SuTTcExecutionForm extends AbstractForm {
 	private String sutId = null;
 	private String badgeId = null;
 	private String requirementId = null;
+	private String testCaseId = null;
 
+	@FormData
+	public String getTestCaseId() {
+		return testCaseId;
+	}
+	public void setTestCaseId(String testCaseId) {
+		this.testCaseId = testCaseId;
+	}
+	
 	@FormData
 	public String getRequirementId() {
 		return requirementId;
@@ -105,12 +110,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 		return getFieldByClass(TestCaseNameField.class);
 	}
 	
-	public TestCaseExecutionStatusField getTestCaseExecutionStatusField() {
-		return getFieldByClass(TestCaseExecutionStatusField.class);
-	}
-
-	public ProgressImageField getProgressImageField() {
-		return getFieldByClass(ProgressImageField.class);
+	public TestCaseExecutionStatusTableField getTestCaseExecutionStatusTableField() {
+		return getFieldByClass(TestCaseExecutionStatusTableField.class);
 	}
 	public TcExecutionDetailsBox getTcExecutionDetailsBox() {
 		return getFieldByClass(TcExecutionDetailsBox.class);
@@ -185,13 +186,15 @@ public class SuTTcExecutionForm extends AbstractForm {
 					return 128;
 				}
 			}
+
 			@Order(1030)
-			public class TestCaseExecutionStatusField extends AbstractStringField {
+			public class TestCaseExecutionStatusTableField extends AbstractTableField<TestCaseExecutionStatusTableField.Table> {
+
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("TCStatus");
+					return TEXTS.get("TCAusfhrung");
 				}
-				
+
 				@Override
 				protected int getConfiguredGridH() {
 					return 1;
@@ -199,59 +202,61 @@ public class SuTTcExecutionForm extends AbstractForm {
 				
 				@Override
 				protected int getConfiguredGridW() {
-					return 1;
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-			@Order(1040)
-			public class ProgressImageField extends AbstractImageField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Progress");
-				}
-
-				@Override
-				protected boolean getConfiguredAutoFit() {
-					return false;
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
 					return 2;
 				}
 				
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
 
-				@Override
-				protected boolean getConfiguredLabelVisible() {
-					return true;
-				}
-				@Override
-				protected int getConfiguredHorizontalAlignment() {
-					// TODO Auto-generated method stub
-					return -1;
-				}
-				@Override
-				public boolean isAutoFit() {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				@Override
-				protected void execInitField() {
-					try (InputStream in = ResourceBase.class
-							.getResourceAsStream("icons/" + "NATO_logo" + ".png")) {
-						setImage(IOUtility.readBytes(in));
-						setImageId("NATO_logo");
-						doRotate(-45.0); 
-					} catch (Exception e) {
+				public class Table extends AbstractTable {
+					
+					@Override
+					protected boolean getConfiguredHeaderVisible() {
+						// do not show headline
+						return true;
+					}
+					
+					public ProgressColumn getProgressColumn() {
+						return getColumnSet().getColumnByClass(ProgressColumn.class);
+					}
+
+					public TcStatusColumn getTcStatusColumn() {
+						return getColumnSet().getColumnByClass(TcStatusColumn.class);
+					}
+
+					@Order(1000)
+					public class TcStatusColumn extends AbstractStringColumn {
+						@Override
+						protected String getConfiguredHeaderText() {
+							return TEXTS.get("TCStatus");
+						}
+
+						@Override
+						protected int getConfiguredWidth() {
+							return 200;
+						}
+					}
+
+					@Order(2000)
+					public class ProgressColumn extends AbstractIntegerColumn {
+						@Override
+						protected String getConfiguredHeaderText() {
+							return TEXTS.get("Progress");
+						}
+						@Override
+						protected int getConfiguredHorizontalAlignment() {
+							// left alignment
+							return -1;
+						}
+
+						@Override
+						protected int getConfiguredWidth() {
+							return 200;
+						}
+						
+						@Override
+						protected String getConfiguredBackgroundEffect() {
+							return BackgroundEffect.BAR_CHART;
+						}
+						
 					}
 				}
 			}

@@ -84,8 +84,8 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getFieldByClass(TcExecutionLog.class);
 	}
 
-	public TestCaseExecutionStatus getTestCaseExecutionStatus() {
-		return getFieldByClass(TestCaseExecutionStatus.class);
+	public TestCaseExecutionStatusTable getTestCaseExecutionStatusTable() {
+		return getFieldByClass(TestCaseExecutionStatusTable.class);
 	}
 
 	public TestCaseName getTestCaseName() {
@@ -181,9 +181,68 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class TestCaseExecutionStatus extends AbstractValueFieldData<String> {
+	public static class TestCaseExecutionStatusTable extends AbstractTableFieldBeanData {
 
 		private static final long serialVersionUID = 1L;
+
+		@Override
+		public TestCaseExecutionStatusTableRowData addRow() {
+			return (TestCaseExecutionStatusTableRowData) super.addRow();
+		}
+
+		@Override
+		public TestCaseExecutionStatusTableRowData addRow(int rowState) {
+			return (TestCaseExecutionStatusTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public TestCaseExecutionStatusTableRowData createRow() {
+			return new TestCaseExecutionStatusTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return TestCaseExecutionStatusTableRowData.class;
+		}
+
+		@Override
+		public TestCaseExecutionStatusTableRowData[] getRows() {
+			return (TestCaseExecutionStatusTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public TestCaseExecutionStatusTableRowData rowAt(int index) {
+			return (TestCaseExecutionStatusTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(TestCaseExecutionStatusTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class TestCaseExecutionStatusTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String tcStatus = "tcStatus";
+			public static final String progress = "progress";
+			private String m_tcStatus;
+			private Integer m_progress;
+
+			public String getTcStatus() {
+				return m_tcStatus;
+			}
+
+			public void setTcStatus(String newTcStatus) {
+				m_tcStatus = newTcStatus;
+			}
+
+			public Integer getProgress() {
+				return m_progress;
+			}
+
+			public void setProgress(Integer newProgress) {
+				m_progress = newProgress;
+			}
+		}
 	}
 
 	public static class TestCaseName extends AbstractValueFieldData<String> {

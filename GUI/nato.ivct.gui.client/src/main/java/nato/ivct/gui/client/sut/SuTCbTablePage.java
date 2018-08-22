@@ -22,7 +22,6 @@ import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
-import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 
@@ -112,7 +111,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 						List<ITableRow> tcArray = getSelectedRows();
 						for (ITableRow tr : tcArray) {
 							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
-							tr.setBackgroundColor(ResourceBase.RUNNING);
+//							tr.setBackgroundColor(ResourceBase.RUNNING);
 							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
 							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
 						}

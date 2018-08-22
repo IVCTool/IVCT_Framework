@@ -61,6 +61,7 @@ public class SuTTcNodePage extends AbstractPageWithNodes {
 	    form.setSutId(getSutId());
 		form.setBadgeId(getBadgeId());
 	    form.setRequirementId(getRequirementId());
+	    form.setTestCaseId(getCbTestCase());
 	    setDetailForm(form);
 	    form.startView();
 	  }
