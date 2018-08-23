@@ -4,6 +4,7 @@ import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;
 import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWithSubject("anonymous")
@@ -12,4 +13,8 @@ import org.junit.runner.RunWith;
 public class SuTTcExecutionFormTest {
 
 	// TODO [the] add test cases
+	@Test
+	public void testDummy () {
+		
+	}
 }

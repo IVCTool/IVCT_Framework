@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 
 import nato.ivct.gui.server.ServerSession;
 
-@RunWithSubject("anonymous")
-@RunWith(ServerTestRunner.class)
+//@RunWithSubject("anonymous")
+//@RunWith(ServerTestRunner.class)
 @RunWithServerSession(ServerSession.class)
 public class SuTBadgeServiceTest {
 
