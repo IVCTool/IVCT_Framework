@@ -1,6 +1,28 @@
+// -----------------------------------------------------------------------------
+// Docker
+// -----------------------------------------------------------------------------
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.4'
+    }
+}
+apply plugin: 'com.bmuschko.docker-java-application'
 apply plugin: 'application'
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.JMSTestRunner'
+
+docker {
+    javaApplication {
+        baseImage = 'app-docker136.hex.tno.nl/pitch/lrc:5.4.0.0-alpine-noslf4j'
+        maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
+        tag = 'ivct/tc-runner'
+    }
+}
 
 dependencies {
 	compile     project(':Command')
