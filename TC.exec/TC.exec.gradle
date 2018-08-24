@@ -35,18 +35,6 @@ dependencies {
 distributions {
     main {
         contents {
-            from('src/conf/TC.execPitch.bat') {
-                into 'bin'
-            }
-            from('src/conf/TC.execPitch') {
-                into 'bin'
-            }
-            from('src/conf/TC.execMAK.bat') {
-                into 'bin'
-            }
-            from('src/conf/TC.execMAK') {
-                into 'bin'
-            }
             from('src/conf/JMSTestRunner_logback.xml') {
                 into 'lib'
             }
@@ -59,9 +47,6 @@ tasks.withType(CreateStartScripts) {
 	 * Want to have the lib folder (for the logback xml file) included in classpath,
 	 * but gradle makes lib/lib out of that.
 	 * Thus need to edit the script to only have a single lib level.
-	 * A second piece of logic is that separate scripts are made for the various RTIs
-	 * using the standard environment variables for each RTI. A script is needed for
-	 * each of UNIX and Windows for each RTI.
 	 */
     classpath += files('lib')
 doLast {
