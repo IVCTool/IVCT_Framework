@@ -34,10 +34,6 @@ public class SuTCbService implements ISuTCbService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 	private static HashMap<String, SuTCbTablePageData> cap_hm = new HashMap<String, SuTCbTablePageData>();
 
-//	public static SuTCbTablePageData getCapabilityTablePageData (String sut) {
-//		return cap_hm.get (sut);
-//	}
-	
 	/*
 	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
 	 * 
@@ -97,50 +93,12 @@ public class SuTCbService implements ISuTCbService {
 		formData.getCbName().setValue(badgeDescription.name);
 		formData.getCbDescription().setValue(badgeDescription.description);
 		
-		// TODO fill parameter table of this form
-//		Path paramFile =  getParamFile(formData.getSutId(), badgeDescription.ID);
-//		importBadgeParams(formData, paramFile);
-		
 		// fill requirement table of this form
 		importRequirements(formData, badgeDescription);
 
 		return formData;
 	}
 	
-//	private SuTCbFormData importBadgeParams (final SuTCbFormData fd, final Path paramFilePath) {
-//		JSONParser parser = new JSONParser();
-//		try {
-//			JSONObject jsonObj = (JSONObject) parser.parse(new FileReader(paramFilePath.toString()));
-//			LOG.trace(jsonObj.toString());
-//			
-//			jsonObj.forEach((key, value) -> {
-//				SuTCbParameterTableRowData row = fd.getSuTCbParameterTable().addRow();
-//				row.setParameterName(key.toString());
-//				row.setParameterValue(value.toString());
-//			});
-//		} catch (IOException | ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return fd;
-//	}
-	
-	SuTCbParameterTableRowData importJsonElement(final SuTCbParameterTableRowData r, final String k, final Object v) {
-		r.setParameterName(k);
-		if (v instanceof String) {
-			// simple element type
-			r.setParameterValue(v.toString());
-		}
-		else {
-			//structured hierarchical element type
-//			SuTCbParameterTableRowData child = r.;
-//			SuTCbParameterTableRowData
-		}
-			
-		return r;
-	}
-
 	@Override
 	public String loadBadgeParams(String sutId, String badgeId) {
 		Path paramFile = null;
