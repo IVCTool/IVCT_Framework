@@ -2,6 +2,7 @@ package nato.ivct.gui.server.sut;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -142,18 +143,26 @@ public class SuTCbService implements ISuTCbService {
 
 	@Override
 	public String loadBadgeParams(String sutId, String badgeId) {
-		Path paramFile = getParamFile(sutId, badgeId);
+		Path paramFile = null;
 		try {
+			paramFile = getParamFile(sutId, badgeId);
+			if (Files.notExists(paramFile)) {
+				LOG.info("badge parameter file " + paramFile.toString() + " does not exist");
+				return null;
+			}
 			LOG.debug("load badge parameters from file " + paramFile.toString());
 			return new String(Files.readAllBytes(paramFile));
-		} catch (IOException e) {
+		} catch (InvalidPathException e) {
+			LOG.error("invalid path for badge parameter file " + paramFile.toString());
+			return null;
+		} catch (Exception e) {
 			LOG.error("could not read badge parameters from file " + paramFile.toString());
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	private Path getParamFile (String sutId, String badgeId) {
+	private Path getParamFile (String sutId, String badgeId) throws InvalidPathException {
 		return Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), sutId, badgeId, "TcParam.json");
 	}
 

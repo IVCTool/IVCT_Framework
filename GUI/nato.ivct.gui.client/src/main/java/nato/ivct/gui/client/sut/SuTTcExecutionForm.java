@@ -387,8 +387,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 					
 					@Override
 					public boolean isEnabled() {
-						// set to read-only
-						return false;
+						// set to r/w to activate the scrollbars
+						return true;
 					}
 				}
 			}
