@@ -29,9 +29,9 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof SuTOutline) {
+						// set TC verdict in table
 						SuTTcNodePage tcNP = (SuTTcNodePage) outline.getSelectedNode();
 						SuTCbTablePage sutCbNode = (SuTCbTablePage) tcNP.getParentNode();
-						// set TC execution status in table
 						for (ITableRow tr : sutCbNode.getTable().getRows()) {
 							// find row with test case name
 							if (sutCbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
@@ -42,13 +42,37 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 							}
 						}
 						
-						// set TC execution status in detail form
+						// set TC verdict in TC execution form
+						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
+							// set TC execution notification in detail form
+							if (notification.getTc().endsWith(((SuTTcExecutionForm) form).getTestCaseId())) {
+								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
+								tbl.discardAllRows();
+
+								// set verdict
+								ITableRow row = tbl.addRow();
+								((Table) tbl).getTcStatusColumn().setValue(row, notification.getVerdict());
+								
+								// set execution progress
+								((Table) tbl).getProgressColumn().setValue(row, null);
+								
+								//record status and progress in the form
+								((SuTTcExecutionForm) form).setTestCaseVerdict(notification.getVerdict());
+								((SuTTcExecutionForm) form).setTestCaseProgress(null);
+							}
+						});
+
+						
+						
+						
+						// set TC verdict in detail form
 //						((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusField().setValue(notification.getVerdict());
-						ITable tbl = ((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusTableField().getTable();
-						tbl.discardAllRows();
-						ITableRow row = tbl.addRow();
-						// set verdict
-						((Table) tbl).getTcStatusColumn().setValue(row, notification.getVerdict());
+
+//						ITable tbl = ((SuTTcRequirementForm) tcNP.getDetailForm()).getTestCaseExecutionStatusTableField().getTable();
+//						tbl.discardAllRows();
+//						ITableRow row = tbl.addRow();
+//						// set verdict
+//						((Table) tbl).getTcStatusColumn().setValue(row, notification.getVerdict());
 					}
 				}
 			}

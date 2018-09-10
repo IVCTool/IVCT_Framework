@@ -18,8 +18,6 @@ import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.basic.table.ITable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.INumberColumn.BackgroundEffect;
-import org.eclipse.scout.rt.client.ui.basic.table.userfilter.UserTableRowFilter;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
@@ -27,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
 import nato.ivct.gui.client.outlines.SuTOutline;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
@@ -45,9 +42,9 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 						+ notification.getPercent() + "%");
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof SuTOutline) {
+						// set TC execution status in table
 						SuTTcNodePage tcNP = (SuTTcNodePage) outline.getSelectedNode();
 						SuTCbTablePage cbNode = (SuTCbTablePage) tcNP.getParentNode();
-						// set TC execution notification in table
 						for (ITableRow tr : cbNode.getTable().getRows()) {
 							// find row with test case name
 							if (cbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
@@ -55,41 +52,46 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 							}
 						}
 
-						
-						
-						// set TC execution notification in detail form
-						if (notification.getTc().endsWith(((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseId())) {
-							ITable tbl = ((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusTableField().getTable();
-							tbl.discardAllRows();
-// >>> begin test							
-//							for (int i=0; i<4; i++) {
-//								ITableRow row = tbl.addRow();
-//								((Table) tbl).getTcStatusColumn().setValue(row, "TC STATUS");
-//								// ((Table) tbl).getProgressColumn().setBackgroundEffect(BackgroundEffect.BAR_CHART);
-//								((Table) tbl).getProgressColumn().setValue(row, 10*i);
-//							}
-// <<< end test
-							ITableRow row = tbl.addRow();
-							// set verdict
-							((Table) tbl).getTcStatusColumn().setValue(row, notification.getStatus());
-							
-							// set execution progress
-							((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
-//							((Table) tbl).getProgressColumn().setInitialBackgroundEffect(BackgroundEffect.BAR_CHART); // required for progress bar implementation
-//							
-//							// for implementing a progress bar, add dummy row do have the bar effect and a filter for no-show of this dummy row
-//							tbl.getRowFilters()
-//								.forEach(rf -> {
-//									tbl.removeRowFilter(rf);
-//									});
-//
-//							UserTableRowFilter rowFilter = new UserTableRowFilter(tbl.getRows());
-//							tbl.addRowFilter(rowFilter);
-//							tbl.applyRowFilters();
-//
-//							ITableRow dummyRow = tbl.addRow();
-//							((Table) tbl).getProgressColumn().setValue(dummyRow, 100); 
-						}
+						// set TC execution status in TC execution form
+						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
+							// set TC execution status in detail form
+							if (notification.getTc().endsWith(((SuTTcExecutionForm) form).getTestCaseId())) {
+								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
+								tbl.discardAllRows();
+	// >>> begin test							
+	//							for (int i=0; i<4; i++) {
+	//								ITableRow row = tbl.addRow();
+	//								((Table) tbl).getTcStatusColumn().setValue(row, "TC STATUS");
+	//								// ((Table) tbl).getProgressColumn().setBackgroundEffect(BackgroundEffect.BAR_CHART);
+	//								((Table) tbl).getProgressColumn().setValue(row, 10*i);
+	//							}
+	// <<< end test
+								ITableRow row = tbl.addRow();
+								// set verdict
+								((Table) tbl).getTcStatusColumn().setValue(row, notification.getStatus());
+								
+								// set execution progress
+								((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
+	//							((Table) tbl).getProgressColumn().setInitialBackgroundEffect(BackgroundEffect.BAR_CHART); // required for progress bar implementation
+	//							
+	//							// for implementing a progress bar, add dummy row do have the bar effect and a filter for no-show of this dummy row
+	//							tbl.getRowFilters()
+	//								.forEach(rf -> {
+	//									tbl.removeRowFilter(rf);
+	//									});
+	//
+	//							UserTableRowFilter rowFilter = new UserTableRowFilter(tbl.getRows());
+	//							tbl.addRowFilter(rowFilter);
+	//							tbl.applyRowFilters();
+	//
+	//							ITableRow dummyRow = tbl.addRow();
+	//							((Table) tbl).getProgressColumn().setValue(dummyRow, 100); 
+								
+								//record status and progress in the form
+								((SuTTcExecutionForm) form).setTestCaseStatus(notification.getStatus());
+								((SuTTcExecutionForm) form).setTestCaseProgress(Integer.toString(notification.getPercent()));
+							}
+						});
 					}
 				}
 			}

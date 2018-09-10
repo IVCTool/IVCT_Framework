@@ -1,14 +1,6 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.List;
-import java.util.Set;
-
-import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.Data;
-import org.eclipse.scout.rt.client.job.ModelJobs;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -17,8 +9,6 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
@@ -31,7 +21,6 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	private String sutId = null;
 	
 	private String badgeId = null;
-	// private TestCaseResultHandler resultHandler = null;
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -83,7 +72,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	}
 
 	public class Table extends AbstractTable {
-
+/*
 		@Order(1000)
 		public class TCexecMenu extends AbstractMenu {
 			@Override
@@ -98,28 +87,31 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 
 			@Override
 			protected void execAction() {
-				// start the result handler
-				// resultHandler = new TestCaseResultHandler();
+				// open TC execution form
+				SuTTcExecutionForm form = new SuTTcExecutionForm();
+			    form.setSutId(getSutId());
+				form.setBadgeId(getBadgeId());
+			    form.startView();
 
 				// use ModelJobs to asynchronously start test case execution
 				// sequence
-				ModelJobs.schedule(new IRunnable() {
-
-					@Override
-					public void run() throws Exception {
-						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
-						List<ITableRow> tcArray = getSelectedRows();
-						for (ITableRow tr : tcArray) {
-							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
-//							tr.setBackgroundColor(ResourceBase.RUNNING);
-							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
-							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
-						}
-					}
-				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+//				ModelJobs.schedule(new IRunnable() {
+//
+//					@Override
+//					public void run() throws Exception {
+//						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
+//						List<ITableRow> tcArray = getSelectedRows();
+//						for (ITableRow tr : tcArray) {
+//							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
+//					//		tr.setBackgroundColor(ResourceBase.RUNNING);
+//							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
+//							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
+//						}
+//					}
+//				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 			}
 		}
-
+*/
 		public AbstractTCColumn getAbstractTCColumn() {
 			return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 		}

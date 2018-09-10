@@ -1,19 +1,19 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Set;
 
+import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
-import org.eclipse.scout.rt.client.ui.form.IForm;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
@@ -21,19 +21,22 @@ import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ReqDescrField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseNameField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.ReqDescrField;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseExecutionStatusField;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseNameField;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
+import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
-import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
-@FormData(value = SuTTcExecutionFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
-public class SuTTcExecutionForm extends AbstractForm {
+@FormData(value = SuTTcRequirementFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
+public class SuTTcRequirementForm extends AbstractForm {
 	
 	private String sutId = null;
 	private String badgeId = null;
@@ -114,15 +117,10 @@ public class SuTTcExecutionForm extends AbstractForm {
 		this.testCaseVerdict = testCaseVerdict;
 	}
 	
-//	@Override
-//	protected String getConfiguredTitle() {
-//		// TODO [the] verify translation
-//		return TEXTS.get("TCExecution");
-//	}
-	
 	@Override
-	protected int getConfiguredDisplayHint() {
-		return IForm.DISPLAY_HINT_VIEW;
+	protected String getConfiguredTitle() {
+		// TODO [the] verify translation
+		return TEXTS.get("SuTTcExecution");
 	}
 
 	public void startView() {
@@ -157,8 +155,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 		return getFieldByClass(TestCaseNameField.class);
 	}
 	
-	public TestCaseExecutionStatusTableField getTestCaseExecutionStatusTableField() {
-		return getFieldByClass(TestCaseExecutionStatusTableField.class);
+	public TestCaseExecutionStatusField getTestCaseExecutionStatusTableField() {
+		return getFieldByClass(TestCaseExecutionStatusField.class);
 	}
 	public TcExecutionDetailsBox getTcExecutionDetailsBox() {
 		return getFieldByClass(TcExecutionDetailsBox.class);
@@ -235,7 +233,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 			}
 
 			@Order(1030)
-			public class TestCaseExecutionStatusTableField extends AbstractTableField<TestCaseExecutionStatusTableField.Table> {
+			public class TestCaseExecutionStatusField extends AbstractStringField {
 
 				@Override
 				protected String getConfiguredLabel() {
@@ -250,61 +248,6 @@ public class SuTTcExecutionForm extends AbstractForm {
 				@Override
 				protected int getConfiguredGridW() {
 					return 2;
-				}
-				
-
-				public class Table extends AbstractTable {
-					
-					@Override
-					protected boolean getConfiguredHeaderVisible() {
-						// do not show headline
-						return true;
-					}
-					
-					public ProgressColumn getProgressColumn() {
-						return getColumnSet().getColumnByClass(ProgressColumn.class);
-					}
-
-					public TcStatusColumn getTcStatusColumn() {
-						return getColumnSet().getColumnByClass(TcStatusColumn.class);
-					}
-
-					@Order(1000)
-					public class TcStatusColumn extends AbstractStringColumn {
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("TCStatus");
-						}
-
-						@Override
-						protected int getConfiguredWidth() {
-							return 200;
-						}
-					}
-
-					@Order(2000)
-					public class ProgressColumn extends AbstractIntegerColumn {
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("Progress");
-						}
-						@Override
-						protected int getConfiguredHorizontalAlignment() {
-							// left alignment
-							return -1;
-						}
-
-						@Override
-						protected int getConfiguredWidth() {
-							return 200;
-						}
-						
-						@Override
-						protected String getConfiguredBackgroundEffect() {
-							return BackgroundEffect.BAR_CHART;
-						}
-						
-					}
 				}
 			}
 		}
@@ -329,6 +272,86 @@ public class SuTTcExecutionForm extends AbstractForm {
 				return 0.4;
 				}
 
+				@Order(1000)
+				public class TcExecutionHistoryTableField extends AbstractTableField<TcExecutionHistoryTableField.TcExecutionHistoryTable> {
+
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("TcExecutionHistory");
+					}
+					
+					@Override
+					protected int getConfiguredGridH() {
+						return 3;
+					}
+					
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+					
+					public class TcExecutionHistoryTable extends AbstractTable {
+						
+						@Override
+						protected boolean getConfiguredMultiSelect() {
+							// only a single row can be selected
+							return false;
+						}
+						
+						@Override
+						protected void execRowsSelected(List<? extends ITableRow> rows) {
+							// TODO Auto-generated method stub
+							if (getSelectedRowCount() > 0) {
+								String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
+								// load log file content
+								ISuTTcService service = BEANS.get(ISuTTcService.class);
+								SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
+								exportFormData(formData);
+								formData = service.loadLogFile(formData, tcName);
+								importFormData(formData);
+							}
+							else {
+								getTcExecutionLogField().setValue(null);
+							}
+						}
+						
+						@Order(1000)
+						public class FileNameColumn extends AbstractStringColumn {
+
+							@Override
+							protected String getConfiguredHeaderText() {
+								return TEXTS.get("FileName");
+							}
+
+							@Override
+							protected int getConfiguredWidth() {
+								return 200;
+							}
+						}
+
+						@Order(2000)
+						public class TcVerdictColumn extends AbstractStringColumn {
+							@Override
+							protected String getConfiguredHeaderText() {
+								return TEXTS.get("TCResult");
+							}
+
+							@Override
+							protected int getConfiguredWidth() {
+								return 200;
+							}
+						}
+						
+						public FileNameColumn getFileNameColumn() {
+							return this.getColumnSet().getColumnByClass(FileNameColumn.class);
+						}
+
+						public TcVerdictColumn getTcVerdictColumn() {
+							return getColumnSet().getColumnByClass(TcVerdictColumn.class);
+						}
+					}
+				}
+				
 				@Order(2000)
 				public class TcExecutionLogField extends AbstractStringField {
 					@Override
@@ -360,6 +383,49 @@ public class SuTTcExecutionForm extends AbstractForm {
 				}
 			}
 		}
+		
+		@Order(1000)
+		public class TCexecMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("TCexec");
+			}
+
+			@Override
+			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+				return CollectionUtility.hashSet(TableMenuType.SingleSelection, TableMenuType.MultiSelection);
+			}
+
+			@Override
+			protected void execAction() {
+				// open TC execution form
+				SuTTcExecutionForm form = new SuTTcExecutionForm();
+			    form.setSutId(getSutId());
+				form.setBadgeId(getBadgeId());
+				form.setRequirementId(getRequirementId());
+				form.setTestCaseId(getTestCaseId());
+				
+			    form.startView();
+
+				// use ModelJobs to asynchronously start test case execution
+				// sequence
+				ModelJobs.schedule(new IRunnable() {
+
+					@Override
+					public void run() throws Exception {
+						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
+//						List<ITableRow> tcArray = getSelectedRows();
+//						for (ITableRow tr : tcArray) {
+//							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
+//					//		tr.setBackgroundColor(ResourceBase.RUNNING);
+//							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
+							sutCbService.executeTestCase(getSutId(), getTestCaseId(), getBadgeId());
+//						}
+					}
+				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+			}
+		}
+
 
 //		@Order(100000)
 //		public class OkButton extends AbstractOkButton {
@@ -368,26 +434,6 @@ public class SuTTcExecutionForm extends AbstractForm {
 //		@Order(101000)
 //		public class CancelButton extends AbstractCancelButton {
 //		}
-		
-		@Order(100000)
-		public class CloseButton extends AbstractButton {
-			
-			  @Override
-			  protected int getConfiguredSystemType() {
-			    return SYSTEM_TYPE_CLOSE;
-			  }
-
-			  @Override
-			  protected String getConfiguredLabel() {
-			    return TEXTS.get("CloseButton");
-			  }
-
-			  @Override
-			  protected String getConfiguredKeyStroke() {
-			    return IKeyStroke.ESCAPE;
-			  }
-		}
-
 	}
 
 	public class ViewHandler extends AbstractFormHandler {
@@ -395,12 +441,11 @@ public class SuTTcExecutionForm extends AbstractForm {
 		@Override
 		protected void execLoad() {
 			ISuTTcService service = BEANS.get(ISuTTcService.class);
-			SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
+			SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-			
-			getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a,b) -> b).get());
+//			getForm().setSubTitle(formData.getName().getValue());
 
 			setEnabledPermission(new UpdateSuTPermission());
 		}

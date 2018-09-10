@@ -1,6 +1,5 @@
 package nato.ivct.gui.server.sut;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -26,7 +25,6 @@ import nato.ivct.gui.shared.cb.UpdateCbPermission;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
 import nato.ivct.gui.shared.sut.SuTCbFormData.CbRequirementsTable.CbRequirementsTableRowData;
-import nato.ivct.gui.shared.sut.SuTCbFormData.SuTCbParameterTable.SuTCbParameterTableRowData;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 

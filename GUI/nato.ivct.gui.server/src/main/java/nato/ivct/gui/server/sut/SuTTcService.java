@@ -27,25 +27,26 @@ import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.ReadCbPermission;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
 
 public class SuTTcService implements ISuTTcService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 
 	@Override
-	public SuTTcExecutionFormData prepareCreate(SuTTcExecutionFormData formData) {
+	public SuTTcRequirementFormData prepareCreate(SuTTcRequirementFormData formData) {
 		// TODO Auto-generated method stub
 		return formData;
 	}
 
 	@Override
-	public SuTTcExecutionFormData create(SuTTcExecutionFormData formData) {
+	public SuTTcRequirementFormData create(SuTTcRequirementFormData formData) {
 		// TODO Auto-generated method stub
 		return formData;
 	}
 
 	@Override
-	public SuTTcExecutionFormData load(SuTTcExecutionFormData formData) {
-		LOG.info("load");
+	public SuTTcRequirementFormData load(SuTTcRequirementFormData formData) {
+		LOG.info("load requirement form");
 		if (!ACCESS.check(new ReadCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -87,12 +88,12 @@ public class SuTTcService implements ISuTTcService {
 	}
 
 	@Override
-	public SuTTcExecutionFormData store(SuTTcExecutionFormData formData) {
+	public SuTTcRequirementFormData store(SuTTcRequirementFormData formData) {
 		// TODO Auto-generated method stub
 		return formData;
 	}
 
-	public SuTTcExecutionFormData loadLogFile(SuTTcExecutionFormData formData, String fileName) {
+	public SuTTcRequirementFormData loadLogFile(SuTTcRequirementFormData formData, String fileName) {
 		// get requirement description and test case
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
@@ -101,11 +102,32 @@ public class SuTTcService implements ISuTTcService {
 			Path tcLogFile = Paths.get(Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID).toString(), fileName);
 			try {
 				formData.getTcExecutionLog().setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
-//				formData.getTcExecutionLog().setValue(java.nio.file.Files.lines(tcLogFile).reduce((a,b) -> a+"\n"+b).get());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		
+		return formData;
+	}
+
+	@Override
+	public SuTTcExecutionFormData load(SuTTcExecutionFormData formData) {
+		LOG.info("load tc execution form");
+		if (!ACCESS.check(new ReadCbPermission())) {
+			throw new VetoException(TEXTS.get("AuthorizationFailed"));
+		}
+
+		CbService cbService = (CbService) BEANS.get(CbService.class);
+		
+		// get requirement description and test case
+		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
+		if (bd != null) {
+			Optional<InteroperabilityRequirement> first = Arrays.stream(bd.requirements).filter(requirement -> formData.getRequirementId().equals(requirement.ID)).findFirst();
+			first.ifPresent(requirement -> {
+				formData.getReqDescr().setValue(requirement.description);
+				formData.getTestCaseName().setValue(requirement.TC);
+			});
 		}
 		
 		return formData;

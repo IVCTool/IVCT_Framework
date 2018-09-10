@@ -57,7 +57,7 @@ public class SuTTcNodePage extends AbstractPageWithNodes {
 	protected void execPageActivated() throws ProcessingException {
 	  if (getDetailForm() == null) {
 	    // TODO use constructor with title argument?
-		SuTTcExecutionForm form = new SuTTcExecutionForm();
+		SuTTcRequirementForm form = new SuTTcRequirementForm();
 	    form.setSutId(getSutId());
 		form.setBadgeId(getBadgeId());
 	    form.setRequirementId(getRequirementId());
