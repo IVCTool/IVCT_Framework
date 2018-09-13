@@ -338,7 +338,6 @@ public class SuTTcExecutionForm extends AbstractForm {
 					
 					@Override
 					protected int getConfiguredGridH() {
-						// TODO Auto-generated method stub
 						return 5;
 					}
 					
