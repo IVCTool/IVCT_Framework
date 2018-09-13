@@ -414,13 +414,7 @@ public class SuTTcRequirementForm extends AbstractForm {
 					@Override
 					public void run() throws Exception {
 						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
-//						List<ITableRow> tcArray = getSelectedRows();
-//						for (ITableRow tr : tcArray) {
-//							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
-//					//		tr.setBackgroundColor(ResourceBase.RUNNING);
-//							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
 							sutCbService.executeTestCase(getSutId(), getTestCaseId(), getBadgeId());
-//						}
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 			}
