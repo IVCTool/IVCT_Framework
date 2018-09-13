@@ -72,46 +72,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 	}
 
 	public class Table extends AbstractTable {
-/*
-		@Order(1000)
-		public class TCexecMenu extends AbstractMenu {
-			@Override
-			protected String getConfiguredText() {
-				return TEXTS.get("TCexec");
-			}
 
-			@Override
-			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-				return CollectionUtility.hashSet(TableMenuType.SingleSelection, TableMenuType.MultiSelection);
-			}
-
-			@Override
-			protected void execAction() {
-				// open TC execution form
-				SuTTcExecutionForm form = new SuTTcExecutionForm();
-			    form.setSutId(getSutId());
-				form.setBadgeId(getBadgeId());
-			    form.startView();
-
-				// use ModelJobs to asynchronously start test case execution
-				// sequence
-//				ModelJobs.schedule(new IRunnable() {
-//
-//					@Override
-//					public void run() throws Exception {
-//						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
-//						List<ITableRow> tcArray = getSelectedRows();
-//						for (ITableRow tr : tcArray) {
-//							tr.setCellValue(getTCresultColumn().getColumnIndex(), "starting");
-//					//		tr.setBackgroundColor(ResourceBase.RUNNING);
-//							String tcName = tr.getCell(getAbstractTCColumn().getColumnIndex()).toString();
-//							sutCbService.executeTestCase(getSutId(), tcName, getBadgeId());
-//						}
-//					}
-//				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
-			}
-		}
-*/
 		public AbstractTCColumn getAbstractTCColumn() {
 			return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 		}
