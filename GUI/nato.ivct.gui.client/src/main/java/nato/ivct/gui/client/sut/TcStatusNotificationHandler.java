@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.basic.table.ITable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.gui.client.Desktop;
 import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
+import nato.ivct.gui.shared.sut.ISuTTcService;
+import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
 public class TcStatusNotificationHandler implements INotificationHandler<TcStatusNotification> {
@@ -86,6 +90,12 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 	//
 	//							ITableRow dummyRow = tbl.addRow();
 	//							((Table) tbl).getProgressColumn().setValue(dummyRow, 100); 
+								
+								// update the TC log
+								SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
+								((SuTTcExecutionForm) form).exportFormData(formData);
+								formData = BEANS.get(ISuTTcService.class).loadLogFile(formData, ((SuTTcExecutionForm) form).getTestCaseId());
+								((SuTTcExecutionForm) form).importFormData(formData);
 								
 								//record status and progress in the form
 								((SuTTcExecutionForm) form).setTestCaseStatus(notification.getStatus());

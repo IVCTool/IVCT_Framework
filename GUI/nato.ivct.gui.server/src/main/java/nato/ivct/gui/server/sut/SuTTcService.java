@@ -102,6 +102,29 @@ public class SuTTcService implements ISuTTcService {
 			Path tcLogFile = Paths.get(Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID).toString(), fileName);
 			try {
 				formData.getTcExecutionLog().setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
+			} catch (NoSuchFileException e) {
+				LOG.info("log files not found: " + tcLogFile);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return formData;
+	}
+
+	@Override
+	public SuTTcExecutionFormData loadLogFile(SuTTcExecutionFormData formData, String fileName) {
+		// get requirement description and test case
+		CbService cbService = (CbService) BEANS.get(CbService.class);
+		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
+		if (bd != null) {
+			// get log files for this test case
+			Path tcLogFile = Paths.get(Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID).toString(), Stream.of(fileName.split(Pattern.quote("."))).reduce((a,b) -> b).get()+".log");
+			try {
+				formData.getTcExecutionLog().setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
+			} catch (NoSuchFileException e) {
+				LOG.info("log files not found: " + tcLogFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
