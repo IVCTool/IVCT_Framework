@@ -1,10 +1,9 @@
 {
 	"id" 			: 	"HLA-BASE-2017",
-	"version"		:	"0.0.2",
+	"version"		:	"1.0.0",
 	"name" 			: 	"HLA Basic Test 2017",
 	"description"	:	"Basic CS/SOM and Best Practices compliance",
-	"graphics"		:	"/some/icon.png",
-	"tsRunTimefolder":	"HelloWorld-0.4.1\lib",
+	"tsRunTimefolder":	"",
 	"dependency"	:	["HLA-Verification-2017", "HLA-Declaration-2017", "HLA-Object-2017", "HLA-Services-2017"],
 	"requirements"	:	[
 		{

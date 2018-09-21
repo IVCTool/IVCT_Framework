@@ -1,11 +1,10 @@
 {
 	"id" 			: 	"HLA-Object-2017",
-	"version"		:	"0.0.2",
+	"version"		:	"1.0.0",
 	"name" 			: 	"HLA Object-2017 Test 2017",
 	"description"	:	"This badge verifies that the federate sends and receives only the objects and interactions specified in its SOM.",
-	"graphics"		:	"/some/icon.png",
-	"tsRunTimeFolder":	"TS_HLA_Object-0.0.1/bin",
-	"tsLibTimeFolder":	"TS_HLA_Object-0.0.1/lib",
+	"tsRunTimeFolder":	"TS_HLA_Object-1.0.0/bin",
+	"tsLibTimeFolder":	"TS_HLA_Object-1.0.0/lib",
 	"dependency"	:	[],
 	"requirements"	:	[
 		{

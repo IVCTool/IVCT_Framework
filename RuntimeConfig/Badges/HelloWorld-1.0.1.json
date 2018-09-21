@@ -1,11 +1,11 @@
 {
-	"id" 			: 	"HelloWorld-1.0.0",
-	"version"		:	"1.0.0",
+	"id" 			: 	"HelloWorld-1.0.1",
+	"version"		:	"1.0.1",
 	"name" 			: 	"HelloWorld Tutorial Badge",
 	"description"	:	"This is a simple example for capability badge to test the compliance of an federate to the hello world federation.",
 	"graphics"		:	"/some/icon.png",
-	"tsRunTimeFolder":	"TS_HelloWorld-1.0.0/bin",
-	"tsLibTimeFolder":	"TS_HelloWorld-1.0.0/lib",
+	"tsRunTimeFolder":	"TS_HelloWorld-1.0.1/bin",
+	"tsLibTimeFolder":	"TS_HelloWorld-1.0.1/lib",
 	"dependency"	:	[],
 	"requirements"	:	[
 		{
