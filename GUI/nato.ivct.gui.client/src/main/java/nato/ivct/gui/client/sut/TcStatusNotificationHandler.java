@@ -38,7 +38,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 
 	@Override
 	public void handleNotification(TcStatusNotification notification) {
-		// inform client about test case verdict
+		// inform client about test case progress
 		ModelJobs.schedule(new IRunnable() {
 			@Override
 			public void run() throws Exception {
