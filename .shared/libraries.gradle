@@ -23,6 +23,8 @@ ext {
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 
+		gradleDockerPluginVersion = '3.0.12'
+
 		
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
@@ -68,6 +70,7 @@ ext {
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
                 junit:                          "junit:junit:${junitVersion}",
-				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}"
+				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}",
+				docker:	"com.bmuschko:gradle-docker-plugin:${gradleDockerPluginVersion}"
         ]
 }

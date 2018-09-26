@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
-apply from: "../../.shared/libraries.gradle"
-apply from: "../../.shared/commons.gradle"
+//apply from: "../../.shared/libraries.gradle"
+//apply from: "../../.shared/commons.gradle"
 
 description = """IVCT HTML UI"""
 
