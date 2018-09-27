@@ -29,6 +29,7 @@ import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.ReqDescr
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseExecutionStatusField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseNameField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
@@ -158,8 +159,13 @@ public class SuTTcRequirementForm extends AbstractForm {
 	public TestCaseExecutionStatusField getTestCaseExecutionStatusTableField() {
 		return getFieldByClass(TestCaseExecutionStatusField.class);
 	}
+	
 	public TcExecutionDetailsBox getTcExecutionDetailsBox() {
 		return getFieldByClass(TcExecutionDetailsBox.class);
+	}
+	
+	public TcExecutionHistoryTableField getTcExecutionHistoryTableField() {
+		return getFieldByClass(TcExecutionHistoryTableField.class);
 	}
 	
 	public TcExecutionLogField getTcExecutionLogField() {
@@ -300,14 +306,13 @@ public class SuTTcRequirementForm extends AbstractForm {
 						
 						@Override
 						protected void execRowsSelected(List<? extends ITableRow> rows) {
-							// TODO Auto-generated method stub
 							if (getSelectedRowCount() > 0) {
 								String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
 								// load log file content
 								ISuTTcService service = BEANS.get(ISuTTcService.class);
 								SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
 								exportFormData(formData);
-								formData = service.loadLogFile(formData, tcName);
+								formData = service.loadLogFileContent(formData, tcName);
 								importFormData(formData);
 							}
 							else {

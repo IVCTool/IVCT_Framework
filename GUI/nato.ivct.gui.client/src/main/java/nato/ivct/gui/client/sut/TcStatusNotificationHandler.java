@@ -93,7 +93,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 								// update the TC log
 								SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
 								((SuTTcExecutionForm) form).exportFormData(formData);
-								formData = BEANS.get(ISuTTcService.class).loadLogFile(formData, ((SuTTcExecutionForm) form).getTestCaseId());
+								formData = BEANS.get(ISuTTcService.class).loadLogFileContent(formData, ((SuTTcExecutionForm) form).getTestCaseId());
 								((SuTTcExecutionForm) form).importFormData(formData);
 								
 								//record status and progress in the form
