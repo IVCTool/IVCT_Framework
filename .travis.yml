@@ -20,18 +20,30 @@ script:
   - export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
+  # LogSink Build
   - cd LogSink
   - docker build --build-arg version=$VERSION -t msg134/logsink:$TRAVIS_BRANCH-latest -t msg134/logsink:$TRAVIS_BRANCH-$VERSION .
   - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:$VERSION && docker tag msg134/logsink:$TRAVIS_BRANCH-$VERSION msg134/logsink:latest; fi
   - docker push msg134/logsink
+  # TC-Runner Pitch LRC Build
   - cd ../TC.exec
-  - docker build --build-arg version=$VERSION -t msg134/tc-runner:$TRAVIS_BRANCH-latest -t msg134/tc-runner:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:$VERSION && docker tag msg134/tc-runner:$TRAVIS_BRANCH-$VERSION msg134/tc-runner:latest; fi
+  - docker build --build-arg version=$VERSION -f Dockerfile-pi -t msg134/tc-runner:pi-$TRAVIS_BRANCH-latest -t msg134/tc-runner:pi-$TRAVIS_BRANCH-$VERSION .
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/tc-runner:pi-$TRAVIS_BRANCH-$VERSION msg134/tc-runner:pi-$VERSION && docker tag msg134/tc-runner:pi-$TRAVIS_BRANCH-$VERSION msg134/tc-runner:pi-latest; fi
   - docker push msg134/tc-runner
+  # TC-Runner MAK LRC Build
+  - docker build --build-arg version=$VERSION -f Dockerfile-ma -t msg134/tc-runner:ma-$TRAVIS_BRANCH-latest -t msg134/tc-runner:ma-$TRAVIS_BRANCH-$VERSION .
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/tc-runner:ma-$TRAVIS_BRANCH-$VERSION msg134/tc-runner:ma-$VERSION && docker tag msg134/tc-runner:ma-$TRAVIS_BRANCH-$VERSION msg134/tc-runner:ma-latest; fi
+  - docker push msg134/tc-runner
+  # TC-Runner Portico LRC Build
+  - docker build --build-arg version=$VERSION -f Dockerfile-po -t msg134/tc-runner:po-$TRAVIS_BRANCH-latest -t msg134/tc-runner:po-$TRAVIS_BRANCH-$VERSION .
+  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/tc-runner:po-$TRAVIS_BRANCH-$VERSION msg134/tc-runner:po-$VERSION && docker tag msg134/tc-runner:po-$TRAVIS_BRANCH-$VERSION msg134/tc-runner:po-latest; fi
+  - docker push msg134/tc-runner
+  # GUI Tomcat Build
   - cd ../GUI
   - docker build --build-arg version=$VERSION -t msg134/ivct-gui:$TRAVIS_BRANCH-latest -t msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION .
   - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:$VERSION && docker tag msg134/ivct-gui:$TRAVIS_BRANCH-$VERSION msg134/ivct-gui:latest; fi
   - docker push msg134/ivct-gui
+  # Runtime Config Build
   - cd ../RuntimeConfig
   - docker build --build-arg version=$VERSION -t msg134/runtime-config:$TRAVIS_BRANCH-latest -t msg134/runtime-config:$TRAVIS_BRANCH-$VERSION .
   - if [ $TRAVIS_BRANCH == "master" ]; then docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:$VERSION && docker tag msg134/runtime-config:$TRAVIS_BRANCH-$VERSION msg134/runtime-config:latest; fi
