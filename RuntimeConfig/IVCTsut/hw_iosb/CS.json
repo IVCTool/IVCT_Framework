@@ -2,5 +2,5 @@
 	"id" 			: 	"hw_iosb",
 	"description"	:	"HelloWorld system under federate for IVCT demonstration",
 	"vendor"		:	"Fraunhofer IOSB",
-	"badge"			:	["HelloWorld-1.0.0", "TS_HLA_EncodingRulesTester-2017"]
+	"badge"			:	["HelloWorld-1.0.1", "TS_HLA_EncodingRulesTester-2017"]
 }
