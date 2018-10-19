@@ -29,13 +29,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.commander.CmdQuitListener.OnQuitListener;
-import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
-import nato.ivct.commander.CmdStartTcListener.TcInfo;
-import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 
-public class ReportEngine implements OnResultListener, OnQuitListener, OnStartTestCaseListener {
+public class ReportEngine {
     Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
     private boolean havePrevFile = false;
     private int numFailed = 0;
@@ -50,7 +46,6 @@ public class ReportEngine implements OnResultListener, OnQuitListener, OnStartTe
 	private final String failedStr = "FAILED";
 	private final String inconclusiveStr = "INCONCLUSIVE";
 	private final String passedStr = "PASSED";
-	public TcChangedListener tcListener = null;
 
 	public Map<String, String> status = new HashMap<String, String>();
 	
@@ -101,14 +96,10 @@ public class ReportEngine implements OnResultListener, OnQuitListener, OnStartTe
     	}
     }
 
-	@Override
 	public void onQuit() {
 		closeFile();
-		System.exit(0);
 	}
 
-	/** {@inheritDoc} */
-	@Override
 	public void onResult(TcResult result) {
 		LOGGER.info("ReportEngine:checkMessage: announceVerdict");
 		if (result.sutName.equals(knownSut) == false) {
@@ -153,12 +144,6 @@ public class ReportEngine implements OnResultListener, OnQuitListener, OnStartTe
 		}
 	}
     
-    public void onStartTestCase(TcInfo info) {
-    	if (tcListener != null) {
-    		tcListener.tcChanged(info.testCaseId);
-    	}
-    }
-
     private void doSutChanged (TcResult result) throws IOException {
 		LocalDateTime ldt = LocalDateTime.now();
 		String formattedMM = String.format("%02d", ldt.getMonthValue());
