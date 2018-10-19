@@ -2,9 +2,7 @@ package nato.ivct.gui.shared.security;
 
 import java.security.PermissionCollection;
 
-import org.eclipse.scout.rt.shared.ISession;
 import org.eclipse.scout.rt.shared.services.common.security.AbstractAccessControlService;
-import org.eclipse.scout.rt.shared.services.common.security.IAccessControlService;
 
 /**
  *

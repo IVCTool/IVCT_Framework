@@ -15,7 +15,6 @@ import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
-import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 public class TestCaseNotificationHandler implements INotificationHandler<TestCaseNotification> {
