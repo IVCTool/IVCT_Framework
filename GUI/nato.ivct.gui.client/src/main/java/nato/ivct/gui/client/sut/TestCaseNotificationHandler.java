@@ -48,19 +48,10 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 								if (detailedForm != null
 									&& detailedForm.isFormStarted()
 									&& detailedForm.getTestCaseId().equals(notification.getTc())) {
+									
 									//update log file table
 									ISuTTcService service = BEANS.get(ISuTTcService.class);
 									SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
-									
-//									//ToDo: Make this smarter and only update the table content!
-//									detailedForm.exportFormData(formData);
-//									formData = service.load(formData);
-//									detailedForm.importFormData(formData);
-//									
-//									//smarter version
-//									TcExecutionHistoryTable tbl = detailedForm.getTcExecutionHistoryTableField().getTable();
-//									tbl.discardAllRows();
-//									tbl.addRows(null);
 									detailedForm.exportFormData(formData);
 									formData = service.updateLogFileTable(formData);
 									detailedForm.importFormData(formData);
@@ -90,9 +81,6 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 								((SuTTcExecutionForm) form).setTestCaseProgress(null);
 							}
 						});
-
-						
-						
 						
 						// set TC verdict in detail form
 //						((SuTTcExecutionForm) tcNP.getDetailForm()).getTestCaseExecutionStatusField().setValue(notification.getVerdict());
