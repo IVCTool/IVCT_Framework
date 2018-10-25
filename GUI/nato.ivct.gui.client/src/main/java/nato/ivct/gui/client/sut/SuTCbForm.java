@@ -4,10 +4,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ColumnSet;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -26,6 +30,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.json.simple.JSONArray;
@@ -276,7 +281,7 @@ public class SuTCbForm extends AbstractForm {
 					
 					@Override
 					protected double getConfiguredSplitterPosition() {
-					return 0.35;
+					return 0.5;
 					}
 
 					@Order(1000)
@@ -466,6 +471,45 @@ public class SuTCbForm extends AbstractForm {
 									return 200;
 								}
 							}
+							
+							@Order(100)
+							public class NewMenu extends AbstractMenu {
+							
+							    @Override
+							    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+							    	return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
+							    }
+							
+							    @Override
+							    protected String getConfiguredText() {
+							    	return TEXTS.get("New");
+							    }
+							
+							    @Override
+							    protected void execAction() {
+							    	newRowWithParent(getTable().getSelectedRow());
+							    }
+							}
+							
+					        @Order(20)
+					        public class DeleteMenu extends AbstractMenu {
+
+					        	@Override
+					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.MultiSelection, TableMenuType.SingleSelection);
+					           	}
+
+					            @Override
+					            protected String getConfiguredText() {
+					            	return TEXTS.get("DeleteMenu");
+					            }
+
+					            @Override
+					            protected void execAction() {
+					            	List<ITableRow> rows = getSelectedRows();
+					            	deleteRows(rows);
+					            }
+					        }
 						}
 					}
 
