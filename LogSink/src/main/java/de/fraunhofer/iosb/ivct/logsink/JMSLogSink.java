@@ -43,12 +43,12 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
-import nato.ivct.commander.Factory;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.Factory;
 
 public class JMSLogSink implements MessageListener, TcChangedListener, OnResultListener, OnQuitListener, OnStartTestCaseListener {
 
@@ -163,7 +163,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 			fileAppender = new FileAppender<ILoggingEvent>();
 			Date date = new Date();
 			SimpleDateFormat sdf;
-			sdf = new SimpleDateFormat("zzz");
+			sdf = new SimpleDateFormat("ZZZ");
 			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log");
 			fileAppender.setEncoder(ple);
 			fileAppender.setContext(lc);
@@ -191,8 +191,8 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 		if (fileAppender != null) {
 			fileAppender.stop();
 		}
-		appenderMap.remove(result.testcase);
-	}
+		appenderMap.remove(tc);
+    }
 
 	@Override
 	public void tcChanged(String newTcName) {
