@@ -94,9 +94,14 @@ public abstract class AbstractTestCase {
     	IVCT_BaseModel ivct_BaseModel = null;
     	IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
         MDC.put("testcase", this.getClass().getSimpleName());
-        logger.info("TEST CASE PARAMETERS -------------------------------------- BEGIN");
-        logger.info(tcParamJson);
-        logger.info("TEST CASE PARAMETERS -------------------------------------- END");
+
+        String tcParam = new String();
+        tcParam = "\n"
+        +   "TEST CASE PARAMETERS -------------------------------------- BEGIN\n"
+        +   tcParamJson
+        +   "\nTEST CASE PARAMETERS -------------------------------------- END\n";
+
+        logger.info(tcParam);
     	
     	try {
 			ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
