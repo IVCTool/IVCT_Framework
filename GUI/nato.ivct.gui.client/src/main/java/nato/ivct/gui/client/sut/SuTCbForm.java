@@ -472,7 +472,7 @@ public class SuTCbForm extends AbstractForm {
 								}
 							}
 							
-							@Order(100)
+							@Order(110)
 							public class NewMenu extends AbstractMenu {
 							
 							    @Override
@@ -491,7 +491,27 @@ public class SuTCbForm extends AbstractForm {
 							    }
 							}
 							
-					        @Order(20)
+					        @Order(120)
+					        public class EditMenu extends AbstractMenu {
+
+					        	@Override
+					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.SingleSelection);
+					           	}
+
+					            @Override
+					            protected String getConfiguredText() {
+					            	return TEXTS.get("Edit");
+					            }
+
+					            @Override
+					            protected void execAction() {
+					            	if (getTable().getSelectedRowCount()>0)
+					            		getTable().getParameterValueColumn().setEditable(true);
+					            }
+					        }
+							
+					        @Order(130)
 					        public class DeleteMenu extends AbstractMenu {
 
 					        	@Override
