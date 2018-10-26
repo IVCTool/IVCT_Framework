@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,6 +21,8 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.api.client.util.Objects;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
@@ -80,7 +85,7 @@ public class SuTTcService implements ISuTTcService {
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
 		if (bd != null) {
-			// get log files for this test case
+			// get content of the requested log file
 			Path tcLogFile = Paths.get(Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID).toString(), fileName);
 			try {
 				formData.getTcExecutionLog().setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
@@ -109,15 +114,23 @@ public class SuTTcService implements ISuTTcService {
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
 		if (bd != null) {
-			// get log files for this test case
-			Path tcLogFile = Paths.get(Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID).toString(), Stream.of(fileName.split(Pattern.quote("."))).reduce((a,b) -> b).get()+".log");
+			// load content of the newest log file for this test case
+			final String fileNamePattern = fileName.substring(fileName.lastIndexOf('.') + 1);
+			
 			try {
-				formData.getTcExecutionLog().setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
-			} catch (NoSuchFileException e) {
-				LOG.info("log files not found: " + tcLogFile);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Optional<Path> optionalTcLogFile = Files.find(Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID), 1, (path, fileAttributes) -> {
+					String filenameToCheck = path.getFileName().toString();
+					return fileAttributes.isRegularFile() && filenameToCheck.startsWith(fileNamePattern) && filenameToCheck.endsWith(".log");
+				}).sorted(new FileCreationTimeComparator()
+					.reversed())
+					.findFirst();
+				
+				if (optionalTcLogFile.isPresent())
+					formData.getTcExecutionLog().setValue(Files.lines(optionalTcLogFile.get()).collect(Collectors.joining("\n")));
+				else
+					LOG.info("log files not found: " + fileNamePattern + "*.log");
+			} catch (IOException | IllegalStateException exc) {
+				LOG.error("", exc);
 			}
 		}
 		
@@ -165,5 +178,18 @@ public class SuTTcService implements ISuTTcService {
 		}
 		
 		return fd;
+	}
+	
+	private static final class FileCreationTimeComparator implements Comparator<Path> {
+
+		@Override
+		public int compare(Path path1, Path path2) {
+			try {
+				return Files.readAttributes(path1, BasicFileAttributes.class).creationTime().compareTo(Files.readAttributes(path2, BasicFileAttributes.class).creationTime());
+			} catch (IOException exc) {
+				throw new IllegalStateException(exc);
+			}
+		}
+		
 	}
 }
