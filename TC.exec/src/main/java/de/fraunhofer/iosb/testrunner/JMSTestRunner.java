@@ -181,19 +181,19 @@ public class JMSTestRunner extends TestRunner
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
 			extendThreadClassLoader (info.badge);
-			MDC.put("tcStatus", "running");
+
 			this.testRunner.executeTests(logger, info.sutName, testcases, info.testCaseParam.toString(), verdicts);
 
 			// The JMSLogSink waits on this message!
 			// The following pair of lines will cause the JMSLogSink to close the log file!
-			MDC.put("tcStatus", "result");
-			logger.info("Test Case Finished");
+			MDC.put("tcStatus", "ended");
+			logger.warn("Test Case Ended");
 
 			for (int i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
 						verdicts[i].text).execute();
 			}
-			MDC.put("tcStatus", "stopped");
+			MDC.put("tcStatus", "inactive");
 		}
 
 	}

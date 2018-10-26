@@ -132,7 +132,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 				}
 				String tcStatus = event.getMDCPropertyMap().get("tcStatus");
 				if (tcStatus != null) {
-					if (tcStatus.contentEquals("result")) {
+					if (tcStatus.contentEquals("ended")) {
 						FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
 						if (fileAppender != null) {
 							fileAppender.stop();
