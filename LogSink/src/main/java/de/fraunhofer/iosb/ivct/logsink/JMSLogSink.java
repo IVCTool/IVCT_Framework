@@ -130,6 +130,16 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 					Logger log = getTestCaseLogger(tc, sutName, sutDir, badge);
 					log.callAppenders(event);
 				}
+				String tcStatus = event.getMDCPropertyMap().get("tcStatus");
+				if (tcStatus != null) {
+					if (tcStatus.contentEquals("ended")) {
+						FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
+						if (fileAppender != null) {
+							fileAppender.stop();
+						}
+						appenderMap.remove(tc);
+					}
+				}
 			} else {
 				logger.warn("Received message is of type " + message.getJMSType() + ", was expecting ObjectMessage.");
 			}
@@ -164,7 +174,8 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 			Date date = new Date();
 			SimpleDateFormat sdf;
 			sdf = new SimpleDateFormat("ZZZ");
-			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log");
+			String tc = tcName.substring(tcName.lastIndexOf(".") + 1);
+			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tc + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log");
 			fileAppender.setEncoder(ple);
 			fileAppender.setContext(lc);
 			fileAppender.start();
@@ -186,12 +197,11 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 	@Override
 	public void onResult(TcResult result) {
 		reportEngine.onResult(result);
-		String tc = result.testcase.substring(result.testcase.lastIndexOf(".") + 1);
-		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
-		if (fileAppender != null) {
-			fileAppender.stop();
-		}
-		appenderMap.remove(tc);
+//		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(result.testcase);
+//		if (fileAppender != null) {
+//			fileAppender.stop();
+//		}
+//		appenderMap.remove(result.testcase);
     }
 
 	@Override

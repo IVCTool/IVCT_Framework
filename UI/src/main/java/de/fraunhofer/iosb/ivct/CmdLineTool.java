@@ -623,10 +623,11 @@ class Writer extends Thread {
                 case "sll":
                 	// Need an input parameter
                 	if (split.length == 1) {
-                		out.println("setLogLevel: Error missing log level: error, warning, info, debug or trace");
+                        // Do NOT allow ERROR, since end test case relies on a warn message to close log file.
+                        out.println("setLogLevel: Error missing log level: warning, info, debug or trace");
                 		break;
                 	}
-                	if (split[1].equalsIgnoreCase("error") || split[1].equalsIgnoreCase("warning") || split[1].equalsIgnoreCase("info") || split[1].equalsIgnoreCase("debug") || split[1].equalsIgnoreCase("trace")) {
+                    if (split[1].equalsIgnoreCase("warning") || split[1].equalsIgnoreCase("info") || split[1].equalsIgnoreCase("debug") || split[1].equalsIgnoreCase("trace")) {
                 		logLevelString = split[1].toLowerCase();
                 		CmdSetLogLevel cmdSetLogLevel = ivctCommander.rtp.createCmdSetLogLevel(split[1]);
                 		cmdSetLogLevel.execute();

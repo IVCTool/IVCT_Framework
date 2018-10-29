@@ -93,7 +93,13 @@ public abstract class AbstractTestCase {
     	
     	IVCT_BaseModel ivct_BaseModel = null;
     	IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
-        MDC.put("testcase", this.getClass().getSimpleName());
+        MDC.put("testcase", this.getClass().getName());
+
+        // A one-time start message
+		MDC.put("tcStatus", "started");
+		logger.warn("Test Case Started");
+
+		MDC.put("tcStatus", "running");
 
         String tcParam = new String();
         tcParam = "\n"
