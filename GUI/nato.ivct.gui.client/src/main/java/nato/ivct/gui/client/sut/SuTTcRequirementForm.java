@@ -30,6 +30,7 @@ import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCase
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseNameField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
@@ -444,9 +445,14 @@ public class SuTTcRequirementForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-//			getForm().setSubTitle(formData.getName().getValue());
-
-			setEnabledPermission(new UpdateSuTPermission());
+			
+			//sort log history table by newest at top
+//			TcExecutionHistoryTable historyTable = getTcExecutionHistoryTableField().getTable();
+//			boolean tableSortEnable = historyTable.isSortEnabled();
+//			historyTable.setSortEnabled(true);
+//			historyTable.getColumnSet().addSortColumn(historyTable.getFileNameColumn(), false);
+//			historyTable.sort();
+//			historyTable.setSortEnabled(tableSortEnable);
 		}
 	}
 

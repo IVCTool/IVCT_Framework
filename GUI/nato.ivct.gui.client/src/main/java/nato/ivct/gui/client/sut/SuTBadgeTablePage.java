@@ -145,24 +145,6 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
 		}
 	}
 
-//	@Override
-//	protected void execPageActivated() throws ProcessingException {
-//	  if (getDetailForm() == null) {
-//	    SuTForm form = new SuTForm("");
-//	    form.setSutId(getSutId());
-//	    setDetailForm(form);
-//	    form.startView();
-//	  }
-//	}
-//	
-//	@Override
-//	protected void execPageDeactivated() throws ProcessingException {
-//	  if (getDetailForm() != null) {
-//	    getDetailForm().doClose();
-//	    setDetailForm(null);
-//	  }
-//	}
-
 	public void setSutId(String _sutId) {
 		m_sutId = _sutId;
 	}
