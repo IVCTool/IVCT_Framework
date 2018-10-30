@@ -60,7 +60,6 @@ public class ServerSession extends AbstractServerSession {
 
 		@Override
 		public CmdListBadges call() throws Exception {
-			// TODO Auto-generated method stub
 			CmdListBadges badges;
 			badges = Factory.createCmdListBadges();
 			badges.execute();

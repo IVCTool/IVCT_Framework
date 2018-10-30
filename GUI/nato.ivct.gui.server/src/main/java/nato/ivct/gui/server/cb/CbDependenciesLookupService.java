@@ -20,19 +20,16 @@ public class CbDependenciesLookupService extends AbstractLookupService<String>
 
 	@Override
 	public List<? extends ILookupRow<String>> getDataByKey(ILookupCall<String> call) {
-		// TODO [the] Auto-generated method stub.
 		return CollectionUtility.emptyArrayList();
 	}
 
 	@Override
 	public List<? extends ILookupRow<String>> getDataByRec(ILookupCall<String> call) {
-		// TODO [the] Auto-generated method stub.
 		return CollectionUtility.emptyArrayList();
 	}
 
 	@Override
 	public List<? extends ILookupRow<String>> getDataByText(ILookupCall<String> call) {
-		// TODO [the] Auto-generated method stub.
 		return CollectionUtility.emptyArrayList();
 	}
 

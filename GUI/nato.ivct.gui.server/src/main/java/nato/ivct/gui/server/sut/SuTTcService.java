@@ -35,13 +35,11 @@ public class SuTTcService implements ISuTTcService {
 
 	@Override
 	public SuTTcRequirementFormData prepareCreate(SuTTcRequirementFormData formData) {
-		// TODO Auto-generated method stub
 		return formData;
 	}
 
 	@Override
 	public SuTTcRequirementFormData create(SuTTcRequirementFormData formData) {
-		// TODO Auto-generated method stub
 		return formData;
 	}
 
@@ -72,7 +70,6 @@ public class SuTTcService implements ISuTTcService {
 
 	@Override
 	public SuTTcRequirementFormData store(SuTTcRequirementFormData formData) {
-		// TODO Auto-generated method stub
 		return formData;
 	}
 
@@ -91,7 +88,6 @@ public class SuTTcService implements ISuTTcService {
 			} catch (NoSuchFileException e) {
 				LOG.info("log files not found: {}", tcLogFile);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -169,7 +165,6 @@ public class SuTTcService implements ISuTTcService {
 				fd.getTcExecutionHistoryTable().addRow().setFileName(logFileName);
 			});
 		} catch (IOException exc) {
-			// TODO Auto-generated catch block
 			exc.printStackTrace();
 		}
 

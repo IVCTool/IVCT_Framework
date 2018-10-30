@@ -33,7 +33,6 @@ public class OptionsForm extends AbstractForm {
 
 	@Override
 	protected void execInitForm() {
-		// TODO Auto-generated method stub
 		super.execInitForm();
 	}
 
