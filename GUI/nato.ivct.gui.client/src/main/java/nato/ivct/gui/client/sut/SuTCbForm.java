@@ -506,7 +506,7 @@ public class SuTCbForm extends AbstractForm {
 
 					            @Override
 					            protected void execAction() {
-					            	if (getTable().getSelectedRowCount()>0)
+					            	if (getTable().getSelectedRowCount()==1)
 					            		getTable().getParameterValueColumn().setEditable(true);
 					            }
 					        }
@@ -529,6 +529,13 @@ public class SuTCbForm extends AbstractForm {
 					            	List<ITableRow> rows = getSelectedRows();
 					            	deleteRows(rows);
 					            }
+					        }
+					        
+					        @Override
+					        protected void execRowsSelected(List<? extends ITableRow> rows) {
+					        	// Set table to read-only if no row is selected
+					        	if (rows.isEmpty())
+					        		getTable().getParameterValueColumn().setEditable(false);
 					        }
 						}
 					}
