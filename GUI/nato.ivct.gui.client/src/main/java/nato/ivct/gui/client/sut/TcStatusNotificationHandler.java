@@ -29,7 +29,6 @@ import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
-import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
 public class TcStatusNotificationHandler implements INotificationHandler<TcStatusNotification> {
@@ -38,7 +37,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 
 	@Override
 	public void handleNotification(TcStatusNotification notification) {
-		// inform client about test case verdict
+		// inform client about test case progress
 		ModelJobs.schedule(new IRunnable() {
 			@Override
 			public void run() throws Exception {
@@ -94,7 +93,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 								// update the TC log
 								SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
 								((SuTTcExecutionForm) form).exportFormData(formData);
-								formData = BEANS.get(ISuTTcService.class).loadLogFile(formData, ((SuTTcExecutionForm) form).getTestCaseId());
+								formData = BEANS.get(ISuTTcService.class).loadLogFileContent(formData, ((SuTTcExecutionForm) form).getTestCaseId());
 								((SuTTcExecutionForm) form).importFormData(formData);
 								
 								//record status and progress in the form

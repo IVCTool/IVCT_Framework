@@ -5,6 +5,10 @@ apply from: "../../.shared/commons.gradle"
 
 description = """IVCT HTML UI"""
 
+/* extend source classpath */
+sourceSets.main.resources.srcDirs += 'src/main/js'
+
+
 dependencies {
     compile     project(':GUI:nato.ivct.gui.client')
     compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.ui.html', version:"${scoutVersion}"

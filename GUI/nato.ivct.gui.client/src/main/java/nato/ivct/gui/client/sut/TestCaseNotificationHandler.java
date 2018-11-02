@@ -5,6 +5,7 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.basic.table.ITable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.gui.client.Desktop;
 import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
+import nato.ivct.gui.shared.sut.ISuTTcService;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
+import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.TestCaseNotification;
 
 public class TestCaseNotificationHandler implements INotificationHandler<TestCaseNotification> {
@@ -35,10 +39,35 @@ public class TestCaseNotificationHandler implements INotificationHandler<TestCas
 						for (ITableRow tr : sutCbNode.getTable().getRows()) {
 							// find row with test case name
 							if (sutCbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
+
+								// set verdict in node page table
 								sutCbNode.getTable().getTCresultColumn().setValue(tr,notification.getVerdict());
-//								tr.setBackgroundColor(ResourceBase.getVerdictColor(notification.getVerdict()));
-								// set font color to dark black if background color changed due to TC status
-//								tr.setForegroundColor("000000");
+								
+								// set verdict in detailed form and update log table
+								SuTTcRequirementForm detailedForm = (SuTTcRequirementForm) tcNP.getDetailForm();
+								if (detailedForm != null
+									&& detailedForm.isFormStarted()
+									&& detailedForm.getTestCaseId().equals(notification.getTc())) {
+									//update log file table
+									ISuTTcService service = BEANS.get(ISuTTcService.class);
+									SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
+									
+//									//ToDo: Make this smarter and only update the table content!
+//									detailedForm.exportFormData(formData);
+//									formData = service.load(formData);
+//									detailedForm.importFormData(formData);
+//									
+//									//smarter version
+//									TcExecutionHistoryTable tbl = detailedForm.getTcExecutionHistoryTableField().getTable();
+//									tbl.discardAllRows();
+//									tbl.addRows(null);
+									detailedForm.exportFormData(formData);
+									formData = service.updateLogFileTable(formData);
+									detailedForm.importFormData(formData);
+									
+									// set verdict
+									detailedForm.getTestCaseExecutionStatusTableField().setValue(notification.getVerdict());
+								}
 							}
 						}
 						

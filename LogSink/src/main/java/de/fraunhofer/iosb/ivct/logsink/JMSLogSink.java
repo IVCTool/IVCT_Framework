@@ -14,6 +14,9 @@ limitations under the License. */
 
 package de.fraunhofer.iosb.ivct.logsink;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -40,16 +43,24 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
+import nato.ivct.commander.CmdQuitListener.OnQuitListener;
+import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
+import nato.ivct.commander.CmdStartTcListener.TcInfo;
+import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
+import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
 
-public class JMSLogSink implements MessageListener, TcChangedListener {
+public class JMSLogSink implements MessageListener, TcChangedListener, OnResultListener, OnQuitListener, OnStartTestCaseListener {
 
 	private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
 	// private Logger log;
 	private HashMap<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
+	private ReportEngine reportEngine;
+	public TcChangedListener tcListener = null;
 
-	public JMSLogSink(String tcfBindingName, String topicBindingName, String username, String password) {
+	public JMSLogSink(String tcfBindingName, String topicBindingName, String username, String password, ReportEngine reportEngine) {
 
+		this.reportEngine = reportEngine;
 		try {
 			Properties env = new Properties();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, Factory.props.getProperty(Factory.JAVA_NAMING_FACTORY_ID));
@@ -119,6 +130,16 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 					Logger log = getTestCaseLogger(tc, sutName, sutDir, badge);
 					log.callAppenders(event);
 				}
+				String tcStatus = event.getMDCPropertyMap().get("tcStatus");
+				if (tcStatus != null) {
+					if (tcStatus.contentEquals("ended")) {
+						FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
+						if (fileAppender != null) {
+							fileAppender.stop();
+						}
+						appenderMap.remove(tc);
+					}
+				}
 			} else {
 				logger.warn("Received message is of type " + message.getJMSType() + ", was expecting ObjectMessage.");
 			}
@@ -143,8 +164,18 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 			ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
 			ple.setContext(lc);
 			ple.start();
+			LocalDateTime ldt = LocalDateTime.now();
+			String formattedMM = String.format("%02d", ldt.getMonthValue());
+			String formatteddd = String.format("%02d", ldt.getDayOfMonth());
+			String formattedhh = String.format("%02d", ldt.getHour());
+			String formattedmm = String.format("%02d", ldt.getMinute());
+			String formattedss = String.format("%02d", ldt.getSecond());
 			fileAppender = new FileAppender<ILoggingEvent>();
-			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tcName + ".log");
+			Date date = new Date();
+			SimpleDateFormat sdf;
+			sdf = new SimpleDateFormat("ZZZ");
+			String tc = tcName.substring(tcName.lastIndexOf(".") + 1);
+			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tc + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log");
 			fileAppender.setEncoder(ple);
 			fileAppender.setContext(lc);
 			fileAppender.start();
@@ -157,8 +188,31 @@ public class JMSLogSink implements MessageListener, TcChangedListener {
 	}
 
 	@Override
+	public void onQuit() {
+		reportEngine.onQuit();
+		System.exit(0);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onResult(TcResult result) {
+		reportEngine.onResult(result);
+//		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(result.testcase);
+//		if (fileAppender != null) {
+//			fileAppender.stop();
+//		}
+//		appenderMap.remove(result.testcase);
+    }
+
+	@Override
 	public void tcChanged(String newTcName) {
 		logger.info("Test Case changed to :" + newTcName);
 	}
+
+    public void onStartTestCase(TcInfo info) {
+        if (tcListener != null) {
+            tcListener.tcChanged(info.testCaseId);
+        }
+    }
 
 }

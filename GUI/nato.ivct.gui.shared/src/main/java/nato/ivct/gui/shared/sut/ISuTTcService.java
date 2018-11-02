@@ -13,9 +13,11 @@ public interface ISuTTcService extends IService {
 
 	SuTTcRequirementFormData store(SuTTcRequirementFormData formData);
 
-	SuTTcRequirementFormData loadLogFile(SuTTcRequirementFormData formData, String fileName);
+	SuTTcRequirementFormData loadLogFileContent(SuTTcRequirementFormData formData, String fileName);
 
 	SuTTcExecutionFormData load(SuTTcExecutionFormData formData);
 
-	SuTTcExecutionFormData loadLogFile(SuTTcExecutionFormData formData, String fileName);
+	SuTTcExecutionFormData loadLogFileContent(SuTTcExecutionFormData formData, String fileName);
+
+	SuTTcRequirementFormData updateLogFileTable(SuTTcRequirementFormData formData);
 }

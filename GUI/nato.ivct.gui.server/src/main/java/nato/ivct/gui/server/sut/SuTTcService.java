@@ -28,6 +28,7 @@ import nato.ivct.gui.shared.cb.ReadCbPermission;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.TcExecutionHistoryTable;
 
 public class SuTTcService implements ISuTTcService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
@@ -60,30 +61,11 @@ public class SuTTcService implements ISuTTcService {
 			first.ifPresent(requirement -> {
 				formData.getReqDescr().setValue(requirement.description);
 				formData.getTestCaseName().setValue(requirement.TC);
-
 				// get log files for this test case
-				Path tcLogFolder = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID);
-				// get the log files from this folder
-				String tcFullName = requirement.TC;
-				String tcName = Stream.of(tcFullName.split(Pattern.quote("."))).reduce((a,b) -> b).get();
-				try (DirectoryStream<Path> files =
-						Files.newDirectoryStream(tcLogFolder, tcName+"*.log"))
-				{
-				  for (Path file : files) {
-					  String logFileName = file.getFileName().toString();
-					  LOG.info("Log file found: " +logFileName);
-					  formData.getTcExecutionHistoryTable().addRow().setFileName(logFileName);
-				  }
-				} catch (NoSuchFileException e) {
-					LOG.info("No log files found for test case: " + requirement.TC);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				loadLogFiles(formData, bd.ID, requirement.TC);
 			});
 		}
-		
-		
+
 		return formData;
 	}
 
@@ -93,7 +75,7 @@ public class SuTTcService implements ISuTTcService {
 		return formData;
 	}
 
-	public SuTTcRequirementFormData loadLogFile(SuTTcRequirementFormData formData, String fileName) {
+	public SuTTcRequirementFormData loadLogFileContent(SuTTcRequirementFormData formData, String fileName) {
 		// get requirement description and test case
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
@@ -114,7 +96,15 @@ public class SuTTcService implements ISuTTcService {
 	}
 
 	@Override
-	public SuTTcExecutionFormData loadLogFile(SuTTcExecutionFormData formData, String fileName) {
+	public SuTTcRequirementFormData updateLogFileTable(SuTTcRequirementFormData formData) {
+		TcExecutionHistoryTable tbl = formData.getTcExecutionHistoryTable();
+		tbl.clearRows();
+		loadLogFiles(formData, formData.getBadgeId(), formData.getTestCaseId());
+		return formData;
+	}
+
+	@Override
+	public SuTTcExecutionFormData loadLogFileContent(SuTTcExecutionFormData formData, String fileName) {
 		// get requirement description and test case
 		CbService cbService = (CbService) BEANS.get(CbService.class);
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
@@ -155,5 +145,25 @@ public class SuTTcService implements ISuTTcService {
 		
 		return formData;
 	}
-
+	
+	private SuTTcRequirementFormData loadLogFiles(SuTTcRequirementFormData fd, String bdId, String tcFullName) {
+		Path tcLogFolder = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), fd.getSutId(), bdId);
+		String tcName = Stream.of(tcFullName.split(Pattern.quote("."))).reduce((a,b) -> b).get();
+		try (DirectoryStream<Path> files =
+				Files.newDirectoryStream(tcLogFolder, tcName+"*.log"))
+		{
+		  for (Path file : files) {
+			  String logFileName = file.getFileName().toString();
+			  LOG.info("Log file found: " +logFileName);
+			  fd.getTcExecutionHistoryTable().addRow().setFileName(logFileName);
+		  }
+		} catch (NoSuchFileException e) {
+			LOG.info("No log files found for test case: " + tcFullName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return fd;
+	}
 }

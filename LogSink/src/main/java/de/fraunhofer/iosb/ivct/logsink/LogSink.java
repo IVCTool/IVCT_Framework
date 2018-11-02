@@ -25,7 +25,8 @@ public class LogSink {
 
     private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
     //private JMSTopicSink  jmsTopicSink;
-    private JMSLogSink  jmsLogSink;
+    private static JMSLogSink  jmsLogSink;
+    private static ReportEngine reportEngine = new ReportEngine();
 
 
     /**
@@ -36,13 +37,9 @@ public class LogSink {
     public static void main(final String[] args) {
         MDC.put("testcase", "LogSink");
         LOGGER.info("in main");
-        final ReportEngine reportEngine = new ReportEngine();
 		Factory.initialize();
-		(new CmdStartTestResultListener(reportEngine)).execute();
-		(new CmdQuitListener(reportEngine)).execute();
         final LogSink instance = new LogSink();
         instance.init();
-        reportEngine.tcListener = instance.jmsLogSink;
         instance.execute();
         System.exit(0);;
     }
@@ -56,8 +53,14 @@ public class LogSink {
         final String topicBindingName = Factory.props.getProperty(Factory.LOGSINK_TOPIC_BINDINGNAME_ID);
         final String username = Factory.props.getProperty(Factory.LOGSINK_USER_ID);
         final String password = Factory.props.getProperty(Factory.LOGSINK_PASSWORD_ID);
-        this.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password);
+        LogSink.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password, reportEngine);
+		(new CmdStartTestResultListener(jmsLogSink)).execute();
+		(new CmdQuitListener(jmsLogSink)).execute();
     }
+
+	public String getTestCaseResults() {
+		return reportEngine.status.toString();
+	}
 
 
     /**
