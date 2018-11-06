@@ -30,12 +30,10 @@ import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCase
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseNameField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
-import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
-import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 @FormData(value = SuTTcRequirementFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTTcRequirementForm extends AbstractForm {
@@ -121,7 +119,6 @@ public class SuTTcRequirementForm extends AbstractForm {
 	
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [the] verify translation
 		return TEXTS.get("SuTTcExecution");
 	}
 

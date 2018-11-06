@@ -18,6 +18,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.IColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -33,6 +34,7 @@ import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
+import org.eclipse.scout.rt.platform.util.collection.OrderedCollection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -283,6 +285,10 @@ public class SuTCbForm extends AbstractForm {
 					protected double getConfiguredSplitterPosition() {
 					return 0.5;
 					}
+					
+					public SuTCbParameterTableField getSuTCbParameterTableField() {
+						return getFieldByClass(SuTCbParameterTableField.class);
+					}
 
 					@Order(1000)
 					public class SuTCbParameterTableField extends AbstractTableField<SuTCbParameterTableField.SuTCbParameterTable> {
@@ -472,31 +478,32 @@ public class SuTCbForm extends AbstractForm {
 								}
 							}
 							
-							@Order(110)
-							public class NewMenu extends AbstractMenu {
-							
-							    @Override
-							    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-							    	return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
-							    }
-							
-							    @Override
-							    protected String getConfiguredText() {
-							    	return TEXTS.get("New");
-							    }
-							
-							    @Override
-							    protected void execAction() {
-							    	newRowWithParent(getTable().getSelectedRow());
-							    }
-							}
+//							@Order(110)
+//							public class NewMenu extends AbstractMenu {
+//							
+//							    @Override
+//							    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+//							    	return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
+//							    }
+//							
+//							    @Override
+//							    protected String getConfiguredText() {
+//							    	return TEXTS.get("New");
+//							    }
+//							
+//							    @Override
+//							    protected void execAction() {
+//							    	newRowWithParent(getTable().getSelectedRow());
+//							    }
+//							}
 							
 					        @Order(120)
 					        public class EditMenu extends AbstractMenu {
 
 					        	@Override
 					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.SingleSelection);
+//					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.SingleSelection);
+					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
 					           	}
 
 					            @Override
@@ -506,30 +513,41 @@ public class SuTCbForm extends AbstractForm {
 
 					            @Override
 					            protected void execAction() {
-					            	if (getTable().getSelectedRowCount()==1)
-					            		getTable().getParameterValueColumn().setEditable(true);
+//					            	if (getTable().getSelectedRowCount()==1) {
+//					            		getTable().getParameterValueColumn().setEditable(true);
+			            			    List<IColumn<?>> columns = getSuTCbParameterTableField().getTable().getColumns();
+					            		SuTBdParamForm badgeParamForm = new SuTBdParamForm(columns);
+					            		badgeParamForm.setDisplayHint(DISPLAY_HINT_DIALOG);
+//					            		try {
+						            		badgeParamForm.startNew();
+						            		badgeParamForm.waitFor();
+//										} catch (CloneNotSupportedException exc) {
+//											// TODO Auto-generated catch block
+//											exc.printStackTrace();
+//										}
+//					            	}
 					            }
 					        }
 							
-					        @Order(130)
-					        public class DeleteMenu extends AbstractMenu {
-
-					        	@Override
-					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.MultiSelection, TableMenuType.SingleSelection);
-					           	}
-
-					            @Override
-					            protected String getConfiguredText() {
-					            	return TEXTS.get("DeleteMenu");
-					            }
-
-					            @Override
-					            protected void execAction() {
-					            	List<ITableRow> rows = getSelectedRows();
-					            	deleteRows(rows);
-					            }
-					        }
+//					        @Order(130)
+//					        public class DeleteMenu extends AbstractMenu {
+//
+//					        	@Override
+//					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+//					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.MultiSelection, TableMenuType.SingleSelection);
+//					           	}
+//
+//					            @Override
+//					            protected String getConfiguredText() {
+//					            	return TEXTS.get("DeleteMenu");
+//					            }
+//
+//					            @Override
+//					            protected void execAction() {
+//					            	List<ITableRow> rows = getSelectedRows();
+//					            	deleteRows(rows);
+//					            }
+//					        }
 					        
 					        @Override
 					        protected void execRowsSelected(List<? extends ITableRow> rows) {
