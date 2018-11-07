@@ -43,6 +43,6 @@ doLast {
         * Thus need to edit the script to only have a single lib level.
         */
         windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%LRC_CLASSPATH%')
-        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib;$LRC_CLASSPATH')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib:$LRC_CLASSPATH')
     }
 }
