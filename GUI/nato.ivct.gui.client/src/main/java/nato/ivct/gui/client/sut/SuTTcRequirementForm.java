@@ -273,7 +273,7 @@ public class SuTTcRequirementForm extends AbstractForm {
 				
 				@Override
 				protected double getConfiguredSplitterPosition() {
-				return 0.4;
+				return 0.35;
 				}
 
 				@Order(1000)
@@ -284,15 +284,15 @@ public class SuTTcRequirementForm extends AbstractForm {
 						return TEXTS.get("TcExecutionHistory");
 					}
 					
-					@Override
-					protected int getConfiguredGridH() {
-						return 3;
-					}
+//					@Override
+//					protected int getConfiguredGridH() {
+//						return 3;
+//					}
 					
-					@Override
-					protected int getConfiguredGridW() {
-						return 3;
-					}
+//					@Override
+//					protected int getConfiguredGridW() {
+//						return 3;
+//					}
 					
 					public class TcExecutionHistoryTable extends AbstractTable {
 						
@@ -362,11 +362,11 @@ public class SuTTcRequirementForm extends AbstractForm {
 						return TEXTS.get("TcExecutionLog");
 					}
 					
-					@Override
-					protected int getConfiguredGridH() {
-						// TODO Auto-generated method stub
-						return 5;
-					}
+//					@Override
+//					protected int getConfiguredGridH() {
+//						// TODO Auto-generated method stub
+//						return 3;
+//					}
 					
 					@Override
 					protected boolean getConfiguredMultilineText() {

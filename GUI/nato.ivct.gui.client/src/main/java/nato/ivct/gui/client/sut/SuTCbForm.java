@@ -376,53 +376,53 @@ public class SuTCbForm extends AbstractForm {
 				            table.getParameterValueColumn().setValue(row, value);
 				            
 				            //add row to table
-				           mRows.add(row);
+				            mRows.add(row);
 				            
 				            return row;
-				          }
+				        }
 
-				          private void newRow() {
-				            newRowWithParent(null);
-				          }
+						private void newRow() {
+							newRowWithParent(null);
+						}
 
-				          private void newRowWithParent(final ITableRow parent) {
-				            SuTCbParameterTable table = getTable();
-				            ColumnSet cols = table.getColumnSet();
-				            ITableRow row = new TableRow(cols);
-
-				            row.getCellForUpdate(table.getIdColumn()).setValue(m_nextRowId.getAndIncrement());
-				            row.getCellForUpdate(table.getParentIdColumn()).setValue(Optional.ofNullable(table.getIdColumn().getValue(parent)).orElse(null));
-
-				            table.addRow(row, true);
-				          }
+						private void newRowWithParent(final ITableRow parent) {
+						    SuTCbParameterTable table = getTable();
+						    ColumnSet cols = table.getColumnSet();
+						    ITableRow row = new TableRow(cols);
+						
+						    row.getCellForUpdate(table.getIdColumn()).setValue(m_nextRowId.getAndIncrement());
+						    row.getCellForUpdate(table.getParentIdColumn()).setValue(Optional.ofNullable(table.getIdColumn().getValue(parent)).orElse(null));
+						
+						    table.addRow(row, true);
+						}
 				          
-				          public class SuTCbParameterTable extends AbstractTable {
-				        	  
-							  public ParentIdColumn getParentIdColumn() {
+				        public class SuTCbParameterTable extends AbstractTable {
+				        	
+				        	public ParentIdColumn getParentIdColumn() {
 							      return getColumnSet().getColumnByClass(ParentIdColumn.class);
-							  }
+							}
 	
-							  public IdColumn getIdColumn() {
-								    return getColumnSet().getColumnByClass(IdColumn.class);
-							  }
+							public IdColumn getIdColumn() {
+								  return getColumnSet().getColumnByClass(IdColumn.class);
+							}
 								
-							  public ParameterNameColumn getParameterNameColumn() {
+							public ParameterNameColumn getParameterNameColumn() {
 							    return getColumnSet().getColumnByClass(ParameterNameColumn.class);
-							  }
+							}
 								
-							  public ParameterValueColumn getParameterValueColumn() {
+							public ParameterValueColumn getParameterValueColumn() {
 							    return getColumnSet().getColumnByClass(ParameterValueColumn.class);
-							  }
+							}
 	
-					          @Override
-					          protected void execDecorateRow(ITableRow row) {
+					        @Override
+					        protected void execDecorateRow(ITableRow row) {
 					            if (getParameterValueColumn().getValue(row) == null) {
 					              row.setIconId("font:\uE001");
 					            }
-					          }
+					        }
 	
-							  @Order(10)
-							  public class IdColumn extends AbstractLongColumn {
+							@Order(10)
+							public class IdColumn extends AbstractLongColumn {
 							
 							    @Override
 							    protected boolean getConfiguredDisplayable() {
@@ -434,10 +434,10 @@ public class SuTCbForm extends AbstractForm {
 							      return true;
 							    }
 							
-							  }
+							}
 							
-							  @Order(15)
-							  public class ParentIdColumn extends AbstractLongColumn {
+							@Order(15)
+							public class ParentIdColumn extends AbstractLongColumn {
 
 					            @Override
 					            protected boolean getConfiguredParentKey() {
@@ -478,7 +478,30 @@ public class SuTCbForm extends AbstractForm {
 								}
 							}
 							
-//							@Order(110)
+					        @Order(3000)
+					        public class EditMenu extends AbstractMenu {
+
+					        	@Override
+					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
+					           	}
+
+					            @Override
+					            protected String getConfiguredText() {
+					            	return TEXTS.get("Edit");
+					            }
+
+					            @Override
+					            protected void execAction() {
+					            	SuTBdParamForm badgeParamForm = new SuTBdParamForm();
+					            	badgeParamForm.setDisplayHint(DISPLAY_HINT_DIALOG);
+					            	badgeParamForm.getMainBox().getSuTBdParamTableField().getTable().dispose();
+						            badgeParamForm.startModify();
+						            badgeParamForm.waitFor();
+					            }
+					        }
+							
+//							@Order(3100)
 //							public class NewMenu extends AbstractMenu {
 //							
 //							    @Override
@@ -497,39 +520,7 @@ public class SuTCbForm extends AbstractForm {
 //							    }
 //							}
 							
-					        @Order(120)
-					        public class EditMenu extends AbstractMenu {
-
-					        	@Override
-					            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-//					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.SingleSelection);
-					           		return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
-					           	}
-
-					            @Override
-					            protected String getConfiguredText() {
-					            	return TEXTS.get("Edit");
-					            }
-
-					            @Override
-					            protected void execAction() {
-//					            	if (getTable().getSelectedRowCount()==1) {
-//					            		getTable().getParameterValueColumn().setEditable(true);
-			            			    List<IColumn<?>> columns = getSuTCbParameterTableField().getTable().getColumns();
-					            		SuTBdParamForm badgeParamForm = new SuTBdParamForm(columns);
-					            		badgeParamForm.setDisplayHint(DISPLAY_HINT_DIALOG);
-//					            		try {
-						            		badgeParamForm.startNew();
-						            		badgeParamForm.waitFor();
-//										} catch (CloneNotSupportedException exc) {
-//											// TODO Auto-generated catch block
-//											exc.printStackTrace();
-//										}
-//					            	}
-					            }
-					        }
-							
-//					        @Order(130)
+//					        @Order(3200)
 //					        public class DeleteMenu extends AbstractMenu {
 //
 //					        	@Override
@@ -549,12 +540,12 @@ public class SuTCbForm extends AbstractForm {
 //					            }
 //					        }
 					        
-					        @Override
-					        protected void execRowsSelected(List<? extends ITableRow> rows) {
-					        	// Set table to read-only if no row is selected
-					        	if (rows.isEmpty())
-					        		getTable().getParameterValueColumn().setEditable(false);
-					        }
+//					        @Override
+//					        protected void execRowsSelected(List<? extends ITableRow> rows) {
+//					        	// Set table to read-only if no row is selected
+//					        	if (rows.isEmpty())
+//					        		getTable().getParameterValueColumn().setEditable(false);
+//					        }
 						}
 					}
 

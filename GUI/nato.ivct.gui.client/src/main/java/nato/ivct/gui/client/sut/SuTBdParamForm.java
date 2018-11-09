@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ColumnSet;
+import org.eclipse.scout.rt.client.ui.basic.table.ITable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.IColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -27,13 +28,6 @@ import nato.ivct.gui.shared.sut.UpdateSuTBdParamPermission;
 
 @FormData(value = SuTBdParamFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTBdParamForm extends AbstractForm {
-	
-	private List<IColumn<?>> injectedColumnList;
-
-	// Constructor
-	public SuTBdParamForm (List<IColumn<?>> columnList) {
-	setInjectedColumnList(columnList);
-	}
 
 	@Override
 	protected String getConfiguredTitle() {
@@ -44,9 +38,9 @@ public class SuTBdParamForm extends AbstractForm {
 		startInternalExclusive(new ModifyHandler());
 	}
 
-	public void startNew() {
-		startInternal(new NewHandler());
-	}
+//	public void startNew() {
+//		startInternal(new NewHandler());
+//	}
 
 	public CancelButton getCancelButton() {
 		return getFieldByClass(CancelButton.class);
@@ -60,21 +54,13 @@ public class SuTBdParamForm extends AbstractForm {
 		return getFieldByClass(OkButton.class);
 	}
 
-	public List<IColumn<?>> getInjectedColumnList() {
-		return injectedColumnList;
-	}
-
-	public void setInjectedColumnList(List<IColumn<?>> columnList) {
-		this.injectedColumnList = columnList;
-	}
-
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
 
 		public SuTBdParamTableField getSuTBdParamTableField() {
 			return getFieldByClass(SuTBdParamTableField.class);
 		}
-		
+	
 		@Order(1010)
 		public class SuTBdParamTableField extends AbstractTableField<SuTBdParamTableField.Table> {
 			
@@ -87,18 +73,32 @@ public class SuTBdParamForm extends AbstractForm {
 			protected int getConfiguredGridH() {
 				return 6;
 			}
-			
+
+//@Override
+//protected void setTableInternal(Table table) {
+//	// TODO Auto-generated method stub
+//	super.setTableInternal(table);
+//}
+//@Override
+//public void setTable(Table newTable, boolean externallyManaged) {
+//	// TODO Auto-generated method stub
+//	super.setTable(newTable, externallyManaged);
+//}
+@Override
+protected Class<? extends ITable> getConfiguredTable() {
+	// TODO Auto-generated method stub
+	// return super.getConfiguredTable();
+	return SuTBadgeParameterTable.class;
+}
+
 			// derive table structure from SutCbForm
 			public class Table extends AbstractTable {
-//				public void insertColumns(List<IColumn<?>> columnList) {
-//					setInjectedColumnList(columnList);
-//				}
-				
-			    @Override
+
+				@Override
 			    protected void injectColumnsInternal(OrderedCollection<IColumn<?>> columns) {
-			      if (getInjectedColumnList() != null && !getInjectedColumnList().isEmpty()) {
-			        columns.addAllLast(getInjectedColumnList());
-			      }
+//					SuTBadgeParameterTable tbl = new SuTBadgeParameterTable();
+//					List<IColumn<?>> cl = tbl.getColumns();
+//					columns.addAllLast(cl);
 			    }
 			}
 		}
@@ -134,25 +134,25 @@ public class SuTBdParamForm extends AbstractForm {
 		}
 	}
 
-	public class NewHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-			ISuTBdParamEditService service = BEANS.get(ISuTBdParamEditService.class);
-			SuTBdParamFormData formData = new SuTBdParamFormData();
-			exportFormData(formData);
-			formData = service.prepareCreate(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new CreateSuTBdParamPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			ISuTBdParamEditService service = BEANS.get(ISuTBdParamEditService.class);
-			SuTBdParamFormData formData = new SuTBdParamFormData();
-			exportFormData(formData);
-			service.create(formData);
-		}
-	}
+//	public class NewHandler extends AbstractFormHandler {
+//
+//		@Override
+//		protected void execLoad() {
+//			ISuTBdParamEditService service = BEANS.get(ISuTBdParamEditService.class);
+//			SuTBdParamFormData formData = new SuTBdParamFormData();
+//			exportFormData(formData);
+//			formData = service.prepareCreate(formData);
+//			importFormData(formData);
+//
+//			setEnabledPermission(new CreateSuTBdParamPermission());
+//		}
+//
+//		@Override
+//		protected void execStore() {
+//			ISuTBdParamEditService service = BEANS.get(ISuTBdParamEditService.class);
+//			SuTBdParamFormData formData = new SuTBdParamFormData();
+//			exportFormData(formData);
+//			service.create(formData);
+//		}
+//	}
 }
