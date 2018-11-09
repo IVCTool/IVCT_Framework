@@ -11,6 +11,8 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.IColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractFormStateButton.SaveAsMenu;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractFormStateButton.SaveMenu;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
@@ -72,6 +74,11 @@ public class SuTBdParamForm extends AbstractForm {
 			@Override
 			protected int getConfiguredGridH() {
 				return 6;
+			}
+			
+			@Override
+			protected double getConfiguredGridWeightY() {
+				return 3;
 			}
 
 //@Override

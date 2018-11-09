@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.IWidget;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -39,11 +40,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.mockito.internal.matchers.InstanceOf;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.ResourceBase;
+import nato.ivct.gui.client.sut.SuTBdParamForm.MainBox.SuTBdParamTableField.Table;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbImageField;
@@ -495,7 +498,16 @@ public class SuTCbForm extends AbstractForm {
 					            protected void execAction() {
 					            	SuTBdParamForm badgeParamForm = new SuTBdParamForm();
 					            	badgeParamForm.setDisplayHint(DISPLAY_HINT_DIALOG);
-					            	badgeParamForm.getMainBox().getSuTBdParamTableField().getTable().dispose();
+//>>>>>>>>> Begin Test 
+					            	List<? extends IWidget> c = badgeParamForm.getMainBox().getSuTBdParamTableField().getChildren();
+					            	if (c.get(0) instanceof SuTBadgeParameterTable) {
+					            		SuTBadgeParameterTable tbl = (SuTBadgeParameterTable) c.get(0);
+					            		tbl.deleteAllRows();
+					            		tbl.addRows(getTable().getRows());
+					            		tbl.getParameterNameColumn().setEditable(true);
+					            		tbl.getParameterValueColumn().setEditable(true);
+					            	}
+//End Test <<<<<<<<<<					            	
 						            badgeParamForm.startModify();
 						            badgeParamForm.waitFor();
 					            }
