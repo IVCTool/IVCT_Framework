@@ -22,9 +22,6 @@ echo "Starting the Dockerized IVCT Test Case Engine"
 # call the TC exec
 chmod a+x /root/application/TC.exec/bin/TC.exec
 
-# Hack the LRC_CLASSPATH into CLASSPATH of TC_Runner launch script
-sed -i -e 's#CLASSPATH=#CLASSPATH=$LRC_CLASSPATH:#g' /root/application/TC.exec/bin/TC.exec
-
 sh /root/application/TC.exec/bin/TC.exec
 	
 pid="$!"
