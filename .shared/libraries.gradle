@@ -16,34 +16,12 @@ ext {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
         logbackVersion = '1.1.3'
         slf4jVersion = '1.7.10'
-		activemqVersion = '5.12.0'
+		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
 		scoutVersion = '8.0.0.010_Photon'
 		jsonSimpleVersion = '1.1.1'
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
-
-		
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		//rti = "prti1516e"
-		rti = "IEEE1516e"
-		//rti = "mak"
-
-		switch (rti) {
-			case "prti1516e":
-				rti_jar =   "prti1516e.jar"
-				rti_lib =   "C:/Program Files/prti1516e/lib"
-				break
-			case "mak":
-				logger.warn ('MAK RTI not configured yet')
-				break
-			case "IEEE1516e":
-			default:
-				logger.warn ('No RTI is used. Compile with empty interface')
-
-		}
-
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
 

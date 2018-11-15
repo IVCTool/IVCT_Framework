@@ -17,18 +17,7 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 
-    switch (rti) {
-		case "prti1516e":
-			compile files (rti_lib + "/" + rti_jar)
-			runtime fileTree (dir: rti_lib, include: '*.jar')
-			break
-		case "mak":
-			logger.warn (':TC:MAK RTI is not configure. HelloWorld will not be runnable')
-		case "IEEE1516e":
-		default:
-			logger.warn (':TC:No RTI is used. Test Engine will not be able to run test cases')
-			compile     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
-	}
+	compileOnly     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
 }
 distributions {
     main {
@@ -43,9 +32,17 @@ distributions {
 tasks.withType(CreateStartScripts) {
     classpath += files('lib')
 doLast {
+		/*
+		* Get the default scripts from the gradle task.
+		*/
         def windowsScriptFile = file getWindowsScript()
         def unixScriptFile = file getUnixScript()
-        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
-        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
+        /*
+        * Want to have the lib folder (for the logback xml file) included in classpath,
+        * but gradle makes lib/lib out of that.
+        * Thus need to edit the script to only have a single lib level.
+        */
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%LRC_CLASSPATH%')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib:$LRC_CLASSPATH')
     }
 }
