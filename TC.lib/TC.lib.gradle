@@ -1,3 +1,81 @@
+
+plugins {
+    id 'maven-publish'
+    id 'signing'
+}
+
+import org.gradle.plugins.signing.Sign
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'io.github.msg134'
+            artifactId = 'TC.lib'
+            archivesBaseName = "TC.lib"
+            version = ivctVersion
+
+            from components.java
+            pom {
+                name = "Test Case Library"
+                description = "Library to be used by IVCT test case developers"
+                url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
+               licenses {
+                  license {
+                      name = "The Apache License, Version 2.0"
+                      url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                  }
+              }
+              developers {
+                  developer {
+                      id = "rhzg"
+                      name = "Reinhard Herzog"
+                      email = "reinhard.herzog@iosb.fraunhofer.de"
+                 }
+              }
+              scm {
+                 connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
+                 developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
+                 url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
+              }
+           }
+        }
+    }
+}
+
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+    }
+  }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    // Do not sign archives by default (a local build without gpg keyring should succeed)
+    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' }.each { task ->
+            task.enabled = false
+        }
+    }
+}
+
+apply plugin: 'signing'
+signing
+{
+    sign configurations.archives
+}
+build.dependsOn.remove(signArchives)
+
+
 dependencies {
 	compile     project(':Command')
 
@@ -11,5 +89,5 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 
-	compileOnly     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
+	compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
 }
