@@ -3,7 +3,8 @@ apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.testrunner.JMSTestRunner'
 
 dependencies {
-	compile     project(':Command')
+  compile     project(':Command')
+  compileOnly     project(':IEEE1516e')
 	compile     project(':TC.lib')
 
 	compile     libraries.slf4j_api
@@ -17,7 +18,7 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 
-	compileOnly     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
+//	compileOnly     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
 }
 distributions {
     main {

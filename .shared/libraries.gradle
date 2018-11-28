@@ -2,50 +2,43 @@
 // Allows centralized definition of the version of artifacts to use.
 ext {
 
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
+  gradleVersion = '4.9'
+  gradleWrapperVersion = "${gradleVersion}"
 
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-        gradleVersion = '4.9'
-        gradleWrapperVersion = "${gradleVersion}"
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
+  ivctVersion = '1.0.1'
 
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-		ivctVersion = '1.0.1'
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
+  junitVersion = '4.+'
 
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
-        junitVersion = '4.+'
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
+  logbackVersion = '1.1.3'
+  slf4jVersion = '1.7.10'
+  activemqVersion = '5.12.0'
+  hamcrestVersion = '1.1'
+  scoutVersion = '8.0.0.010_Photon'
+  jsonSimpleVersion = '1.1.1'
+  javaxServletVersion = '3.0.1'
+  geronimoJmsVersion = '1.1.1'
 
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-        logbackVersion = '1.1.3'
-        slf4jVersion = '1.7.10'
-		activemqVersion = '5.12.0'
-		hamcrestVersion = '1.1'
-		scoutVersion = '8.0.0.010_Photon'
-		jsonSimpleVersion = '1.1.1'
-		javaxServletVersion = '3.0.1'
-		geronimoJmsVersion = '1.1.1'
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
 
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
+  libraries = [
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
+    logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
+    logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
+    slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
+    slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
+    slf4j_jul_to_slf4j:             "org.slf4j:jul-to-slf4j:${slf4jVersion}",
+    slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
 
-        libraries = [
+    actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
 
+    jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
 
-                // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-
-                logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
-                logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
-
-                slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
-                slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
-                slf4j_jul_to_slf4j:             "org.slf4j:jul-to-slf4j:${slf4jVersion}",
-                slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
-
-				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
-
-				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
-
-
-
-                // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
-                junit:                          "junit:junit:${junitVersion}",
-				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}"
-        ]
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
+    junit:                          "junit:junit:${junitVersion}",
+    hamcrest_core:					        "org.hamcrest:hamcrest-core:${hamcrestVersion}"
+  ]
 }

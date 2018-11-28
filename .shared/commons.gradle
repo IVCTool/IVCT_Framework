@@ -7,15 +7,15 @@
 // -----------------------------------------------------------------------------
 
 allprojects {
-	//http://www.gradle.org/docs/nightly/userguide/dependency_management.html#sub:dynamic_versions_and_changing_modules
-	configurations.all {
-		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-	}
+  //http://www.gradle.org/docs/nightly/userguide/dependency_management.html#sub:dynamic_versions_and_changing_modules
+  configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+  }
 
   repositories {
-		mavenLocal()
-		mavenCentral()
-	}
+    mavenLocal()
+    mavenCentral()
+  }
 
   ext {
         // may be feed from bamboo, see also https://confluence.atlassian.com/display/BAMBOO/Using+global,+plan+or+build-specific+variables
@@ -29,10 +29,6 @@ allprojects {
   }
 }
 
-
-
-
-
 // -----------------------------------------------------------------------------
 // subprojects
 // -----------------------------------------------------------------------------
@@ -40,36 +36,35 @@ allprojects {
 subprojects { subProject ->
     defaultTasks 'build'
 
-	group = subProject.parent.group
-	if (subProject.version == 'unspecified') {
-		version = subProject.parent.version
-	}
-	description = subProject.parent.description
+  group = subProject.parent.group
+  if (subProject.version == 'unspecified') {
+    version = subProject.parent.version
+  }
+  description = subProject.parent.description
     ext {
         specificationVersion = version
     }
 
     if ( ! subProject.name.startsWith( 'misc' )  && ! subProject.name.startsWith( 'documentation' ) ) {
-        apply plugin: 'java'
-        compileJava {
-            sourceCompatibility = 1.8
-            targetCompatibility = 1.8
+       apply plugin: 'java'
+       compileJava {
+          sourceCompatibility = 1.8
+          targetCompatibility = 1.8
 
-            options.compilerArgs << '-Xlint:unchecked'
-			//options.warnings = true	// defaults to true
-			options.warnings = false
+          options.compilerArgs << '-Xlint:unchecked'
+          //options.warnings = true  // defaults to true
+          options.warnings = false
+          options.encoding = 'UTF-8'
 
-            options.encoding = 'UTF-8'
+          //options.bootClasspath = bootClasspath
+          options.debug(debugLevel : 'lines,vars,source')
+          options.deprecation = true
+       }
 
-            //options.bootClasspath = bootClasspath
-            options.debug(debugLevel : 'lines,vars,source')
-            options.deprecation = true
-        }
-
-		javadoc {
-			options.encoding = "UTF-8"
-			options.tags = [ "noinspection" ]
-		}
+       javadoc {
+         options.encoding = "UTF-8"
+         options.tags = [ "noinspection" ]
+       }
 
 
         apply plugin: 'maven' // for install task as well as deploy dependencies
@@ -115,44 +110,36 @@ configure(leafProjects) {
         //want parts of paths in resulting .classpath file to be replaced by variables
         //pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
 
-		classpath {
-			//default settings for downloading sources and Javadoc:
-			downloadSources = true
-			downloadJavadoc = false
-		}
+      classpath {
+        //default settings for downloading sources and Javadoc:
+        downloadSources = true
+        downloadJavadoc = false
+      }
     }
-// experimental: (use different folders for test and main)
-//	eclipse.classpath {
-//		defaultOutputDir = file('bin')
-//		file.withXml { n ->
-//		n.asNode().classpathentry.findAll { it.@path.startsWith('src/test')}
-//				.each { it.@output = 'bin-test' }
-//		}
-//	}
 
-	eclipse.classpath.file {
-		def projectEntries
-	    beforeMerged { classpath ->
-			//classpath.entries.findAll { entry -> println entry }
-			//classpath.entries.removeAll { entry -> entry.kind == 'lib' || entry.kind == 'var' }
-			//classpath.entries.removeAll { entry -> entry.path.startsWith("/") }
-			projectEntries = classpath.entries.findAll { entry -> entry.path.startsWith("/") }
-			//classpath.entries.findAll { entry -> println entry }
-		}
-		whenMerged { classpath ->
-			//classpath.entries.findAll { entry -> entry.kind == 'lib' }*.exported = false
-			//classpath.entries.findAll { ['con', 'lib'].contains(it.kind) }*.exported = false
+  eclipse.classpath.file {
+    def projectEntries
+      beforeMerged { classpath ->
+      //classpath.entries.findAll { entry -> println entry }
+      //classpath.entries.removeAll { entry -> entry.kind == 'lib' || entry.kind == 'var' }
+      //classpath.entries.removeAll { entry -> entry.path.startsWith("/") }
+      projectEntries = classpath.entries.findAll { entry -> entry.path.startsWith("/") }
+      //classpath.entries.findAll { entry -> println entry }
+    }
+    whenMerged { classpath ->
+      //classpath.entries.findAll { entry -> entry.kind == 'lib' }*.exported = false
+      //classpath.entries.findAll { ['con', 'lib'].contains(it.kind) }*.exported = false
 
-			//keep only those that are not already added by gradle
-			projectEntries.removeAll { projectEntry -> classpath.entries.find{ entry -> entry.path == projectEntry.path }}
+      //keep only those that are not already added by gradle
+      projectEntries.removeAll { projectEntry -> classpath.entries.find{ entry -> entry.path == projectEntry.path }}
 
-			//try to remove lib dependencies that match additionally included projects (experimental)
-			classpath.entries.removeAll { entry -> projectEntries.find{ projectEntry -> entry.path.contains(projectEntry.path) }}
+      //try to remove lib dependencies that match additionally included projects (experimental)
+      classpath.entries.removeAll { entry -> projectEntries.find{ projectEntry -> entry.path.contains(projectEntry.path) }}
 
-			// re-add additionally included projects
-			classpath.entries += projectEntries
-		}
-	}
+      // re-add additionally included projects
+      classpath.entries += projectEntries
+    }
+  }
 }
 
 
