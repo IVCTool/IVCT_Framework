@@ -43,8 +43,16 @@ distributions {
 tasks.withType(CreateStartScripts) {
     classpath += files('lib')
 doLast {
+		/*
+		* Get the default scripts from the gradle task.
+		*/
         def windowsScriptFile = file getWindowsScript()
         def unixScriptFile = file getUnixScript()
+        /*
+        * Want to have the lib folder (for the logback xml file) included in classpath,
+        * but gradle makes lib/lib out of that.
+        * Thus need to edit the script to only have a single lib level.
+        */
         windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%LRC_CLASSPATH%')
         unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib:$LRC_CLASSPATH')
     }

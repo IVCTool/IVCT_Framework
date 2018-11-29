@@ -23,28 +23,6 @@ ext {
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 
-		
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		//rti = "prti1516e"
-		rti = "IEEE1516e"
-		//rti = "mak"
-
-		switch (rti) {
-			case "prti1516e":
-				rti_jar =   "prti1516e.jar"
-				rti_lib =   "C:/Program Files/prti1516e/lib"
-				break
-			case "mak":
-				logger.warn ('MAK RTI not configured yet')
-				break
-			case "IEEE1516e":
-			default:
-				logger.warn ('No RTI is used. Compile with empty interface')
-
-		}
-
-
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
 
         libraries = [
@@ -61,10 +39,10 @@ ext {
                 slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
-				
+
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
 
-				
+
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
                 junit:                          "junit:junit:${junitVersion}",

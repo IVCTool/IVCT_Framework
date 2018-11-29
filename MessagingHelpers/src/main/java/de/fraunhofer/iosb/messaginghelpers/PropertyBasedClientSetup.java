@@ -33,19 +33,19 @@ public final class PropertyBasedClientSetup {
     /**
      * properties key for username for JMS connection.
      */
-    public static final String        PROPERTY_USER     = "messaging.user";
+    public static final String        PROPERTY_USER     = "ACTIVEMQ_USER";
     /**
      * properties key for password for JMS connection
      */
-    public static final String        PROPERTY_PASSWORD = "messaging.password";
+    public static final String        PROPERTY_PASSWORD = "ACTIVEMQ_PASSWORD";
     /**
      * properties key for hostname for JMS connection
      */
-    public static final String        PROPERTY_HOST     = "messaging.host";
+    public static final String        PROPERTY_HOST     = "ACTIVEMQ_HOST";
     /**
      * properties key for port number for JMS connection
      */
-    public static final String        PROPERTY_PORT     = "messaging.port";
+    public static final String        PROPERTY_PORT     = "ACTIVEMQ_PORT";
 
     private final Properties          properties;
 
