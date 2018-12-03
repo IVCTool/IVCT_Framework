@@ -51,6 +51,7 @@ uploadArchives {
       }
       snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
         authentication(userName: ossrhUsername, password: ossrhPassword)
+        proxy(host: "proxy-ka.iosb.fraunhofer.de", port: 80, type: 'https')
       }
     }
   }
