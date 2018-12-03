@@ -203,6 +203,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 		String tcLogName = tcLogMap.get(result.testcase);
 		if (tcLogName == null) {
 			tcLogName = "test case log file not found";
+			return;
 		}
 		tcLogMap.remove(result.testcase);
 		reportEngine.onResult(result, tcLogName);
