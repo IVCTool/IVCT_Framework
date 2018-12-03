@@ -10,8 +10,8 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'io.github.msg134'
-            artifactId = 'TC.lib'
-            archivesBaseName = "TC.lib"
+            artifactId = 'TC-lib'
+            archivesBaseName = "TC-lib"
             version = ivctVersion
 
             pom {
