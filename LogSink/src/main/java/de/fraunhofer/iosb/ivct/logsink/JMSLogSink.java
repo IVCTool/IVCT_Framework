@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -54,7 +55,8 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 
 	private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
 	// private Logger log;
-	private HashMap<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
+	private Map<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
+	private Map<String, String> tcLogMap = new HashMap<String, String>();
 	private ReportEngine reportEngine;
 	public TcChangedListener tcListener = null;
 
@@ -175,11 +177,13 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 			SimpleDateFormat sdf;
 			sdf = new SimpleDateFormat("ZZZ");
 			String tc = tcName.substring(tcName.lastIndexOf(".") + 1);
-			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tc + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log");
+			String tcLogName = tc + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log";
+			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tcLogName);
 			fileAppender.setEncoder(ple);
 			fileAppender.setContext(lc);
 			fileAppender.start();
 			appenderMap.put(tcName, fileAppender);
+			tcLogMap.put(tcName, tcLogName);
 		}
 
 		Logger logger = (Logger) LoggerFactory.getLogger(tcName);
@@ -196,7 +200,14 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 	/** {@inheritDoc} */
 	@Override
 	public void onResult(TcResult result) {
-		reportEngine.onResult(result);
+		String tcLogName = tcLogMap.get(result.testcase);
+		if (tcLogName == null) {
+			tcLogName = "test case log file not found";
+			return;
+		}
+		tcLogMap.remove(result.testcase);
+		reportEngine.onResult(result, tcLogName);
+
 //		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(result.testcase);
 //		if (fileAppender != null) {
 //			fileAppender.stop();

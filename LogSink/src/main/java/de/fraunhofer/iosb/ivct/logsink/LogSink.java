@@ -78,11 +78,17 @@ public class LogSink {
                 if(s == null) {
                 	// ignore - probably running in a container so we don't have system in
                 	// LogSink will be killed when the container is killed.
-                    try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-					}
+
+                    // now lets wait forever to avoid the JVM terminating immediately
+                    Object lock = new Object();
+                    synchronized (lock) {
+                        try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                    }
                 }
                 else if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
                 	LOGGER.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
