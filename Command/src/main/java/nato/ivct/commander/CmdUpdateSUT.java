@@ -67,6 +67,7 @@ public class CmdUpdateSUT implements Command {
 	 * @param vendorName the new vendor name
 	 * @param badgeTcParams the new list of badges supported
 	 * @return true means some data is different, false means all data is the same
+	 * @throws Exception in case of major error
 	 */
 	public static boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, BadgeTcParam[] badgeTcParams) throws Exception {
 		StringBuilder sb = new StringBuilder();
