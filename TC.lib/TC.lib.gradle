@@ -1,8 +1,8 @@
 dependencies {
-	compile     project(':Command')
+	compileOnly     project(':Command')
 
-	compile     libraries.slf4j_api
-	compile     libraries.jsonSimple
+	compileOnly     libraries.slf4j_api
+	compileOnly     libraries.jsonSimple
 
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
