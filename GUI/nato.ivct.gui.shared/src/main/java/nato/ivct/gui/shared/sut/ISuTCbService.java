@@ -16,5 +16,6 @@ public interface ISuTCbService extends IService {
 	SuTCbFormData prepareCreate(SuTCbFormData formData);
 	SuTCbFormData create(SuTCbFormData formData);
 	
-	String loadBadgeParams (String sutId, String badgeId);
+	String loadTcParams (String sutId, String badgeId);
+	boolean storeTcParams (String sutId, String badgeId, String parameters);
 }

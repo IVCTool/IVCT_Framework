@@ -6,11 +6,11 @@ import org.eclipse.scout.rt.shared.TunnelToServer;
 @TunnelToServer
 public interface ISuTBdParamEditService extends IService {
 
-	SuTBdParamFormData prepareCreate(SuTBdParamFormData formData);
+	SuTTcParamFormData prepareCreate(SuTTcParamFormData formData);
 
-	SuTBdParamFormData create(SuTBdParamFormData formData);
+	SuTTcParamFormData create(SuTTcParamFormData formData);
 
-	SuTBdParamFormData load(SuTBdParamFormData formData);
+	SuTTcParamFormData load(SuTTcParamFormData formData);
 
-	SuTBdParamFormData store(SuTBdParamFormData formData);
+	SuTTcParamFormData store(SuTTcParamFormData formData);
 }

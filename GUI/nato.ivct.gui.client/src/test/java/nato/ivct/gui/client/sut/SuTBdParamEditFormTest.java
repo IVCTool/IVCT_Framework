@@ -11,7 +11,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import nato.ivct.gui.shared.sut.ISuTBdParamEditService;
-import nato.ivct.gui.shared.sut.SuTBdParamFormData;
+import nato.ivct.gui.shared.sut.SuTTcParamFormData;
 
 @RunWithSubject("anonymous")
 @RunWith(ClientTestRunner.class)
@@ -23,7 +23,7 @@ public class SuTBdParamEditFormTest {
 
 	@Before
 	public void setup() {
-		SuTBdParamFormData answer = new SuTBdParamFormData();
+		SuTTcParamFormData answer = new SuTTcParamFormData();
 		Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
 		Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
 		Mockito.when(m_mockSvc.load(ArgumentMatchers.any())).thenReturn(answer);

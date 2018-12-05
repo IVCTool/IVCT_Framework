@@ -25,10 +25,10 @@ import nato.ivct.gui.client.sut.SuTBdParamForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTBdParamForm.MainBox.OkButton;
 import nato.ivct.gui.shared.sut.CreateSuTBdParamPermission;
 import nato.ivct.gui.shared.sut.ISuTBdParamEditService;
-import nato.ivct.gui.shared.sut.SuTBdParamFormData;
+import nato.ivct.gui.shared.sut.SuTTcParamFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTBdParamPermission;
 
-@FormData(value = SuTBdParamFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
+@FormData(value = SuTTcParamFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTBdParamForm extends AbstractForm {
 
 	@Override
@@ -124,7 +124,7 @@ protected Class<? extends ITable> getConfiguredTable() {
 		@Override
 		protected void execLoad() {
 			ISuTBdParamEditService service = BEANS.get(ISuTBdParamEditService.class);
-			SuTBdParamFormData formData = new SuTBdParamFormData();
+			SuTTcParamFormData formData = new SuTTcParamFormData();
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
@@ -135,7 +135,7 @@ protected Class<? extends ITable> getConfiguredTable() {
 		@Override
 		protected void execStore() {
 			ISuTBdParamEditService service = BEANS.get(ISuTBdParamEditService.class);
-			SuTBdParamFormData formData = new SuTBdParamFormData();
+			SuTTcParamFormData formData = new SuTTcParamFormData();
 			exportFormData(formData);
 			service.store(formData);
 		}

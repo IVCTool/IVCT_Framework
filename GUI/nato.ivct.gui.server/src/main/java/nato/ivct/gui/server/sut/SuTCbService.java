@@ -1,9 +1,11 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -98,7 +100,7 @@ public class SuTCbService implements ISuTCbService {
 	}
 	
 	@Override
-	public String loadBadgeParams(String sutId, String badgeId) {
+	public String loadTcParams(String sutId, String badgeId) {
 		Path paramFile = null;
 		try {
 			paramFile = getParamFile(sutId, badgeId);
@@ -106,16 +108,34 @@ public class SuTCbService implements ISuTCbService {
 				LOG.info("badge parameter file " + paramFile.toString() + " does not exist");
 				return null;
 			}
-			LOG.debug("load badge parameters from file " + paramFile.toString());
+			LOG.debug("load TC parameters from file " + paramFile.toString());
 			return new String(Files.readAllBytes(paramFile));
 		} catch (InvalidPathException e) {
-			LOG.error("invalid path for badge parameter file " + paramFile.toString());
+			LOG.error("invalid path for TC parameter file " + paramFile.toString());
 			return null;
 		} catch (Exception e) {
-			LOG.error("could not read badge parameters from file " + paramFile.toString());
+			LOG.error("could not read TC parameters from file " + paramFile.toString());
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public boolean storeTcParams(String sutId, String badgeId, String parameters) {
+        Path paramFile = null;
+        try {
+            paramFile = getParamFile(sutId, badgeId);
+            LOG.debug("store TC parameters to file " + paramFile.toString());
+            Files.write(paramFile, parameters.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            return true;
+        } catch (InvalidPathException e) {
+            LOG.error("invalid path for badge parameter file " + paramFile.toString());
+            return false;
+        } catch (IOException e) {
+            LOG.error("could not write badge parameters from file " + paramFile.toString());
+            e.printStackTrace();
+            return false;
+        }
 	}
 	
 	private Path getParamFile (String sutId, String badgeId) throws InvalidPathException {
