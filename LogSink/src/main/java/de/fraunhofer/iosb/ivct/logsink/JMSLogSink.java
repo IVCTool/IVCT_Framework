@@ -50,6 +50,7 @@ import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutPathsFiles;
 
 public class JMSLogSink implements MessageListener, TcChangedListener, OnResultListener, OnQuitListener, OnStartTestCaseListener {
 
@@ -127,9 +128,10 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 				String tc = event.getMDCPropertyMap().get("testcase");
 				if (tc != null) {
 					String sutName = event.getMDCPropertyMap().get("sutName");
-					String sutDir = event.getMDCPropertyMap().get("sutDir");
+					SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
 					String badge = event.getMDCPropertyMap().get("badge");
-					Logger log = getTestCaseLogger(tc, sutName, sutDir, badge);
+					String tcLogDir = sutPathsFiles.getSutLogPathName(sutName, badge);
+					Logger log = getTestCaseLogger(tc, sutName, tcLogDir);
 					log.callAppenders(event);
 				}
 				String tcStatus = event.getMDCPropertyMap().get("tcStatus");
@@ -157,7 +159,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 	 * @param tcName
 	 * @return
 	 */
-	private Logger getTestCaseLogger(String tcName, String sutName, String sutDir, String testScheduleName) {
+	private Logger getTestCaseLogger(String tcName, String sutName, String tcLogDir) {
 		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tcName);
 		if (fileAppender == null) {
 			LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -178,7 +180,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 			sdf = new SimpleDateFormat("ZZZ");
 			String tc = tcName.substring(tcName.lastIndexOf(".") + 1);
 			String tcLogName = tc + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log";
-			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tcLogName);
+			fileAppender.setFile(tcLogDir + '/' + tcLogName);
 			fileAppender.setEncoder(ple);
 			fileAppender.setContext(lc);
 			fileAppender.start();
@@ -207,12 +209,6 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 		}
 		tcLogMap.remove(result.testcase);
 		reportEngine.onResult(result, tcLogName);
-
-//		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(result.testcase);
-//		if (fileAppender != null) {
-//			fileAppender.stop();
-//		}
-//		appenderMap.remove(result.testcase);
     }
 
 	@Override
