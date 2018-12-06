@@ -101,21 +101,6 @@ public final class RuntimeParameters {
         return false;
     }
 
-	protected boolean checkSutNotKnown(final String sut) {
-		setSUTS();
-        if (sut == null) {
-            printStream.println("checkSutNotKnown: SUT: null pointer found");
-            return true;
-        }
-		for (String entry : suts) {
-			if (sut.equals(entry)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	/*
 	 * Some commands have no meaning without knowing the SUT involved.
 	 */
@@ -177,12 +162,6 @@ public final class RuntimeParameters {
 	 */
 	protected boolean checkTestSuiteNameNew() {
 		return testSuiteNameNew;
-	}
-
-	protected int fetchCounters(int n) {
-		int ret = counter;
-		counter += n;
-		return ret;
 	}
 
 	public static boolean getAbortTestScheduleBool() {
@@ -259,11 +238,6 @@ public final class RuntimeParameters {
 		return tsRunFolder;
 	}
 	
-	protected List<String> getSUTS() {
-		setSUTS();
-		return suts;
-	}
-
 	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
 		List<String> badges = null;
 		listSUTs();
@@ -310,13 +284,6 @@ public final class RuntimeParameters {
 		suts = new LinkedList<>();
 		sutList = Factory.createCmdListSut();
 		sutList.execute();
-	}
-
-	protected void setSUTS() {
-		listSUTs();
-		for (String it: sutList.sutMap.keySet()) {
-			suts.add(it);
-		}
 	}
 
 	protected String getSutName() {

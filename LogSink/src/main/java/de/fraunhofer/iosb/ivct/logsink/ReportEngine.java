@@ -17,6 +17,7 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct.logsink;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
@@ -34,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutPathsFiles;
 
 public class ReportEngine {
     Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
@@ -159,11 +162,31 @@ public class ReportEngine {
 		SimpleDateFormat sdf;
 		sdf = new SimpleDateFormat("ZZZ");
 		String sut =  result.sutName;
-		String sutPath =  result.sutDir;
-		LOGGER.info("ReportEngine:doSutChanged: sutPath: " + sutPath);
+		SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
+		String reportPath =  sutPathsFiles.getReportPath(sut);
+		File f = null;
+		boolean bool = false;
+
+		try {
+			// returns pathnames for files and directory
+			f = new File(reportPath);
+
+			// create
+			bool = f.mkdir();
+
+			if (bool == true) {
+				LOGGER.debug("Directory created: " + reportPath);
+			}
+		}
+		catch(Exception e) {
+              // if any error occurs
+              e.printStackTrace();
+              System.out.print("Directory ERROR "+bool);
+	    }
+
         String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".txt";
-    	openFile(sutPath, fName);
-    	path = FileSystems.getDefault().getPath(sutPath, fName);
+        openFile(reportPath, fName);
+        path = FileSystems.getDefault().getPath(reportPath, fName);
     	writer.write(dashes, 0, dashes.length());
 		writer.newLine();
 		String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + ":" + formattedmm;
