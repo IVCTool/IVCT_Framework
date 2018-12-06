@@ -43,6 +43,21 @@ public class SutPathsFiles {
 	}
 
 	/**
+	 * Get the path where the report file(s) are located
+	 * @param sutName the desired SUT name
+	 * @return path where report file(s) are located
+	 */
+	public String getReportPath(final String sutName) {
+		String sutsHomePath = getSutsHomePath();
+		// Do not have any access to any SUTs
+		if (sutsHomePath == null) {
+			return null;
+		}
+
+		return sutsHomePath + "/" + sutName + "/Reports";
+	}
+
+	/**
 	 * Get the path where the TcParam file(s) are located
 	 * @param sutName the desired SUT name
 	 * @return path where TcParam file(s) are located

@@ -86,21 +86,6 @@ public class UiTest {
 	}
 
 	@Test
-	public void testCheckSutNotKnown() {
-		System.out.println("testCheckSutNotKnown enter");
-
-		// Simple null pointer test
-		RuntimeParameters rp = new RuntimeParameters();
-		assertTrue("RuntimeParameters is a null pointer", rp != null);
-
-		// Just to test if method is robust against null pointers
-		boolean tcr = rp.checkSutNotKnown(null);
-		assertTrue("checkSutNotKnown: null pointer not detected", true == tcr);
-
-		System.out.println("testCheckSutNotKnown leave");
-	}
-
-	@Test
 	public void testCheckSutNotSelected() {
 		System.out.println("testCheckSutNotSelected enter");
 
