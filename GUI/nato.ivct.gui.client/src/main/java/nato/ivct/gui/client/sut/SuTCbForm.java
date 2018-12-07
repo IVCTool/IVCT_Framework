@@ -3,9 +3,7 @@ package nato.ivct.gui.client.sut;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -327,13 +325,6 @@ public class SuTCbForm extends AbstractForm {
 				        	getSuTTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
 				        }
 				        
-//						@Override
-//						protected void execSave(List<? extends ITableRow> insertedRows,
-//							List<? extends ITableRow> updatedRows, List<? extends ITableRow> deletedRows) {
-//							// TODO Auto-generated method stub
-//							super.execSave(insertedRows, updatedRows, deletedRows);
-//						}
-
 				        // Save the TC parameters from the SuTCbParameterTable
 				        @Override
 				        public void doSave() {
