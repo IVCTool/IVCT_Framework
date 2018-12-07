@@ -1,8 +1,8 @@
 package nato.ivct.commander;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SutPathsFiles {
 	/**
@@ -23,8 +23,8 @@ public class SutPathsFiles {
 	 * 
 	 * @return set of sut names
 	 */
-	public Set<String> getSuts() {
-		Set<String> sutNames = new HashSet<String>();
+	public List<String> getSuts() {
+		List<String> sutNames = new ArrayList<String>();
 
 		String sutsHomePath = getSutsHomePath();
 		// Do not have any access to any SUTs
@@ -62,39 +62,56 @@ public class SutPathsFiles {
 	 * @param sutName the desired SUT name
 	 * @return path where TcParam file(s) are located
 	 */
-	public String getTcParamPath(final String sutName) {
+	public String getTcParamPath(final String sutName, final String badgeName) {
 		String sutsHomePath = getSutsHomePath();
 		// Do not have any access to any SUTs
 		if (sutsHomePath == null) {
 			return null;
 		}
 
-		return sutsHomePath + "/" + sutName;
+		return sutsHomePath + "/" + sutName + "/" + badgeName;
 	}
 
 	/**
-	 * Get the names of the TcParam files available. Currently only one,
-	 * may change in the future
+	 * Get the names of the TcParam files available without path prefix.
+	 * Currently only one, may change in the future.
 	 * 
 	 * @param sutName the desired SUT name
 	 * @param badgeName the name of the badge under consideration
 	 * @return set of TcParam file names
 	 */
-	public Set<String> getTcParamFileNames(final String sutName, final String badgeName) {
-		Set<String> tcParamFileNames = new HashSet<String>();
+	public List<String> getTcParamFileNames(final String sutName, final String badgeName) {
+		return getTcParamFileNames(sutName, badgeName, false);
+	}
 
-		String folderName = getTcParamPath(sutName);
+	/**
+	 * Get the names of the TcParam files availablewith/without path prefix depending
+	 * on withPath parameter.
+	 * Currently only one, may change in the future
+	 *
+	 * @param sutName the desired SUT name
+	 * @param badgeName the name of the badge under consideration
+	 * @return set of TcParam file names
+	 */
+	public List<String> getTcParamFileNames(final String sutName, final String badgeName, final boolean withPath) {
+		List<String> tcParamFileNames = new ArrayList<String>();
+
+		String folderName = getTcParamPath(sutName, badgeName);
 		if (folderName == null) {
 			return tcParamFileNames;
 		}
-		final File folder = new File(folderName + "/" + badgeName);
+		final File folder = new File(folderName);
 	    for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isFile()) {
 	        	String s = fileEntry.getName();
 //              May have multiple TcParam file in the future
 //	        	if (s.substring(len - 5, len).equals(".json")) {
 	        	if (s.equals("TcParam.json")) {
-		        	tcParamFileNames.add(s);
+                    if (withPath) {
+                        tcParamFileNames.add(folderName + "/" + fileEntry.getName());
+                    } else {
+                        tcParamFileNames.add(fileEntry.getName());
+                    }
 	        	}
 	        }
 	    }
@@ -108,7 +125,7 @@ public class SutPathsFiles {
 	 * @param badgeName the name of the badge under consideration
 	 * @return a set of log file names
 	 */
-	public Set<String> getSutLogFileNames(final String sutName, final String badgeName) {
+	public List<String> getSutLogFileNames(final String sutName, final String badgeName) {
 		return getSutLogFileNames(sutName, badgeName, false);
 	}
 
@@ -120,10 +137,10 @@ public class SutPathsFiles {
 	 * @param withPath whether the path name is prefixed to log file name
 	 * @return a set of log file names
 	 */
-	public Set<String> getSutLogFileNames(final String sutName, final String badgeName, final boolean withPath) {
+	public List<String> getSutLogFileNames(final String sutName, final String badgeName, final boolean withPath) {
 		String path = getSutLogPathName(sutName, badgeName);
 		final File folder = new File(path);
-		Set<String> logFileNames = listLogFilesForFolder(folder, path, withPath);
+		List<String> logFileNames = listLogFilesForFolder(folder, path, withPath);
 		return logFileNames;
 	}
 
@@ -139,7 +156,7 @@ public class SutPathsFiles {
 		if (sutsHome == null) {
 			return null;
 		}
-		return sutsHome + "/" + sutName + "/" + badgeName;
+		return sutsHome + "/" + sutName + "/" + badgeName + "/Logs";
 	}
 
 	/**
@@ -148,8 +165,8 @@ public class SutPathsFiles {
 	 * @param logfile folderName
 	 * @return set of logfile names
 	 */
-	private Set<String> listLogFilesForFolder(final File folderName, final String path, final boolean withPath) {
-		Set<String> logFileNames = new HashSet<String>();
+	private List<String> listLogFilesForFolder(final File folderName, final String path, final boolean withPath) {
+		List<String> logFileNames = new ArrayList<String>();
 		if (folderName == null) {
 			return logFileNames;
 		}
