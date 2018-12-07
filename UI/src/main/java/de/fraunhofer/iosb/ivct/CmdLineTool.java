@@ -202,7 +202,7 @@ class Writer extends Thread {
     	// check if SUT entered exists in SUT list
     	if (addMode) {
             boolean sutFound = false;
-            Set<String> suts = sutPathsFiles.getSuts();
+            List<String> suts = sutPathsFiles.getSuts();
             for (String t : suts) {
                 if (t.equals(split[1])) {
                     sutFound = true;
@@ -305,7 +305,7 @@ class Writer extends Thread {
 	                	break;
 					}
                 	command = null;
-                    Set<String> sutsAsut = sutPathsFiles.getSuts();
+                    List<String> sutsAsut = sutPathsFiles.getSuts();
                 	if (sutsAsut.isEmpty()) {
                 		out.println("addSUT: cannot load SUT onto the file system.");
                 		break;
@@ -320,7 +320,7 @@ class Writer extends Thread {
                         out.println("modifySUT: need SUT name");
                         break;
                 	}
-                    Set<String> sutsMsut = sutPathsFiles.getSuts();
+                    List<String> sutsMsut = sutPathsFiles.getSuts();
                     if (sutsMsut.isEmpty()) {
                         out.println("modifySUT: cannot find any SUT on the file system.");
                         break;
@@ -459,7 +459,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
-                    Set<String> sutsLsut = sutPathsFiles.getSuts();
+                    List<String> sutsLsut = sutPathsFiles.getSuts();
                     if (sutsLsut.isEmpty()) {
                 		System.out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
@@ -483,7 +483,7 @@ class Writer extends Thread {
                 	}
 
                 	// get SUT list
-                    Set<String> sutsSetSut = sutPathsFiles.getSuts();
+                    List<String> sutsSetSut = sutPathsFiles.getSuts();
                     if (sutsSetSut.isEmpty()) {
                 		out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
