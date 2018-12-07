@@ -364,6 +364,10 @@ public class Factory {
 		return new CmdUpdateSUT(sutName, sutDescription, vendorName, badgeTcParams);
 	}
 
+	public static SutPathsFiles getSutPathsFiles() {
+		initialize();
+		return new SutPathsFiles();
+	}
 	public static int getCmdCounter() {
 		return cmdCounter;
 	}
