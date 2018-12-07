@@ -162,6 +162,8 @@ public class SuTTcService implements ISuTTcService {
 				LOG.info("Log file found: {}" ,logFileName);
 				fd.getTcExecutionHistoryTable().addRow().setFileName(logFileName);
 			});
+		} catch (NoSuchFileException exc) {
+            LOG.info("log files not found: {}", folder+"\\"+tcName);
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}

@@ -104,7 +104,7 @@ public class SuTCbService implements ISuTCbService {
 		Path paramFile = null;
 		try {
 			paramFile = getParamFile(sutId, badgeId);
-			if (Files.notExists(paramFile)) {
+			if (paramFile == null) {
 				LOG.info("badge parameter file " + paramFile.toString() + " does not exist");
 				return null;
 			}
@@ -139,7 +139,7 @@ public class SuTCbService implements ISuTCbService {
 	}
 	
 	private Path getParamFile (String sutId, String badgeId) throws InvalidPathException {
-		return Paths.get(Factory.getSutPathsFiles().getTcParamFileNames(sutId, badgeId).toArray()[0].toString());
+		return Paths.get(Factory.getSutPathsFiles().getTcParamFileNames(sutId, badgeId, true).get(0));
 	}
 
 	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {
