@@ -139,7 +139,7 @@ public class SuTCbService implements ISuTCbService {
 	}
 	
 	private Path getParamFile (String sutId, String badgeId) throws InvalidPathException {
-		return Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), sutId, badgeId, "TcParam.json");
+		return Paths.get(Factory.getSutPathsFiles().getTcParamFileNames(sutId, badgeId).toArray()[0].toString());
 	}
 
 	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {

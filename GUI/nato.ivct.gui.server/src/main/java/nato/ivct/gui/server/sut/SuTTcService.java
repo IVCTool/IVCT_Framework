@@ -79,9 +79,8 @@ public class SuTTcService implements ISuTTcService {
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
 		if (bd != null) {
 			// get content of the requested log file
-			Path tcLogFile = Paths.get(Paths
-					.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(), bd.ID).toString(),
-					fileName);
+			Path tcLogFile = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(formData.getSutId(), bd.ID),
+					                   fileName);
 			try {
 				formData.getTcExecutionLog()
 						.setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
@@ -112,8 +111,7 @@ public class SuTTcService implements ISuTTcService {
 		if (bd != null) {
 			// load content of the newest log file for this test case
 			try {
-				final Path folder = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), formData.getSutId(),
-						bd.ID);
+				final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(formData.getSutId(), bd.ID));
 				final String tcName = tcFullName.substring(tcFullName.lastIndexOf('.') + 1);
 
 				Optional<Path> optionalTcLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
@@ -155,7 +153,7 @@ public class SuTTcService implements ISuTTcService {
 	}
 
 	private SuTTcRequirementFormData loadLogFiles(SuTTcRequirementFormData fd, String bdId, String tcFullName) {
-		final Path folder = Paths.get(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID), fd.getSutId(), bdId);
+		final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(fd.getSutId(), bdId));
 		final String tcName = tcFullName.substring(tcFullName.lastIndexOf('.') + 1);
 
 		try {
