@@ -30,6 +30,8 @@ import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutPathsFiles;
+import java.util.Set;
 
 /*
  * Dialog program using keyboard input.
@@ -174,6 +176,7 @@ class SutDescriptionVendor {
 // This thread reads user input from the console and sends it to the server.
 class Writer extends Thread {
 	IVCTcommander ivctCommander;
+	SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
 
     public Writer(IVCTcommander i) {
         super("CmdLineTool Writer");
@@ -198,7 +201,14 @@ class Writer extends Thread {
     	}
     	// check if SUT entered exists in SUT list
     	if (addMode) {
-    		if (ivctCommander.rtp.checkSutNotKnown(sutName) == false) {
+            boolean sutFound = false;
+            List<String> suts = sutPathsFiles.getSuts();
+            for (String t : suts) {
+                if (t.equals(split[1])) {
+                    sutFound = true;
+                }
+            }
+            if (sutFound) {
     			out.println("getSutDescriptionVendor: SUT already exists: " + sutName);
     			return null;
     		}
@@ -295,7 +305,7 @@ class Writer extends Thread {
 	                	break;
 					}
                 	command = null;
-                    List<String> sutsAsut = ivctCommander.rtp.getSUTS();
+                    List<String> sutsAsut = sutPathsFiles.getSuts();
                 	if (sutsAsut.isEmpty()) {
                 		out.println("addSUT: cannot load SUT onto the file system.");
                 		break;
@@ -310,6 +320,21 @@ class Writer extends Thread {
                         out.println("modifySUT: need SUT name");
                         break;
                 	}
+                    List<String> sutsMsut = sutPathsFiles.getSuts();
+                    if (sutsMsut.isEmpty()) {
+                        out.println("modifySUT: cannot find any SUT on the file system.");
+                        break;
+                    }
+                    boolean sutFoundMsut = false;
+                    for (String t : sutsMsut) {
+                        if (t.equals(split[1])) {
+                            sutFoundMsut = true;
+                        }
+                    }
+                    if (sutFoundMsut == false) {
+                        out.println("modifySUT: cannot find SUT: " + split[1]);
+                        break;
+                    }
                 	SutDescriptionVendor sutDescriptionVendorModify = getSutDescriptionVendor(out, line, false);
                 	if (sutDescriptionVendorModify == null) {
                 		break;
@@ -324,11 +349,6 @@ class Writer extends Thread {
 	                	break;
 					}
                 	command = null;
-                    List<String> sutsAsutModify = ivctCommander.rtp.getSUTS();
-                	if (sutsAsutModify.isEmpty()) {
-                		out.println("modifySUT: cannot find SUT on the file system.");
-                		break;
-                	}
                 	ivctCommander.rtp.setSutName(split[1]);
                     ivctCommander.resetSUT();
                 	break;
@@ -439,14 +459,13 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
-                    List<String> suts1 = ivctCommander.rtp.getSUTS();
-                	if (suts1.isEmpty()) {
+                    List<String> sutsLsut = sutPathsFiles.getSuts();
+                    if (sutsLsut.isEmpty()) {
                 		System.out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
                 	}
         			System.out.println("The SUTs are:");
-        			for (String entry : suts1)
-        			{
+                    for (String entry : sutsLsut) {
         				System.out.println(entry);
         			}
                     break;
@@ -464,13 +483,19 @@ class Writer extends Thread {
                 	}
 
                 	// get SUT list
-                    List<String> suts2 = ivctCommander.rtp.getSUTS();
-                	if (suts2.isEmpty()) {
+                    List<String> sutsSetSut = sutPathsFiles.getSuts();
+                    if (sutsSetSut.isEmpty()) {
                 		out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
                 	}
                 	// check if SUT entered exists in SUT list
-                    if (ivctCommander.rtp.checkSutNotKnown(split[1])) {
+                    boolean sutFoundSetSut = false;
+                    for (String t : sutsSetSut) {
+                        if (t.equals(split[1])) {
+                            sutFoundSetSut = true;
+                        }
+                    }
+                    if (sutFoundSetSut == false) {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}

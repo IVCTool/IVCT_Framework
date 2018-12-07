@@ -17,19 +17,26 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct.logsink;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutPathsFiles;
 
 public class ReportEngine {
     Logger LOGGER = LoggerFactory.getLogger(ReportEngine.class);
@@ -100,7 +107,7 @@ public class ReportEngine {
 		closeFile();
 	}
 
-	public void onResult(TcResult result) {
+	public void onResult(TcResult result, String tcLogName) {
 		LOGGER.info("ReportEngine:checkMessage: announceVerdict");
 		if (result.sutName.equals(knownSut) == false) {
 			try {
@@ -130,9 +137,9 @@ public class ReportEngine {
 		String verdictText = result.verdictText;
 		String announceVerdict;
 		if (testScheduleName.isEmpty()) {
-			announceVerdict = "VERDICT: " + testScheduleName + "(single tc) " + testcase.substring(testcase.lastIndexOf(".") + 1) + " " + verdict + "    " + verdictText;
+			announceVerdict = "VERDICT: " + testScheduleName + "(single tc) " + testcase.substring(testcase.lastIndexOf(".") + 1) + " " + verdict + "    " + verdictText + "   (" + result.testScheduleName + "/" + tcLogName + ")";
 		} else {
-			announceVerdict = "VERDICT: " + testScheduleName + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + " " + verdict + "    " + verdictText;
+			announceVerdict = "VERDICT: " + testScheduleName + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + " " + verdict + "    " + verdictText + "   (" + result.testScheduleName + "/" + tcLogName + ")";
 		}
 		try {
 			writer.write(announceVerdict, 0, announceVerdict.length());
@@ -150,16 +157,39 @@ public class ReportEngine {
 		String formatteddd = String.format("%02d", ldt.getDayOfMonth());
 		String formattedhh = String.format("%02d", ldt.getHour());
 		String formattedmm = String.format("%02d", ldt.getMinute());
-		LOGGER.info("ReportEngine:doSutChanged: setSUT " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + " " + formattedmm);
+		String formattedss = String.format("%02d", ldt.getSecond());
+		Date date = new Date();
+		SimpleDateFormat sdf;
+		sdf = new SimpleDateFormat("ZZZ");
 		String sut =  result.sutName;
-		String sutPath =  result.sutDir;
-		LOGGER.info("ReportEngine:doSutChanged: sutPath: " + sutPath);
-    	String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "_" + formattedhh + "-" + formattedmm + ".txt";
-    	openFile(sutPath, fName);
-    	path = FileSystems.getDefault().getPath(sutPath, fName);
+		SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
+		String reportPath =  sutPathsFiles.getReportPath(sut);
+		File f = null;
+		boolean bool = false;
+
+		try {
+			// returns pathnames for files and directory
+			f = new File(reportPath);
+
+			// create
+			bool = f.mkdir();
+
+			if (bool == true) {
+				LOGGER.debug("Directory created: " + reportPath);
+			}
+		}
+		catch(Exception e) {
+              // if any error occurs
+              e.printStackTrace();
+              System.out.print("Directory ERROR "+bool);
+	    }
+
+        String fName = baseFileName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".txt";
+        openFile(reportPath, fName);
+        path = FileSystems.getDefault().getPath(reportPath, fName);
     	writer.write(dashes, 0, dashes.length());
 		writer.newLine();
-		String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + ldt.getMonthValue() + "-" + ldt.getDayOfMonth() + " " + ldt.getHour() + ":" + ldt.getMinute();
+		String a = "// SUT: " + sut + "             Date: " + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + " " + formattedhh + ":" + formattedmm;
 		writer.write(a, 0, a.length());
 		writer.newLine();
     	writer.write(dashes, 0, dashes.length());

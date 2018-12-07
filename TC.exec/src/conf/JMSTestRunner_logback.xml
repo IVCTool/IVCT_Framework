@@ -8,7 +8,7 @@
 <!--  -->
 	<appender name="JMS" class="ch.qos.logback.classic.net.JMSTopicAppender">
 		<InitialContextFactoryName>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactoryName>
-    	<ProviderURL>tcp://localhost:61616</ProviderURL>
+    	<ProviderURL>tcp://activemq:61616</ProviderURL>
     	<TopicConnectionFactoryBindingName>ConnectionFactory</TopicConnectionFactoryBindingName>
     	<TopicBindingName>dynamicTopics/LogTopic.jms</TopicBindingName>
 	</appender>
@@ -34,7 +34,7 @@
 		</encoder>
 	</appender>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder
 			by default -->
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
@@ -50,11 +50,11 @@
 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	<!-- -->
-		<appender-ref ref="JMS" />  
+		<appender-ref ref="JMS" />
 	</root>
 	<!--  configure special settings for own packages -->
 	<logger name="de.fraunhofer.iosb" level="INFO" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
-	
-	
+
+
 </configuration>
