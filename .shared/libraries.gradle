@@ -22,6 +22,7 @@ ext {
 		jsonSimpleVersion = '1.1.1'
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
+		jsonIoVersion = '4.10.1'
 
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
@@ -62,6 +63,8 @@ ext {
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
 
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+				
+				jsonIo:						"com.cedarsoftware:json-io:${jsonIoVersion}",
 
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing

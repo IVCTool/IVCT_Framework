@@ -1,1 +1,5 @@
 apply plugin: 'java'
+
+dependencies {
+	runtime libraries.jsonIo
+}

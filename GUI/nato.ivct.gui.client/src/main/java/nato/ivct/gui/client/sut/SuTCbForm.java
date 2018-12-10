@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -49,6 +50,8 @@ import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTC
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
+
+import com.cedarsoftware.util.io.JsonWriter;
 
 @FormData(value = SuTCbFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTCbForm extends AbstractForm {
@@ -372,7 +375,7 @@ public class SuTCbForm extends AbstractForm {
 				        	}
 				        	
 					        ISuTCbService service = BEANS.get(ISuTCbService.class);
-					        boolean success = service.storeTcParams(getSutId(), getCbId(), jsonObjects.toJSONString());
+					        boolean success = service.storeTcParams(getSutId(), getCbId(), JsonWriter.objectToJson(jsonObjects, (Map<String, Object>) new HashMap() {{put(JsonWriter.PRETTY_PRINT ,true);put(JsonWriter.TYPE, false);}}));
 				        	
 				        	// call super
 				        	super.doSave();
