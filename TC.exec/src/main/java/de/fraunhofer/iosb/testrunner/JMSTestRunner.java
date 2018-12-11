@@ -61,8 +61,6 @@ public class JMSTestRunner extends TestRunner
 	 *            The command line arguments
 	 */
 	public static void main(final String[] args) {
-		// LogConfigurationHelper.configureLogging(JMSTestRunner.class);
-		LogConfigurationHelper.configureLogging();
 		try {
 			final JMSTestRunner runner = new JMSTestRunner();
 		} catch (final IOException ex) {
@@ -80,6 +78,9 @@ public class JMSTestRunner extends TestRunner
 
 		// initialize the IVCT Commander Factory
 		Factory.initialize();
+
+		// Configure the logger
+		LogConfigurationHelper.configureLogging();
 
 		// start command listeners
 		(new CmdSetLogLevelListener(this)).execute();
