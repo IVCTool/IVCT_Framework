@@ -12,32 +12,32 @@ import nato.ivct.gui.client.outlines.SuTOutline;
 
 public class SuTDesktopExtension extends AbstractDesktopExtension {
 
-	public SuTDesktopExtension() {
-		
-	}
+    public SuTDesktopExtension() {
+    	
+    }
+    
+    @Override
+    protected List<Class<? extends IOutline>> getConfiguredOutlines() {
+    	List<Class<? extends IOutline>> outlines = new ArrayList<>();
+    	outlines.add(SuTOutline.class);
+    	return outlines;
+    }
 
-	@Override
-	protected List<Class<? extends IOutline>> getConfiguredOutlines() {
-		List<Class<? extends IOutline>> outlines = new ArrayList<>();
-		outlines.add(SuTOutline.class);
-		return outlines;
-	}
-
-	  @Order(2000)
-	  public class SuTOutlineViewButton extends AbstractOutlineViewButton {
-
-	    public SuTOutlineViewButton() {
-	      super(getCoreDesktop(), SuTOutline.class);
-	    }
-
-	    @Override
-	    protected DisplayStyle getConfiguredDisplayStyle() {
-	      return DisplayStyle.MENU;
-	    }
-//
-//	    @Override
-//	    protected String getConfiguredKeyStroke() {
-//	      return "ctrl-shift-e";
-//	    }
-	  }
+    @Order(2000)
+    public class SuTOutlineViewButton extends AbstractOutlineViewButton {
+    
+        public SuTOutlineViewButton() {
+            super(getCoreDesktop(), SuTOutline.class);
+        }
+        
+        @Override
+        protected DisplayStyle getConfiguredDisplayStyle() {
+            return DisplayStyle.MENU;
+        }
+    
+//        @Override
+//        protected String getConfiguredKeyStroke() {
+//          return "ctrl-shift-e";
+//        }
+    }
 }
