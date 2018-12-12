@@ -81,6 +81,9 @@ public class Factory {
 	public static final String LOGSINK_PASSWORD_ID = "logsink.password";
 	public static final String LOGSINK_PASSWORD_DEFLT = "";
 
+	public static final String SETTINGS_DESIGNATOR = "SETTINGS_DESIGNATOR";
+	public static final String SETTINGS_DESIGNATOR_DEFLT = "crcAddress=localhost:8989";
+
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
 
@@ -133,6 +136,7 @@ public class Factory {
 			fallback.put(LOGSINK_TOPIC_BINDINGNAME_ID, LOGSINK_TOPIC_BINDINGNAME_DEFLT);
 			fallback.put(LOGSINK_USER_ID, LOGSINK_USER_DEFLT);
 			fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);
+			fallback.put(SETTINGS_DESIGNATOR, SETTINGS_DESIGNATOR_DEFLT);
 
 			props = new Properties(fallback);
 
