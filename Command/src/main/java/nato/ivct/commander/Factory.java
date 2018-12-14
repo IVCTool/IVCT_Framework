@@ -82,7 +82,7 @@ public class Factory {
 	public static final String LOGSINK_PASSWORD_DEFLT = "";
 
 	public static final String SETTINGS_DESIGNATOR = "SETTINGS_DESIGNATOR";
-	public static final String SETTINGS_DESIGNATOR_DEFLT = "crcAddress=localhost:8989";
+	public static final String SETTINGS_DESIGNATOR_DEFLT = "";
 
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
