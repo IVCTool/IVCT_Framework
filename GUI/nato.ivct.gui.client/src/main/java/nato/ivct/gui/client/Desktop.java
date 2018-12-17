@@ -66,18 +66,18 @@ public class Desktop extends AbstractDesktop {
 		}
 
 
-		@Order(0)
-		public class NewSuTMenu extends AbstractMenu {
-			@Override
-			protected String getConfiguredText() {
-				return TEXTS.get("NewSuT");
-			}
-
-			@Override
-			protected void execAction() {
-				new SuTForm(TEXTS.get("SuT")).startNew();
-			}
-		}
+//		@Order(0)
+//		public class NewSuTMenu extends AbstractMenu {
+//			@Override
+//			protected String getConfiguredText() {
+//				return TEXTS.get("NewSuT");
+//			}
+//
+//			@Override
+//			protected void execAction() {
+//				new SuTForm(TEXTS.get("SuT")).startNew();
+//			}
+//		}
 
 		
 		@Order(1000)
