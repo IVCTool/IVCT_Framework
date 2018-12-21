@@ -33,6 +33,9 @@ public class SutPathsFiles {
 		}
 
 		File dir = new File(sutsHomePath);
+		if (dir.exists() == false || dir.isDirectory() == false) {
+			return sutNames;
+		}
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			if (file.isDirectory()) {
@@ -101,6 +104,9 @@ public class SutPathsFiles {
 			return tcParamFileNames;
 		}
 		final File folder = new File(folderName);
+		if (folder.exists() == false || folder.isDirectory() == false) {
+			return tcParamFileNames;
+		}
 	    for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isFile()) {
 	        	String s = fileEntry.getName();
@@ -138,9 +144,13 @@ public class SutPathsFiles {
 	 * @return a set of log file names
 	 */
 	public List<String> getSutLogFileNames(final String sutName, final String badgeName, final boolean withPath) {
+		List<String> logFileNames = new ArrayList<String>();
 		String path = getSutLogPathName(sutName, badgeName);
 		final File folder = new File(path);
-		List<String> logFileNames = listLogFilesForFolder(folder, path, withPath);
+		if (folder.exists() == false || folder.isDirectory() == false) {
+			return logFileNames;
+		}
+		logFileNames = listLogFilesForFolder(folder, path, withPath);
 		return logFileNames;
 	}
 
