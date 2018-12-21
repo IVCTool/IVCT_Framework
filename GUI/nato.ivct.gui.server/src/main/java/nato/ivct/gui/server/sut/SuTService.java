@@ -19,6 +19,7 @@ import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
+import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTTablePageData;
 import nato.ivct.gui.shared.sut.SuTTablePageData.SuTTableRowData;
@@ -72,26 +73,10 @@ public class SuTService implements ISuTService {
 		return pageData;
 	}
 
-	@Override
-	public SuTFormData prepareCreate(SuTFormData formData) {
-		LOG.info ("prepareCreate");
-		if (!ACCESS.check(new CreateSuTPermission())) {
-			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-		}
-		// TODO [hzg] add business logic here.
-		return formData;
-	}
-
-	@Override
-	public SuTFormData create(SuTFormData formData) {
-		LOG.info ("create");
-		if (!ACCESS.check(new CreateSuTPermission())) {
-			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-		}
-		// TODO [hzg] add business logic here.
-		return formData;
-	}
-
+	/*
+	 * functions for SuTFormData
+	 */
+	
 	@Override
 	public SuTFormData load(SuTFormData formData) {
 		LOG.info ("load");
@@ -113,8 +98,54 @@ public class SuTService implements ISuTService {
 		return formData;
 	}
 
+	/*
+	 *  functions for SuTEditFormData
+	 */
+	
+    @Override
+    public SuTEditFormData load(SuTEditFormData formData) {
+        LOG.info ("load");
+        if (!ACCESS.check(new ReadSuTPermission())) {
+            throw new VetoException(TEXTS.get("AuthorizationFailed"));
+        }
+        // find the SuT description by selected SuTid.
+        SutDescription sut = sutMap.get(formData.getSutId());
+        // fill the form data: GeneralBox
+        formData.setSutId(sut.ID);
+        formData.getName().setValue(sut.ID);
+        formData.getSutVendor().setValue(sut.vendor);
+        formData.getDescr().setValue(sut.description);
+
+        // TODO fill the form data: SuTCapabilities
+
+        // TODO fill the form data: SuTReports
+        
+        return formData;
+    }
+
+    @Override
+    public SuTEditFormData prepareCreate(SuTEditFormData formData) {
+        LOG.info ("prepareCreate");
+        if (!ACCESS.check(new CreateSuTPermission())) {
+            throw new VetoException(TEXTS.get("AuthorizationFailed"));
+        }
+        // TODO add business logic here.
+        return formData;
+    }
+
+    @Override
+    public SuTEditFormData create(SuTEditFormData formData) {
+        LOG.info ("create");
+        if (!ACCESS.check(new CreateSuTPermission())) {
+            throw new VetoException(TEXTS.get("AuthorizationFailed"));
+        }
+        // TODO add business logic here.
+        return formData;
+    }
+
+
 	@Override
-	public SuTFormData store(SuTFormData formData) {
+	public SuTEditFormData store(SuTEditFormData formData) {
 		LOG.info ("store");
 		if (!ACCESS.check(new UpdateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));

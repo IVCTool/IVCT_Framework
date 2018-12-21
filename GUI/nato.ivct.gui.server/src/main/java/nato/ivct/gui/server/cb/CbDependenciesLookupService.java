@@ -47,9 +47,13 @@ public class CbDependenciesLookupService extends AbstractLookupService<String>
 	
 	private void addBadgeToTreeList (final String parentBadgeId, final ArrayList<LookupRow<String>> treeList) {
 		CbService cbService = (CbService) BEANS.get(ICbService.class);
-		BadgeDescription bd = cbService.getBadgeDescription(parentBadgeId);
+		String[] dependencies = null;
+		if (parentBadgeId!= null)
+	          dependencies = cbService.getBadgeDescription(parentBadgeId).dependency;
+		else 
+		    dependencies = cbService.loadBadges().stream().toArray(String[]::new);
 		
-		for (String dep:bd.dependency) {
+		for (String dep:dependencies) {
 			LookupRow<String> lookupRow = new LookupRow<String>(dep, cbService.getBadgeDescription(dep).name);
 			if (parentBadgeId != null)
 				lookupRow = (LookupRow<String>) lookupRow.withParentKey(parentBadgeId);
@@ -57,6 +61,5 @@ public class CbDependenciesLookupService extends AbstractLookupService<String>
 			
 			addBadgeToTreeList (dep, treeList);
 		}
-
 	}
 }

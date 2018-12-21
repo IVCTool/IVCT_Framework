@@ -25,10 +25,7 @@ public class SuTFormTest {
 	@Before
 	public void setup() {
 		SuTFormData answer = new SuTFormData();
-		Mockito.when(m_mockSvc.prepareCreate(Matchers.any(SuTFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.create(Matchers.any(SuTFormData.class))).thenReturn(answer);
 		Mockito.when(m_mockSvc.load(Matchers.any(SuTFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.store(Matchers.any(SuTFormData.class))).thenReturn(answer);
 	}
 
 	// TODO [hzg] add test cases

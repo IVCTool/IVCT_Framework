@@ -314,7 +314,6 @@ public class CbForm extends AbstractForm {
 							exportFormData(formData);
 							CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
 							c.setCbId(formData.getCbId());
-							super.execPrepareLookup(call, parent);
 				        }
 				        
 				        // do not expand all nodes initially

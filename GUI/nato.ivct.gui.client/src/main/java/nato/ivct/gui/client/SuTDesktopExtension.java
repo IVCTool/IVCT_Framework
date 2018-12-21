@@ -15,6 +15,7 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import nato.ivct.gui.client.outlines.SuTOutline;
+import nato.ivct.gui.client.sut.SuTEditForm;
 
 public class SuTDesktopExtension extends AbstractDesktopExtension {
 
@@ -67,7 +68,10 @@ public class SuTDesktopExtension extends AbstractDesktopExtension {
     
         @Override
         protected void execAction() {
-            
+            SuTEditForm form = new SuTEditForm("");
+//            setDetailForm(form);
+            form.startNew();
+
         }
     }
     

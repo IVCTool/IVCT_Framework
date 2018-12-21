@@ -12,12 +12,22 @@ public interface ISuTService extends IService {
 	SuTTablePageData getSuTTableData(SearchFilter filter);
 
 	Set<String> loadSuts();
-
-	SuTFormData prepareCreate(SuTFormData formData);
-
-	SuTFormData create(SuTFormData formData);
+	
+	/*
+	 * SuTFormData
+	 */
 
 	SuTFormData load(SuTFormData formData);
+	
+	/*
+	 * SuTEditFormData
+	 */
 
-	SuTFormData store(SuTFormData formData);
+    SuTEditFormData load(SuTEditFormData formData);
+
+	SuTEditFormData store(SuTEditFormData formData);
+
+    SuTEditFormData prepareCreate(SuTEditFormData formData);
+
+    SuTEditFormData create(SuTEditFormData formData);
 }

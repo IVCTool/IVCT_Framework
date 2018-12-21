@@ -101,6 +101,9 @@ public class SutPathsFiles {
 			return tcParamFileNames;
 		}
 		final File folder = new File(folderName);
+		if (!folder.exists())
+		    return tcParamFileNames;
+		
 	    for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isFile()) {
 	        	String s = fileEntry.getName();

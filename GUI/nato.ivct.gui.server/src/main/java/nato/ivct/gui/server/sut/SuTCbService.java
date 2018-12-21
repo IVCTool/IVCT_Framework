@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
@@ -105,13 +106,13 @@ public class SuTCbService implements ISuTCbService {
 		try {
 			paramFile = getParamFile(sutId, badgeId);
 			if (paramFile == null) {
-				LOG.info("badge parameter file " + paramFile.toString() + " does not exist");
+				LOG.info("badge parameter file for SuT" + sutId + " and badge " + badgeId + " does not exist");
 				return null;
 			}
 			LOG.debug("load TC parameters from file " + paramFile.toString());
 			return new String(Files.readAllBytes(paramFile));
 		} catch (InvalidPathException e) {
-			LOG.error("invalid path for TC parameter file " + paramFile.toString());
+			LOG.error("invalid path for TC parameter file for SuT" + sutId + " and badge " + badgeId);
 			return null;
 		} catch (Exception e) {
 			LOG.error("could not read TC parameters from file " + paramFile.toString());
@@ -129,17 +130,21 @@ public class SuTCbService implements ISuTCbService {
             Files.write(paramFile, parameters.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         } catch (InvalidPathException e) {
-            LOG.error("invalid path for badge parameter file " + paramFile.toString());
+            LOG.error("invalid path for TC parameter file for SuT" + sutId + " and badge " + badgeId);
             return false;
         } catch (IOException e) {
-            LOG.error("could not write badge parameters from file " + paramFile.toString());
+            LOG.error("could not write badge parameters to file " + paramFile.toString());
             e.printStackTrace();
             return false;
         }
 	}
 	
 	private Path getParamFile (String sutId, String badgeId) throws InvalidPathException {
-		return Paths.get(Factory.getSutPathsFiles().getTcParamFileNames(sutId, badgeId, true).get(0));
+	    List<String> tcParamFiles = Factory.getSutPathsFiles().getTcParamFileNames(sutId, badgeId, true);
+	    if (!tcParamFiles.isEmpty())
+	        return Paths.get(tcParamFiles.get(0));
+	    else
+	        return null;
 	}
 
 	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {

@@ -19,7 +19,6 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.client.search.SearchOutline;
-import nato.ivct.gui.client.sut.SuTForm;
 import nato.ivct.gui.shared.Icons;
 
 /**
