@@ -1,29 +1,34 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.TreeSet;
 
+import nato.ivct.gui.client.sut.SuTEditForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.SuTCapabilityBox;
+import nato.ivct.gui.client.sut.SuTEditForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
+import nato.ivct.gui.shared.sut.SuTCbLookupCall;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 
 @FormData(value = SuTEditFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -76,9 +81,9 @@ public class SuTEditForm extends AbstractForm {
 		return getFieldByClass(SutVendorField.class);
 	}
 
-	public SuTCapabilityBox getDetailsBox() {
-		return getFieldByClass(SuTCapabilityBox.class);
-	}
+//	public SuTCapabilityBox getDetailsBox() {
+//		return getFieldByClass(SuTCapabilityBox.class);
+//	}
 
 	public NameField getNameField() {
 		return getFieldByClass(NameField.class);
@@ -191,7 +196,7 @@ public class SuTEditForm extends AbstractForm {
             }
 
     		@Order(2000)
-    		public class SuTCapabilityBox extends AbstractTreeBox<String> {
+    		public class SuTCapabilityBox extends AbstractListBox<String> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("SuTCapabilities");
@@ -207,50 +212,30 @@ public class SuTEditForm extends AbstractForm {
                     return 3;
                 }
 
-//                    @Override
-//                    protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-//                        return CbDependenciesLookupCall.class;
-//                    }
-//
-//                    @Override
-//                    protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
-//                        CbFormData formData = new CbFormData();
-//                        exportFormData(formData);
-//                        CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
-//                        c.setCbId(formData.getCbId());
-//                        super.execPrepareLookup(call, parent);
-//                    }
-                
-                // do not expand all nodes initially
                 @Override
-                protected boolean getConfiguredAutoExpandAll() {
-                    return false;
-                }
-                
-                // check all child notes if their parent is checked
-                @Override
-                protected boolean getConfiguredAutoCheckChildNodes() {
-                    return true;
+                protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+                    return SuTCbLookupCall.class;
                 }
     		}
         }
+
+        @Order(100000)
+        public class OkButton extends AbstractOkButton {
+//            @Override
+//            public boolean isVisible() {
+//                return true;
+//            }
+        }
+        
+        @Order(101000)
+        public class CancelButton extends AbstractCancelButton {
+//            @Override
+//            public boolean isVisible() {
+//                return true;
+//            }
+        }
 	}
 		
-	@Order(101000)
-	public class CancelButton extends AbstractCancelButton {
-	    @Override
-	    public boolean isVisible() {
-	        return true;
-	    }
-	}
-
-	@Order(100000)
-	public class OkButton extends AbstractOkButton {
-	    @Override
-	    public boolean isVisible() {
-	        return true;
-	    }
-	}
 
 	public class ModifyHandler extends AbstractFormHandler {
 

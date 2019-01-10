@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
@@ -12,7 +11,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -331,7 +329,18 @@ public class CbForm extends AbstractForm {
 
 					@Order(2000)
 					public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
-						@Override
+
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Requirements");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 1;
+                        }
+
+                        @Override
 						protected int getConfiguredGridW() {
 							return 3;
 						}
@@ -390,16 +399,6 @@ public class CbForm extends AbstractForm {
 								return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 							}
 						}
-
-						@Override
-						protected String getConfiguredLabel() {
-							return TEXTS.get("Requirements");
-						}
-
-						@Override
-						protected int getConfiguredGridH() {
-							return 6;
-						}
 						
 						@Override
 						protected Class<? extends IValueField<Set<String>>> getConfiguredMasterField() {
@@ -453,24 +452,24 @@ public class CbForm extends AbstractForm {
 		}
 
 
-		@Order(100000)
-		public class CloseButton extends AbstractButton {
-			
-			  @Override
-			  protected int getConfiguredSystemType() {
-			    return SYSTEM_TYPE_CLOSE;
-			  }
-
-			  @Override
-			  protected String getConfiguredLabel() {
-			    return TEXTS.get("CloseButton");
-			  }
-
-			  @Override
-			  protected String getConfiguredKeyStroke() {
-			    return IKeyStroke.ESCAPE;
-			  }
-		}
+//		@Order(100000)
+//		public class CloseButton extends AbstractButton {
+//			
+//			  @Override
+//			  protected int getConfiguredSystemType() {
+//			    return SYSTEM_TYPE_CLOSE;
+//			  }
+//
+//			  @Override
+//			  protected String getConfiguredLabel() {
+//			    return TEXTS.get("CloseButton");
+//			  }
+//
+//			  @Override
+//			  protected String getConfiguredKeyStroke() {
+//			    return IKeyStroke.ESCAPE;
+//			  }
+//		}
 
 //		@Order(101000)
 //		public class CancelButton extends AbstractCancelButton {
@@ -504,7 +503,7 @@ public class CbForm extends AbstractForm {
 		@Override
 		protected void execLoad() {
 			super.execLoad();
-			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
+//			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
 		}
 	}
 
