@@ -1,7 +1,6 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -23,7 +22,6 @@ import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.Ge
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
-import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.SuTCapabilityBox;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.OkButton;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
@@ -235,7 +233,32 @@ public class SuTEditForm extends AbstractForm {
 //            }
         }
 	}
-		
+
+    public class NewHandler extends AbstractFormHandler {
+
+        @Override
+        protected void execLoad() {
+              ICbService cbService = BEANS.get(ICbService.class);
+              TreeSet<String> badges = (TreeSet<String>) cbService.loadBadges();
+
+            
+            ISuTService service = BEANS.get(ISuTService.class);
+            SuTEditFormData formData = new SuTEditFormData();
+            exportFormData(formData);
+            formData = service.prepareCreate(formData);
+            importFormData(formData);
+
+            setEnabledPermission(new CreateSuTPermission());
+        }
+
+        @Override
+        protected void execStore() {
+            ISuTService service = BEANS.get(ISuTService.class);
+            SuTEditFormData formData = new SuTEditFormData();
+            exportFormData(formData);
+            service.create(formData);
+        }
+    }
 
 	public class ModifyHandler extends AbstractFormHandler {
 
@@ -250,32 +273,6 @@ public class SuTEditForm extends AbstractForm {
 			SuTEditFormData formData = new SuTEditFormData();
 			exportFormData(formData);
 			service.store(formData);
-		}
-	}
-
-	public class NewHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-	          ICbService cbService = BEANS.get(ICbService.class);
-	          TreeSet<String> badges = (TreeSet<String>) cbService.loadBadges();
-
-		    
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTEditFormData formData = new SuTEditFormData();
-			exportFormData(formData);
-			formData = service.prepareCreate(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new CreateSuTPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTEditFormData formData = new SuTEditFormData();
-			exportFormData(formData);
-			service.create(formData);
 		}
 	}
 }
