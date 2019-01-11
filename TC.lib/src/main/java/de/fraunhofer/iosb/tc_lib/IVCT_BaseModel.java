@@ -78,7 +78,12 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     	
         // Connect to rti
         try {
-        	ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.ivct_TcParam.getSettingsDesignator());
+            if (this.ivct_TcParam.getSettingsDesignator().equals("")) {
+                ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE);
+            }
+            else {
+                ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.ivct_TcParam.getSettingsDesignator());
+            }
         }
         catch (AlreadyConnected e) {
             this.logger.warn("initiateRti: AlreadyConnected (ignored)");
