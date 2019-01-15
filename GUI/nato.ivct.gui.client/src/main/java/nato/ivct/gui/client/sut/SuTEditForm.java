@@ -1,6 +1,7 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -22,7 +23,7 @@ import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.Ge
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
-import nato.ivct.gui.client.sut.SuTEditForm.MainBox.OkButton;
+import nato.ivct.gui.client.sut.SuTEditForm.MainBox.SaveButton;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
@@ -59,8 +60,8 @@ public class SuTEditForm extends AbstractForm {
 		return getFieldByClass(CancelButton.class);
 	}
 
-	public OkButton getOkButton() {
-		return getFieldByClass(OkButton.class);
+	public SaveButton getSaveButton() {
+		return getFieldByClass(SaveButton.class);
 	}
 
 	public MainBox getMainBox() {
@@ -78,10 +79,6 @@ public class SuTEditForm extends AbstractForm {
 	public SutVendorField getSutVendorField() {
 		return getFieldByClass(SutVendorField.class);
 	}
-
-//	public SuTCapabilityBox getDetailsBox() {
-//		return getFieldByClass(SuTCapabilityBox.class);
-//	}
 
 	public NameField getNameField() {
 		return getFieldByClass(NameField.class);
@@ -104,7 +101,6 @@ public class SuTEditForm extends AbstractForm {
 
 	@Override
 	protected int getConfiguredDisplayHint() {
-		// TODO Auto-generated method stub
 		return IForm.DISPLAY_HINT_VIEW;
 	}
 
@@ -218,11 +214,45 @@ public class SuTEditForm extends AbstractForm {
         }
 
         @Order(100000)
-        public class OkButton extends AbstractOkButton {
-//            @Override
-//            public boolean isVisible() {
-//                return true;
-//            }
+        public class SaveButton extends AbstractOkButton {
+			@Override
+			protected int getConfiguredSystemType() {
+				return  SYSTEM_TYPE_SAVE;
+			}
+			
+			@Override
+			protected String getConfiguredLabel() {
+				return TEXTS.get("SaveButton");
+			}
+			
+			@Override
+			protected String getConfiguredKeyStroke() {
+				return IKeyStroke.CONTROL+"-s";
+			}
+			
+//			@Override
+//			public boolean isVisible() {
+//			    return false;
+//			}
+//        	
+//			@Override
+//			protected boolean execIsSaveNeeded() {
+//				// show save button
+//				if (super.execIsSaveNeeded()) {
+//					getSaveButton().setVisible(true);
+//					return true;
+//				}
+//				else
+//					return false;
+//			}
+			
+//			@Override
+//			protected void execClickAction() {
+//				// TODO save data
+//				doSave();
+//				// close the form
+//				doClose();
+//			}
         }
         
         @Order(101000)
@@ -257,6 +287,10 @@ public class SuTEditForm extends AbstractForm {
             SuTEditFormData formData = new SuTEditFormData();
             exportFormData(formData);
             service.create(formData);
+            
+			// close the form
+			doClose();
+
         }
     }
 

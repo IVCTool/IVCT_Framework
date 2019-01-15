@@ -37,17 +37,15 @@ public class SuTCbLookupService extends AbstractLookupService<String> implements
 
     @Override
     public List<? extends ILookupRow<String>> getDataByAll(ILookupCall<String> call) {
-//        ArrayList<LookupRow<String>> cbList = CollectionUtility.emptyArrayList();
-//        CbService cbService = (CbService) BEANS.get(ICbService.class);
-//
-////        String[] badges = cbService.loadBadges().stream().toArray(String[]::new);
-//        cbService.loadBadges().forEach(id-> {
-//            LookupRow<String> lookupRow = new LookupRow<String>(id, cbService.getBadgeDescription(id).name);
-//            cbList.add(lookupRow);
-//        });
-//        
-//        return cbList;
-//        
-        return null;
+        ArrayList<LookupRow<String>> cbList = CollectionUtility.emptyArrayList();
+        CbService cbService = (CbService) BEANS.get(ICbService.class);
+
+//        String[] badges = cbService.loadBadges().stream().toArray(String[]::new);
+        cbService.loadBadges().forEach(id-> {
+            LookupRow<String> lookupRow = new LookupRow<String>(id, cbService.getBadgeDescription(id).name);
+            cbList.add(lookupRow);
+        });
+        
+        return cbList;
     }
 }

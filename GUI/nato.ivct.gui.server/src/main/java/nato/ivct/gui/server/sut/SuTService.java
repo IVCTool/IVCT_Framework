@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
@@ -7,13 +8,16 @@ import java.util.TreeSet;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.BadgeTcParam;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListSuT.SutDescription;
+import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Command;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
@@ -140,6 +144,10 @@ public class SuTService implements ISuTService {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
         // TODO add business logic here.
+        ArrayList<BadgeTcParam> badgeTcParams = CollectionUtility.emptyArrayList();
+        
+        CmdUpdateSUT sut = new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), (BadgeTcParam[]) badgeTcParams.toArray());
+        
         return formData;
     }
 
@@ -150,7 +158,7 @@ public class SuTService implements ISuTService {
 		if (!ACCESS.check(new UpdateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
+		// TODO add business logic here.
 		return formData;
 	}
 }
