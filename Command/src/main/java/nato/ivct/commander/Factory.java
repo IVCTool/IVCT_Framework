@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -363,7 +364,7 @@ public class Factory {
 		return new CmdSendTcVerdict(sutName, sutDir, testScheduleName, testcase, verdict, verdictText);
 	}
 
-	public static CmdUpdateSUT createCmdUpdateSUT(final String sutName, final String sutDescription, final String vendorName, final BadgeTcParam[] badgeTcParams) {
+	public static CmdUpdateSUT createCmdUpdateSUT(final String sutName, final String sutDescription, final String vendorName, final Set<BadgeTcParam> badgeTcParams) {
 		initialize();
 		return new CmdUpdateSUT(sutName, sutDescription, vendorName, badgeTcParams);
 	}

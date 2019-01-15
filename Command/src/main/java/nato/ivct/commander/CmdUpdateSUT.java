@@ -37,7 +37,7 @@ public class CmdUpdateSUT implements Command {
 	private String sutId;
 	private String sutDescription;
 	private String vendorName;
-	private BadgeTcParam[] badgeTcParams;
+	private Set<BadgeTcParam> badgeTcParams;
 	private static Map<String, URL[]> badgeURLs = new HashMap<String, URL[]>();
 	private static CmdListBadges badges;
 
@@ -48,7 +48,7 @@ public class CmdUpdateSUT implements Command {
 	 * @param vendorName the vendor name
 	 * @param badgeTcParams the full list of badge names and optionally TcParams
 	 */
-	public CmdUpdateSUT(final String sutId, final String sutDescription, final String vendorName, final BadgeTcParam[] badgeTcParams) {
+	public CmdUpdateSUT(final String sutId, final String sutDescription, final String vendorName, final Set<BadgeTcParam> badgeTcParams) {
 		this.sutId = sutId;
 		this.sutDescription = sutDescription;
 		this.vendorName = vendorName;
@@ -69,7 +69,7 @@ public class CmdUpdateSUT implements Command {
 	 * @return true means some data is different, false means all data is the same
 	 * @throws Exception in case of major error
 	 */
-	public static boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, BadgeTcParam[] badgeTcParams) throws Exception {
+	private boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, Set<BadgeTcParam> badgeTcParams) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		File cs = new File(csJsonFileName);
 		if (cs.exists() && cs.isFile()) {
@@ -124,10 +124,10 @@ public class CmdUpdateSUT implements Command {
 				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
 				if (badgeTcParams != null) {
 					if (badgeArray != null) {
-						if (badgeTcParams.length == badgeArray.size()) {
-							if (badgeTcParams.length > 0) {
-								for (int i = 0; i < badgeTcParams.length; i++) {
-									if (badgeArray.contains(badgeTcParams[i].id)) {
+						if (badgeTcParams.size() == badgeArray.size()) {
+							if (badgeTcParams.size() > 0) {
+								for (BadgeTcParam entry : this.badgeTcParams) {
+									if (badgeArray.contains(entry.id)) {
 										continue;
 									}
 									return true;
@@ -139,8 +139,8 @@ public class CmdUpdateSUT implements Command {
 					}
 					boolean dataFound  = false;
 					for (int i = 0; i < badgeArray.size(); i++) {
-						for (int j = 0; j < badgeTcParams.length; j++) {
-							if (badgeTcParams[j].id.equals(badgeArray.get(i))) {
+						for (BadgeTcParam entry : this.badgeTcParams) {
+							if (entry.id.equals(badgeArray.get(i))) {
 								dataFound = true;
 								break;
 							}
@@ -360,8 +360,8 @@ public class CmdUpdateSUT implements Command {
 		if (this.badgeTcParams != null) {
 			
 			// For each badge, check if there is a testsuite with TcParams
-			for (int i = 0; i < this.badgeTcParams.length; i++) {
-				buildTestsuiteSet(testsuites, this.badgeTcParams[i].id);
+			for (BadgeTcParam entry : this.badgeTcParams) {
+				buildTestsuiteSet(testsuites, entry.id);
 			}
 			
 
@@ -400,9 +400,8 @@ public class CmdUpdateSUT implements Command {
 
         JSONArray list = new JSONArray();
         if (badgeTcParams != null) {
-        	int len = this.badgeTcParams.length;
-        	for (int i = 0; i < len; i++) {
-                list.add(this.badgeTcParams[i].id);
+            for (BadgeTcParam entry : this.badgeTcParams) {
+                list.add(entry.id);
         	}
         }
 
