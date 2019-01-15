@@ -7,6 +7,7 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractSaveButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -144,6 +145,12 @@ public class SuTEditForm extends AbstractForm {
                 	protected int getConfiguredMaxLength() {
                 		return 128;
                 	}
+					
+					// the ID field must have a value
+					@Override
+					public boolean isMandatory() {
+						return true;
+					}
                 }
         
                 @Order(1200)
@@ -214,79 +221,65 @@ public class SuTEditForm extends AbstractForm {
         }
 
         @Order(100000)
-        public class SaveButton extends AbstractOkButton {
-			@Override
-			protected int getConfiguredSystemType() {
-				return  SYSTEM_TYPE_SAVE;
-			}
-			
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("SaveButton");
-			}
-			
+        public class SaveButton extends AbstractSaveButton {
 			@Override
 			protected String getConfiguredKeyStroke() {
-				return IKeyStroke.CONTROL+"-s";
+				return "ctrl-s";
 			}
 			
-//			@Override
-//			public boolean isVisible() {
-//			    return false;
-//			}
-//        	
-//			@Override
-//			protected boolean execIsSaveNeeded() {
-//				// show save button
-//				if (super.execIsSaveNeeded()) {
-//					getSaveButton().setVisible(true);
-//					return true;
-//				}
-//				else
-//					return false;
-//			}
-			
-//			@Override
-//			protected void execClickAction() {
-//				// TODO save data
-//				doSave();
-//				// close the form
-//				doClose();
-//			}
+			@Override
+			protected boolean getConfiguredEnabled() {
+				return false;
+			}	
         }
         
         @Order(101000)
         public class CancelButton extends AbstractCancelButton {
-//            @Override
-//            public boolean isVisible() {
-//                return true;
-//            }
+            @Override
+            public boolean isVisible() {
+                return true;
+            }
         }
 	}
-
+	
+	@Override
+	protected boolean execIsSaveNeeded() {
+		// show save button if save is required
+		final boolean saveNeeded = super.execIsSaveNeeded();
+			getSaveButton().setEnabled(saveNeeded);
+		return saveNeeded;
+	}
+	
+	@Override
+	public boolean isSaveNeededVisible() {
+		return true;
+	}
+	
     public class NewHandler extends AbstractFormHandler {
 
         @Override
         protected void execLoad() {
-              ICbService cbService = BEANS.get(ICbService.class);
-              TreeSet<String> badges = (TreeSet<String>) cbService.loadBadges();
+			ICbService cbService = BEANS.get(ICbService.class);
+			TreeSet<String> badges = (TreeSet<String>) cbService.loadBadges();
 
-            
-            ISuTService service = BEANS.get(ISuTService.class);
-            SuTEditFormData formData = new SuTEditFormData();
-            exportFormData(formData);
-            formData = service.prepareCreate(formData);
-            importFormData(formData);
-
-            setEnabledPermission(new CreateSuTPermission());
+            if (isSaveNeeded()) {
+	            ISuTService service = BEANS.get(ISuTService.class);
+	            SuTEditFormData formData = new SuTEditFormData();
+	            exportFormData(formData);
+	            formData = service.prepareCreate(formData);
+	            importFormData(formData);
+            }
+//            setEnabledPermission(new CreateSuTPermission());
         }
 
         @Override
         protected void execStore() {
-            ISuTService service = BEANS.get(ISuTService.class);
-            SuTEditFormData formData = new SuTEditFormData();
-            exportFormData(formData);
-            service.create(formData);
+        	if (isSaveNeeded()) {
+	            ISuTService service = BEANS.get(ISuTService.class);
+	            SuTEditFormData formData = new SuTEditFormData();
+	            exportFormData(formData);
+	            service.create(formData);
+        	}
             
 			// close the form
 			doClose();

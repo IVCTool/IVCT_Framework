@@ -2,6 +2,7 @@ package nato.ivct.gui.server.sut;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -144,9 +145,13 @@ public class SuTService implements ISuTService {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
         // TODO add business logic here.
-        ArrayList<BadgeTcParam> badgeTcParams = CollectionUtility.emptyArrayList();
-        
-        CmdUpdateSUT sut = new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), (BadgeTcParam[]) badgeTcParams.toArray());
+        // get the selected capabilities
+        HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
+        Set<String> cb = formData.getSuTCapabilityBox().getValue();
+        cb.forEach(bd->{
+        	badgeTcParams.add(new BadgeTcParam(bd));
+        });
+        CmdUpdateSUT sut = new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams);
         
         return formData;
     }
