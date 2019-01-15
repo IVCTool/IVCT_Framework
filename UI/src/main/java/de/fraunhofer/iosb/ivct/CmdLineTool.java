@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -390,18 +391,17 @@ class Writer extends Thread {
                 		sutBadges.add(newBadge);
                 		}
                 	}
-                	BadgeTcParam[] badgeTcParams = new BadgeTcParam[sutBadges.size()];
-                	int ind = 0;
+                    Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
                 	for (String Entry : sutBadges) {
                 		if (allBadges.contains(newBadge) == false) {
                             out.println("addBadge: unknown badge name: " + newBadge);
                             errorOccurred = true;
                             break;
                 		}
-                    	badgeTcParams[ind] = new BadgeTcParam();
-                		badgeTcParams[ind].id = new String (Entry);
-                		badgeTcParams[ind].tcParam = null;
-                		ind += 1;
+                        BadgeTcParam badgeTcParam = new BadgeTcParam();
+                        badgeTcParam.id = new String (Entry);
+                        badgeTcParam.tcParam = null;
+                        badgeTcParams.add(badgeTcParam);
                 	}
                 	if (errorOccurred) {
                 		break;
@@ -436,13 +436,12 @@ class Writer extends Thread {
                 		}
             			sutBadgesDbg.remove(newBadgeDbg);
                 	}
-                	BadgeTcParam[] badgeTcParamsDbg = new BadgeTcParam[sutBadgesDbg.size()];
-                	int indDbg = 0;
+                    Set<BadgeTcParam> badgeTcParamsDbg =new HashSet<BadgeTcParam>();
                 	for (String Entry : sutBadgesDbg) {
-                		badgeTcParamsDbg[indDbg] = new BadgeTcParam();
-                		badgeTcParamsDbg[indDbg].id = new String (Entry);
-                		badgeTcParamsDbg[indDbg].tcParam = null;
-                		indDbg += 1;
+                        BadgeTcParam badgeTcParamDbg = new BadgeTcParam();
+                        badgeTcParamDbg.id = new String (Entry);
+                        badgeTcParamDbg.tcParam = null;
+                        badgeTcParamsDbg.add(badgeTcParamDbg);
                 	}
                 	command = Factory.createCmdUpdateSUT(ivctCommander.rtp.getSutName(), ivctCommander.rtp.getSutDescription(), ivctCommander.rtp.getVendorName(), badgeTcParamsDbg);
                 	try {
