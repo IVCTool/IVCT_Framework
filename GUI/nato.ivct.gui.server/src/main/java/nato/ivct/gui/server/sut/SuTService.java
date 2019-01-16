@@ -149,7 +149,7 @@ public class SuTService implements ISuTService {
         HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
         cb.forEach(bd->{
-        	badgeTcParams.add(new BadgeTcParam(bd));
+        	badgeTcParams.add(new BadgeTcParam().setId(bd));
         });
         CmdUpdateSUT sut = new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams);
         
