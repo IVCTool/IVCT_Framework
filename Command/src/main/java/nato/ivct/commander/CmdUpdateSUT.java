@@ -69,7 +69,7 @@ public class CmdUpdateSUT implements Command {
 	 * @return true means some data is different, false means all data is the same
 	 * @throws Exception in case of major error
 	 */
-	private boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, Set<BadgeTcParam> badgeTcParams) throws Exception {
+	public boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, Set<BadgeTcParam> badgeTcParams) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		File cs = new File(csJsonFileName);
 		if (cs.exists() && cs.isFile()) {
