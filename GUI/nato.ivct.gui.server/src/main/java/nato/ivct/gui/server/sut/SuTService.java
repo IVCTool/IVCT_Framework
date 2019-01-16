@@ -144,13 +144,15 @@ public class SuTService implements ISuTService {
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
-        // TODO add business logic here.
+
         // get the selected capabilities
         HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
         cb.forEach(bd->{
         	badgeTcParams.add(new BadgeTcParam().setId(bd));
         });
+        
+        // save SuT
         CmdUpdateSUT sut = new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams);
         
         return formData;
