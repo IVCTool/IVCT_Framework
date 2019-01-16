@@ -398,7 +398,7 @@ class Writer extends Thread {
                             errorOccurred = true;
                             break;
                 		}
-                        BadgeTcParam badgeTcParam = new BadgeTcParam(new String (Entry));
+                        BadgeTcParam badgeTcParam = new BadgeTcParam().setId(new String (Entry));
                         badgeTcParams.add(badgeTcParam);
                 	}
                 	if (errorOccurred) {
@@ -436,7 +436,7 @@ class Writer extends Thread {
                 	}
                     Set<BadgeTcParam> badgeTcParamsDbg =new HashSet<BadgeTcParam>();
                 	for (String Entry : sutBadgesDbg) {
-                        BadgeTcParam badgeTcParamDbg = new BadgeTcParam(new String (Entry));
+                        BadgeTcParam badgeTcParamDbg = new BadgeTcParam().setId(new String (Entry));
                         badgeTcParamsDbg.add(badgeTcParamDbg);
                 	}
                 	command = Factory.createCmdUpdateSUT(ivctCommander.rtp.getSutName(), ivctCommander.rtp.getSutDescription(), ivctCommander.rtp.getVendorName(), badgeTcParamsDbg);
