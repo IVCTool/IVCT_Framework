@@ -1,12 +1,12 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractSaveButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.TreeSet;
 
+import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.CancelButton;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
@@ -26,7 +27,6 @@ import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.Ge
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.SaveButton;
 import nato.ivct.gui.shared.cb.ICbService;
-import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTCbLookupCall;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
@@ -239,6 +239,11 @@ public class SuTEditForm extends AbstractForm {
             public boolean isVisible() {
                 return true;
             }
+            
+            @Override
+            protected void execClickAction() {
+            	// TODO Auto-generated method stub
+            }
         }
 	}
 	
@@ -259,9 +264,6 @@ public class SuTEditForm extends AbstractForm {
 
         @Override
         protected void execLoad() {
-			ICbService cbService = BEANS.get(ICbService.class);
-			TreeSet<String> badges = (TreeSet<String>) cbService.loadBadges();
-
             if (isSaveNeeded()) {
 	            ISuTService service = BEANS.get(ISuTService.class);
 	            SuTEditFormData formData = new SuTEditFormData();
@@ -280,10 +282,14 @@ public class SuTEditForm extends AbstractForm {
 	            exportFormData(formData);
 	            service.create(formData);
         	}
-            
-			// close the form
-			doClose();
 
+        	// close the form
+			doClose();
+			
+			// reset outline to reload all SuT
+			IOutline sutOutline = getDesktop().getOutline();
+			sutOutline.resetOutline();
+			sutOutline.deselectNodes(sutOutline.getSelectedNodes());
         }
     }
 

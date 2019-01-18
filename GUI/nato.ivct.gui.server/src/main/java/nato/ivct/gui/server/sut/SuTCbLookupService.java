@@ -40,9 +40,9 @@ public class SuTCbLookupService extends AbstractLookupService<String> implements
         ArrayList<LookupRow<String>> cbList = CollectionUtility.emptyArrayList();
         CbService cbService = (CbService) BEANS.get(ICbService.class);
 
-//        String[] badges = cbService.loadBadges().stream().toArray(String[]::new);
         cbService.loadBadges().forEach(id-> {
-            LookupRow<String> lookupRow = new LookupRow<String>(id, cbService.getBadgeDescription(id).name);
+            // TODO Replace ID by name; this requires a table with 2 columns instead of a list in the SuTEditForm
+        	LookupRow<String> lookupRow = new LookupRow<String>(id, cbService.getBadgeDescription(id).ID);
             cbList.add(lookupRow);
         });
         

@@ -1,6 +1,5 @@
 package nato.ivct.gui.server.sut;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,14 +32,14 @@ import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 public class SuTService implements ISuTService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 	private HashMap<String, SutDescription> sutMap = null;
-
+	
+	// TODO check whether or not this attribute is ever used
 	HashMap<String, SutDescription> sut_hm = new HashMap<String, SutDescription>();
 	
 	@Override
 	public Set<String> loadSuts() {
-		if (sutMap == null)
-			// load SuT descriptions
-			waitForSutLoading(); 
+		// load SuT descriptions
+		waitForSutLoading(); 
 
 		return new TreeSet<>(sutMap.keySet());
 	}
@@ -148,12 +147,25 @@ public class SuTService implements ISuTService {
         // get the selected capabilities
         HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        cb.forEach(bd->{
-        	badgeTcParams.add(new BadgeTcParam().setId(bd));
-        });
+        if (cb != null) {
+	        cb.forEach(bd->{
+	        	badgeTcParams.add(new BadgeTcParam().setId(bd));
+	        });
+        }
         
         // save SuT
-        CmdUpdateSUT sut = new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams);
+        try {
+        	LOG.info ("SuT description stored for: " + formData.getName().getValue());
+			new CmdUpdateSUT(formData.getName().getValue(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams).execute();
+		} catch (Exception e) {
+			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
+			e.printStackTrace();
+		}
+        
+        // Update SuT map (must be better re-written!)
+        CmdListSuT sutCmd = new CmdListSuT();
+        sutCmd.execute();
+        sutMap = sutCmd.sutMap;
         
         return formData;
     }
