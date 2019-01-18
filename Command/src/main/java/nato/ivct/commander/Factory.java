@@ -191,6 +191,7 @@ public class Factory {
 			overwriteWithEnv(LOGSINK_TOPIC_BINDINGNAME_ID);
 			overwriteWithEnv(LOGSINK_USER_ID);
 			overwriteWithEnv(LOGSINK_PASSWORD_ID);
+			overwriteWithEnv(SETTINGS_DESIGNATOR);
 
 			LOGGER.info("Properties used: {}", props);
 
