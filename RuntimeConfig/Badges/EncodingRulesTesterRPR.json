@@ -1,5 +1,5 @@
 {
-	"id" 			: 	"TS_HLA_EncodingRulesTester-2017",
+	"id" 			: 	"EncodingRulesTesterRPR",
 	"version"		:	"1.0.1",
 	"name" 			: 	"TS_HLA_EncodingRulesTester Test 2017",
 	"description"	:	"This is a test to verify whether the HLA encoding rules are being used correctly.",
