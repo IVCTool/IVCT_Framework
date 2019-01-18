@@ -18,6 +18,48 @@ import org.json.simple.JSONObject;
 
 // The badge with its TcParam name/value pairs
 public class BadgeTcParam {
-		public String id;
-		public JSONObject tcParam;
+	private String id;
+	private JSONObject tcParam = null;
+
+	/**
+	 * Default constructor
+	 */
+	public BadgeTcParam() {
+	}
+
+	/**
+	 * Get the id value.
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * Setter method for id
+	 * @param id
+	 * @return
+	 */
+	public BadgeTcParam setId(String id) {
+		this.id = id;
+		return this;
+	}
+
+	/**
+	 * Get the tcParam value.
+	 * @return the tcParam
+	 */
+	public JSONObject getTcParam() {
+		return tcParam;
+	}
+
+	/**
+	 * Setter method for tcParam
+	 * @param tcParam
+	 * @return
+	 */
+	public BadgeTcParam setTcParam(JSONObject tcParam) {
+		this.tcParam = tcParam;
+		return this;
+	}
 }
