@@ -19,10 +19,6 @@ import nato.ivct.gui.client.sut.SuTEditForm;
 
 public class SuTDesktopExtension extends AbstractDesktopExtension {
 
-    public SuTDesktopExtension() {
-    	
-    }
-    
     @Override
     protected List<Class<? extends IOutline>> getConfiguredOutlines() {
     	List<Class<? extends IOutline>> outlines = new ArrayList<>();
@@ -62,7 +58,6 @@ public class SuTDesktopExtension extends AbstractDesktopExtension {
     
         @Override
         public boolean isVisible() {
-            // TODO Auto-generated method stub
             return super.isVisible();
         }
     

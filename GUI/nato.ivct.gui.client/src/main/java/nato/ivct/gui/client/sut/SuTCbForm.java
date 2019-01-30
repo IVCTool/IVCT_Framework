@@ -421,9 +421,7 @@ public class SuTCbForm extends AbstractForm {
 				        		});
 				        	} else if (jObject instanceof JSONArray) {
 				        		// handle as JSONArray
-				        		((JSONArray) jObject).forEach(value -> {
-				        			addJsonObjectToTable(parentRow, value);
-				        		});
+				        		((JSONArray) jObject).forEach(value -> addJsonObjectToTable(parentRow, value));
 				        	} else {
 				        		// handle as element without having a key
 				        		addElementToTable(parentRow, null, jObject.toString());
@@ -445,10 +443,6 @@ public class SuTCbForm extends AbstractForm {
 				            
 				            return row;
 				        }
-
-						private void newRow() {
-							newRowWithParent(null);
-						}
 
 						private void newRowWithParent(final ITableRow parent) {
 						    SuTTcParameterTable table = getTable();
@@ -617,9 +611,6 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-
-                                    @Override
-                                    protected void execAction() {}
                                 }
 
                                 @Order(3120)
@@ -633,9 +624,6 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-
-                                    @Override
-                                    protected void execAction() {}
                                 }
 
                                 @Order(3130)
@@ -649,9 +637,6 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-
-                                    @Override
-                                    protected void execAction() {}
                                 }
 
                                 @Order(3140)
@@ -665,9 +650,6 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-
-                                    @Override
-                                    protected void execAction() {}
                                 }
 							}
 							

@@ -38,8 +38,9 @@ public class SuTService implements ISuTService {
 	
 	@Override
 	public Set<String> loadSuts() {
-		// load SuT descriptions
-		waitForSutLoading(); 
+		if (sutMap == null)
+			// load SuT descriptions
+			waitForSutLoading(); 
 
 		return new TreeSet<>(sutMap.keySet());
 	}
@@ -148,9 +149,7 @@ public class SuTService implements ISuTService {
         HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
         if (cb != null) {
-	        cb.forEach(bd->{
-	        	badgeTcParams.add(new BadgeTcParam().setId(bd));
-	        });
+	        cb.forEach(bd->badgeTcParams.add(new BadgeTcParam().setId(bd)));
         }
         
         // save SuT

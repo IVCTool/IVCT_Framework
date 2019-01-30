@@ -1,8 +1,9 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -17,7 +18,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
-import java.util.TreeSet;
+import java.util.List;
 
 import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.CancelButton;
@@ -26,7 +27,6 @@ import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.Ge
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.SaveButton;
-import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTCbLookupCall;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
@@ -260,7 +260,56 @@ public class SuTEditForm extends AbstractForm {
 		return true;
 	}
 	
+	@Override
+	protected void execStored() {
+		// select the newly created/modified node
+		SuTOutline sutOutline = (SuTOutline) getDesktop().getOutline();
+
+		AbstractPageWithNodes pageWithNode = (AbstractPageWithNodes) sutOutline.getRootNode();
+		SuTBadgeTablePage newPage = sutOutline.createChildPage(this.getSutId());
+		pageWithNode.getTree().addChildNode(pageWithNode, newPage);
+		sutOutline.selectNode(newPage);
+
+//		// reset outline to reload all SuT
+//		sutOutline.resetOutline();
+		// find the node in the tree and select it
+//		SuTEditFormData formData = new SuTEditFormData();
+//        exportFormData(formData);
+//		List<ITreeNode> nodeList = sutOutline.getRootNode().getChildNodes();
+//		nodeList.forEach(n->{
+//			if (((SuTBadgeTablePage) n).getConfiguredTitle().equals(formData.getName().getValue())) {
+//				sutOutline.selectNode(n);
+//			}
+//		});
+
+    	// close the form
+		doClose();
+	}
+	
     public class NewHandler extends AbstractFormHandler {
+
+        @Override
+        protected void execLoad() {
+            ISuTService service = BEANS.get(ISuTService.class);
+            SuTEditFormData formData = new SuTEditFormData();
+            exportFormData(formData);
+            formData = service.prepareCreate(formData);
+            importFormData(formData);
+//          setEnabledPermission(new CreateSuTPermission());
+        }
+
+        @Override
+        protected void execStore() {
+            ISuTService service = BEANS.get(ISuTService.class);
+            SuTEditFormData formData = new SuTEditFormData();
+            exportFormData(formData);
+            service.create(formData);
+            // set the id of this form
+            setSutId(formData.getName().getValue());
+        }
+    }
+
+	public class ModifyHandler extends AbstractFormHandler {
 
         @Override
         protected void execLoad() {
@@ -268,37 +317,11 @@ public class SuTEditForm extends AbstractForm {
 	            ISuTService service = BEANS.get(ISuTService.class);
 	            SuTEditFormData formData = new SuTEditFormData();
 	            exportFormData(formData);
-	            formData = service.prepareCreate(formData);
+	            formData = service.load(formData);
 	            importFormData(formData);
             }
 //            setEnabledPermission(new CreateSuTPermission());
         }
-
-        @Override
-        protected void execStore() {
-        	if (isSaveNeeded()) {
-	            ISuTService service = BEANS.get(ISuTService.class);
-	            SuTEditFormData formData = new SuTEditFormData();
-	            exportFormData(formData);
-	            service.create(formData);
-        	}
-
-        	// close the form
-			doClose();
-			
-			// reset outline to reload all SuT
-			IOutline sutOutline = getDesktop().getOutline();
-			sutOutline.resetOutline();
-			sutOutline.deselectNodes(sutOutline.getSelectedNodes());
-        }
-    }
-
-	public class ModifyHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-			super.execLoad();
-		}
 
 		@Override
 		protected void execStore() {

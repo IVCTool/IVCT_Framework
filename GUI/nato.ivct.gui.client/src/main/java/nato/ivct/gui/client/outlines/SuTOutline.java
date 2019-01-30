@@ -21,14 +21,17 @@ public class SuTOutline extends AbstractOutline {
 
 	  @Override
 	  protected void execCreateChildPages(List<IPage<?>> pageList) {
-//		  pageList.clear();
 	      Set<String> suts = BEANS.get(ISuTService.class).loadSuts();
-		  suts.forEach(s -> {SuTBadgeTablePage tp = new SuTBadgeTablePage(s); tp.setOverviewIconId(getConfiguredIconId());pageList.add(tp);});
-		  
-//		  pageList.add(new SuTBadgeTablePage("NewSUT"));
-//        addChildNode(getRootPage(), new SuTBadgeTablePage("<NewSUT>"));
+		  suts.forEach(s -> pageList.add(createChildPage(s)));
 	  }
 
+	  public SuTBadgeTablePage createChildPage(final String key) {
+		  SuTBadgeTablePage page = new SuTBadgeTablePage(key);
+		  page.setOverviewIconId(getConfiguredIconId());
+		  page.setPrimaryKey(key);
+		  return page;
+	  }
+	  
 	  @Override
 	  protected String getConfiguredIconId() {
 	    return Icons.Gear;
