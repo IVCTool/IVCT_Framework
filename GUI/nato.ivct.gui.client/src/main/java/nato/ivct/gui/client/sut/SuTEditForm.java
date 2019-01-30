@@ -270,18 +270,6 @@ public class SuTEditForm extends AbstractForm {
 		pageWithNode.getTree().addChildNode(pageWithNode, newPage);
 		sutOutline.selectNode(newPage);
 
-//		// reset outline to reload all SuT
-//		sutOutline.resetOutline();
-		// find the node in the tree and select it
-//		SuTEditFormData formData = new SuTEditFormData();
-//        exportFormData(formData);
-//		List<ITreeNode> nodeList = sutOutline.getRootNode().getChildNodes();
-//		nodeList.forEach(n->{
-//			if (((SuTBadgeTablePage) n).getConfiguredTitle().equals(formData.getName().getValue())) {
-//				sutOutline.selectNode(n);
-//			}
-//		});
-
     	// close the form
 		doClose();
 	}
