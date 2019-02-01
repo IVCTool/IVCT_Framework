@@ -262,7 +262,7 @@ public class SuTEditForm extends AbstractForm {
 			getSaveButton().setEnabled(saveNeeded);
 		return saveNeeded;
 	}
-	
+	 
 	@Override
 	public boolean isSaveNeededVisible() {
 		return true;
