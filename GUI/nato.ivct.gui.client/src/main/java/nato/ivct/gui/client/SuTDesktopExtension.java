@@ -10,12 +10,15 @@ import org.eclipse.scout.rt.client.ui.desktop.AbstractDesktopExtension;
 import org.eclipse.scout.rt.client.ui.desktop.ContributionCommand;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
+import nato.ivct.gui.client.SuTDesktopExtension.AlterSuTMenu.EditSutMenu;
 import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTEditForm;
+import nato.ivct.gui.client.sut.SuTForm;
 
 public class SuTDesktopExtension extends AbstractDesktopExtension {
 
@@ -45,40 +48,88 @@ public class SuTDesktopExtension extends AbstractDesktopExtension {
     }
 
     @Order(100)
-    public class NewSuTMenu extends AbstractMenu {
+    public class AlterSuTMenu extends AbstractMenu {
         @Override
         protected String getConfiguredText() {
-            return TEXTS.get("NewSuT");
+            return TEXTS.get("AlterSutList");
         }
         
         @Override
         protected Set<? extends IMenuType> getConfiguredMenuTypes() {
             return CollectionUtility.hashSet();
         }
-    
-        @Override
-        public boolean isVisible() {
-            return super.isVisible();
-        }
-    
-        @Override
-        protected void execAction() {
-            SuTEditForm form = new SuTEditForm("");
-//            setDetailForm(form);
-            form.startNew();
+//    
+//        @Override
+//        public boolean isVisible() {
+//            return super.isVisible();
+//        }
 
-        }
+		@Order(110)
+		public class NewSuTMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("NewSuT");
+			}
+
+			@Override
+			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+				return CollectionUtility.hashSet();
+			}
+		    
+			@Override
+			protected void execAction() {
+	            SuTEditForm form = new SuTEditForm("");
+	            form.startNew();
+			}
+		}
+
+
+
+		@Order(120)
+		public class EditSutMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("EditSUT");
+			}
+
+			@Override
+			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+				return CollectionUtility.hashSet();
+			}
+			
+			@Override
+			protected boolean getConfiguredVisible() {
+				// set to invisible by default until a SUT is selected
+				return false;
+			}
+			
+			@Override
+			protected void execAction() {
+	            SuTEditForm form = new SuTEditForm("");
+	            form.startModify();
+			}
+		}
+		
+		
     }
     
+    @Override
+    protected ContributionCommand execPageDetailFormChanged(IForm oldForm, IForm newForm) {
+    	 if (newForm instanceof SuTForm)
+             getCoreDesktop().getMenuByClass(EditSutMenu.class).setVisible(true);
+    	 else
+    		 getCoreDesktop().getMenuByClass(EditSutMenu.class).setVisible(false);
+    	
+    	return ContributionCommand.Stop; //super.execPageDetailFormChanged(oldForm, newForm);
+    }
     
     @Override
     protected ContributionCommand execOutlineChanged(IOutline oldOutline, IOutline newOutline) {
-        // TODO Auto-generated method stub
         if (newOutline instanceof SuTOutline)
-            getCoreDesktop().getMenuByClass(NewSuTMenu.class).setVisible(true);
+            getCoreDesktop().getMenuByClass(AlterSuTMenu.class).setVisible(true);
         else
-            getCoreDesktop().getMenuByClass(NewSuTMenu.class).setVisible(false);
+            getCoreDesktop().getMenuByClass(AlterSuTMenu.class).setVisible(false);
         
-        return super.execOutlineChanged(oldOutline, newOutline);
+        return ContributionCommand.Stop; //super.execOutlineChanged(oldOutline, newOutline);
     }
 }

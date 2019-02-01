@@ -96,9 +96,9 @@ public class SuTService implements ISuTService {
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
 
-		// fill the form data: SuTCapabilities
+		// fill the form data: SuTCapabilities table with conformance status
 
-		// fill the form data: SuTReports
+		// fill the form data: SuTReports table
 		
 		return formData;
 	}
@@ -122,8 +122,6 @@ public class SuTService implements ISuTService {
         formData.getDescr().setValue(sut.description);
 
         // TODO fill the form data: SuTCapabilities
-
-        // TODO fill the form data: SuTReports
         
         return formData;
     }

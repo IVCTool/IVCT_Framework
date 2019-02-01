@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class SuTBadgeService implements ISuTBadgeService {
 		LOG.info("getBadgeTableData");
 		SutDescription sutDesc = ((SuTService) BEANS.get(ISuTService.class)).getSutDescription(searchText[0]);
 		m_collectedBadges.clear();
-		collectBadgesForSut (sutDesc);
+		collectBadgesForSut(sutDesc);
 		
 		for (BadgeDescription bd:m_collectedBadges) {
 			SuTBadgeTableRowData row = pageData.addRow();
@@ -54,6 +55,16 @@ public class SuTBadgeService implements ISuTBadgeService {
 		
 		badge_hm.put(sutDesc.ID, pageData);
 		return pageData;
+	}
+	
+	public Set<String> SutCapabilities(final String SutId) {
+		final Set<String> capList = Collections.emptySet();
+		
+		SutDescription sutDesc = ((SuTService) BEANS.get(ISuTService.class)).getSutDescription(SutId);
+		collectBadgesForSut(sutDesc);
+		m_collectedBadges.forEach(bd->capList.add(bd.ID));
+		
+		return capList;
 	}
 	
 	private void collectBadgesForSut(final SutDescription _sutDesc) {

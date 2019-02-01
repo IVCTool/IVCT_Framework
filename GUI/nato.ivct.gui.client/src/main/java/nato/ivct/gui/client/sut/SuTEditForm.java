@@ -1,8 +1,8 @@
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
-import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -16,8 +16,11 @@ import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringFiel
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import nato.ivct.gui.client.outlines.SuTOutline;
@@ -26,6 +29,7 @@ import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.Ge
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
+import nato.ivct.gui.client.sut.SuTEditForm.MainBox.MainBoxHorizontalSplitBox.SuTCapabilityBox;
 import nato.ivct.gui.client.sut.SuTEditForm.MainBox.SaveButton;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTCbLookupCall;
@@ -84,7 +88,11 @@ public class SuTEditForm extends AbstractForm {
 	public NameField getNameField() {
 		return getFieldByClass(NameField.class);
 	}
-
+	
+	public SuTCapabilityBox getSuTCapabilityBox() {
+		return getFieldByClass(SuTCapabilityBox.class);
+	}
+	
 	@FormData
 	public String getSutId() {
 		return sutId;
@@ -301,13 +309,27 @@ public class SuTEditForm extends AbstractForm {
 
         @Override
         protected void execLoad() {
-            if (isSaveNeeded()) {
+//            if (isSaveNeeded()) {
 	            ISuTService service = BEANS.get(ISuTService.class);
 	            SuTEditFormData formData = new SuTEditFormData();
 	            exportFormData(formData);
+	            
+	            // set the SutId
+	    		SuTOutline sutOutline = (SuTOutline) getDesktop().getOutline();
+	    		String SutId = (String) sutOutline.getActivePage().getPrimaryKey();
+	            formData.setSutId(SutId);
+	            
+	            //load the data into the form
 	            formData = service.load(formData);
 	            importFormData(formData);
-            }
+	            
+	            // mark the already implemented capabilities
+	            sutOutline.getSelectedNode().getChildNodes().forEach(node->{
+	            	List<String> keys = CollectionUtility.emptyArrayList();
+	            	keys.add(((SuTCbTablePage)node).getBadgeId());
+	            	getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
+	            });
+//            }
 //            setEnabledPermission(new CreateSuTPermission());
         }
 
