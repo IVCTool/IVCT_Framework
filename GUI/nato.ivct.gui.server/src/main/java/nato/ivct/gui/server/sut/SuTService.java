@@ -60,7 +60,7 @@ public class SuTService implements ISuTService {
 
 	@Override
 	public SuTTablePageData getSuTTableData(SearchFilter filter) {
-		LOG.info ("getSuTTableData");
+		LOG.info (getClass().toString()+".getSuTTableData");
 		SuTTablePageData pageData = new SuTTablePageData();
 		if (sutMap == null) {
 			// wait until collect SuT Descriptions Job has finished
@@ -84,7 +84,7 @@ public class SuTService implements ISuTService {
 	
 	@Override
 	public SuTFormData load(SuTFormData formData) {
-		LOG.info ("load");
+		LOG.info (getClass().toString()+".load");
 		if (!ACCESS.check(new ReadSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
@@ -109,7 +109,7 @@ public class SuTService implements ISuTService {
 	
     @Override
     public SuTEditFormData load(SuTEditFormData formData) {
-        LOG.info ("load");
+        LOG.info (getClass().toString()+".load");
         if (!ACCESS.check(new ReadSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -128,7 +128,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData prepareCreate(SuTEditFormData formData) {
-        LOG.info ("prepareCreate");
+        LOG.info (getClass().toString()+".prepareCreate");
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -138,7 +138,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData create(SuTEditFormData formData) {
-        LOG.info ("create");
+        LOG.info (getClass().toString()+".create");
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -159,10 +159,8 @@ public class SuTService implements ISuTService {
 			e.printStackTrace();
 		}
         
-        // Update SuT map (must be better re-written!)
-        CmdListSuT sutCmd = new CmdListSuT();
-        sutCmd.execute();
-        sutMap = sutCmd.sutMap;
+        // Update SuT map 
+        updateSutMap();
         
         return formData;
     }
@@ -170,11 +168,37 @@ public class SuTService implements ISuTService {
 
 	@Override
 	public SuTEditFormData store(SuTEditFormData formData) {
-		LOG.info ("store");
 		if (!ACCESS.check(new UpdateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO add business logic here.
+
+        // get the selected capabilities
+        HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
+        Set<String> cb = formData.getSuTCapabilityBox().getValue();
+        if (cb != null) {
+	        cb.forEach(bd->badgeTcParams.add(new BadgeTcParam().setId(bd)));
+        }
+        
+        // save SuT
+        try {
+        	LOG.info ("SuT description stored for: " + formData.getName().getValue());
+			new CmdUpdateSUT(formData.getName().getValue(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams).execute();
+		} catch (Exception e) {
+			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
+			e.printStackTrace();
+		}
+        
+        //update SuT map
+        updateSutMap();
+
 		return formData;
+	}
+	
+	private void updateSutMap ( ) {
+		LOG.info ("update sutMap attribute");
+		// TODO must be better re-written!
+        CmdListSuT sutCmd = new CmdListSuT();
+        sutCmd.execute();
+        sutMap = sutCmd.sutMap;
 	}
 }

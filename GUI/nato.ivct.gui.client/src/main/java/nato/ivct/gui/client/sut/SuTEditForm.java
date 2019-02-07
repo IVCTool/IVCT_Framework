@@ -2,7 +2,6 @@ package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -17,10 +16,9 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import nato.ivct.gui.client.outlines.SuTOutline;
@@ -274,11 +272,24 @@ public class SuTEditForm extends AbstractForm {
 		SuTOutline sutOutline = (SuTOutline) getDesktop().getOutline();
 
 		AbstractPageWithNodes pageWithNode = (AbstractPageWithNodes) sutOutline.getRootNode();
-		SuTBadgeTablePage newPage = sutOutline.createChildPage(this.getSutId());
-		pageWithNode.getTree().addChildNode(pageWithNode, newPage);
-		sutOutline.selectNode(newPage);
+		// add only a newly created node
+		if (pageWithNode.getTree().findNode(this.getSutId()) == null) {
+			SuTBadgeTablePage newPage = sutOutline.createChildPage(this.getSutId());
+			pageWithNode.getTree().addChildNode(pageWithNode, newPage);
+			sutOutline.selectNode(newPage);
+		} else {
+			// toggle selection to reload to form content
+			SuTBadgeTablePage selNode = (SuTBadgeTablePage) sutOutline.getSelectedNode();
+			sutOutline.deselectNode(selNode);
+			sutOutline.selectNode(selNode);
+			
+			// reload capabilities
+			if (getFieldByClass(SuTCapabilityBox.class).getTable().getUpdatedRowCount() > 0)
+				selNode.execLoadData(new SearchFilter());
+		}
+		
 
-    	// close the form
+    	// close the edit form
 		doClose();
 	}
 	
@@ -329,10 +340,17 @@ public class SuTEditForm extends AbstractForm {
 	            	keys.add(((SuTCbTablePage)node).getBadgeId());
 	            	getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
 	            });
+	          
 //            }
 //            setEnabledPermission(new CreateSuTPermission());
         }
-
+        
+		@Override
+		protected void execPostLoad() {
+            // set all rows of the table to unchanged after loading to avoid updating the table without being explicitly altered (checked/unchecked)
+            getSuTCapabilityBox().getTable().getRows().forEach(row->row.setStatus(ITableRow.STATUS_NON_CHANGED));
+		}
+		
 		@Override
 		protected void execStore() {
 			ISuTService service = BEANS.get(ISuTService.class);
