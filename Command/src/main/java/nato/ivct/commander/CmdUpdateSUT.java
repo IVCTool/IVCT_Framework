@@ -201,7 +201,9 @@ public class CmdUpdateSUT implements Command {
 				throw new Exception("getBadgeUrls unknown badge: " + badge);
 			}
 		}
-		return null;
+		
+//		return null;
+		return myBadgeURLs;
 	}
 
 	/**
