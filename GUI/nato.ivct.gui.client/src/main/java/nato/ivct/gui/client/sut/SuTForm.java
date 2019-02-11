@@ -22,7 +22,6 @@ import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.Genera
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
-import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
@@ -49,25 +48,9 @@ public class SuTForm extends AbstractForm {
 		startInternal/*Exclusive*/(new ViewHandler());
 	}
 
-	public void startModify() {
-		startInternalExclusive(new ModifyHandler());
-	}
-
-	public void startNew() {
-		startInternal(new NewHandler());
-	}
-
 	public CloseButton getCloseButton() {
 		return getFieldByClass(CloseButton.class);
 	}
-
-//	public CancelButton getCancelButton() {
-//		return getFieldByClass(CancelButton.class);
-//	}
-//
-//	public OkButton getOkButton() {
-//		return getFieldByClass(OkButton.class);
-//	}
 
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
@@ -201,6 +184,7 @@ public class SuTForm extends AbstractForm {
 
 			@Order(2000)
 			public class DetailsHorizontalSplitterBox extends AbstractSplitBox {
+				
 				@Override
 				protected boolean getConfiguredSplitHorizontal() {
 					// split horizontal
@@ -259,7 +243,6 @@ public class SuTForm extends AbstractForm {
 
 				@Order(2000)
 				public class TestReportBox extends AbstractGroupBox {
-					
 
 					@Order(2000)
 					public class TestReportTableField extends AbstractTableField<TestReportTableField.TestReportTable> {
@@ -320,24 +303,11 @@ public class SuTForm extends AbstractForm {
 			protected String getConfiguredKeyStroke() {
 			    return IKeyStroke.ESCAPE;
 			}
-			  
-			@Override
-			public boolean isVisible() {
-				// TODO Auto-generated method stub
-				return super.isVisible();
-			}
 		}
-
-//		@Order(101000)
-//		public class CancelButton extends AbstractCancelButton {
-//		}
-//
-//		@Order(100000)
-//		public class OkButton extends AbstractOkButton {
-//		}
 	}
 
 	protected abstract class AbstractSuTFormHandler extends AbstractFormHandler {
+		
 		@Override
 		protected void execLoad() {
 			ISuTService service = BEANS.get(ISuTService.class);
@@ -345,7 +315,6 @@ public class SuTForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-//			getForm().setSubTitle(formData.getName().getValue());
 
 			setEnabledPermission(new UpdateSuTPermission());
 		}
@@ -356,45 +325,6 @@ public class SuTForm extends AbstractForm {
 		@Override
 		protected void execLoad() {
 			super.execLoad();
-//			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
-		}
-	}
-	
-	public class ModifyHandler extends AbstractSuTFormHandler {
-
-		@Override
-		protected void execLoad() {
-			super.execLoad();
-		}
-
-		@Override
-		protected void execStore() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTFormData formData = new SuTFormData();
-			exportFormData(formData);
-			service.store(formData);
-		}
-	}
-
-	public class NewHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTFormData formData = new SuTFormData();
-			exportFormData(formData);
-			formData = service.prepareCreate(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new CreateSuTPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTFormData formData = new SuTFormData();
-			exportFormData(formData);
-			service.create(formData);
 		}
 	}
 }
