@@ -340,6 +340,10 @@ public class SuTEditForm extends AbstractForm {
 	            	keys.add(((SuTCbTablePage)node).getBadgeId());
 	            	getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
 	            });
+	            
+	            // lock SUT name to modification and treat this value as a SUT key.
+	            // TODO: add another value SutId for use as the SUT key
+	            getFieldByClass(NameField.class).setEnabled(false);
 	          
 //            }
 //            setEnabledPermission(new CreateSuTPermission());
