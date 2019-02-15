@@ -120,8 +120,6 @@ public class SuTService implements ISuTService {
         formData.getName().setValue(sut.ID);
         formData.getSutVendor().setValue(sut.vendor);
         formData.getDescr().setValue(sut.description);
-
-        // TODO fill the form data: SuTCapabilities
         
         return formData;
     }
@@ -132,7 +130,7 @@ public class SuTService implements ISuTService {
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
-        // TODO add business logic here.
+
         return formData;
     }
 
