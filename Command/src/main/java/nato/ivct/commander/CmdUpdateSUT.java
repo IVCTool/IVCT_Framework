@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class CmdUpdateSUT implements Command {
 
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
-	private String sutId;
+	private String sutId = null;
 	private String sutDescription;
 	private String vendorName;
 	private Set<BadgeTcParam> badgeTcParams;
@@ -127,7 +127,7 @@ public class CmdUpdateSUT implements Command {
 						if (badgeTcParams.size() == badgeArray.size()) {
 							if (badgeTcParams.size() > 0) {
 								for (BadgeTcParam entry : this.badgeTcParams) {
-									if (badgeArray.contains(entry.id)) {
+									if (badgeArray.contains(entry.getId())) {
 										continue;
 									}
 									return true;
@@ -140,7 +140,7 @@ public class CmdUpdateSUT implements Command {
 					boolean dataFound  = false;
 					for (int i = 0; i < badgeArray.size(); i++) {
 						for (BadgeTcParam entry : this.badgeTcParams) {
-							if (entry.id.equals(badgeArray.get(i))) {
+							if (entry.getId().equals(badgeArray.get(i))) {
 								dataFound = true;
 								break;
 							}
@@ -201,8 +201,6 @@ public class CmdUpdateSUT implements Command {
 				throw new Exception("getBadgeUrls unknown badge: " + badge);
 			}
 		}
-		
-//		return null;
 		return myBadgeURLs;
 	}
 
@@ -347,6 +345,11 @@ public class CmdUpdateSUT implements Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute() throws Exception {
+		// Do not use a null sutId
+		if (sutId == null) {
+			return;
+		}
+
 		// The SUT is placed in a known folder
 		String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
 		String sutDir = sutsDir + "/" + sutId;
@@ -363,7 +366,7 @@ public class CmdUpdateSUT implements Command {
 			
 			// For each badge, check if there is a testsuite with TcParams
 			for (BadgeTcParam entry : this.badgeTcParams) {
-				buildTestsuiteSet(testsuites, entry.id);
+				buildTestsuiteSet(testsuites, entry.getId());
 			}
 			
 
@@ -403,7 +406,7 @@ public class CmdUpdateSUT implements Command {
         JSONArray list = new JSONArray();
         if (badgeTcParams != null) {
             for (BadgeTcParam entry : this.badgeTcParams) {
-                list.add(entry.id);
+                list.add(entry.getId());
         	}
         }
 
