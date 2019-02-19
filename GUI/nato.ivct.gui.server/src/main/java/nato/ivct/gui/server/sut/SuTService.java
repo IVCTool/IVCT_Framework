@@ -9,7 +9,6 @@ import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +24,6 @@ import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
-import nato.ivct.gui.shared.sut.SuTTablePageData;
-import nato.ivct.gui.shared.sut.SuTTablePageData.SuTTableRowData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 public class SuTService implements ISuTService {
@@ -58,26 +55,6 @@ public class SuTService implements ISuTService {
 		sutMap = sutCmd.sutMap;
 	}
 
-	@Override
-	public SuTTablePageData getSuTTableData(SearchFilter filter) {
-		LOG.info (getClass().toString()+".getSuTTableData");
-		SuTTablePageData pageData = new SuTTablePageData();
-		if (sutMap == null) {
-			// wait until collect SuT Descriptions Job has finished
-			waitForSutLoading();
-		}
-		for (SutDescription value : sutMap.values()) {
-			SuTTableRowData row;
-			row = pageData.addRow();
-			row.setSuTid(value.ID);
-			row.setSuTDescription(value.description);
-			row.setVendor(value.vendor);
-			sut_hm.put(row.getSuTid(), value);
-
-		}
-		return pageData;
-	}
-
 	/*
 	 * functions for SuTFormData
 	 */
@@ -91,10 +68,13 @@ public class SuTService implements ISuTService {
 		// find the SuT description by selected SuTid.
 		SutDescription sut = sutMap.get(formData.getSutId());
 		// fill the form data: GeneralBox
-		formData.setSutId(sut.ID);
-		formData.getName().setValue(sut.ID);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
+		
+		// TODO: get these data out from the data model
+		formData.getVersion().setValue("VERSION");
+		formData.setSutId(sut.ID);
+		formData.getName().setValue(sut.ID); // TODO set the correct SUT name 
 
 		// fill the form data: SuTCapabilities table with conformance status
 
@@ -115,11 +95,14 @@ public class SuTService implements ISuTService {
         }
         // find the SuT description by selected SuTid.
         SutDescription sut = sutMap.get(formData.getSutId());
-        // fill the form data: GeneralBox
-        formData.setSutId(sut.ID);
-        formData.getName().setValue(sut.ID);
-        formData.getSutVendor().setValue(sut.vendor);
-        formData.getDescr().setValue(sut.description);
+		// fill the form data: GeneralBox
+		formData.getSutVendor().setValue(sut.vendor);
+		formData.getDescr().setValue(sut.description);
+		
+		// TODO: get these data out from the data model
+		formData.getVersion().setValue("VERSION");
+		formData.setSutId(sut.ID);
+		formData.getName().setValue(sut.ID); // TODO set the correct SUT name 
         
         return formData;
     }
@@ -180,7 +163,7 @@ public class SuTService implements ISuTService {
         // save SuT
         try {
         	LOG.info ("SuT description stored for: " + formData.getName().getValue());
-			new CmdUpdateSUT(formData.getName().getValue(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams).execute();
+			new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams).execute(); //TODO Add SUT name as well
 		} catch (Exception e) {
 			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
 			e.printStackTrace();
