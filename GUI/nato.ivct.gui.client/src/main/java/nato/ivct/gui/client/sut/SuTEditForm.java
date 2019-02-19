@@ -158,6 +158,19 @@ public class SuTEditForm extends AbstractForm {
 						return true;
 					}
                 }
+                
+				@Order(1150)
+				public class VersionField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("Version");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 64;
+					}
+				}
         
                 @Order(1200)
                 public class SutVendorField extends AbstractStringField {
@@ -320,32 +333,26 @@ public class SuTEditForm extends AbstractForm {
 
         @Override
         protected void execLoad() {
-//            if (isSaveNeeded()) {
-	            ISuTService service = BEANS.get(ISuTService.class);
-	            SuTEditFormData formData = new SuTEditFormData();
-	            exportFormData(formData);
-	            
-	            // set the SutId
-	    		SuTOutline sutOutline = (SuTOutline) getDesktop().getOutline();
-	    		String SutId = (String) sutOutline.getActivePage().getPrimaryKey();
-	            formData.setSutId(SutId);
-	            
-	            //load the data into the form
-	            formData = service.load(formData);
-	            importFormData(formData);
-	            
-	            // mark the already implemented capabilities
-	            sutOutline.getSelectedNode().getChildNodes().forEach(node->{
-	            	List<String> keys = CollectionUtility.emptyArrayList();
-	            	keys.add(((SuTCbTablePage)node).getBadgeId());
-	            	getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
-	            });
-	            
-	            // lock SUT name to modification and treat this value as a SUT key.
-	            // TODO: add another value SutId for use as the SUT key
-	            getFieldByClass(NameField.class).setEnabled(false);
+            ISuTService service = BEANS.get(ISuTService.class);
+            SuTEditFormData formData = new SuTEditFormData();
+            exportFormData(formData);
+            
+            // set the SutId
+    		SuTOutline sutOutline = (SuTOutline) getDesktop().getOutline();
+    		String SutId = (String) sutOutline.getActivePage().getPrimaryKey();
+            formData.setSutId(SutId);
+            
+            //load the data into the form
+            formData = service.load(formData);
+            importFormData(formData);
+            
+            // mark the already implemented capabilities
+            sutOutline.getSelectedNode().getChildNodes().forEach(node->{
+            	List<String> keys = CollectionUtility.emptyArrayList();
+            	keys.add(((SuTCbTablePage)node).getBadgeId());
+            	getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
+            });
 	          
-//            }
 //            setEnabledPermission(new CreateSuTPermission());
         }
         

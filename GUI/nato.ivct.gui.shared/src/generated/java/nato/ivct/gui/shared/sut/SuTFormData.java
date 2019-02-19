@@ -56,6 +56,10 @@ public class SuTFormData extends AbstractFormData {
 		return getFieldByClass(TestReportTable.class);
 	}
 
+	public Version getVersion() {
+		return getFieldByClass(Version.class);
+	}
+
 	public static class Descr extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
@@ -192,5 +196,10 @@ public class SuTFormData extends AbstractFormData {
 				m_testReport = newTestReport;
 			}
 		}
+	}
+
+	public static class Version extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
 	}
 }

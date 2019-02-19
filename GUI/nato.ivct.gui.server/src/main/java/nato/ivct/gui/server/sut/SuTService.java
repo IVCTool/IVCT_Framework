@@ -68,13 +68,13 @@ public class SuTService implements ISuTService {
 		// find the SuT description by selected SuTid.
 		SutDescription sut = sutMap.get(formData.getSutId());
 		// fill the form data: GeneralBox
+		formData.setSutId(sut.ID);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
 		
 		// TODO: get these data out from the data model
 		formData.getVersion().setValue("VERSION");
-		formData.setSutId(sut.ID);
-		formData.getName().setValue(sut.ID); // TODO set the correct SUT name 
+		formData.getName().setValue(sut.ID); //TODO set the correct SUT name here !
 
 		// fill the form data: SuTCapabilities table with conformance status
 
@@ -123,7 +123,7 @@ public class SuTService implements ISuTService {
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
-
+        
         // get the selected capabilities
         HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();

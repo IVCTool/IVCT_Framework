@@ -52,6 +52,10 @@ public class SuTEditFormData extends AbstractFormData {
 		return getFieldByClass(SutVendor.class);
 	}
 
+	public Version getVersion() {
+		return getFieldByClass(Version.class);
+	}
+
 	public static class Descr extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
@@ -73,6 +77,11 @@ public class SuTEditFormData extends AbstractFormData {
 	}
 
 	public static class SutVendor extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class Version extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}

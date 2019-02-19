@@ -138,6 +138,19 @@ public class SuTForm extends AbstractForm {
 						return 128;
 					}
 				}
+				
+				@Order(1500)
+				public class VersionField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("Version");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 64;
+					}
+				}
 	
 				@Order(2000)
 				public class SutVendorField extends AbstractStringField {
@@ -278,8 +291,6 @@ public class SuTForm extends AbstractForm {
 			}
 		}
 		
-		
-		
 		@Order(100000)
 		public class CloseButton extends AbstractButton {
 			
@@ -306,7 +317,7 @@ public class SuTForm extends AbstractForm {
 		}
 	}
 
-	protected abstract class AbstractSuTFormHandler extends AbstractFormHandler {
+	public class ViewHandler extends AbstractFormHandler {
 		
 		@Override
 		protected void execLoad() {
@@ -317,14 +328,6 @@ public class SuTForm extends AbstractForm {
 			importFormData(formData);
 
 			setEnabledPermission(new UpdateSuTPermission());
-		}
-	}
-	
-	public class ViewHandler extends AbstractSuTFormHandler {
-		
-		@Override
-		protected void execLoad() {
-			super.execLoad();
 		}
 	}
 }
