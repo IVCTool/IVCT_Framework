@@ -8,9 +8,6 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 @TunnelToServer
 public interface ISuTService extends IService {
-
-	SuTTablePageData getSuTTableData(SearchFilter filter);
-
 	Set<String> loadSuts();
 	
 	/*
