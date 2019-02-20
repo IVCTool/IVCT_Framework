@@ -26,14 +26,6 @@ import org.json.simple.parser.ParseException;
 
 public class CmdListSuT implements Command {
 	
-	public class SutDescription {
-		public String ID;
-		public String description;
-		public String vendor;
-		public String[] conformanceStatment;
-	}
-
-
 	public HashMap<String, SutDescription> sutMap = new HashMap<String, SutDescription>();
 
 	@Override
@@ -57,6 +49,10 @@ public class CmdListSuT implements Command {
 					obj = parser.parse(fReader);
 					JSONObject jsonObj = (JSONObject) obj;
 					sut.ID = (String) jsonObj.get("id");
+					sut.name = (String) jsonObj.get("name");
+					if (sut.name == null) {
+						sut.name = sut.ID;
+					}
 					sut.description = (String) jsonObj.get("description");
 					sut.vendor = (String) jsonObj.get("vendor");
 					JSONArray cs = (JSONArray) jsonObj.get("badge");

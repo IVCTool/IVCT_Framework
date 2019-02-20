@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import nato.ivct.commander.CmdListSuT.SutDescription;
+import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;

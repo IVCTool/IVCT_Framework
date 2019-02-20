@@ -23,16 +23,16 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
-import nato.ivct.commander.BadgeTcParam;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
-import java.util.Set;
 
 /*
  * Dialog program using keyboard input.
@@ -169,6 +169,7 @@ class TcRunnable implements Runnable {
 }
 
 class SutDescriptionVendor {
+	String sutID;
 	String sutName;
 	String sutDescription;
 	String vendorName;
@@ -194,8 +195,8 @@ class Writer extends Thread {
      */
     private SutDescriptionVendor getSutDescriptionVendor(final PrintStream out, final String line, final boolean addMode) {
         String split[]= line.trim().split("\\s+");
-    	String sutName = split[1];
-    	int posSutName = sutName.indexOf("\"");
+    	String sutID = split[1];
+    	int posSutName = sutID.indexOf("\"");
     	if (posSutName != -1) {
     		out.println("getSutDescriptionVendor: SUT name must NOT be quoted: " + line);
     		return null;
@@ -210,11 +211,30 @@ class Writer extends Thread {
                 }
             }
             if (sutFound) {
-    			out.println("getSutDescriptionVendor: SUT already exists: " + sutName);
+    			out.println("getSutDescriptionVendor: SUT already exists: " + sutID);
     			return null;
     		}
     	}
-        int posDesc = line.indexOf("\"");
+
+    	// Get name
+        int posName = line.indexOf("\"");
+        if (posName == -1) {
+    		out.println("getSutDescriptionVendor: missing sut name start quote: " + line);
+    		return null;
+        }
+        int posNameEnd = line.indexOf("\"", posName + 1);
+        if (posNameEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing sut name end quote: " + line);
+    		return null;
+        }
+    	if (posNameEnd == posName + 1) {
+    		out.println("getSutDescriptionVendor: no sut name: " + line);
+    		return null;
+    	}
+    	String sutName = line.substring(posName + 1, posNameEnd);
+
+    	// Get description
+        int posDesc = line.indexOf("\"", posNameEnd + 1);
         if (posDesc == -1) {
     		out.println("getSutDescriptionVendor: missing description start quote: " + line);
     		return null;
@@ -229,6 +249,8 @@ class Writer extends Thread {
     		return null;
     	}
     	String sutDescription = line.substring(posDesc + 1, posDescEnd);
+
+    	// Get vendor
         int posVen = line.indexOf("\"", posDescEnd + 1);
         if (posVen == -1) {
     		out.println("getSutDescriptionVendor: missing vendor start quote: " + line);
@@ -245,6 +267,8 @@ class Writer extends Thread {
     	}
     	String vendorName = line.substring(posVen + 1, posVenEnd);
     	SutDescriptionVendor sutDescriptionVendor = new SutDescriptionVendor();
+
+    	sutDescriptionVendor.sutID = sutID;
     	sutDescriptionVendor.sutName = sutName;
     	sutDescriptionVendor.sutDescription = sutDescription;
     	sutDescriptionVendor.vendorName = vendorName;
@@ -296,7 +320,12 @@ class Writer extends Thread {
                 	if (sutDescriptionVendorAdd == null) {
                 		break;
                 	}
-                	command = Factory.createCmdUpdateSUT(sutDescriptionVendorAdd.sutName, sutDescriptionVendorAdd.sutDescription, sutDescriptionVendorAdd.vendorName, null);
+                	SutDescription sutDescriptionAsut = new SutDescription();
+                	sutDescriptionAsut.ID = sutDescriptionVendorAdd.sutID;
+                	sutDescriptionAsut.name = sutDescriptionVendorAdd.sutName;
+                	sutDescriptionAsut.description = sutDescriptionVendorAdd.sutDescription;
+                	sutDescriptionAsut.vendor = sutDescriptionVendorAdd.vendorName;
+                	command = Factory.createCmdUpdateSUT(sutDescriptionAsut);
                 	try {
 						command.execute();
 					} catch (Exception e2) {
@@ -340,7 +369,12 @@ class Writer extends Thread {
                 	if (sutDescriptionVendorModify == null) {
                 		break;
                 	}
-                	command = Factory.createCmdUpdateSUT(sutDescriptionVendorModify.sutName, sutDescriptionVendorModify.sutDescription, sutDescriptionVendorModify.vendorName, null);
+                	SutDescription sutDescriptionMsut = new SutDescription();
+                	sutDescriptionMsut.ID = sutDescriptionVendorModify.sutID;
+                	sutDescriptionMsut.name = sutDescriptionVendorModify.sutName;
+                	sutDescriptionMsut.description = sutDescriptionVendorModify.sutDescription;
+                	sutDescriptionMsut.vendor = sutDescriptionVendorModify.vendorName;
+                	command = Factory.createCmdUpdateSUT(sutDescriptionMsut);
                 	try {
 						command.execute();
 					} catch (Exception e2) {
@@ -391,20 +425,29 @@ class Writer extends Thread {
                 		sutBadges.add(newBadge);
                 		}
                 	}
-                    Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
+                    Set<String> badgesAbg = new HashSet<String>();
                 	for (String Entry : sutBadges) {
                 		if (allBadges.contains(newBadge) == false) {
                             out.println("addBadge: unknown badge name: " + newBadge);
                             errorOccurred = true;
                             break;
                 		}
-                        BadgeTcParam badgeTcParam = new BadgeTcParam().setId(new String (Entry));
-                        badgeTcParams.add(badgeTcParam);
+                        badgesAbg.add(new String (Entry));
                 	}
                 	if (errorOccurred) {
                 		break;
                 	}
-                	command = Factory.createCmdUpdateSUT(ivctCommander.rtp.getSutName(), ivctCommander.rtp.getSutDescription(), ivctCommander.rtp.getVendorName(), badgeTcParams);
+                	SutDescription sutDescriptionAbg = new SutDescription();
+                	sutDescriptionAbg.ID = ivctCommander.rtp.getSutName();
+                	sutDescriptionAbg.name = ivctCommander.rtp.getSutName();
+                	sutDescriptionAbg.description = ivctCommander.rtp.getSutDescription();
+                	sutDescriptionAbg.vendor = ivctCommander.rtp.getVendorName();
+                	sutDescriptionAbg.conformanceStatment = new String[badgesAbg.size()];
+                	int ind = 0;
+					for (String entry : badgesAbg) {
+						sutDescriptionAbg.conformanceStatment[ind++] = entry;
+					}
+                	command = Factory.createCmdUpdateSUT(sutDescriptionAbg);
                 	try {
 						command.execute();
 					} catch (Exception e1) {
@@ -434,12 +477,21 @@ class Writer extends Thread {
                 		}
             			sutBadgesDbg.remove(newBadgeDbg);
                 	}
-                    Set<BadgeTcParam> badgeTcParamsDbg =new HashSet<BadgeTcParam>();
+                    Set<String> badgesDbg = new HashSet<String>();
                 	for (String Entry : sutBadgesDbg) {
-                        BadgeTcParam badgeTcParamDbg = new BadgeTcParam().setId(new String (Entry));
-                        badgeTcParamsDbg.add(badgeTcParamDbg);
+                        badgesDbg.add(new String (Entry));
                 	}
-                	command = Factory.createCmdUpdateSUT(ivctCommander.rtp.getSutName(), ivctCommander.rtp.getSutDescription(), ivctCommander.rtp.getVendorName(), badgeTcParamsDbg);
+                	SutDescription sutDescriptionDbg = new SutDescription();
+                	sutDescriptionDbg.ID = ivctCommander.rtp.getSutName();
+                	sutDescriptionDbg.name = ivctCommander.rtp.getSutName();
+                	sutDescriptionDbg.description = ivctCommander.rtp.getSutDescription();
+                	sutDescriptionDbg.vendor = ivctCommander.rtp.getVendorName();
+                	sutDescriptionDbg.conformanceStatment = new String[badgesDbg.size()];
+                	int indDbg = 0;
+					for (String entry : badgesDbg) {
+						sutDescriptionDbg.conformanceStatment[indDbg++] = entry;
+					}
+                	command = Factory.createCmdUpdateSUT(sutDescriptionDbg);
                 	try {
 						command.execute();
 					} catch (Exception e) {
@@ -712,8 +764,8 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
-                    out.println("addSUT (asut) sut \"description text quoted\" \"vendor text quoted\"- add an SUT");
-                    out.println("modifySUT (msut) sut \"description text quoted\" \"vendor text quoted\"- modify an SUT");
+                    out.println("addSUT (asut) sut \"name text quoted\" \"description text quoted\" \"vendor text quoted\"- add an SUT");
+                    out.println("modifySUT (msut) sut \"name text quoted\" \"description text quoted\" \"vendor text quoted\"- modify an SUT");
                     out.println("listBadges (lbg) - list all available badges");
                     out.println("addBadge (abg) badge ... badge - add one or more badges to SUT");
                     out.println("deleteBadge (dbg) badge ... badge - delete one or more badges from SUT");

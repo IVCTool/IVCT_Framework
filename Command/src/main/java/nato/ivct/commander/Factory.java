@@ -365,6 +365,11 @@ public class Factory {
 		return new CmdSendTcVerdict(sutName, sutDir, testScheduleName, testcase, verdict, verdictText);
 	}
 
+	public static CmdUpdateSUT createCmdUpdateSUT(final SutDescription sutDescription) {
+		initialize();
+		return new CmdUpdateSUT(sutDescription);
+	}
+
 	public static CmdUpdateSUT createCmdUpdateSUT(final String sutName, final String sutDescription, final String vendorName, final Set<BadgeTcParam> badgeTcParams) {
 		initialize();
 		return new CmdUpdateSUT(sutName, sutDescription, vendorName, badgeTcParams);
