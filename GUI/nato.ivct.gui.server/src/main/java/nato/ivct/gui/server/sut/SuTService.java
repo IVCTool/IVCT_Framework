@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeTcParam;
 import nato.ivct.commander.CmdListSuT;
-import nato.ivct.commander.CmdListSuT.SutDescription;
 import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Command;
+import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
