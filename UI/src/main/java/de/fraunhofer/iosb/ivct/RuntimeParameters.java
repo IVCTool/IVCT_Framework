@@ -21,7 +21,6 @@ package de.fraunhofer.iosb.ivct;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -34,9 +33,10 @@ import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.Factory;
-import nato.ivct.commander.CmdSetLogLevel.LogLevel;
+import nato.ivct.commander.SutDescription;
 
 public final class RuntimeParameters {
     private static Logger LOGGER = LoggerFactory.getLogger(RuntimeParameters.class);
@@ -44,18 +44,16 @@ public final class RuntimeParameters {
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
-	private int counter = 0;
 	private int countSemaphore = 0;
 	private CmdListBadges cmdListBadges = null;
 	private CmdListSuT sutList = null;
-	private static List<String> suts = null;
 	private PrintStream printStream = new PrintStream(System.out);
 	private static Semaphore semaphore = new Semaphore(0);
 	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private String testSuiteName = null;
-	private CmdListSuT.SutDescription sutDescription;
+	private SutDescription sutDescription;
 
     public RuntimeParameters () {
     }
@@ -281,7 +279,6 @@ public final class RuntimeParameters {
 	}
 	
 	private void listSUTs() {
-		suts = new LinkedList<>();
 		sutList = Factory.createCmdListSut();
 		sutList.execute();
 	}
