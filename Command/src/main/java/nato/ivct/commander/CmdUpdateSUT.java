@@ -31,15 +31,44 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.SutDescription;
+
 public class CmdUpdateSUT implements Command {
 
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
 	private String sutId = null;
+	private String name = null;
 	private String sutDescription;
 	private String vendorName;
-	private Set<BadgeTcParam> badgeTcParams;
+	private Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
 	private static Map<String, URL[]> badgeURLs = new HashMap<String, URL[]>();
 	private static CmdListBadges badges;
+
+	/**
+	 * 
+	 * @param sutDescription the SUT description
+	 */
+	public CmdUpdateSUT(final SutDescription sutDescription) {
+		this.sutId = sutDescription.ID;
+		if (sutDescription.name == null) {
+			this.name = sutDescription.ID;
+		}
+		else {
+			this.name = sutDescription.name;
+		}
+		this.sutDescription = sutDescription.description;
+		this.vendorName = sutDescription.vendor;
+		if (sutDescription.conformanceStatment != null) {
+			for (int i = 0; i < sutDescription.conformanceStatment.length; i++) {
+				BadgeTcParam badgeTcParam = new BadgeTcParam();
+				badgeTcParam.setId(sutDescription.conformanceStatment[i]);
+				this.badgeTcParams.add(badgeTcParam);
+			}
+		}
+		// get the badge descriptions
+		badges = new CmdListBadges();
+		badges.execute();
+	}
 
 	/**
 	 * 
@@ -50,6 +79,7 @@ public class CmdUpdateSUT implements Command {
 	 */
 	public CmdUpdateSUT(final String sutId, final String sutDescription, final String vendorName, final Set<BadgeTcParam> badgeTcParams) {
 		this.sutId = sutId;
+		this.name = sutId;
 		this.sutDescription = sutDescription;
 		this.vendorName = vendorName;
 		this.badgeTcParams = badgeTcParams;
@@ -400,6 +430,7 @@ public class CmdUpdateSUT implements Command {
 		// Update CS.json file
         JSONObject obj = new JSONObject();
         obj.put("id", this.sutId);
+        obj.put("name", this.name);
         obj.put("description", this.sutDescription);
         obj.put("vendor", this.vendorName);
 
