@@ -30,9 +30,6 @@ public class SuTService implements ISuTService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 	private HashMap<String, SutDescription> sutMap = null;
 	
-	// TODO check whether or not this attribute is ever used
-	HashMap<String, SutDescription> sut_hm = new HashMap<String, SutDescription>();
-	
 	@Override
 	public Set<String> loadSuts() {
 		if (sutMap == null)
