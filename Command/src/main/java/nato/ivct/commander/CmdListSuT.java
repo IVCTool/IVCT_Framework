@@ -53,6 +53,7 @@ public class CmdListSuT implements Command {
 					if (sut.name == null) {
 						sut.name = sut.ID;
 					}
+					sut.version = (String) jsonObj.get("version");
 					sut.description = (String) jsonObj.get("description");
 					sut.vendor = (String) jsonObj.get("vendor");
 					JSONArray cs = (JSONArray) jsonObj.get("badge");
