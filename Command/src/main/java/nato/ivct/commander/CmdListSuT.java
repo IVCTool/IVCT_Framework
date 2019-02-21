@@ -56,9 +56,9 @@ public class CmdListSuT implements Command {
 					sut.description = (String) jsonObj.get("description");
 					sut.vendor = (String) jsonObj.get("vendor");
 					JSONArray cs = (JSONArray) jsonObj.get("badge");
-					sut.conformanceStatment = new String[cs.size()];
+					sut.conformanceStatement = new String[cs.size()];
 					for (int i=0; i < cs.size(); i++) {
-						sut.conformanceStatment[i] = cs.get(i).toString();
+						sut.conformanceStatement[i] = cs.get(i).toString();
 					}
 					sutMap.put(sut.ID, sut);
 				} catch (IOException | ParseException e) {
