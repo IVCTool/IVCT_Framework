@@ -38,6 +38,7 @@ public class CmdUpdateSUT implements Command {
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
 	private String sutId = null;
 	private String name = null;
+	private String version = null;
 	private String sutDescription;
 	private String vendorName;
 	private Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
@@ -56,12 +57,13 @@ public class CmdUpdateSUT implements Command {
 		else {
 			this.name = sutDescription.name;
 		}
+		this.version = sutDescription.version;
 		this.sutDescription = sutDescription.description;
 		this.vendorName = sutDescription.vendor;
-		if (sutDescription.conformanceStatment != null) {
-			for (int i = 0; i < sutDescription.conformanceStatment.length; i++) {
+		if (sutDescription.conformanceStatement != null) {
+			for (int i = 0; i < sutDescription.conformanceStatement.length; i++) {
 				BadgeTcParam badgeTcParam = new BadgeTcParam();
-				badgeTcParam.setId(sutDescription.conformanceStatment[i]);
+				badgeTcParam.setId(sutDescription.conformanceStatement[i]);
 				this.badgeTcParams.add(badgeTcParam);
 			}
 		}
@@ -130,9 +132,23 @@ public class CmdUpdateSUT implements Command {
 			try {
 				jsonObject = (JSONObject) jsonParser.parse(sb.toString());
 				// get a String from the JSON object
-				String oldSUTname = (String) jsonObject.get("id");
+				String oldSUTid = (String) jsonObject.get("id");
+				if (oldSUTid != null) {
+					if (oldSUTid.equals(sutId) == false) {
+						return true;
+					}
+				}
+				// get a String from the JSON object
+				String oldSUTname = (String) jsonObject.get("name");
 				if (oldSUTname != null) {
 					if (oldSUTname.equals(sutId) == false) {
+						return true;
+					}
+				}
+				// get a String from the JSON object
+				String oldSUTversion = (String) jsonObject.get("version");
+				if (oldSUTversion != null) {
+					if (oldSUTversion.equals(sutId) == false) {
 						return true;
 					}
 				}
@@ -431,6 +447,7 @@ public class CmdUpdateSUT implements Command {
         JSONObject obj = new JSONObject();
         obj.put("id", this.sutId);
         obj.put("name", this.name);
+        obj.put("version", this.version);
         obj.put("description", this.sutDescription);
         obj.put("vendor", this.vendorName);
 

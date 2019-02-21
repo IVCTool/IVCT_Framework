@@ -17,7 +17,8 @@ package nato.ivct.commander;
 public class SutDescription {
 		public String ID = null;
 		public String name = null;
+		public String version = null;
 		public String description = null;
 		public String vendor = null;
-		public String[] conformanceStatment = null;
+		public String[] conformanceStatement = null;
 }
