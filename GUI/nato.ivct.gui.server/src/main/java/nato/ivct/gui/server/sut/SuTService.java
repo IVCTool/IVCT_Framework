@@ -129,7 +129,8 @@ public class SuTService implements ISuTService {
         
         // get the selected capabilities
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        sut.conformanceStatement = cb.toArray(new String[cb.size()]);
+        if (cb != null)
+        	sut.conformanceStatement = cb.toArray(new String[cb.size()]);
         
         // save SuT
         try {
@@ -139,6 +140,9 @@ public class SuTService implements ISuTService {
 			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
 			e.printStackTrace();
 		}
+        
+        // set the SUT ID in the form
+        formData.setSutId(sut.ID);
         
         // Update SuT map 
         updateSutMap();
@@ -163,7 +167,8 @@ public class SuTService implements ISuTService {
 
         // get the selected capabilities
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        sut.conformanceStatement = cb.toArray(new String[cb.size()]);
+        if (cb != null)
+        	sut.conformanceStatement = cb.toArray(new String[cb.size()]);
         
         // save SuT
         try {

@@ -323,9 +323,9 @@ public class SuTEditForm extends AbstractForm {
             ISuTService service = BEANS.get(ISuTService.class);
             SuTEditFormData formData = new SuTEditFormData();
             exportFormData(formData);
-            service.create(formData);
-            // set the id of this form
-            setSutId(formData.getName().getValue());
+            String sutId = service.create(formData).getSutId();
+            // set the id of this form which is derived from the SUT name
+            setSutId(sutId);
         }
     }
 
