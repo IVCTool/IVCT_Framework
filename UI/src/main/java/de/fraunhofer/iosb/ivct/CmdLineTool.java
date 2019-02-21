@@ -442,10 +442,10 @@ class Writer extends Thread {
                 	sutDescriptionAbg.name = ivctCommander.rtp.getSutName();
                 	sutDescriptionAbg.description = ivctCommander.rtp.getSutDescription();
                 	sutDescriptionAbg.vendor = ivctCommander.rtp.getVendorName();
-                	sutDescriptionAbg.conformanceStatment = new String[badgesAbg.size()];
+                	sutDescriptionAbg.conformanceStatement = new String[badgesAbg.size()];
                 	int ind = 0;
 					for (String entry : badgesAbg) {
-						sutDescriptionAbg.conformanceStatment[ind++] = entry;
+						sutDescriptionAbg.conformanceStatement[ind++] = entry;
 					}
                 	command = Factory.createCmdUpdateSUT(sutDescriptionAbg);
                 	try {
@@ -486,10 +486,10 @@ class Writer extends Thread {
                 	sutDescriptionDbg.name = ivctCommander.rtp.getSutName();
                 	sutDescriptionDbg.description = ivctCommander.rtp.getSutDescription();
                 	sutDescriptionDbg.vendor = ivctCommander.rtp.getVendorName();
-                	sutDescriptionDbg.conformanceStatment = new String[badgesDbg.size()];
+                	sutDescriptionDbg.conformanceStatement = new String[badgesDbg.size()];
                 	int indDbg = 0;
 					for (String entry : badgesDbg) {
-						sutDescriptionDbg.conformanceStatment[indDbg++] = entry;
+						sutDescriptionDbg.conformanceStatement[indDbg++] = entry;
 					}
                 	command = Factory.createCmdUpdateSUT(sutDescriptionDbg);
                 	try {

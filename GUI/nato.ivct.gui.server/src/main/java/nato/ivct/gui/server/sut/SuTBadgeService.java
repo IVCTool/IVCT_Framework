@@ -58,8 +58,8 @@ public class SuTBadgeService implements ISuTBadgeService {
 	
 	private void collectBadgesForSut(final SutDescription _sutDesc) {
 		CbService cbService = (CbService) BEANS.get(CbService.class);
-		for (int i = 0; i < _sutDesc.conformanceStatment.length; i++) {
-			BadgeDescription badge = cbService.getBadgeDescription(_sutDesc.conformanceStatment[i]);
+		for (int i = 0; i < _sutDesc.conformanceStatement.length; i++) {
+			BadgeDescription badge = cbService.getBadgeDescription(_sutDesc.conformanceStatement[i]);
 			addBadgeToCollection (badge, m_collectedBadges);
 		}
 	}
