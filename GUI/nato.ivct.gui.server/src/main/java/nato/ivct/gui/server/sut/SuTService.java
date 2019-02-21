@@ -67,14 +67,13 @@ public class SuTService implements ISuTService {
 		}
 		// find the SuT description by selected SuTid.
 		SutDescription sut = sutMap.get(formData.getSutId());
-		// fill the form data: GeneralBox
 		formData.setSutId(sut.ID);
+
+		// fill the form data: GeneralBox
+		formData.getName().setValue(sut.name);
+		formData.getVersion().setValue(sut.version);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
-		
-		// TODO: get these data out from the data model
-		formData.getVersion().setValue("VERSION");
-		formData.getName().setValue(sut.ID); //TODO set the correct SUT name here !
 
 		// fill the form data: SuTCapabilities table with conformance status
 
@@ -95,14 +94,13 @@ public class SuTService implements ISuTService {
         }
         // find the SuT description by selected SuTid.
         SutDescription sut = sutMap.get(formData.getSutId());
-		// fill the form data: GeneralBox
+		formData.setSutId(sut.ID);
+		
+        // fill the form data: GeneralBox
+		formData.getName().setValue(sut.name); 
+		formData.getVersion().setValue(sut.version);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
-		
-		// TODO: get these data out from the data model
-		formData.getVersion().setValue("VERSION");
-		formData.setSutId(sut.ID);
-		formData.getName().setValue(sut.ID); // TODO set the correct SUT name 
         
         return formData;
     }
@@ -124,17 +122,22 @@ public class SuTService implements ISuTService {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
         
+        // fill the SUT description with the from values
+        SutDescription sut = new SutDescription();
+        sut.ID = formData.getName().getValue().replaceAll("\\W", "_");
+        sut.name = formData.getName().getValue();
+        sut.version = formData.getVersion().getValue();
+        sut.description = formData.getDescr().getValue();
+        sut.vendor = formData.getSutVendor().getValue();
+        
         // get the selected capabilities
-        HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        if (cb != null) {
-	        cb.forEach(bd->badgeTcParams.add(new BadgeTcParam().setId(bd)));
-        }
+        sut.conformanceStatement = cb.toArray(new String[cb.size()]);
         
         // save SuT
         try {
         	LOG.info ("SuT description stored for: " + formData.getName().getValue());
-			new CmdUpdateSUT(formData.getName().getValue(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams).execute();
+			new CmdUpdateSUT(sut).execute();
 		} catch (Exception e) {
 			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
 			e.printStackTrace();
@@ -152,18 +155,27 @@ public class SuTService implements ISuTService {
 		if (!ACCESS.check(new UpdateSuTPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
+		
+        // fill the SUT description with the from values
+        SutDescription sut = new SutDescription();
+        sut.ID = formData.getSutId();
+        sut.name = formData.getName().getValue();
+        sut.version = formData.getVersion().getValue();
+        sut.description = formData.getDescr().getValue();
+        sut.vendor = formData.getSutVendor().getValue();
 
         // get the selected capabilities
-        HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
+//        HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        if (cb != null) {
-	        cb.forEach(bd->badgeTcParams.add(new BadgeTcParam().setId(bd)));
-        }
+//        if (cb != null) {
+//	        cb.forEach(bd->badgeTcParams.add(new BadgeTcParam().setId(bd)));
+//        }
+        sut.conformanceStatement = cb.toArray(new String[cb.size()]);
         
         // save SuT
         try {
         	LOG.info ("SuT description stored for: " + formData.getName().getValue());
-			new CmdUpdateSUT(formData.getSutId(), formData.getDescr().getValue(), formData.getSutVendor().getValue(), badgeTcParams).execute(); //TODO Add SUT name as well
+			new CmdUpdateSUT(sut).execute();
 		} catch (Exception e) {
 			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
 			e.printStackTrace();
