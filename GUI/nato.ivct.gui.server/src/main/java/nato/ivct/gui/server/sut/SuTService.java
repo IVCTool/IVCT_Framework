@@ -165,11 +165,7 @@ public class SuTService implements ISuTService {
         sut.vendor = formData.getSutVendor().getValue();
 
         // get the selected capabilities
-//        HashSet<BadgeTcParam> badgeTcParams = CollectionUtility.emptyHashSet();
         Set<String> cb = formData.getSuTCapabilityBox().getValue();
-//        if (cb != null) {
-//	        cb.forEach(bd->badgeTcParams.add(new BadgeTcParam().setId(bd)));
-//        }
         sut.conformanceStatement = cb.toArray(new String[cb.size()]);
         
         // save SuT
