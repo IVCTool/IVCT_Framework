@@ -67,7 +67,7 @@ public class SuTService implements ISuTService {
 		formData.setSutId(sut.ID);
 
 		// fill the form data: GeneralBox
-		formData.getName().setValue(sut.name);
+		formData.getName().setValue(sut.name == null ? sut.ID : sut.name);
 		formData.getVersion().setValue(sut.version);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
@@ -94,7 +94,7 @@ public class SuTService implements ISuTService {
 		formData.setSutId(sut.ID);
 		
         // fill the form data: GeneralBox
-		formData.getName().setValue(sut.name); 
+		formData.getName().setValue(sut.name == null ? "" : sut.name); 
 		formData.getVersion().setValue(sut.version);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
