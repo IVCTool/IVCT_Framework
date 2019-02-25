@@ -14,6 +14,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
@@ -387,20 +388,16 @@ public class SuTTcRequirementForm extends AbstractForm {
 			}
 		}
 		
-		@Order(1000)
-		public class TCexecMenu extends AbstractMenu {
-			@Override
-			protected String getConfiguredText() {
-				return TEXTS.get("TCexec");
-			}
+	    @Order(3000)
+	    public class TcExecutionButton extends AbstractButton {
 
-			@Override
-			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-				return CollectionUtility.hashSet(TableMenuType.SingleSelection, TableMenuType.MultiSelection);
-			}
+	      @Override
+	      protected String getConfiguredLabel() {
+	        return TEXTS.get("TCexec");
+	      }
 
-			@Override
-			protected void execAction() {
+	      @Override
+	      protected void execClickAction() {
 				// open TC execution form
 				SuTTcExecutionForm form = new SuTTcExecutionForm();
 			    form.setSutId(getSutId());
@@ -421,7 +418,8 @@ public class SuTTcRequirementForm extends AbstractForm {
 					}
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 			}
-		}
+	    }
+
 
 
 //		@Order(100000)
