@@ -130,39 +130,64 @@ public class FactoryTest {
 		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
 			return;
 		}
-		String sutName = "hw_iosb";
-		String sutDescription = "HelloWorld system under federate for IVCT demonstration";
 		String vendorName = "Fraunhofer IOSB";
 		Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
-		BadgeTcParam btp0 = new BadgeTcParam();
-		btp0.setId("HLA-BASE-2017");
-		badgeTcParams.add(btp0);
-		BadgeTcParam btp1 = new BadgeTcParam();
-		btp1.setId("TS_HLA_EncodingRulesTester-2017");
-		badgeTcParams.add(btp1);
-		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutName, sutDescription, vendorName, badgeTcParams);
+		SutDescription sutDescription = new SutDescription();
+		sutDescription.name = "hw_iosb";
+		sutDescription.description = "HelloWorld system under federate for IVCT demonstration";
+		sutDescription.vendor = "Fraunhofer IOSB";
+		sutDescription.badges.add("HLA-BASE-2017");
+		sutDescription.badges.add("TS_HLA_EncodingRulesTester-2017");
+		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutDescription);
 		try {
 			cus.execute();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutName + "/" + "CS.json";
+		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.name + "/" + "CS.json";
 		try {
 			// The parameters should be the same. Thus expected false.
-			assertFalse("CS.json values should be equal", cus.compareCSdata(csJsonFilename, sutName, sutDescription, vendorName, badgeTcParams));
-			// The sut name is changed. Thus expected true.
-			assertTrue("CS.json sut name change should be detected", cus.compareCSdata(csJsonFilename, "dummy", sutDescription, vendorName, badgeTcParams));
+			assertFalse("CS.json values should be equal", cus.compareCSdata(csJsonFilename, sutDescription));
+			SutDescription tmpSutDescription = new SutDescription();
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.name = "dummy";
+			// The name is changed. Thus expected true.
+			assertTrue("CS.json sut name change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.description = "dummy";
 			// The description is changed. Thus expected true.
-			assertTrue("CS.json sut description change should be detected", cus.compareCSdata(csJsonFilename, sutName, "dummy", vendorName, badgeTcParams));
+			assertTrue("CS.json sut description change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.vendor = "dummy";
 			// The vendor has changed. Thus expected true.
-			assertTrue("CS.json vendor change should be detected", cus.compareCSdata(csJsonFilename, sutName, sutDescription, "dummy", badgeTcParams));
+			assertTrue("CS.json vendor change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.version = "dummy";
+			// The version has changed. Thus expected true.
+			assertTrue("CS.json version change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.badges.add("dummy");
 			// The badges have changed. Thus expected true.
-			btp0.setId("dummy");
-			assertTrue("CS.json badge change should be detected", cus.compareCSdata(csJsonFilename, sutName, sutDescription, vendorName, badgeTcParams));
+			assertTrue("CS.json badge change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	private void copySUT(SutDescription tmpSutDescription, SutDescription sutDescription) {
+		tmpSutDescription.ID = sutDescription.ID;
+		tmpSutDescription.name = sutDescription.name;
+		tmpSutDescription.description = sutDescription.description;
+		tmpSutDescription.vendor = sutDescription.vendor;
+		for (String entry : sutDescription.badges) {
+			tmpSutDescription.badges.add(entry);
 		}
 	}
 

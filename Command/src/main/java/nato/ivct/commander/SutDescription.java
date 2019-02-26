@@ -14,11 +14,14 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SutDescription {
-		public String ID = null;
-		public String name = null;
-		public String version = null;
-		public String description = null;
-		public String vendor = null;
-		public String[] conformanceStatement = null;
+		public String ID = new String();
+		public String name = new String();
+		public String version = new String();
+		public String description = new String();
+		public String vendor = new String();
+		public Set<String> badges = new HashSet<String>();
 }

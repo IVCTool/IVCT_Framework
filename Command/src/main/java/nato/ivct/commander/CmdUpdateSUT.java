@@ -25,23 +25,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.Random;
 import nato.ivct.commander.SutDescription;
 
-public class CmdUpdateSUT implements Command {
+public class CmdUpdateSUT {
 
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
-	private String sutId = null;
-	private String name = null;
-	private String version = null;
-	private String sutDescription;
-	private String vendorName;
-	private Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
+    private SutDescription sutDescription = null;
 	private static Map<String, URL[]> badgeURLs = new HashMap<String, URL[]>();
 	private static CmdListBadges badges;
 
@@ -50,58 +46,31 @@ public class CmdUpdateSUT implements Command {
 	 * @param sutDescription the SUT description
 	 */
 	public CmdUpdateSUT(final SutDescription sutDescription) {
-		this.sutId = sutDescription.ID;
-		if (sutDescription.name == null) {
-			this.name = sutDescription.ID;
+		this.sutDescription = sutDescription;
+		if (this.sutDescription.ID == null || this.sutDescription.ID.isEmpty()) {
+			createSUTid();
 		}
-		else {
-			this.name = sutDescription.name;
+		if (this.sutDescription.name == null) {
+			this.sutDescription.name = this.sutDescription.ID;
 		}
-		this.version = sutDescription.version;
-		this.sutDescription = sutDescription.description;
-		this.vendorName = sutDescription.vendor;
-		if (sutDescription.conformanceStatement != null) {
-			for (int i = 0; i < sutDescription.conformanceStatement.length; i++) {
-				BadgeTcParam badgeTcParam = new BadgeTcParam();
-				badgeTcParam.setId(sutDescription.conformanceStatement[i]);
-				this.badgeTcParams.add(badgeTcParam);
-			}
-		}
+
 		// get the badge descriptions
 		badges = new CmdListBadges();
 		badges.execute();
 	}
-
-	/**
-	 * 
-	 * @param sutId the SUT identifier
-	 * @param sutDescription the SUT description
-	 * @param vendorName the vendor name
-	 * @param badgeTcParams the full list of badge names and optionally TcParams
-	 */
-	public CmdUpdateSUT(final String sutId, final String sutDescription, final String vendorName, final Set<BadgeTcParam> badgeTcParams) {
-		this.sutId = sutId;
-		this.name = sutId;
-		this.sutDescription = sutDescription;
-		this.vendorName = vendorName;
-		this.badgeTcParams = badgeTcParams;
-		// get the badge descriptions
-		badges = new CmdListBadges();
-		badges.execute();
+	
+	private void createSUTid() {
+		sutDescription.ID = sutDescription.name.replaceAll("\\W", "_");
 	}
 
 	/**
 	 * This method will check the parameter values are different to those already in the CS.json file
 	 * 
 	 * @param csJsonFileName the full name of the CS.json file
-	 * @param sutId the new sut identifier
-	 * @param sutDescription the new sut description
-	 * @param vendorName the new vendor name
-	 * @param badgeTcParams the new list of badges supported
-	 * @return true means some data is different, false means all data is the same
+	 * @param tmpSutDescription the sut description to be tested
 	 * @throws Exception in case of major error
 	 */
-	public boolean compareCSdata(String csJsonFileName, String sutId, String sutDescription, String vendorName, Set<BadgeTcParam> badgeTcParams) throws Exception {
+	public boolean compareCSdata(String csJsonFileName, SutDescription tmpSutDescription) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		File cs = new File(csJsonFileName);
 		if (cs.exists() && cs.isFile()) {
@@ -134,46 +103,46 @@ public class CmdUpdateSUT implements Command {
 				// get a String from the JSON object
 				String oldSUTid = (String) jsonObject.get("id");
 				if (oldSUTid != null) {
-					if (oldSUTid.equals(sutId) == false) {
+					if (oldSUTid.equals(tmpSutDescription.ID) == false) {
 						return true;
 					}
 				}
 				// get a String from the JSON object
 				String oldSUTname = (String) jsonObject.get("name");
 				if (oldSUTname != null) {
-					if (oldSUTname.equals(sutId) == false) {
+					if (oldSUTname.equals(tmpSutDescription.name) == false) {
 						return true;
 					}
 				}
 				// get a String from the JSON object
 				String oldSUTversion = (String) jsonObject.get("version");
 				if (oldSUTversion != null) {
-					if (oldSUTversion.equals(sutId) == false) {
+					if (oldSUTversion.equals(tmpSutDescription.vendor) == false) {
 						return true;
 					}
 				}
 				// get a String from the JSON object
 				String oldDescription = (String) jsonObject.get("description");
 				if (oldDescription != null) {
-					if (oldDescription.equals(sutDescription) == false) {
+					if (oldDescription.equals(tmpSutDescription.description) == false) {
 						return true;
 					}
 				}
 				// get a String from the JSON object
 				String oldVendor = (String) jsonObject.get("vendor");
 				if (oldVendor != null) {
-					if (oldVendor.equals(vendorName) == false) {
+					if (oldVendor.equals(tmpSutDescription.vendor) == false) {
 						return true;
 					}
 				}
 				// get badge files list from the JSON object
 				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
-				if (badgeTcParams != null) {
+				if (tmpSutDescription.badges != null) {
 					if (badgeArray != null) {
-						if (badgeTcParams.size() == badgeArray.size()) {
-							if (badgeTcParams.size() > 0) {
-								for (BadgeTcParam entry : this.badgeTcParams) {
-									if (badgeArray.contains(entry.getId())) {
+						if (tmpSutDescription.badges.size() == badgeArray.size()) {
+							if (tmpSutDescription.badges.size() > 0) {
+								for (String entry : this.sutDescription.badges) {
+									if (badgeArray.contains(entry)) {
 										continue;
 									}
 									return true;
@@ -185,8 +154,8 @@ public class CmdUpdateSUT implements Command {
 					}
 					boolean dataFound  = false;
 					for (int i = 0; i < badgeArray.size(); i++) {
-						for (BadgeTcParam entry : this.badgeTcParams) {
-							if (entry.getId().equals(badgeArray.get(i))) {
+						for (String entry : this.sutDescription.badges) {
+							if (entry.equals(badgeArray.get(i))) {
 								dataFound = true;
 								break;
 							}
@@ -389,16 +358,15 @@ public class CmdUpdateSUT implements Command {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public void execute() throws Exception {
-		// Do not use a null sutId
-		if (sutId == null) {
-			return;
+	public String execute() throws Exception {
+		// Do not use a null ID
+		if (this.sutDescription.ID == null) {
+			return this.sutDescription.ID;
 		}
 
 		// The SUT is placed in a known folder
 		String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-		String sutDir = sutsDir + "/" + sutId;
+		String sutDir = sutsDir + "/" + this.sutDescription.ID;
 		File f = new File(sutDir);
 		if (f.exists() == false) {
 			if (f.mkdir() == false) {
@@ -408,11 +376,11 @@ public class CmdUpdateSUT implements Command {
 
 		Set<String> testsuites = new HashSet<String>();
 		// Check if no badges
-		if (this.badgeTcParams != null) {
+		if (this.sutDescription.badges.size() != 0) {
 			
 			// For each badge, check if there is a testsuite with TcParams
-			for (BadgeTcParam entry : this.badgeTcParams) {
-				buildTestsuiteSet(testsuites, entry.getId());
+			for (String entry : this.sutDescription.badges) {
+				buildTestsuiteSet(testsuites, entry);
 			}
 			
 
@@ -437,24 +405,24 @@ public class CmdUpdateSUT implements Command {
 		// If CS.json exists, only change what is different
 		boolean dataChanged = false;
 		String csJsonFileName = new String(sutDir + "/" + "CS.json");
-		dataChanged = compareCSdata(csJsonFileName, this.sutId, this.sutDescription, this.vendorName, this.badgeTcParams);
+		dataChanged = compareCSdata(csJsonFileName, this.sutDescription);
 		
 		if (dataChanged == false) {
-			return;
+			return this.sutDescription.ID;
 		}
 
 		// Update CS.json file
         JSONObject obj = new JSONObject();
-        obj.put("id", this.sutId);
-        obj.put("name", this.name);
-        obj.put("version", this.version);
-        obj.put("description", this.sutDescription);
-        obj.put("vendor", this.vendorName);
+        obj.put("id", this.sutDescription.ID);
+        obj.put("name", this.sutDescription.name);
+        obj.put("version", this.sutDescription.version);
+        obj.put("description", this.sutDescription.description);
+        obj.put("vendor", this.sutDescription.vendor);
 
         JSONArray list = new JSONArray();
-        if (badgeTcParams != null) {
-            for (BadgeTcParam entry : this.badgeTcParams) {
-                list.add(entry.getId());
+        if (this.sutDescription.badges.size() != 0) {
+            for (String entry : this.sutDescription.badges) {
+                list.add(entry);
         	}
         }
 
@@ -479,6 +447,6 @@ public class CmdUpdateSUT implements Command {
         	}
         }
 
-//        System.out.print(obj);
+		return this.sutDescription.ID;
 	}
 }

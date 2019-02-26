@@ -240,18 +240,16 @@ public final class RuntimeParameters {
 		List<String> badges = null;
 		listSUTs();
 		for (String it: sutList.sutMap.keySet()) {
-			int len = sutList.sutMap.get(it).conformanceStatement.length;
 			if (it.equals(theSutName)) {
 				getTestSuiteNames();
 				badges = new ArrayList<String>();
-				String[] conformanceStatment = sutList.sutMap.get(it).conformanceStatement;
-				for (int i = 0; i < len; i++) {
-					int ind = badges.indexOf(conformanceStatment[i]);
+				for (String entry : sutList.sutMap.get(it).badges) {
+					int ind = badges.indexOf(entry);
 					if (ind < 0) {
-						badges.add(conformanceStatment[i]);
+						badges.add(entry);
 					}
 					if (recursive) {
-						if (getRecursiveBadges(badges, conformanceStatment[i])) {
+						if (getRecursiveBadges(badges, entry)) {
 							return null;
 						}
 					}

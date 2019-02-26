@@ -321,7 +321,6 @@ class Writer extends Thread {
                 		break;
                 	}
                 	SutDescription sutDescriptionAsut = new SutDescription();
-                	sutDescriptionAsut.ID = sutDescriptionVendorAdd.sutID;
                 	sutDescriptionAsut.name = sutDescriptionVendorAdd.sutName;
                 	sutDescriptionAsut.description = sutDescriptionVendorAdd.sutDescription;
                 	sutDescriptionAsut.vendor = sutDescriptionVendorAdd.vendorName;
@@ -442,10 +441,9 @@ class Writer extends Thread {
                 	sutDescriptionAbg.name = ivctCommander.rtp.getSutName();
                 	sutDescriptionAbg.description = ivctCommander.rtp.getSutDescription();
                 	sutDescriptionAbg.vendor = ivctCommander.rtp.getVendorName();
-                	sutDescriptionAbg.conformanceStatement = new String[badgesAbg.size()];
                 	int ind = 0;
 					for (String entry : badgesAbg) {
-						sutDescriptionAbg.conformanceStatement[ind++] = entry;
+						sutDescriptionAbg.badges.add(entry);
 					}
                 	command = Factory.createCmdUpdateSUT(sutDescriptionAbg);
                 	try {
@@ -486,10 +484,9 @@ class Writer extends Thread {
                 	sutDescriptionDbg.name = ivctCommander.rtp.getSutName();
                 	sutDescriptionDbg.description = ivctCommander.rtp.getSutDescription();
                 	sutDescriptionDbg.vendor = ivctCommander.rtp.getVendorName();
-                	sutDescriptionDbg.conformanceStatement = new String[badgesDbg.size()];
                 	int indDbg = 0;
 					for (String entry : badgesDbg) {
-						sutDescriptionDbg.conformanceStatement[indDbg++] = entry;
+						sutDescriptionDbg.badges.add(entry);
 					}
                 	command = Factory.createCmdUpdateSUT(sutDescriptionDbg);
                 	try {
