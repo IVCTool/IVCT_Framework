@@ -212,6 +212,11 @@ public class SuTForm extends AbstractForm {
 				
 				@Order(1000)
 				public class CapabilityStatusBox extends AbstractGroupBox {
+					@Override
+					protected boolean getConfiguredVisible() {
+						// !!! TODO Hide this box until it has no real content !!!
+						return false;
+					}
 					
 					@Order(1000)
 					public class SutCapabilityStatusTableField extends AbstractTableField<SutCapabilityStatusTableField.SutCapabilityStatusTable> {
