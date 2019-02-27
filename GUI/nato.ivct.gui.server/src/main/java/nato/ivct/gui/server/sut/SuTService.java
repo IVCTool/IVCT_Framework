@@ -1,22 +1,28 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.commander.BadgeTcParam;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Command;
+import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
@@ -75,10 +81,58 @@ public class SuTService implements ISuTService {
 		// fill the form data: SuTCapabilities table with conformance status
 
 		// fill the form data: SuTReports table
+		loadReportFiles(formData, formData.getSutId());
 		
 		return formData;
 	}
 
+//>>>>>
+	
+	private SuTFormData loadReportFiles(SuTFormData fd, String sutId) {
+		final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
+
+		try {
+			getReportFilesOrderedByCreationDate(folder).forEach(path -> {
+				String reportFileName = path.getFileName().toString();
+				LOG.info("Log file found: {}" ,reportFileName);
+				fd.getTestReportTable().addRow().setFileName(reportFileName);
+			});
+		} catch (NoSuchFileException exc) {
+            LOG.info("report files not found in folder: {}", folder);
+		} catch (IOException exc) {
+			exc.printStackTrace();
+		}
+
+		return fd;
+	}
+
+	private Stream<Path> getReportFilesOrderedByCreationDate(final Path folder) throws IOException {
+		try {
+			return Files.find(folder, 1, (path, fileAttributes) -> {
+				String filenameToCheck = path.getFileName().toString();
+				return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".txt");
+			}).sorted(new FileCreationTimeComparator().reversed());
+		} catch (IllegalStateException exc) {
+			throw new IOException(exc);
+		}
+	}
+
+	private static final class FileCreationTimeComparator implements Comparator<Path> {
+
+		@Override
+		public int compare(Path path1, Path path2) {
+			try {
+				return Files.readAttributes(path1, BasicFileAttributes.class).creationTime()
+						.compareTo(Files.readAttributes(path2, BasicFileAttributes.class).creationTime());
+			} catch (IOException exc) {
+				throw new IllegalStateException(exc);
+			}
+		}
+	}
+	
+	
+//<<<<<<<<<<<<<<<<<<<>	
+	
 	/*
 	 *  functions for SuTEditFormData
 	 */

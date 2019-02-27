@@ -3,7 +3,9 @@ package nato.ivct.gui.client.sut;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -24,7 +26,6 @@ import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.Genera
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
-import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 @FormData(value = SuTFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTForm extends AbstractForm {
@@ -265,15 +266,22 @@ public class SuTForm extends AbstractForm {
 							return TEXTS.get("TestReports");
 						}
 
-						@Override
-						protected int getConfiguredGridW() {
-							return 3;
-						}
+//						@Override
+//						protected int getConfiguredGridW() {
+//							return 3;
+//						}
 						
 						@Order(1000)
 						public class TestReportTable extends AbstractTable {
+							
+							@Override
+							protected boolean getConfiguredMultiSelect() {
+								// only a single row can be selected
+								return false;
+							}
+
 							@Order(1000)
-							public class TestReport extends AbstractColumn<String> {
+							public class FileNameColumn extends AbstractStringColumn {
 								@Override
 								protected String getConfiguredHeaderText() {
 									return TEXTS.get("FileName");
@@ -283,7 +291,17 @@ public class SuTForm extends AbstractForm {
 								protected int getConfiguredWidth() {
 									return 400;
 								}
-
+							}
+							
+							public FileNameColumn getFileNameColumn() {
+								return this.getColumnSet().getColumnByClass(FileNameColumn.class);
+							}
+							
+							// called on double-click on a row
+							@Override
+							protected void execRowAction(ITableRow row) {
+							// TODO Auto-generated method stub
+							System.out.println(row.getCell(getFileNameColumn()).getValue());
 							}
 						}
 					}
@@ -327,7 +345,7 @@ public class SuTForm extends AbstractForm {
 			formData = service.load(formData);
 			importFormData(formData);
 
-			setEnabledPermission(new UpdateSuTPermission());
+//			setEnabledPermission(new UpdateSuTPermission());
 		}
 	}
 }

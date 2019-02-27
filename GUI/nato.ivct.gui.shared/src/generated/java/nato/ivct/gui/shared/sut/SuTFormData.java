@@ -185,15 +185,15 @@ public class SuTFormData extends AbstractFormData {
 		public static class TestReportTableRowData extends AbstractTableRowData {
 
 			private static final long serialVersionUID = 1L;
-			public static final String testReport = "testReport";
-			private String m_testReport;
+			public static final String fileName = "fileName";
+			private String m_fileName;
 
-			public String getTestReport() {
-				return m_testReport;
+			public String getFileName() {
+				return m_fileName;
 			}
 
-			public void setTestReport(String newTestReport) {
-				m_testReport = newTestReport;
+			public void setFileName(String newFileName) {
+				m_fileName = newFileName;
 			}
 		}
 	}

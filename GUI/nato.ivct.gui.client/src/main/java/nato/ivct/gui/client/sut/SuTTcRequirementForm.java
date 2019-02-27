@@ -440,14 +440,6 @@ public class SuTTcRequirementForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-			
-			//sort log history table by newest at top
-//			TcExecutionHistoryTable historyTable = getTcExecutionHistoryTableField().getTable();
-//			boolean tableSortEnable = historyTable.isSortEnabled();
-//			historyTable.setSortEnabled(true);
-//			historyTable.getColumnSet().addSortColumn(historyTable.getFileNameColumn(), false);
-//			historyTable.sort();
-//			historyTable.setSortEnabled(tableSortEnable);
 		}
 	}
 
