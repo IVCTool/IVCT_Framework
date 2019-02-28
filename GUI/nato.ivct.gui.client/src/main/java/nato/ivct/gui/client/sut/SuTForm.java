@@ -305,8 +305,12 @@ public class SuTForm extends AbstractForm {
 							// called on double-click on a row
 							@Override
 							protected void execRowAction(ITableRow row) {
-							// TODO Auto-generated method stub
-							System.out.println(row.getCell(getFileNameColumn()).getValue());
+								TestReportForm form = new TestReportForm();
+								// set SUT Id and requested report file name
+								form.setSutId(getSutId());
+							    form.setReportFileName(getTable().getFileNameColumn().getValue(getSelectedRow()));
+								//load and open the form
+							    form.startView();
 							}
 						}
 					}

@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -8,8 +9,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
@@ -30,6 +33,7 @@ import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
+import nato.ivct.gui.shared.sut.TestReportFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 public class SuTService implements ISuTService {
@@ -87,6 +91,29 @@ public class SuTService implements ISuTService {
 	}
 
 //>>>>>
+	
+	/*
+	 * functions for TestReport
+	 */
+	
+	@Override
+	public TestReportFormData load(TestReportFormData formData) {
+		String testReportFileName = formData.getReportFileName();
+
+		// get content of the requested report file
+		List<String> testReportFiles = Factory.getSutPathsFiles().getSutReportFileNames(formData.getSutIdProperty().getValue(), true);
+		testReportFiles.stream().filter(value -> value.contains(testReportFileName))
+		.map(Paths::get).findAny()
+		.ifPresent(path -> {	
+			try {
+				formData.getTestReport().setValue(java.nio.file.Files.lines(path).collect(Collectors.joining("\n")));
+			} catch (IOException exc) {
+				exc.printStackTrace();
+			}
+		});
+		
+		return formData;
+	}
 	
 	private SuTFormData loadReportFiles(SuTFormData fd, String sutId) {
 		final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));

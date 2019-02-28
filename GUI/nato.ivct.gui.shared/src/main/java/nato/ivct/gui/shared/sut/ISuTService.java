@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
-import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 @TunnelToServer
 public interface ISuTService extends IService {
@@ -27,4 +26,6 @@ public interface ISuTService extends IService {
     SuTEditFormData prepareCreate(SuTEditFormData formData);
 
     SuTEditFormData create(SuTEditFormData formData);
+
+	TestReportFormData load(TestReportFormData formData);
 }
