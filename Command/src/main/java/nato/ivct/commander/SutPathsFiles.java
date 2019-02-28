@@ -84,7 +84,7 @@ public class SutPathsFiles {
 		if (folder.exists() == false || folder.isDirectory() == false) {
 			return reportFileNames;
 		}
-		reportFileNames = listLogFilesForFolder(folder, path, withPath);
+		reportFileNames = listReportFilesForFolder(folder, path, withPath);
 		return reportFileNames;
 	}
 
