@@ -108,6 +108,7 @@ public class SuTService implements ISuTService {
 			try {
 				formData.getTestReport().setValue(java.nio.file.Files.lines(path).collect(Collectors.joining("\n")));
 			} catch (IOException exc) {
+				LOG.error("Error when attempting to read from file: {}", Factory.getSutPathsFiles().getReportPath(formData.getSutIdProperty().getValue()).concat("\\").concat(testReportFileName));
 				exc.printStackTrace();
 			}
 		});
@@ -121,11 +122,11 @@ public class SuTService implements ISuTService {
 		try {
 			getReportFilesOrderedByCreationDate(folder).forEach(path -> {
 				String reportFileName = path.getFileName().toString();
-				LOG.info("Log file found: {}" ,reportFileName);
+				LOG.info("report file found: {}" ,reportFileName);
 				fd.getTestReportTable().addRow().setFileName(reportFileName);
 			});
 		} catch (NoSuchFileException exc) {
-            LOG.info("report files not found in folder: {}", folder);
+            LOG.error("report files not found in folder: {}", folder);
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}
