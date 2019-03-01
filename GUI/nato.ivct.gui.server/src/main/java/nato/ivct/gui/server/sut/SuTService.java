@@ -1,6 +1,5 @@
 package nato.ivct.gui.server.sut;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -46,7 +45,9 @@ public class SuTService implements ISuTService {
 			// load SuT descriptions
 			waitForSutLoading(); 
 
-		return new TreeSet<>(sutMap.keySet());
+		final Set<String> sortedSutSet = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+		sortedSutSet.addAll(sutMap.keySet());
+		return sortedSutSet;
 	}
 	
 	public SutDescription getSutDescription(String sutId) {
@@ -90,7 +91,6 @@ public class SuTService implements ISuTService {
 		return formData;
 	}
 
-//>>>>>
 	
 	/*
 	 * functions for TestReport
@@ -159,8 +159,6 @@ public class SuTService implements ISuTService {
 	}
 	
 	
-//<<<<<<<<<<<<<<<<<<<>	
-	
 	/*
 	 *  functions for SuTEditFormData
 	 */
@@ -203,21 +201,19 @@ public class SuTService implements ISuTService {
         
         // fill the SUT description with the from values
         SutDescription sut = new SutDescription();
-        sut.ID = formData.getName().getValue().replaceAll("\\W", "_");
+        // set the attributes; the ID is provided by the execute() method
         sut.name = formData.getName().getValue();
         sut.version = formData.getVersion().getValue();
         sut.description = formData.getDescr().getValue();
         sut.vendor = formData.getSutVendor().getValue();
         
         // get the selected capabilities
-        Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        if (cb != null)
-        	sut.conformanceStatement = cb.toArray(new String[cb.size()]);
+        sut.badges = formData.getSuTCapabilityBox().getValue();
         
         // save SuT
         try {
         	LOG.info ("SuT description stored for: " + formData.getName().getValue());
-			new CmdUpdateSUT(sut).execute();
+        	sut.ID = new CmdUpdateSUT(sut).execute();
 		} catch (Exception e) {
 			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
 			e.printStackTrace();
@@ -227,7 +223,7 @@ public class SuTService implements ISuTService {
         formData.setSutId(sut.ID);
         
         // Update SuT map 
-        updateSutMap();
+        updateSutMap(sut);
         
         return formData;
     }
@@ -241,33 +237,31 @@ public class SuTService implements ISuTService {
 		
         // fill the SUT description with the from values
         SutDescription sut = new SutDescription();
-        sut.ID = formData.getSutId();
+        // set the attributes; the ID is provided by the execute() method
         sut.name = formData.getName().getValue();
         sut.version = formData.getVersion().getValue();
         sut.description = formData.getDescr().getValue();
         sut.vendor = formData.getSutVendor().getValue();
 
         // get the selected capabilities
-        Set<String> cb = formData.getSuTCapabilityBox().getValue();
-        if (cb != null)
-        	sut.conformanceStatement = cb.toArray(new String[cb.size()]);
+        sut.badges = formData.getSuTCapabilityBox().getValue();
         
         // save SuT
         try {
         	LOG.info ("SuT description stored for: " + formData.getName().getValue());
-			new CmdUpdateSUT(sut).execute();
+        	sut.ID = new CmdUpdateSUT(sut).execute();
 		} catch (Exception e) {
 			LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
 			e.printStackTrace();
 		}
         
         //update SuT map
-        updateSutMap();
+        updateSutMap(sut);
 
 		return formData;
 	}
 	
-	private void updateSutMap ( ) {
+	private void updateSutMap (final SutDescription sut) {
 		LOG.info ("update sutMap attribute");
 		// TODO must be better re-written!
         CmdListSuT sutCmd = new CmdListSuT();

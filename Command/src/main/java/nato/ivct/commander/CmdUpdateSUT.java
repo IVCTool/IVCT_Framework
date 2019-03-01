@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -31,7 +32,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Random;
 import nato.ivct.commander.SutDescription;
 
 public class CmdUpdateSUT {
@@ -53,6 +53,7 @@ public class CmdUpdateSUT {
 		if (this.sutDescription.name == null) {
 			this.sutDescription.name = this.sutDescription.ID;
 		}
+		this.sutDescription.badges = sutDescription.badges == null || sutDescription.badges.isEmpty() ? new HashSet<String>() : sutDescription.badges;
 
 		// get the badge descriptions
 		badges = new CmdListBadges();
@@ -102,39 +103,54 @@ public class CmdUpdateSUT {
 				jsonObject = (JSONObject) jsonParser.parse(sb.toString());
 				// get a String from the JSON object
 				String oldSUTid = (String) jsonObject.get("id");
-				if (oldSUTid != null) {
-					if (oldSUTid.equals(tmpSutDescription.ID) == false) {
-						return true;
-					}
-				}
+				if (!Objects.equals(oldSUTid, tmpSutDescription.ID))
+					return true;
+
+//				if (oldSUTid != null) {
+//					if (oldSUTid.equals(tmpSutDescription.ID) == false) {
+//						return true;
+//					}
+//				}
 				// get a String from the JSON object
 				String oldSUTname = (String) jsonObject.get("name");
-				if (oldSUTname != null) {
-					if (oldSUTname.equals(tmpSutDescription.name) == false) {
-						return true;
-					}
-				}
+				if (!Objects.equals(oldSUTname, tmpSutDescription.name))
+					return true;
+
+//				if (oldSUTname != null) {
+//					if (oldSUTname.equals(tmpSutDescription.name) == false) {
+//						return true;
+//					}
+//				}
 				// get a String from the JSON object
 				String oldSUTversion = (String) jsonObject.get("version");
-				if (oldSUTversion != null) {
-					if (oldSUTversion.equals(tmpSutDescription.vendor) == false) {
-						return true;
-					}
-				}
+				if (!Objects.equals(oldSUTversion, tmpSutDescription.version))
+					return true;
+				
+//				if (oldSUTversion != null) {
+//					if (oldSUTversion.equals(tmpSutDescription.vendor) == false) {
+//						return true;
+//					}
+//				}
 				// get a String from the JSON object
 				String oldDescription = (String) jsonObject.get("description");
-				if (oldDescription != null) {
-					if (oldDescription.equals(tmpSutDescription.description) == false) {
-						return true;
-					}
-				}
+				if (!Objects.equals(oldDescription, tmpSutDescription.description))
+					return true;
+
+//				if (oldDescription != null) {
+//					if (oldDescription.equals(tmpSutDescription.description) == false) {
+//						return true;
+//					}
+//				}
 				// get a String from the JSON object
 				String oldVendor = (String) jsonObject.get("vendor");
-				if (oldVendor != null) {
-					if (oldVendor.equals(tmpSutDescription.vendor) == false) {
-						return true;
-					}
-				}
+				if (!Objects.equals(oldVendor, tmpSutDescription.vendor))
+					return true;
+
+//				if (oldVendor != null) {
+//					if (oldVendor.equals(tmpSutDescription.vendor) == false) {
+//						return true;
+//					}
+//				}
 				// get badge files list from the JSON object
 				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
 				if (tmpSutDescription.badges != null) {
@@ -376,7 +392,7 @@ public class CmdUpdateSUT {
 
 		Set<String> testsuites = new HashSet<String>();
 		// Check if no badges
-		if (this.sutDescription.badges.size() != 0) {
+		if (!this.sutDescription.badges.isEmpty()) {
 			
 			// For each badge, check if there is a testsuite with TcParams
 			for (String entry : this.sutDescription.badges) {

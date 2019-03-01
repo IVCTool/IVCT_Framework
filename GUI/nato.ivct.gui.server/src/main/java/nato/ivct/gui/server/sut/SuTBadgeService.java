@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class SuTBadgeService implements ISuTBadgeService {
 
 	
 	/*
-	 * get SuTBadgeTablePageData for a specific SuT id. Create new one or select existing
+	 * get SuTBadgeTablePageData for a specific SuT ID. Create new one or select existing
 	 */
 	@Override
 	public SuTBadgeTablePageData getSuTBadgeTableData(SearchFilter filter) {
@@ -56,25 +57,22 @@ public class SuTBadgeService implements ISuTBadgeService {
 		return pageData;
 	}
 	
-	private void collectBadgesForSut(final SutDescription _sutDesc) {
+	private void collectBadgesForSut(final SutDescription sut) {
 		CbService cbService = (CbService) BEANS.get(CbService.class);
-		for (int i = 0; i < _sutDesc.conformanceStatement.length; i++) {
-			BadgeDescription badge = cbService.getBadgeDescription(_sutDesc.conformanceStatement[i]);
-			addBadgeToCollection (badge, m_collectedBadges);
-		}
+		
+		sut.badges.stream().map(cbService::getBadgeDescription).forEach(badgeDescription -> addBadgeToCollection (badgeDescription, m_collectedBadges));
+		
 	}
 	
 	private void addBadgeToCollection (final BadgeDescription parentBadge, final Set<BadgeDescription> badgeCollection) {
 		CbService cbService = (CbService) BEANS.get(ICbService.class);
 		if (parentBadge != null) {
 			badgeCollection.add(parentBadge);
-
-			for (String dep:parentBadge.dependency) {
-				BadgeDescription depBadge = cbService.getBadgeDescription(dep);
+			
+			Arrays.stream(parentBadge.dependency).map(cbService::getBadgeDescription).forEach(depBadge -> {
 				badgeCollection.add(depBadge);
-				
 				addBadgeToCollection (depBadge, badgeCollection);
-			}
+			});
 		}
 	}
 	
