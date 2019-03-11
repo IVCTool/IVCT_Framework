@@ -47,7 +47,7 @@ public class SutPathsFiles {
 
 	/**
 	 * Get the path where the report file(s) of the requested SUT are located
-	 * @param sutName the desired SUT name
+	 * @param sutId the desired SUT name
 	 * @return path where report file(s) are located
 	 */
 	public String getReportPath(final String sutId) {
