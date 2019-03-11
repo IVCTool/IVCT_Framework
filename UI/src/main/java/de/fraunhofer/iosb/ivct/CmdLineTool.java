@@ -30,6 +30,7 @@ import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
@@ -41,6 +42,7 @@ public class CmdLineTool {
     Thread writer;
 	private boolean keepGoing = true;
     private nato.ivct.commander.Command command = null;
+    private CmdUpdateSUT cmdUpdateSUT = null;
 	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
@@ -144,17 +146,15 @@ class TcRunnable implements Runnable {
 
 	    	BufferedReader stdError = new BufferedReader(new InputStreamReader(CmdLineTool.p.getErrorStream()));
 
-	    	// read the output from the command
-	        String s = null;
 	    	System.out.println("Here is the standard output of the command:\n");
-	    	while ((s = stdInput.readLine()) != null) {
+	    	while ((stdInput.readLine()) != null) {
 //	    		System.out.println(s);
 	    	}
 
 	    	// read any errors from the attempted command
 
 	    	System.out.println("Here is the standard error of the command (if any):\n");
-	    	while ((s = stdError.readLine()) != null) {
+	    	while ((stdError.readLine()) != null) {
 //	    		System.out.println(s);
 	    	}
 		} catch (IOException e) {
@@ -324,16 +324,13 @@ class Writer extends Thread {
                 	sutDescriptionAsut.name = sutDescriptionVendorAdd.sutName;
                 	sutDescriptionAsut.description = sutDescriptionVendorAdd.sutDescription;
                 	sutDescriptionAsut.vendor = sutDescriptionVendorAdd.vendorName;
-                	command = Factory.createCmdUpdateSUT(sutDescriptionAsut);
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAsut);
                 	try {
-						command.execute();
+                		cmdUpdateSUT.execute();
 					} catch (Exception e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
-	                	command = null;
 	                	break;
 					}
-                	command = null;
                     List<String> sutsAsut = sutPathsFiles.getSuts();
                 	if (sutsAsut.isEmpty()) {
                 		out.println("addSUT: cannot load SUT onto the file system.");
@@ -373,11 +370,10 @@ class Writer extends Thread {
                 	sutDescriptionMsut.name = sutDescriptionVendorModify.sutName;
                 	sutDescriptionMsut.description = sutDescriptionVendorModify.sutDescription;
                 	sutDescriptionMsut.vendor = sutDescriptionVendorModify.vendorName;
-                	command = Factory.createCmdUpdateSUT(sutDescriptionMsut);
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionMsut);
                 	try {
-						command.execute();
+                		cmdUpdateSUT.execute();
 					} catch (Exception e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
 	                	command = null;
 	                	break;
@@ -441,15 +437,13 @@ class Writer extends Thread {
                 	sutDescriptionAbg.name = ivctCommander.rtp.getSutName();
                 	sutDescriptionAbg.description = ivctCommander.rtp.getSutDescription();
                 	sutDescriptionAbg.vendor = ivctCommander.rtp.getVendorName();
-                	int ind = 0;
-					for (String entry : badgesAbg) {
+                	for (String entry : badgesAbg) {
 						sutDescriptionAbg.badges.add(entry);
 					}
-                	command = Factory.createCmdUpdateSUT(sutDescriptionAbg);
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAbg);
                 	try {
-						command.execute();
+                		cmdUpdateSUT.execute();
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
                 	command = null;
@@ -484,15 +478,13 @@ class Writer extends Thread {
                 	sutDescriptionDbg.name = ivctCommander.rtp.getSutName();
                 	sutDescriptionDbg.description = ivctCommander.rtp.getSutDescription();
                 	sutDescriptionDbg.vendor = ivctCommander.rtp.getVendorName();
-                	int indDbg = 0;
-					for (String entry : badgesDbg) {
+                	for (String entry : badgesDbg) {
 						sutDescriptionDbg.badges.add(entry);
 					}
-                	command = Factory.createCmdUpdateSUT(sutDescriptionDbg);
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionDbg);
                 	try {
-						command.execute();
+                		cmdUpdateSUT.execute();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
                 	command = null;
