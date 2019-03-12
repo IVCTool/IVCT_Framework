@@ -332,7 +332,7 @@ public class SuTTcRequirementForm extends AbstractForm {
 						public class TcVerdictColumn extends AbstractStringColumn {
 							@Override
 							protected String getConfiguredHeaderText() {
-								return TEXTS.get("TCResult");
+								return TEXTS.get("TcResult");
 							}
 
 							@Override
