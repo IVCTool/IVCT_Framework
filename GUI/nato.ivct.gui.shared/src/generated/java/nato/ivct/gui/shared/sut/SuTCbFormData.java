@@ -70,6 +70,10 @@ public class SuTCbFormData extends AbstractFormData {
 		return getPropertyByClass(SutIdProperty.class);
 	}
 
+	public SutTcExtraParameterTable getSutTcExtraParameterTable() {
+		return getFieldByClass(SutTcExtraParameterTable.class);
+	}
+
 	public static class CbDescription extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
@@ -246,5 +250,59 @@ public class SuTCbFormData extends AbstractFormData {
 	public static class SutIdProperty extends AbstractPropertyData<String> {
 
 		private static final long serialVersionUID = 1L;
+	}
+
+	public static class SutTcExtraParameterTable extends AbstractTableFieldBeanData {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public SutTcExtraParameterTableRowData addRow() {
+			return (SutTcExtraParameterTableRowData) super.addRow();
+		}
+
+		@Override
+		public SutTcExtraParameterTableRowData addRow(int rowState) {
+			return (SutTcExtraParameterTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public SutTcExtraParameterTableRowData createRow() {
+			return new SutTcExtraParameterTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return SutTcExtraParameterTableRowData.class;
+		}
+
+		@Override
+		public SutTcExtraParameterTableRowData[] getRows() {
+			return (SutTcExtraParameterTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public SutTcExtraParameterTableRowData rowAt(int index) {
+			return (SutTcExtraParameterTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(SutTcExtraParameterTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class SutTcExtraParameterTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String fileName = "fileName";
+			private String m_fileName;
+
+			public String getFileName() {
+				return m_fileName;
+			}
+
+			public void setFileName(String newFileName) {
+				m_fileName = newFileName;
+			}
+		}
 	}
 }
