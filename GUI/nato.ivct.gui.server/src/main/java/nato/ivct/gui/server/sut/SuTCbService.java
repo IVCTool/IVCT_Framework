@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
-import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -115,9 +114,6 @@ public class SuTCbService implements ISuTCbService {
 
 	@Override
 	public boolean copyUploadedTcExtraParameterFile(final String sutId, final String cbId, final BinaryResource file) {
-		String fileName = file.getFilename();
-		Path path = Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, cbId)).resolve(file.getFilename());
-		byte[] fileContent = file.getContent();
 		try {
 			Files.copy(new ByteArrayInputStream(file.getContent()), Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, cbId)).resolve(file.getFilename()), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException exc) {
