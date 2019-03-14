@@ -20,6 +20,8 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.FileChooserStore;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -822,10 +824,15 @@ public class SuTCbForm extends AbstractForm {
 										protected String getConfiguredHeaderText() {
 											return TEXTS.get("FileName");
 										}
-
 										@Override
 										protected int getConfiguredWidth() {
 											return 300;
+										}
+										
+										@Override
+										protected int getConfiguredSortIndex() {
+											// sort table by this column
+											return 10;
 										}
 									}
 
@@ -845,10 +852,14 @@ public class SuTCbForm extends AbstractForm {
 										protected void execAction() {
 											FileChooser fileChooser = new FileChooser();
 											List<BinaryResource> files = fileChooser.startChooser();
+											ISuTCbService service = BEANS.get(ISuTCbService.class);
 											files.forEach(file -> {
-												ITableRow row = getTable().addRow(getTable().createRow());
-												getTable().getFileNameColumn().setValue(row, file.getFilename());
+												if (service.copyUploadedTcExtraParameterFile(getSutId(), getCbId(), file)) {
+													ITableRow row = getTable().addRow(getTable().createRow());
+													getTable().getFileNameColumn().setValue(row, file.getFilename());
+												}
 											});
+											getTable().sort();
 										}
 									}
 									
