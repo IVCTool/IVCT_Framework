@@ -177,7 +177,7 @@ public class SuTTcService implements ISuTTcService {
 		try {
 			return Files.find(folder, 1, (path, fileAttributes) -> {
 				String filenameToCheck = path.getFileName().toString();
-				return fileAttributes.isRegularFile() && filenameToCheck.startsWith(fileNamePattern)
+				return fileAttributes.isRegularFile() && filenameToCheck.contains(fileNamePattern)
 						&& filenameToCheck.endsWith(".log");
 			}).sorted(new FileCreationTimeComparator().reversed());
 		} catch (IllegalStateException exc) {
