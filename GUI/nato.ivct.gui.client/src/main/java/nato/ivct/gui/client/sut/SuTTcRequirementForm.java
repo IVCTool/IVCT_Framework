@@ -166,10 +166,6 @@ public class SuTTcRequirementForm extends AbstractForm {
 		return getFieldByClass(TcExecutionLogField.class);
 	}
 
-//	public OkButton getOkButton() {
-//		return getFieldByClass(OkButton.class);
-//	}
-
 	@Order(10000)
 	public class MainBox extends AbstractGroupBox {
 		
@@ -414,16 +410,6 @@ public class SuTTcRequirementForm extends AbstractForm {
 				}, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
 			}
 	    }
-
-
-
-//		@Order(100000)
-//		public class OkButton extends AbstractOkButton {
-//		}
-//
-//		@Order(101000)
-//		public class CancelButton extends AbstractCancelButton {
-//		}
 	}
 
 	public class ViewHandler extends AbstractFormHandler {
@@ -435,28 +421,6 @@ public class SuTTcRequirementForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-		}
-	}
-
-	public class ModifyHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-		}
-
-		@Override
-		protected void execStore() {
-		}
-	}
-
-	public class NewHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-		}
-
-		@Override
-		protected void execStore() {
 		}
 	}
 }
