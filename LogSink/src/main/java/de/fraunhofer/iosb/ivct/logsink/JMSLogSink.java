@@ -178,7 +178,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
 			Date date = new Date();
 			SimpleDateFormat sdf;
 			sdf = new SimpleDateFormat("ZZZ");
-			String tcLogName = tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log";
+			String tcLogName = tcName + "_" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log";
 			fileAppender.setFile(tcLogDir + '/' + tcLogName);
 			fileAppender.setEncoder(ple);
 			fileAppender.setContext(lc);
