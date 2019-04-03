@@ -37,8 +37,8 @@ public class BadgeTcParam {
 
 	/**
 	 * Setter method for id
-	 * @param id
-	 * @return
+	 * @param id Badge Id
+	 * @return the tcParam
 	 */
 	public BadgeTcParam setId(String id) {
 		this.id = id;
@@ -55,8 +55,8 @@ public class BadgeTcParam {
 
 	/**
 	 * Setter method for tcParam
-	 * @param tcParam
-	 * @return
+	 * @param tcParam TcParam Object
+	 * @return the tcParam
 	 */
 	public BadgeTcParam setTcParam(JSONObject tcParam) {
 		this.tcParam = tcParam;

@@ -70,6 +70,7 @@ public class CmdUpdateSUT {
 	 * @param csJsonFileName the full name of the CS.json file
 	 * @param tmpSutDescription the sut description to be tested
 	 * @throws Exception in case of major error
+	 * @return true if new value is different
 	 */
 	public boolean compareCSdata(String csJsonFileName, SutDescription tmpSutDescription) throws Exception {
 		StringBuilder sb = new StringBuilder();
