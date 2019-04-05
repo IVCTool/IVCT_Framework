@@ -105,10 +105,10 @@ public class ServerSession extends AbstractServerSession {
 			SutTcResultDescription sutTcResults = new SutTcResultDescription();
 			
 			// get SuT list
-			List<String> sutList = Factory.getSutPathsFiles().getSuts();
+			final List<String> sutList = Factory.getSutPathsFiles().getSuts();
 			// iterate over all SuTs to get its report files
 			sutList.forEach(sutId -> {
-				List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
+				final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
 				//parse each report file to get the verdict and the corresponding log file name
 				reportFiles.forEach(reportFile -> {
 					LOG.info("parse report file: {}\n", reportFile);
@@ -118,11 +118,11 @@ public class ServerSession extends AbstractServerSession {
 						.forEach(verdictLine -> {
 							LOG.info("\tparse verdict line: {}\n", verdictLine);
 							// extract the required elements from the verdict line
-							String[] result = parseVerdictLine(verdictLine);
+							final String[] result = parseVerdictLine(verdictLine);
 							if (result.length > 0) {
-								List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
+								final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
 								// get the matching log file from the list
-								Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
+								final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
 								if (matchingFileName.isPresent()) {
 									// add the match to the result map
 									sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);

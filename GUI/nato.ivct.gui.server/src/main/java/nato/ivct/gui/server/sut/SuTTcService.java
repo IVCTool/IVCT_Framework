@@ -163,9 +163,9 @@ public class SuTTcService implements ISuTTcService {
 		final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(fd.getSutId(), bdId));
 		final String tcName = tcFullName.substring(tcFullName.lastIndexOf('.') + 1);
 		
-		// load the logfile-verdict pairs
+		// load the (logfile,verdict) pairs
 		if (sutTcResults == null) {
-			IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
+			final IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
 			sutTcResults = future1.awaitDoneAndGet();
 		}
 			
@@ -174,7 +174,7 @@ public class SuTTcService implements ISuTTcService {
 			getLogFilesOrderedByCreationDate(tcName, folder).forEach(path -> {
 				final String logFileName = path.getFileName().toString();
 				LOG.info("Log file found: {}" ,logFileName);
-				TcExecutionHistoryTableRowData row = fd.getTcExecutionHistoryTable().addRow();
+				final TcExecutionHistoryTableRowData row = fd.getTcExecutionHistoryTable().addRow();
 				row.setFileName(logFileName);
 				final String verdict = sutTcResults.sutResultMap.get(fd.getSutId()).get(fd.getBadgeId()).get(logFileName);
 				row.setTcVerdict(verdict);
