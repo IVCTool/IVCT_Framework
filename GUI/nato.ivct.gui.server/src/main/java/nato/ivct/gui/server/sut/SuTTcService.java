@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
+import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
@@ -23,15 +24,19 @@ import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.server.ServerSession;
+import nato.ivct.gui.server.ServerSession.SutTcResultDescription;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.ReadCbPermission;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.BadgeIdProperty;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.TcExecutionHistoryTable;
+import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.TcExecutionHistoryTable.TcExecutionHistoryTableRowData;
 
 public class SuTTcService implements ISuTTcService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
+	private SutTcResultDescription sutTcResults = null;
 
 	@Override
 	public SuTTcRequirementFormData prepareCreate(SuTTcRequirementFormData formData) {
@@ -55,11 +60,13 @@ public class SuTTcService implements ISuTTcService {
 		// get requirement description and test case
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
 		if (bd != null) {
+			// get the requirements for this badge
 			Optional<InteroperabilityRequirement> first = Arrays.stream(bd.requirements)
 					.filter(requirement -> formData.getRequirementId().equals(requirement.ID)).findFirst();
 			first.ifPresent(requirement -> {
 				formData.getReqDescr().setValue(requirement.description);
 				formData.getTestCaseName().setValue(requirement.TC);
+				
 				// get log files for this test case
 				loadLogFiles(formData, bd.ID, requirement.TC);
 			});
@@ -155,12 +162,22 @@ public class SuTTcService implements ISuTTcService {
 	private SuTTcRequirementFormData loadLogFiles(SuTTcRequirementFormData fd, String bdId, String tcFullName) {
 		final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(fd.getSutId(), bdId));
 		final String tcName = tcFullName.substring(tcFullName.lastIndexOf('.') + 1);
+		
+		// load the logfile-verdict pairs
+		if (sutTcResults == null) {
+			IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
+			sutTcResults = future1.awaitDoneAndGet();
+		}
+			
 
 		try {
 			getLogFilesOrderedByCreationDate(tcName, folder).forEach(path -> {
-				String logFileName = path.getFileName().toString();
+				final String logFileName = path.getFileName().toString();
 				LOG.info("Log file found: {}" ,logFileName);
-				fd.getTcExecutionHistoryTable().addRow().setFileName(logFileName);
+				TcExecutionHistoryTableRowData row = fd.getTcExecutionHistoryTable().addRow();
+				row.setFileName(logFileName);
+				final String verdict = sutTcResults.sutResultMap.get(fd.getSutId()).get(fd.getBadgeId()).get(logFileName);
+				row.setTcVerdict(verdict);
 			});
 		} catch (NoSuchFileException exc) {
             LOG.info("log files not found: {}", folder+"\\"+tcName);
