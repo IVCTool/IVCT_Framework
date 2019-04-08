@@ -201,6 +201,10 @@ public class Factory {
 			producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
 		} // otherwise consider to be already initialized
 	}
+	
+	public static MessageProducer createTopicProducer (String topic) {
+        return jmsHelper.setupTopicProducer(topic);
+	}
 
 	public static String readWholeFile(final String filename) {
 		BufferedReader br = null;

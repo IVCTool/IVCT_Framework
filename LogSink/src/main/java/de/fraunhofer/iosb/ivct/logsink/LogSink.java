@@ -2,15 +2,15 @@ package de.fraunhofer.iosb.ivct.logsink;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdQuitListener;
+import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
@@ -55,7 +55,9 @@ public class LogSink {
         final String password = Factory.props.getProperty(Factory.LOGSINK_PASSWORD_ID);
         LogSink.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password, reportEngine);
 		(new CmdStartTestResultListener(jmsLogSink)).execute();
-		(new CmdQuitListener(jmsLogSink)).execute();
+        (new CmdQuitListener(jmsLogSink)).execute();
+        (new CmdStartTcListener(jmsLogSink)).execute();
+        (new CmdLogMsgListener(jmsLogSink)).execute();
     }
 
 	public String getTestCaseResults() {
