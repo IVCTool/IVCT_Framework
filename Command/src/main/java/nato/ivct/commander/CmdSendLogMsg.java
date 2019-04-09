@@ -6,6 +6,8 @@ import javax.jms.MessageProducer;
 import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+
 public class CmdSendLogMsg implements Command {
 
     public static final String LOG_MSG_TOPIC    = "LogEvent";
@@ -17,15 +19,9 @@ public class CmdSendLogMsg implements Command {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdSendLogMsg.class);
     private MessageProducer logProducer;
-    private String tc;
-    private String sut;
-    private String badge;
-    private String logMessage;
+    private ILoggingEvent logMessage;
 
-    public CmdSendLogMsg(String forTc, String forSut, String forBadge) {
-        tc = forTc;
-        sut = forSut;
-        badge = forBadge;
+    public CmdSendLogMsg() {
         logProducer = Factory.createTopicProducer(LOG_MSG_TOPIC);
     }
 
@@ -33,17 +29,21 @@ public class CmdSendLogMsg implements Command {
     @Override
     public void execute() throws Exception {
         JSONObject startCmd = new JSONObject();
-        startCmd.put(LOG_MSG_LEVEL, "INFO");
+        String tc = logMessage.getMDCPropertyMap().get("testcase");
+        String sut = logMessage.getMDCPropertyMap().get("sutName");
+        String badge = logMessage.getMDCPropertyMap().get("badge");
+        String level = logMessage.getLevel().toString();
+        startCmd.put(LOG_MSG_LEVEL, level);
         startCmd.put(LOG_MSG_TESTCASE, tc);
         startCmd.put(LOG_MSG_SUT, sut);
         startCmd.put(LOG_MSG_BADGE, badge);
-        startCmd.put(LOG_MSG_EVENT, logMessage);
+        startCmd.put(LOG_MSG_EVENT, logMessage.toString());
 
         Message message = Factory.jmsHelper.createTextMessage(startCmd.toString());
         logProducer.send(message);
     }
 
-    public void send(String newMsg) {
+    public void send(ILoggingEvent newMsg) {
         logMessage = newMsg;
         try {
             execute();

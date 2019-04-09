@@ -44,6 +44,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
+import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
@@ -223,9 +224,27 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
     }
 
     @Override
-    public void onLogMsg(String level, String msg) {
+    public void onLogMsg(LogMsg msg) {
         // TODO Auto-generated method stub
-        System.out.println(level + msg);
+        System.out.println(msg);
+        
+        if (msg.tc != null) {
+            SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
+            String tcLogDir = sutPathsFiles.getSutLogPathName(msg.sut, msg.badge);
+            Logger log = getTestCaseLogger(msg.tc, msg.sut, tcLogDir);
+            msg.txt = "  :-)  " + msg.txt;
+            switch (msg.level) {
+            case "INFO":
+                log.info(msg.txt);
+                break;
+            case "WARN":
+                log.warn(msg.txt);
+                break;
+            case "ERROR":
+                log.error(msg.txt);
+                break;
+            }
+        }
         
     }
 

@@ -11,12 +11,12 @@ public class ReportAppender extends AppenderBase<ILoggingEvent> {
     private CmdSendLogMsg logReporter;
 
     public ReportAppender() {
-      logReporter = new CmdSendLogMsg("TC", "SUT", "BADGE");   // <--- get the real values here!!!!
+      logReporter = new CmdSendLogMsg();
 }
     
     @Override
     protected void append(ILoggingEvent eventObject) {
-        logReporter.send(eventObject.toString());
+        logReporter.send(eventObject);
     }
 
     public String getPrefix() {

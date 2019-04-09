@@ -159,7 +159,9 @@ public class JMSTestRunner extends TestRunner
 			logger.info("JMSTestRunner:onMessageConsumer:run: " + info.testCaseId);
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
-			MDC.put("badge", info.badge);
+            MDC.put("badge", info.badge);
+//            MDC.put("testcase", info.testCaseId);
+			
 
 			BadgeDescription b = badges.badgeMap.get(info.badge);
 			if (b == null) {
