@@ -232,7 +232,6 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
             SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
             String tcLogDir = sutPathsFiles.getSutLogPathName(msg.sut, msg.badge);
             Logger log = getTestCaseLogger(msg.tc, msg.sut, tcLogDir);
-            msg.txt = "  :-)  " + msg.txt;
             switch (msg.level) {
             case "INFO":
                 log.info(msg.txt);
