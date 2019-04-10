@@ -49,11 +49,7 @@ public class LogSink {
      * initialize the LogSink.
      */
     protected void init() {
-		final String tcfBindingName = Factory.props.getProperty(Factory.LOGSINK_TCF_BINDINGNAME_ID);
-        final String topicBindingName = Factory.props.getProperty(Factory.LOGSINK_TOPIC_BINDINGNAME_ID);
-        final String username = Factory.props.getProperty(Factory.LOGSINK_USER_ID);
-        final String password = Factory.props.getProperty(Factory.LOGSINK_PASSWORD_ID);
-        LogSink.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password, reportEngine);
+        LogSink.jmsLogSink = new JMSLogSink(reportEngine);
 		(new CmdStartTestResultListener(jmsLogSink)).execute();
         (new CmdQuitListener(jmsLogSink)).execute();
         (new CmdStartTcListener(jmsLogSink)).execute();

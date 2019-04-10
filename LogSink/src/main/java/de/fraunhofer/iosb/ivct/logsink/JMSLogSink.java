@@ -54,180 +54,141 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutPathsFiles;
 
-public class JMSLogSink implements MessageListener, TcChangedListener, OnResultListener, OnQuitListener, OnStartTestCaseListener, OnLogMsgListener {
+public class JMSLogSink implements MessageListener, OnResultListener, OnQuitListener,
+        OnStartTestCaseListener, OnLogMsgListener {
 
-	private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
-	// private Logger log;
-	private Map<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
-	private Map<String, String> tcLogMap = new HashMap<String, String>();
-	private ReportEngine reportEngine;
-	public TcChangedListener tcListener = null;
+    private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
+    // private Logger log;
+    private Map<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
+    private Map<String, String> tcLogMap = new HashMap<String, String>();
+    private ReportEngine reportEngine;
 
-	public JMSLogSink(String tcfBindingName, String topicBindingName, String username, String password, ReportEngine reportEngine) {
-
-		this.reportEngine = reportEngine;
-		try {
-			Properties env = new Properties();
-			env.put(Context.INITIAL_CONTEXT_FACTORY, Factory.props.getProperty(Factory.JAVA_NAMING_FACTORY_ID));
-            String host = Factory.props.getProperty(Factory.MESSAGING_HOST_ID);
-            if (host == null) {
-                host = "localhost";
-                logger.warn("Environment variable {} not found: using default {}", Factory.MESSAGING_HOST_ID, host);
-            }
-            String portString;
-            portString = Factory.props.getProperty(Factory.MESSAGING_PORT_ID);
-            if (portString == null) {
-                portString = "61616";
-                logger.warn("Environment variable {} not found: using default {}", Factory.MESSAGING_PORT_ID, portString);
-            }
-            int port = Integer.parseInt(portString);
-            String hostPort = new String("tcp://" + host + ":" + port);
-			env.put(Context.PROVIDER_URL, hostPort);
-			Context ctx = new InitialContext(env);
-			TopicConnectionFactory topicConnectionFactory;
-			topicConnectionFactory = (TopicConnectionFactory) lookup(ctx, tcfBindingName);
-			logger.info("Topic Cnx Factory found");
-			Topic topic = (Topic) ctx.lookup(topicBindingName);
-			logger.info("Topic found: " + topic.getTopicName());
-
-			TopicConnection topicConnection = topicConnectionFactory.createTopicConnection(username, password);
-			logger.info("Topic Connection created");
-
-			TopicSession topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-			TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
-			topicSubscriber.setMessageListener(this);
-			topicConnection.start();
-			logger.info("Topic Connection started");
-
-		} catch (Exception e) {
-			logger.error("Could not read JMS message.", e);
-		}
-	}
-
-	protected Object lookup(Context ctx, String name) throws NamingException {
-		try {
-			return ctx.lookup(name);
-		} catch (NameNotFoundException e) {
-			logger.error("Could not find name [" + name + "].");
-			throw e;
-		}
-	}
-
-	/**
-	 * receives messages from the JMS bus and forward them to test case logger  
-	 * if the logging events are marked with an testcase name
-	 */
-	@Override
-	public void onMessage(Message message) {
-		ILoggingEvent event;
-		try {
-			if (message.getJMSRedelivered()) {
-				logger.warn("ReportEngine:onMessage: MESSAGE REDELIVERED");
-			} else if (message instanceof ObjectMessage) {
-				ObjectMessage objectMessage = (ObjectMessage) message;
-				event = (ILoggingEvent) objectMessage.getObject();
-
-				String tc = event.getMDCPropertyMap().get("testcase");
-				if (tc != null) {
-					String sutName = event.getMDCPropertyMap().get("sutName");
-					SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
-					String badge = event.getMDCPropertyMap().get("badge");
-					String tcLogDir = sutPathsFiles.getSutLogPathName(sutName, badge);
-					Logger log = getTestCaseLogger(tc, sutName, tcLogDir);
-					log.callAppenders(event);
-				}
-				String tcStatus = event.getMDCPropertyMap().get("tcStatus");
-				if (tcStatus != null) {
-					if (tcStatus.contentEquals("ended")) {
-						FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
-						if (fileAppender != null) {
-							fileAppender.stop();
-						}
-						appenderMap.remove(tc);
-					}
-				}
-			} else {
-				logger.warn("Received message is of type " + message.getJMSType() + ", was expecting ObjectMessage.");
-			}
-		} catch (JMSException jmse) {
-			logger.error("Exception thrown while processing incoming message.", jmse);
-		}
-	}
-
-	/**
-	 * Finds or creates a logger for the test case called tcName with an appender writing 
-	 * to file named <tcName>.log
-	 * 
-	 * @param tcName
-	 * @return
-	 */
-	private Logger getTestCaseLogger(String tcName, String sutName, String tcLogDir) {
-		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tcName);
-		if (fileAppender == null) {
-			LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-			PatternLayoutEncoder ple = new PatternLayoutEncoder();
-
-			ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
-			ple.setContext(lc);
-			ple.start();
-			LocalDateTime ldt = LocalDateTime.now();
-			String formattedMM = String.format("%02d", ldt.getMonthValue());
-			String formatteddd = String.format("%02d", ldt.getDayOfMonth());
-			String formattedhh = String.format("%02d", ldt.getHour());
-			String formattedmm = String.format("%02d", ldt.getMinute());
-			String formattedss = String.format("%02d", ldt.getSecond());
-			fileAppender = new FileAppender<ILoggingEvent>();
-			Date date = new Date();
-			SimpleDateFormat sdf;
-			sdf = new SimpleDateFormat("ZZZ");
-			String tcLogName = tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh + formattedmm + formattedss + sdf.format(date) + ".log";
-			fileAppender.setFile(tcLogDir + '/' + tcLogName);
-			fileAppender.setEncoder(ple);
-			fileAppender.setContext(lc);
-			fileAppender.start();
-			appenderMap.put(tcName, fileAppender);
-			tcLogMap.put(tcName, tcLogName);
-		}
-
-		Logger logger = (Logger) LoggerFactory.getLogger(tcName);
-		logger.addAppender(fileAppender);
-		return logger;
-	}
-
-	@Override
-	public void onQuit() {
-		reportEngine.onQuit();
-		System.exit(0);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void onResult(TcResult result) {
-		String tcLogName = tcLogMap.get(result.testcase);
-		if (tcLogName == null) {
-			tcLogName = "test case log file not found";
-			return;
-		}
-		tcLogMap.remove(result.testcase);
-		reportEngine.onResult(result, tcLogName);
+    public JMSLogSink(ReportEngine reportEngine) {
+        this.reportEngine = reportEngine;
     }
 
-	@Override
-	public void tcChanged(String newTcName) {
-		logger.info("Test Case changed to :" + newTcName);
-	}
+    protected Object lookup(Context ctx, String name) throws NamingException {
+        try {
+            return ctx.lookup(name);
+        } catch (NameNotFoundException e) {
+            logger.error("Could not find name [" + name + "].");
+            throw e;
+        }
+    }
+
+    /**
+     * receives messages from the JMS bus and forward them to test case logger if
+     * the logging events are marked with an testcase name
+     */
+    @Override
+    public void onMessage(Message message) {
+        ILoggingEvent event;
+        try {
+            if (message.getJMSRedelivered()) {
+                logger.warn("ReportEngine:onMessage: MESSAGE REDELIVERED");
+            } else if (message instanceof ObjectMessage) {
+                ObjectMessage objectMessage = (ObjectMessage) message;
+                event = (ILoggingEvent) objectMessage.getObject();
+
+                String tc = event.getMDCPropertyMap().get("testcase");
+                if (tc != null) {
+                    String sutName = event.getMDCPropertyMap().get("sutName");
+                    SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
+                    String badge = event.getMDCPropertyMap().get("badge");
+                    String tcLogDir = sutPathsFiles.getSutLogPathName(sutName, badge);
+                    Logger log = getTestCaseLogger(tc, sutName, tcLogDir);
+                    log.callAppenders(event);
+                }
+                String tcStatus = event.getMDCPropertyMap().get("tcStatus");
+                if (tcStatus != null) {
+                    if (tcStatus.contentEquals("ended")) {
+                        FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
+                        if (fileAppender != null) {
+                            fileAppender.stop();
+                        }
+                        appenderMap.remove(tc);
+                    }
+                }
+            } else {
+                logger.warn("Received message is of type " + message.getJMSType() + ", was expecting ObjectMessage.");
+            }
+        } catch (JMSException jmse) {
+            logger.error("Exception thrown while processing incoming message.", jmse);
+        }
+    }
+
+    /**
+     * Finds or creates a logger for the test case called tcName with an appender
+     * writing to file named <tcName>.log
+     * 
+     * @param tcName
+     * @return
+     */
+    private Logger getTestCaseLogger(String tcName, String sutName, String tcLogDir) {
+        FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tcName);
+        if (fileAppender == null) {
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            PatternLayoutEncoder ple = new PatternLayoutEncoder();
+
+            ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
+            ple.setContext(lc);
+            ple.start();
+            LocalDateTime ldt = LocalDateTime.now();
+            String formattedMM = String.format("%02d", ldt.getMonthValue());
+            String formatteddd = String.format("%02d", ldt.getDayOfMonth());
+            String formattedhh = String.format("%02d", ldt.getHour());
+            String formattedmm = String.format("%02d", ldt.getMinute());
+            String formattedss = String.format("%02d", ldt.getSecond());
+            fileAppender = new FileAppender<ILoggingEvent>();
+            Date date = new Date();
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat("ZZZ");
+            String tcLogName = tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh
+                    + formattedmm + formattedss + sdf.format(date) + ".log";
+            fileAppender.setFile(tcLogDir + '/' + tcLogName);
+            fileAppender.setEncoder(ple);
+            fileAppender.setContext(lc);
+            fileAppender.start();
+            appenderMap.put(tcName, fileAppender);
+            tcLogMap.put(tcName, tcLogName);
+        }
+
+        Logger logger = (Logger) LoggerFactory.getLogger(tcName);
+        logger.addAppender(fileAppender);
+        return logger;
+    }
+
+    @Override
+    public void onQuit() {
+        reportEngine.onQuit();
+        System.exit(0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onResult(TcResult result) {
+        String tcLogName = tcLogMap.get(result.testcase);
+        if (tcLogName == null) {
+            tcLogName = "test case log file not found";
+        } else {
+            tcLogMap.remove(result.testcase);
+        }
+
+        FileAppender<ILoggingEvent> fileAppender = appenderMap.get(result.testcase);
+        if (fileAppender != null) {
+            fileAppender.stop();
+            appenderMap.remove(result.testcase);
+        }
+
+        reportEngine.onResult(result, tcLogName);
+    }
 
     public void onStartTestCase(TcInfo info) {
-        if (tcListener != null) {
-            tcListener.tcChanged(info.testCaseId);
-        }
+        logger.info("Test Case changed to :" + info.testCaseId);
     }
 
     @Override
     public void onLogMsg(LogMsg msg) {
-        // TODO Auto-generated method stub
-        System.out.println(msg);
-        
         if (msg.tc != null) {
             SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
             String tcLogDir = sutPathsFiles.getSutLogPathName(msg.sut, msg.badge);
@@ -244,7 +205,7 @@ public class JMSLogSink implements MessageListener, TcChangedListener, OnResultL
                 break;
             }
         }
-        
+
     }
 
 }

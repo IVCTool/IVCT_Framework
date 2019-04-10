@@ -1,11 +1,6 @@
 <!--configuration -->
 <configuration scan="true" scanPeriod="120 seconds" debug="false">
 
-	<!-- make use of the jul-to-slf4j bridge -->
-	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-		<resetJUL>false</resetJUL>
-	</contextListener>
-
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
