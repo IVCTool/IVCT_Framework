@@ -97,7 +97,7 @@ public abstract class AbstractTestCase {
 
         // A one-time start message
 		MDC.put("tcStatus", "started");
-		logger.warn("Test Case Started");
+		logger.info("Test Case Started");
 
 		MDC.put("tcStatus", "running");
 

@@ -140,6 +140,7 @@ public final class PropertyBasedClientSetup {
             portString = this.properties.getProperty(PROPERTY_PORT);
             this.port = Integer.parseInt(portString);
             this.factory = new ActiveMQConnectionFactory("tcp://" + this.host + ":" + this.port);
+            this.factory.setTrustAllPackages(true);
             this.state = State.PROPERTIES_PARSED;
         }
         catch (final IllegalArgumentException iae) {

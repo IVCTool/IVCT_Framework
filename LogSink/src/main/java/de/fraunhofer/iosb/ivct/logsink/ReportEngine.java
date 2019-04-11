@@ -111,7 +111,7 @@ public class ReportEngine {
 		LOGGER.info("ReportEngine:checkMessage: announceVerdict");
 		if (result.sutName.equals(knownSut) == false) {
 			try {
-				doSutChanged(result);
+				doSutChanged(result.sutName);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -151,7 +151,7 @@ public class ReportEngine {
 		}
 	}
     
-    private void doSutChanged (TcResult result) throws IOException {
+    private void doSutChanged (String sut) throws IOException {
 		LocalDateTime ldt = LocalDateTime.now();
 		String formattedMM = String.format("%02d", ldt.getMonthValue());
 		String formatteddd = String.format("%02d", ldt.getDayOfMonth());
@@ -161,7 +161,6 @@ public class ReportEngine {
 		Date date = new Date();
 		SimpleDateFormat sdf;
 		sdf = new SimpleDateFormat("ZZZ");
-		String sut =  result.sutName;
 		SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
 		String reportPath =  sutPathsFiles.getReportPath(sut);
 		File f = null;
