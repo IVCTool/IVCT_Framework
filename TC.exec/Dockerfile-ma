@@ -1,4 +1,4 @@
-FROM app-docker136.hex.tno.nl/vtmak/lrc:4.5-alpine
+FROM app-docker136.hex.tno.nl/vtmak/lrc:4.5f-alpine
 
 ARG version
 

@@ -3,7 +3,7 @@
 	"version"		:	"1.0.1",
 	"name" 			: 	"HelloWorld Tutorial Badge",
 	"description"	:	"This is a simple example for capability badge to test the compliance of an federate to the hello world federation.",
-	"graphics"		:	"/some/icon.png",
+	"graphics"		:	"HelloWorld-2017.png",
 	"tsRunTimeFolder":	"TS_HelloWorld-1.0.1/bin",
 	"tsLibTimeFolder":	"TS_HelloWorld-1.0.1/lib",
 	"dependency"	:	[],
@@ -18,5 +18,5 @@
 			"description"	:	"Test inter-country communication",
 			"TC"			:	"de.fraunhofer.iosb.tc_helloworld.TC0002"
 		}
-	] 
+	]
 }

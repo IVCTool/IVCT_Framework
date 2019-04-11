@@ -122,6 +122,8 @@ public class SutPathsFiles {
 	 * Get the path where the TcParam file(s) are located
 	 * @param sutId the desired SUT ID
 	 * @return path where TcParam file(s) are located
+	 * @param badgeName name of the badge
+	 * @return the TcParamPath
 	 */
 	public String getTcParamPath(final String sutId, final String badgeName) {
 		String sutsHomePath = getSutsHomePath();
@@ -152,6 +154,7 @@ public class SutPathsFiles {
 	 *
 	 * @param sutId the desired SUT ID
 	 * @param badgeId the name of the badge under consideration
+	 * @param withPath true if path shall be included
 	 * @return set of TcParam file names
 	 */
 	public List<String> getTcParamFileNames(final String sutId, final String badgeId, final boolean withPath) {
