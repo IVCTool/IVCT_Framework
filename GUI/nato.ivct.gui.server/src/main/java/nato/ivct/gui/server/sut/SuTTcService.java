@@ -30,7 +30,6 @@ import nato.ivct.gui.shared.cb.ReadCbPermission;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
-import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.BadgeIdProperty;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData.TcExecutionHistoryTable.TcExecutionHistoryTableRowData;
 
