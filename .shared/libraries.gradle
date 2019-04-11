@@ -16,7 +16,7 @@ ext {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
         logbackVersion = '1.1.3'
         slf4jVersion = '1.7.10'
-		activemqVersion = '5.12.0'
+		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
 		scoutVersion = '8.0.0.010_Photon'
 		jsonSimpleVersion = '1.1.1'
@@ -63,7 +63,7 @@ ext {
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
 
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
-				
+
 				jsonIo:						"com.cedarsoftware:json-io:${jsonIoVersion}",
 
 

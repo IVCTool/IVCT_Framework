@@ -159,7 +159,9 @@ public class JMSTestRunner extends TestRunner
 			logger.info("JMSTestRunner:onMessageConsumer:run: " + info.testCaseId);
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
-			MDC.put("badge", info.badge);
+            MDC.put("badge", info.badge);
+            MDC.put("testcase", info.testCaseId);
+			
 
 			BadgeDescription b = badges.badgeMap.get(info.badge);
 			if (b == null) {
@@ -188,7 +190,7 @@ public class JMSTestRunner extends TestRunner
 			// The JMSLogSink waits on this message!
 			// The following pair of lines will cause the JMSLogSink to close the log file!
 			MDC.put("tcStatus", "ended");
-			logger.warn("Test Case Ended");
+			logger.info("Test Case Ended");
 
 			for (int i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
