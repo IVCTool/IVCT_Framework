@@ -54,7 +54,7 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutPathsFiles;
 
-public class JMSLogSink implements MessageListener, OnResultListener, OnQuitListener,
+public class JMSLogSink implements OnResultListener, OnQuitListener,
         OnStartTestCaseListener, OnLogMsgListener {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
@@ -73,47 +73,6 @@ public class JMSLogSink implements MessageListener, OnResultListener, OnQuitList
         } catch (NameNotFoundException e) {
             logger.error("Could not find name [" + name + "].");
             throw e;
-        }
-    }
-
-    /**
-     * receives messages from the JMS bus and forward them to test case logger if
-     * the logging events are marked with an testcase name
-     */
-    @Override
-    public void onMessage(Message message) {
-        ILoggingEvent event;
-        try {
-            if (message.getJMSRedelivered()) {
-                logger.warn("ReportEngine:onMessage: MESSAGE REDELIVERED");
-            } else if (message instanceof ObjectMessage) {
-                ObjectMessage objectMessage = (ObjectMessage) message;
-                event = (ILoggingEvent) objectMessage.getObject();
-
-                String tc = event.getMDCPropertyMap().get("testcase");
-                if (tc != null) {
-                    String sutName = event.getMDCPropertyMap().get("sutName");
-                    SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
-                    String badge = event.getMDCPropertyMap().get("badge");
-                    String tcLogDir = sutPathsFiles.getSutLogPathName(sutName, badge);
-                    Logger log = getTestCaseLogger(tc, sutName, tcLogDir);
-                    log.callAppenders(event);
-                }
-                String tcStatus = event.getMDCPropertyMap().get("tcStatus");
-                if (tcStatus != null) {
-                    if (tcStatus.contentEquals("ended")) {
-                        FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tc);
-                        if (fileAppender != null) {
-                            fileAppender.stop();
-                        }
-                        appenderMap.remove(tc);
-                    }
-                }
-            } else {
-                logger.warn("Received message is of type " + message.getJMSType() + ", was expecting ObjectMessage.");
-            }
-        } catch (JMSException jmse) {
-            logger.error("Exception thrown while processing incoming message.", jmse);
         }
     }
 

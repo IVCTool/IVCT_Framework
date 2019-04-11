@@ -160,7 +160,7 @@ public class JMSTestRunner extends TestRunner
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
             MDC.put("badge", info.badge);
-//            MDC.put("testcase", info.testCaseId);
+            MDC.put("testcase", info.testCaseId);
 			
 
 			BadgeDescription b = badges.badgeMap.get(info.badge);
