@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,8 +19,6 @@ import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry
 import org.eclipse.scout.rt.server.session.ServerSessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.api.client.repackaged.com.google.common.base.Splitter;
 
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
