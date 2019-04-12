@@ -61,34 +61,12 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 							if (notification.getTc().endsWith(((SuTTcExecutionForm) form).getTestCaseId())) {
 								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
 								tbl.discardAllRows();
-	// >>> begin test							
-	//							for (int i=0; i<4; i++) {
-	//								ITableRow row = tbl.addRow();
-	//								((Table) tbl).getTcStatusColumn().setValue(row, "TC STATUS");
-	//								// ((Table) tbl).getProgressColumn().setBackgroundEffect(BackgroundEffect.BAR_CHART);
-	//								((Table) tbl).getProgressColumn().setValue(row, 10*i);
-	//							}
-	// <<< end test
 								ITableRow row = tbl.addRow();
 								// set verdict
 								((Table) tbl).getTcStatusColumn().setValue(row, notification.getStatus());
 								
 								// set execution progress
 								((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
-	//							((Table) tbl).getProgressColumn().setInitialBackgroundEffect(BackgroundEffect.BAR_CHART); // required for progress bar implementation
-	//							
-	//							// for implementing a progress bar, add dummy row do have the bar effect and a filter for no-show of this dummy row
-	//							tbl.getRowFilters()
-	//								.forEach(rf -> {
-	//									tbl.removeRowFilter(rf);
-	//									});
-	//
-	//							UserTableRowFilter rowFilter = new UserTableRowFilter(tbl.getRows());
-	//							tbl.addRowFilter(rowFilter);
-	//							tbl.applyRowFilters();
-	//
-	//							ITableRow dummyRow = tbl.addRow();
-	//							((Table) tbl).getProgressColumn().setValue(dummyRow, 100); 
 								
 								// update the TC log
 								SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
