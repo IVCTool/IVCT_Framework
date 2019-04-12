@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -175,7 +176,7 @@ public class SuTTcService implements ISuTTcService {
 				LOG.info("Log file found: {}" ,logFileName);
 				final TcExecutionHistoryTableRowData row = fd.getTcExecutionHistoryTable().addRow();
 				row.setFileName(logFileName);
-				final String verdict = sutTcResults.sutResultMap.get(fd.getSutId()).get(fd.getBadgeId()).get(logFileName);
+				final String verdict = sutTcResults.sutResultMap.get(fd.getSutId()).getOrDefault(fd.getBadgeId(), new HashMap<>()).getOrDefault(logFileName, "");
 				row.setTcVerdict(verdict);
 			});
 		} catch (NoSuchFileException exc) {
