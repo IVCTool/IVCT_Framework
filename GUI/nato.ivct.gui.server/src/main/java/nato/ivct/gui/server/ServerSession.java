@@ -23,7 +23,7 @@ import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
-import nato.ivct.gui.shared.sut.TestCaseNotification;
+import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
 /**
  * <h3>{@link ServerSession}</h3>
@@ -72,7 +72,7 @@ public class ServerSession extends AbstractServerSession {
 
 		@Override
 		public void onResult(TcResult result) {
-			TestCaseNotification notification = new TestCaseNotification();
+			TcVerdictNotification notification = new TcVerdictNotification();
 			notification.setSut(result.sutName);
 			notification.setTc(result.testcase);
 			notification.setVerdict(result.verdict);

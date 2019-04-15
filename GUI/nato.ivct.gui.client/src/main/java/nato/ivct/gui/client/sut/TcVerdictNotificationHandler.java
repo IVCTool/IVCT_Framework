@@ -15,14 +15,14 @@ import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
-import nato.ivct.gui.shared.sut.TestCaseNotification;
+import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
-public class TestCaseNotificationHandler implements INotificationHandler<TestCaseNotification> {
+public class TcVerdictNotificationHandler implements INotificationHandler<TcVerdictNotification> {
 
 	org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public void handleNotification(TestCaseNotification notification) {
+	public void handleNotification(TcVerdictNotification notification) {
 		// inform client about test case verdict
 		ModelJobs.schedule(new IRunnable() {
 			@Override

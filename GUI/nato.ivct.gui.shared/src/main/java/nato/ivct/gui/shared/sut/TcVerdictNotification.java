@@ -2,7 +2,7 @@ package nato.ivct.gui.shared.sut;
 
 import java.io.Serializable;
 
-public class TestCaseNotification implements Serializable {
+public class TcVerdictNotification implements Serializable {
 
 	/**
 	 * 
