@@ -3,6 +3,7 @@ package nato.ivct.gui.server.sut;
 import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
 import org.eclipse.scout.rt.testing.server.runner.RunWithServerSession;
 import org.eclipse.scout.rt.testing.server.runner.ServerTestRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import nato.ivct.gui.server.ServerSession;
@@ -13,4 +14,8 @@ import nato.ivct.gui.server.ServerSession;
 public class SuTBdParamEditServiceTest {
 
 	// TODO [the] add test cases
+    @Test
+    public void testDummy() {
+
+    }
 }
