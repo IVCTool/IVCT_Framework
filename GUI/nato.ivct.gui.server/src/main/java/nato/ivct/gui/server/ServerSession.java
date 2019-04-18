@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
+import nato.ivct.commander.CmdLogMsgListener;
+import nato.ivct.commander.CmdLogMsgListener.LogMsg;
+import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
@@ -22,6 +25,7 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
+import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
@@ -38,6 +42,7 @@ public class ServerSession extends AbstractServerSession {
 	private IFuture<CmdStartTestResultListener> testResultListener = null;
 	private ResultListener sessionResultListener;
 	private StatusListener statusListener;
+	private LogMsgListener logMsgListener;
 
 	/*
 	 * Load SuT descriptions job
@@ -96,6 +101,21 @@ public class ServerSession extends AbstractServerSession {
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}
 
+	}
+	
+	public class LogMsgListener implements OnLogMsgListener {
+
+		@Override
+		public void onLogMsg(LogMsg logMsg) {
+			TcLogMsgNotification notification = new TcLogMsgNotification();
+			notification.setSutId(logMsg.sut);
+			notification.setTcId(logMsg.tc);
+			notification.setBadgeId(logMsg.badge);
+			notification.setLogMsg(logMsg.txt);
+			
+			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+		}
+		
 	}
 
 	/*
@@ -209,7 +229,11 @@ public class ServerSession extends AbstractServerSession {
 
 		LOG.info("start test case Status Listener");
 		statusListener = new StatusListener();
-		(Factory.createCmdTcStatusListener(statusListener)).execute();;
+		(Factory.createCmdTcStatusListener(statusListener)).execute();
+		
+		LOG.info("start Log Message Listener");
+		logMsgListener = new LogMsgListener();
+		(Factory.createCmdLogMsgListener(logMsgListener)).execute();
 
 	}
 

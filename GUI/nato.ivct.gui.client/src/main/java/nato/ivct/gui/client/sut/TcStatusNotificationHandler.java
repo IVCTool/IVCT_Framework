@@ -68,12 +68,6 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 								// set execution progress
 								((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
 								
-								// update the TC log
-								SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
-								((SuTTcExecutionForm) form).exportFormData(formData);
-								formData = BEANS.get(ISuTTcService.class).loadLogFileContent(formData, ((SuTTcExecutionForm) form).getTestCaseId());
-								((SuTTcExecutionForm) form).importFormData(formData);
-								
 								//record status and progress in the form
 								((SuTTcExecutionForm) form).setTestCaseStatus(notification.getStatus());
 								((SuTTcExecutionForm) form).setTestCaseProgress(Integer.toString(notification.getPercent()));
