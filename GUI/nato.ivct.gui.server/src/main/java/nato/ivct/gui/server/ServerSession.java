@@ -112,6 +112,8 @@ public class ServerSession extends AbstractServerSession {
 			notification.setTcId(logMsg.tc);
 			notification.setBadgeId(logMsg.badge);
 			notification.setLogMsg(logMsg.txt);
+			notification.setLogLevel(logMsg.level);
+			notification.setTimeStamp(logMsg.time);
 			
 			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
 		}

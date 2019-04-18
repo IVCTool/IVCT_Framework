@@ -335,7 +335,11 @@ public class SuTTcExecutionForm extends AbstractForm {
 					protected String getConfiguredLabel() {
 						return TEXTS.get("TcExecutionLog");
 					}
-					
+//					@Override
+//					protected void execChangedDisplayText() {
+//						// TODO Auto-generated method stub
+//						this.set
+//					}
 					@Override
 					protected int getConfiguredGridH() {
 						return 5;
