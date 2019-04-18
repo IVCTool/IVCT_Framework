@@ -1,18 +1,6 @@
 <!--configuration -->
 <configuration scan="true" scanPeriod="120 seconds" debug="false">
 
-	<!-- make use of the jul-to-slf4j bridge -->
-	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-		<resetJUL>false</resetJUL>
-	</contextListener>
-<!--  -->
-	<appender name="JMS" class="ch.qos.logback.classic.net.JMSTopicAppender">
-		<InitialContextFactoryName>org.apache.activemq.jndi.ActiveMQInitialContextFactory</InitialContextFactoryName>
-    	<ProviderURL>tcp://localhost:61616</ProviderURL>
-    	<TopicConnectionFactoryBindingName>ConnectionFactory</TopicConnectionFactoryBindingName>
-    	<TopicBindingName>dynamicTopics/LogTopic.jms</TopicBindingName>
-	</appender>
-
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -42,6 +30,9 @@
 			<pattern>%date %X{testcase}: %msg%n</pattern>
 		</encoder>
 	</appender>
+	<appender name="reporter" class="de.fraunhofer.iosb.testrunner.ReportAppender">
+        <prefix>test</prefix>
+	</appender>
 
 
 	<!-- TRACE < DEBUG < INFO < WARN < ERROR - ALL,OFF,NULL(=INHERITED) -->
@@ -49,8 +40,7 @@
 	<root level="INFO">
 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
-	<!-- -->
-		<appender-ref ref="JMS" />
+		<appender-ref ref="reporter" />
 	</root>
 	<!--  configure special settings for own packages -->
 	<logger name="de.fraunhofer.iosb" level="INFO" />
