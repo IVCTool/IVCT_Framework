@@ -105,7 +105,7 @@ public class CbService implements ICbService {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
 		BadgeDescription cb = cb_hm.get(formData.getCbId());
-		formData.getCbName().setValue(cb.ID);
+		formData.getCbName().setValue(cb.name);
 		
 		formData.getCbDescription().setValue(cb.description);
 
