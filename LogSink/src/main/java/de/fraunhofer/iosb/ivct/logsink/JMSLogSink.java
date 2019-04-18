@@ -19,20 +19,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSession;
-import javax.jms.TopicSubscriber;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
@@ -56,6 +44,8 @@ import nato.ivct.commander.SutPathsFiles;
 
 public class JMSLogSink implements OnResultListener, OnQuitListener,
         OnStartTestCaseListener, OnLogMsgListener {
+
+    static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
     private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
     // private Logger log;
@@ -88,11 +78,12 @@ public class JMSLogSink implements OnResultListener, OnQuitListener,
         if (fileAppender == null) {
             logger.debug("create new Appender for " + tcName);
             LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-//            PatternLayoutEncoder ple = new PatternLayoutEncoder();
+            PatternLayoutEncoder ple = new PatternLayoutEncoder();
 
 //            ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
-//            ple.setContext(lc);
-//            ple.start();
+            ple.setPattern("[%level] %msg%n");
+            ple.setContext(lc);
+            ple.start();
             LocalDateTime ldt = LocalDateTime.now();
             String formattedMM = String.format("%02d", ldt.getMonthValue());
             String formatteddd = String.format("%02d", ldt.getDayOfMonth());
@@ -106,7 +97,7 @@ public class JMSLogSink implements OnResultListener, OnQuitListener,
             String tcLogName = tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh
                     + formattedmm + formattedss + sdf.format(date) + ".log";
             fileAppender.setFile(tcLogDir + '/' + tcLogName);
-//            fileAppender.setEncoder(ple);
+            fileAppender.setEncoder(ple);
             fileAppender.setContext(lc);
             fileAppender.start();
             appenderMap.put(tcName, fileAppender);
@@ -153,16 +144,16 @@ public class JMSLogSink implements OnResultListener, OnQuitListener,
             SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
             String tcLogDir = sutPathsFiles.getSutLogPathName(msg.sut, msg.badge);
             Logger log = getTestCaseLogger(msg.tc, msg.sut, tcLogDir);
-            Date d = new Date (msg.time);
+            String ds = dateFormatter.format(new Date (msg.time));
             switch (msg.level) {
             case "INFO":
-                log.info(d.toString() + " " + msg.txt);
+                log.info(ds + ": " + msg.txt);
                 break;
             case "WARN":
-                log.warn(d.toString() + " " + msg.txt);
+                log.warn(ds + ": " + msg.txt);
                 break;
             case "ERROR":
-                log.error(d.toString() + " " + msg.txt);
+                log.error(ds + ": " + msg.txt);
                 break;
             }
         }
