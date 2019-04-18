@@ -85,7 +85,7 @@ public class SuTTcService implements ISuTTcService {
 				formData.getTcExecutionLog()
 						.setValue(java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n")));
 			} catch (NoSuchFileException e) {
-				LOG.info("log files not found: {}", tcLogFile);
+				LOG.info("log files not found: {}", tcLogFile.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -120,7 +120,7 @@ public class SuTTcService implements ISuTTcService {
 					formData.getTcExecutionLog()
 							.setValue(Files.lines(optionalTcLogFile.get()).collect(Collectors.joining("\n")));
 				else
-					LOG.info("log files not found: {}*.log", tcName);
+					LOG.info("log files not found: {}*.log", folder + "\\" + tcName);
 			} catch (IOException | IllegalStateException exc) {
 				LOG.error("", exc);
 			}
