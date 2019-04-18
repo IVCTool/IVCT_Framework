@@ -173,6 +173,7 @@ class SutDescriptionVendor {
 	String sutName;
 	String sutDescription;
 	String vendorName;
+	String version;
 }
 
 // This thread reads user input from the console and sends it to the server.
@@ -194,27 +195,8 @@ class Writer extends Thread {
      *         null when error
      */
     private SutDescriptionVendor getSutDescriptionVendor(final PrintStream out, final String line, final boolean addMode) {
-        String split[]= line.trim().split("\\s+");
+    	String split[]= line.trim().split("\\s+");
     	String sutID = split[1];
-    	int posSutName = sutID.indexOf("\"");
-    	if (posSutName != -1) {
-    		out.println("getSutDescriptionVendor: SUT name must NOT be quoted: " + line);
-    		return null;
-    	}
-    	// check if SUT entered exists in SUT list
-    	if (addMode) {
-            boolean sutFound = false;
-            List<String> suts = sutPathsFiles.getSuts();
-            for (String t : suts) {
-                if (t.equals(split[1])) {
-                    sutFound = true;
-                }
-            }
-            if (sutFound) {
-    			out.println("getSutDescriptionVendor: SUT already exists: " + sutID);
-    			return null;
-    		}
-    	}
 
     	// Get name
         int posName = line.indexOf("\"");
@@ -232,6 +214,31 @@ class Writer extends Thread {
     		return null;
     	}
     	String sutName = line.substring(posName + 1, posNameEnd);
+
+    	if (addMode) {
+    	    // Generate ID
+    	    sutID = sutName.replaceAll("\\W", "_");
+    	}
+    	// check if SUT entered exists in SUT list
+        boolean sutFound = false;
+        List<String> suts = sutPathsFiles.getSuts();
+        for (String t : suts) {
+            if (t.equals(sutID)) {
+                sutFound = true;
+            }
+        }
+        
+    	if (addMode) {
+            if (sutFound) {
+    			out.println("getSutDescriptionVendor: SUT already exists: " + sutID);
+    			return null;
+    		}
+    	} else {
+            if (sutFound == false) {
+    			out.println("getSutDescriptionVendor: SUT does not exist: " + sutID);
+    			return null;
+    		}
+    	}
 
     	// Get description
         int posDesc = line.indexOf("\"", posNameEnd + 1);
@@ -266,12 +273,31 @@ class Writer extends Thread {
     		return null;
     	}
     	String vendorName = line.substring(posVen + 1, posVenEnd);
+
+    	// Get version
+        int posVersion = line.indexOf("\"", posVenEnd + 1);
+        if (posVersion == -1) {
+    		out.println("getSutDescriptionVendor: missing version start quote: " + line);
+    		return null;
+        }
+        int posVersionEnd = line.indexOf("\"", posVersion + 1);
+        if (posVersionEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing version end quote: " + line);
+    		return null;
+        }
+    	if (posVersionEnd == posVersion + 1) {
+    		out.println("getSutDescriptionVendor: no version: " + line);
+    		return null;
+    	}
+    	String versionName = line.substring(posVersion + 1, posVersionEnd);
+
     	SutDescriptionVendor sutDescriptionVendor = new SutDescriptionVendor();
 
     	sutDescriptionVendor.sutID = sutID;
     	sutDescriptionVendor.sutName = sutName;
     	sutDescriptionVendor.sutDescription = sutDescription;
     	sutDescriptionVendor.vendorName = vendorName;
+    	sutDescriptionVendor.version = versionName;
     	return sutDescriptionVendor;
     }
     /*
@@ -321,9 +347,11 @@ class Writer extends Thread {
                 		break;
                 	}
                 	SutDescription sutDescriptionAsut = new SutDescription();
+                	sutDescriptionAsut.ID = sutDescriptionVendorAdd.sutID;
                 	sutDescriptionAsut.name = sutDescriptionVendorAdd.sutName;
                 	sutDescriptionAsut.description = sutDescriptionVendorAdd.sutDescription;
                 	sutDescriptionAsut.vendor = sutDescriptionVendorAdd.vendorName;
+                	sutDescriptionAsut.version = sutDescriptionVendorAdd.version;
                 	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAsut);
                 	try {
                 		cmdUpdateSUT.execute();
@@ -370,6 +398,7 @@ class Writer extends Thread {
                 	sutDescriptionMsut.name = sutDescriptionVendorModify.sutName;
                 	sutDescriptionMsut.description = sutDescriptionVendorModify.sutDescription;
                 	sutDescriptionMsut.vendor = sutDescriptionVendorModify.vendorName;
+                	sutDescriptionMsut.version = sutDescriptionVendorModify.version;
                 	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionMsut);
                 	try {
                 		cmdUpdateSUT.execute();
@@ -753,7 +782,7 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
-                    out.println("addSUT (asut) sut \"name text quoted\" \"description text quoted\" \"vendor text quoted\"- add an SUT");
+                    out.println("addSUT (asut) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\"- add an SUT");
                     out.println("modifySUT (msut) sut \"name text quoted\" \"description text quoted\" \"vendor text quoted\"- modify an SUT");
                     out.println("listBadges (lbg) - list all available badges");
                     out.println("addBadge (abg) badge ... badge - add one or more badges to SUT");

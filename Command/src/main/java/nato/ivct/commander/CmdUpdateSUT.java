@@ -168,6 +168,8 @@ public class CmdUpdateSUT {
 						} else {
 							return true;
 						}
+					} else {
+						badgeArray = new JSONArray();
 					}
 					boolean dataFound  = false;
 					for (int i = 0; i < badgeArray.size(); i++) {
