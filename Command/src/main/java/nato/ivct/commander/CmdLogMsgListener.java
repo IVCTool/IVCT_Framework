@@ -16,6 +16,7 @@ public class CmdLogMsgListener implements Command, MessageListener {
         public String tc = null;
         public String sut = null;
         public String badge = null;
+        public long time = 0;
         public String txt = null;
     }
 
@@ -44,6 +45,7 @@ public class CmdLogMsgListener implements Command, MessageListener {
                     msg.tc = (String) jsonObject.get(CmdSendLogMsg.LOG_MSG_TESTCASE);
                     msg.sut = (String) jsonObject.get(CmdSendLogMsg.LOG_MSG_SUT);
                     msg.badge = (String) jsonObject.get(CmdSendLogMsg.LOG_MSG_BADGE);
+                    msg.time = (long) jsonObject.get(CmdSendLogMsg.LOG_MSG_TIME);
                     msg.txt = (String) jsonObject.get(CmdSendLogMsg.LOG_MSG_EVENT);
                     listener.onLogMsg(msg);
                 } catch (ParseException e) {

@@ -16,6 +16,7 @@ public class CmdSendLogMsg implements Command {
     public static final String LOG_MSG_SUT      = "sut";
     public static final String LOG_MSG_BADGE    = "badge";
     public static final String LOG_MSG_EVENT    = "event";
+    public static final String LOG_MSG_TIME     = "time";
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdSendLogMsg.class);
     private MessageProducer logProducer;
@@ -33,11 +34,13 @@ public class CmdSendLogMsg implements Command {
         String sut = logMessage.getMDCPropertyMap().get("sutName");
         String badge = logMessage.getMDCPropertyMap().get("badge");
         String level = logMessage.getLevel().toString();
+        long ts = logMessage.getTimeStamp();
         startCmd.put(LOG_MSG_LEVEL, level);
         startCmd.put(LOG_MSG_TESTCASE, tc);
         startCmd.put(LOG_MSG_SUT, sut);
         startCmd.put(LOG_MSG_BADGE, badge);
-        startCmd.put(LOG_MSG_EVENT, logMessage.toString());
+        startCmd.put(LOG_MSG_TIME, ts);
+        startCmd.put(LOG_MSG_EVENT, logMessage.getMessage());
 
         Message message = Factory.jmsHelper.createTextMessage(startCmd.toString());
         logProducer.send(message);
