@@ -12,10 +12,15 @@ hs_err_pid*
 *.project
 .settings
 .metadata
+
+# temporary build files
 bin
 logs
 build
 target
 /.gradle
 /.nb-gradle/
+
+# user specfic settings
+gradle.properties
 
