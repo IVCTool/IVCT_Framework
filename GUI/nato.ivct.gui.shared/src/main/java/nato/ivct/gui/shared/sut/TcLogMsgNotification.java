@@ -20,42 +20,42 @@ public class TcLogMsgNotification implements Serializable {
 	public String getSut() {
 		return sutId;
 	}
-	public void setSutId(String _sutId) {
+	public void setSutId(final String _sutId) {
 		sutId = _sutId;
 	}
 	
 	public String getBadgeId() {
 		return badgeId;
 	}
-	public void setBadgeId(String _badgeId) {
+	public void setBadgeId(final String _badgeId) {
 		badgeId = _badgeId;
 	}
 	
 	public String getTcId() {
 		return tcId;
 	}
-	public void setTcId(String _tcId) {
+	public void setTcId(final String _tcId) {
 		tcId = _tcId; 
 	}
 	
 	public String getLogMsg() {
 		return logMsg;
 	}
-	public void setLogMsg(String _msg) {
+	public void setLogMsg(final String _msg) {
 		logMsg = _msg;
 	}
 	
 	public String getLogLevel() {
 		return logLevel;
 	}
-	public void setLogLevel(String _logLevel) {
+	public void setLogLevel(final String _logLevel) {
 		logLevel = _logLevel;
 	}
 	
 	public String getTimeStamp() {
 		return timeStamp;
 	}
-	public void setTimeStamp(long _timeStamp) {
+	public void setTimeStamp(final long _timeStamp) {
 		timeStamp = dateFormatter.format(new Date(_timeStamp));
 	}
 }

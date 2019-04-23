@@ -32,8 +32,8 @@ public class TcLogMsgNotificationHandler implements INotificationHandler<TcLogMs
 						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
 							// show only with a log message that is for this SuT and the currently executed test case
 							if (tcLogMsgNotification.getLogMsg().length()>0 
-									&& ((SuTTcExecutionForm) form).getSutId().equalsIgnoreCase(tcLogMsgNotification.getSut() ) 
-									&& ((SuTTcExecutionForm) form).getTestCaseId().equalsIgnoreCase(tcLogMsgNotification.getTcId())) {
+								&& form.getSutId().equalsIgnoreCase(tcLogMsgNotification.getSut() ) 
+								&& form.getTestCaseId().equalsIgnoreCase(tcLogMsgNotification.getTcId())) {
 
 								// message including level and time stamp
 //								String logMsg = String.format("[%s] %s: %s", tcLogMsgNotification.getLogLevel(), tcLogMsgNotification.getTimeStamp(), tcLogMsgNotification.getLogMsg()); 
@@ -52,13 +52,13 @@ public class TcLogMsgNotificationHandler implements INotificationHandler<TcLogMs
 									int requiredMsgLength = configuredLogMsgLength + logMsg.length();
 									if (configuredLogMsgLength < requiredMsgLength) {
 										// increase the memory
-										((SuTTcExecutionForm) form).getFieldByClass(TcExecutionLogField.class).setMaxLength(requiredMsgLength < Integer.MAX_VALUE ? requiredMsgLength : Integer.MAX_VALUE);
-										((SuTTcExecutionForm) form).exportFormData(formData);
+										form.getFieldByClass(TcExecutionLogField.class).setMaxLength(requiredMsgLength < Integer.MAX_VALUE ? requiredMsgLength : Integer.MAX_VALUE);
+										form.exportFormData(formData);
 									}
 								}
 								
 								formData.getTcExecutionLog().setValue((tcExecLog.length()>0?tcExecLog + "\n" : tcExecLog) + logMsg);
-								((SuTTcExecutionForm) form).importFormData(formData);
+								form.importFormData(formData);
 							}
 						});
 					}

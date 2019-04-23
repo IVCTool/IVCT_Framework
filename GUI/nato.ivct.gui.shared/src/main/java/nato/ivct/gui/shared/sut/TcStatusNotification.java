@@ -19,34 +19,34 @@ import java.io.Serializable;
 public class TcStatusNotification implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private String sut = null;
-	private String tc = null;
+	private String sutId = null;
+	private String tcId = null;
 	private String status = null;
 	private int percent = 0;
 	
-	public String getSut() {
-		return sut;
+	public String getSutId() {
+		return sutId;
 	}
-	public void setSut(String sut) {
-		this.sut = sut;
+	public void setSutId(final String _sutId) {
+		this.sutId = _sutId;
 	}
-	public String getTc() {
-		return tc;
+	public String getTcId() {
+		return tcId;
 	}
-	public void setTc(String tc) {
-		this.tc = tc;
+	public void setTcId(final String _tcId) {
+		this.tcId = _tcId;
 	}
 	public int getPercent() {
 		return percent;
 	}
-	public void setPercent(int percent) {
-		this.percent = percent;
+	public void setPercent(final int _percent) {
+		this.percent = _percent;
 	}
 	public String getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatus(final String _status) {
+		this.status = _status;
 	}
 
 

@@ -78,8 +78,8 @@ public class ServerSession extends AbstractServerSession {
 		@Override
 		public void onResult(TcResult result) {
 			TcVerdictNotification notification = new TcVerdictNotification();
-			notification.setSut(result.sutName);
-			notification.setTc(result.testcase);
+			notification.setSutId(result.sutName);
+			notification.setTcId(result.testcase);
 			notification.setVerdict(result.verdict);
 			notification.setText(result.verdictText);
 
@@ -93,8 +93,8 @@ public class ServerSession extends AbstractServerSession {
 		@Override
 		public void onTcStatus(TcStatus status) {
 			TcStatusNotification notification = new TcStatusNotification();
-			notification.setSut(status.sutName);
-			notification.setTc(status.tcName);
+			notification.setSutId(status.sutName);
+			notification.setTcId(status.tcName);
 			notification.setPercent(status.percentFinshed);
 			notification.setStatus(status.status);
 
