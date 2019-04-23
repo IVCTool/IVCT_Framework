@@ -1,7 +1,30 @@
 apply plugin: 'application'
 
+// -----------------------------------------------------------------------------
+// Docker
+// -----------------------------------------------------------------------------
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.4'
+    }
+}
+apply plugin: 'com.bmuschko.docker-java-application'
+
 mainClassName = 'de.fraunhofer.iosb.ivct.logsink.LogSink'
 
+
+docker {
+    javaApplication {
+        baseImage = 'openjdk:8-jre-alpine'
+        maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
+        tag = 'ivct/logsink'
+    }
+}
 
 
 dependencies {
