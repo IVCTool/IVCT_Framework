@@ -22,7 +22,7 @@ docker {
     javaApplication {
         baseImage = 'openjdk:8-jre-alpine'
         maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
-        tag = 'ivct/logsink'
+        tag = "ivct/logsink:${ivctVersion}"
     }
 }
 

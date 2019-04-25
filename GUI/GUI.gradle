@@ -23,5 +23,5 @@ task dockerBuildImage(type: DockerBuildImage) {
 	description = 'Builds the GUI docker image'
 
 	inputDir = file('.')
-	tag="ivct/ivct-gui"
+	tag="ivct/ivct-gui:${ivctVersion}"
 }
