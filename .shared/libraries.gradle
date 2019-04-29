@@ -8,7 +8,7 @@ ext {
         gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-		ivctVersion = '1.0.1'
+        ivctVersion = '1.0.2-SNAPSHOT'
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
         junitVersion = '4.+'
@@ -23,6 +23,9 @@ ext {
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 		jsonIoVersion = '4.10.1'
+
+		gradleDockerPluginVersion = '3.0.12'
+
 
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
@@ -64,11 +67,12 @@ ext {
 
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
 
-				jsonIo:						"com.cedarsoftware:json-io:${jsonIoVersion}",
+				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
 
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
                 junit:                          "junit:junit:${junitVersion}",
-				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}"
+				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}",
+				docker:	                        "com.bmuschko:gradle-docker-plugin:${gradleDockerPluginVersion}"
         ]
 }

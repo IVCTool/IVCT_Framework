@@ -2,10 +2,10 @@ dependencies {
 	compile     libraries.slf4j_api
 	compile		libraries.jsonSimple
 	compile     project(':MessagingHelpers')
-		
+
 	testCompile libraries.junit
 	testCompile libraries.hamcrest_core
-	
+
 	testRuntime libraries.junit
 	testRuntime libraries.hamcrest_core
 }
