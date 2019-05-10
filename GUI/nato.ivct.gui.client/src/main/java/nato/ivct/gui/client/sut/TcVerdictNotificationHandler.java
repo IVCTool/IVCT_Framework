@@ -42,7 +42,7 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 								// set verdict in node page table
 								sutCbNode.getTable().getTCresultColumn().setValue(tr,notification.getVerdict());
 								
-								// set verdict in detailed form and update log table
+								// update log table and set verdict in detailed form 
 								SuTTcRequirementForm detailedForm = (SuTTcRequirementForm) tcNP.getDetailForm();
 								if (detailedForm != null
 									&& detailedForm.isFormStarted()

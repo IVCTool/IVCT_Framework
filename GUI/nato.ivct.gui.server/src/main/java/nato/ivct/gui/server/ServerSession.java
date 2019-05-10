@@ -1,6 +1,15 @@
 package nato.ivct.gui.server;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.job.IFuture;
@@ -35,8 +44,12 @@ import nato.ivct.gui.shared.sut.TcVerdictNotification;
  * @author hzg
  */
 public class ServerSession extends AbstractServerSession {
+	
+	private static final Pattern RESULT_EXP = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)\\)?\\s*$");   // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
+	private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
 	private IFuture<CmdListSuT> loadSuTJob = null;
+	private IFuture<SutTcResultDescription> loadTcResultsJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
 	private IFuture<CmdStartTc> startTcJobs = null;
 	private IFuture<CmdStartTestResultListener> testResultListener = null;
@@ -44,6 +57,15 @@ public class ServerSession extends AbstractServerSession {
 	private StatusListener statusListener;
 	private LogMsgListener logMsgListener;
 
+	public class SutTcResultDescription {
+		
+		/*
+		 * Result map of the form (sutId, (badgeId, (logFile, verdict))). All elements are from type String
+		 */
+		public HashMap<String, HashMap<String, HashMap<String, String>>> sutResultMap = new HashMap<String, HashMap<String, HashMap<String, String>>>();
+	}
+	
+	
 	/*
 	 * Load SuT descriptions job
 	 */
@@ -71,6 +93,72 @@ public class ServerSession extends AbstractServerSession {
 			return badges;
 		}
 
+	}
+	
+	/*
+	 * Load TC execution results
+	 */
+	public class LoadTcResults implements Callable<SutTcResultDescription> {
+		
+		@Override
+		public SutTcResultDescription call() throws Exception {
+			SutTcResultDescription sutTcResults = new SutTcResultDescription();
+			
+			// get SuT list
+			final List<String> sutList = Factory.getSutPathsFiles().getSuts();
+			// iterate over all SuTs to get its report files
+			sutList.forEach(sutId -> {
+				final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
+				//parse each report file to get the verdict and the corresponding log file name
+				reportFiles.forEach(reportFile -> {
+					LOG.info("parse report file: {}\n", reportFile);
+					try {
+						Files.lines(Paths.get(reportFile))
+						.filter(line -> VERDICT_LINE.matcher(line).matches())
+						.forEach(verdictLine -> {
+							LOG.info("\tparse verdict line: {}\n", verdictLine);
+							// extract the required elements from the verdict line
+							final String[] result = parseVerdictLine(verdictLine);
+							if (result.length > 0) {
+								final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
+								// get the matching log file from the list
+								final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
+								if (matchingFileName.isPresent()) {
+									// add the match to the result map
+									sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
+								}
+							}
+						});
+					} catch (NoSuchFileException exc) {
+			            LOG.info("report file not found: {}", reportFile);
+					} catch (IOException exc) {
+						exc.printStackTrace();
+					}
+				});
+			});
+			
+			return sutTcResults;
+		}
+		
+		/*
+		 * Parse the verdict string of a report file
+		 * @param line the line to parse
+		 * @return a String array with 4 element with:
+		 *         [0]: extended test case name
+		 *         [1]: verdict
+		 *         [2]: badge id
+		 *         [3]: log file name
+		 */
+		private  String[] parseVerdictLine(final String line) {
+			Matcher matcher = RESULT_EXP.matcher(line);
+			
+			return matcher.matches() ? matcher.replaceAll("$1 $2 $3").replace('/', ' ').split(" ") : new String[0];
+		}
+	}
+	
+	public void updateSutResultMap(final String sutId, final String badgeId, final String tcFullName) {
+		LOG.info("reload test results for all SuTs");
+		loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
 	}
 
 	public class ResultListener implements OnResultListener {
@@ -221,6 +309,9 @@ public class ServerSession extends AbstractServerSession {
 
 		LOG.info("load SuT Information");
 		loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());
+		
+		LOG.info("load test results for all SuTs");
+		loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
 
 		LOG.info("load Badge Descriptions");
 		loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
@@ -239,12 +330,16 @@ public class ServerSession extends AbstractServerSession {
 
 	}
 
-	public IFuture<CmdListSuT> getCmdJobs() {
+	public IFuture<CmdListSuT> getLoadSuTJob() {
 		return loadSuTJob;
 	}
 
 	public IFuture<CmdListBadges> getLoadBadgesJob() {
 		return loadBadgesJob;
+	}
+	
+	public IFuture<SutTcResultDescription> getLoadTcResultsJob() {
+		return loadTcResultsJob;
 	}
 
 	public void execStartTc(String sut, String tc, String badge, String runFolder) {
