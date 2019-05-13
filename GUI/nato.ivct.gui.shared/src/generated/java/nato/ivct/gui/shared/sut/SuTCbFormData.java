@@ -22,16 +22,10 @@ public class SuTCbFormData extends AbstractFormData {
 		return getFieldByClass(CbDescription.class);
 	}
 
-	/**
-	 * access method for property CbId.
-	 */
 	public String getCbId() {
 		return getCbIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property CbId.
-	 */
 	public void setCbId(String cbId) {
 		getCbIdProperty().setValue(cbId);
 	}
@@ -52,16 +46,10 @@ public class SuTCbFormData extends AbstractFormData {
 		return getFieldByClass(SuTTcParameterTable.class);
 	}
 
-	/**
-	 * access method for property SutId.
-	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property SutId.
-	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
 	}
