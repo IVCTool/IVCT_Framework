@@ -79,9 +79,11 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         // Connect to rti
         try {
             if (this.ivct_TcParam.getSettingsDesignator().equals("")) {
+                this.logger.info("initiateRTI: settingsDesignator is empty, using installation defaults");
                 ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE);
             }
             else {
+                this.logger.info("initiateRTI: settingsDesignator is set to " + this.ivct_TcParam.getSettingsDesignator());
                 ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.ivct_TcParam.getSettingsDesignator());
             }
         }
