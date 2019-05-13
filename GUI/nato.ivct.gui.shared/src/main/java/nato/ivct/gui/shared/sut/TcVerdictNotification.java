@@ -8,34 +8,34 @@ public class TcVerdictNotification implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String sut = null;
-	private String tc = null;
+	private String sutId = null;
+	private String tcId = null;
 	private String verdict = null;
 	private String text = null;
 	
 	public String getVerdict() {
 		return verdict;
 	}
-	public void setVerdict(String verdict) {
-		this.verdict = verdict;
+	public void setVerdict(final String _verdict) {
+		this.verdict = _verdict;
 	}
-	public String getTc() {
-		return tc;
+	public String getTcId() {
+		return tcId;
 	}
-	public void setTc(String tc) {
-		this.tc = tc;
+	public void setTcId(final String _tcId) {
+		this.tcId = _tcId;
 	}
 	public String getText() {
 		return text;
 	}
-	public void setText(String text) {
+	public void setText(final String text) {
 		this.text = text;
 	}
-	public String getSut() {
-		return sut;
+	public String getSutId() {
+		return sutId;
 	}
-	public void setSut(String sut) {
-		this.sut = sut;
+	public void setSutId(final String _sutId) {
+		this.sutId = _sutId;
 	}
 
 }

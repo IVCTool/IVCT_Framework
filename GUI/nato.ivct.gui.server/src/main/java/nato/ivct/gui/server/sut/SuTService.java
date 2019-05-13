@@ -55,11 +55,10 @@ public class SuTService implements ISuTService {
 	}
 	
 	private void waitForSutLoading() {
-		IFuture<CmdListSuT> future1 = ServerSession.get().getCmdJobs();
-		ServerSession.get().getLoadBadgesJob().awaitDone();
-		Command resultSuT = future1.awaitDoneAndGet();
+		IFuture<CmdListSuT> future1 = ServerSession.get().getLoadSuTJob();
+//		ServerSession.get().getLoadBadgesJob().awaitDone();
+		CmdListSuT sutCmd = future1.awaitDoneAndGet();
 		// copy sut descriptions into table rows
-		CmdListSuT sutCmd = (CmdListSuT) resultSuT;
 		sutMap = sutCmd.sutMap;
 	}
 

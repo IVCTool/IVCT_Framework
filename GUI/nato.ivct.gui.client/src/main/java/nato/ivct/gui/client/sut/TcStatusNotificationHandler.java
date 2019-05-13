@@ -41,7 +41,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 		ModelJobs.schedule(new IRunnable() {
 			@Override
 			public void run() throws Exception {
-				logger.trace("Test Case Status Notification " + notification.getTc() + " is at "
+				logger.trace("Test Case Status Notification " + notification.getTcId() + " is at "
 						+ notification.getPercent() + "%");
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof SuTOutline) {
@@ -50,7 +50,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 						SuTCbTablePage cbNode = (SuTCbTablePage) tcNP.getParentNode();
 						for (ITableRow tr : cbNode.getTable().getRows()) {
 							// find row with test case name
-							if (cbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
+							if (cbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTcId())) {
 								cbNode.getTable().getTCresultColumn().setValue(tr, notification.getStatus() + ": " + notification.getPercent() + "%");
 							}
 						}
@@ -58,7 +58,8 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 						// set TC execution status in TC execution form
 						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
 							// set TC execution status in detail form
-							if (notification.getTc().endsWith(((SuTTcExecutionForm) form).getTestCaseId())) {
+							if (form.getSutId().equalsIgnoreCase(notification.getSutId()) 
+								&& form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
 								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
 								tbl.discardAllRows();
 								ITableRow row = tbl.addRow();
@@ -69,8 +70,8 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 								((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
 								
 								//record status and progress in the form
-								((SuTTcExecutionForm) form).setTestCaseStatus(notification.getStatus());
-								((SuTTcExecutionForm) form).setTestCaseProgress(Integer.toString(notification.getPercent()));
+								form.setTestCaseStatus(notification.getStatus());
+								form.setTestCaseProgress(Integer.toString(notification.getPercent()));
 							}
 						});
 					}

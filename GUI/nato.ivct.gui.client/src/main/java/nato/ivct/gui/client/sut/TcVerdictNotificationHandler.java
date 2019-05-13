@@ -28,7 +28,7 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 			@Override
 			public void run() throws Exception {
 				logger.trace("Test Case Notification " + notification.getVerdict() + " received for "
-						+ notification.getTc());
+						+ notification.getTcId());
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof SuTOutline) {
@@ -37,16 +37,16 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 						SuTCbTablePage sutCbNode = (SuTCbTablePage) tcNP.getParentNode();
 						for (ITableRow tr : sutCbNode.getTable().getRows()) {
 							// find row with test case name
-							if (sutCbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTc())) {
+							if (sutCbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTcId())) {
 
 								// set verdict in node page table
 								sutCbNode.getTable().getTCresultColumn().setValue(tr,notification.getVerdict());
 								
-								// set verdict in detailed form and update log table
+								// update log table and set verdict in detailed form 
 								SuTTcRequirementForm detailedForm = (SuTTcRequirementForm) tcNP.getDetailForm();
 								if (detailedForm != null
 									&& detailedForm.isFormStarted()
-									&& detailedForm.getTestCaseId().equals(notification.getTc())) {
+									&& detailedForm.getTestCaseId().equals(notification.getTcId())) {
 									
 									//update log file table
 									ISuTTcService service = BEANS.get(ISuTTcService.class);
@@ -64,7 +64,8 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 						// set TC verdict in TC execution form
 						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
 							// set TC execution notification in detail form
-							if (notification.getTc().endsWith(((SuTTcExecutionForm) form).getTestCaseId())) {
+							if (form.getSutId().equalsIgnoreCase(notification.getSutId()) 
+								&& form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
 								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
 								tbl.discardAllRows();
 
