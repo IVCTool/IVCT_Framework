@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -357,7 +359,7 @@ public class SuTCbForm extends AbstractForm {
 						        	List<ITableRow> rows = tbl.getRows();
 	
 			                        // map to record all JSONObject and all JSONArray
-		                            HashMap<ITableRow, Object> jsonElements = new HashMap<ITableRow, Object>();
+		                            HashMap<ITableRow, Object> jsonElements = new HashMap<>();
 	
 						        	// root JSON object
 						        	JSONObject jsonObjects = new JSONObject();
@@ -397,7 +399,10 @@ public class SuTCbForm extends AbstractForm {
 						        	}
 						        	
 							        ISuTCbService service = BEANS.get(ISuTCbService.class);
-							        boolean success = service.storeTcParams(getSutId(), getCbId(), JsonWriter.objectToJson(jsonObjects, (Map<String, Object>) new HashMap() {{put(JsonWriter.PRETTY_PRINT ,true);put(JsonWriter.TYPE, false);}}));
+							        Map<String, Object> options = new HashMap<>();
+							        options.put(JsonWriter.PRETTY_PRINT ,true);
+							        options.put(JsonWriter.TYPE, false);
+							        service.storeTcParams(getSutId(), getCbId(), JsonWriter.objectToJson(jsonObjects, options));
 						        	
 						        	// call super
 						        	super.doSave();
@@ -430,6 +435,7 @@ public class SuTCbForm extends AbstractForm {
 						        	if (jObject instanceof JSONObject) {
 						        		if (((JSONObject) jObject).isEmpty())
 						        			return;
+						        		
 						        		// handle JSONObject of the form (key:value)
 						        		((JSONObject) jObject).forEach((key, value) -> {
 						        			if (value instanceof JSONObject || value instanceof JSONArray) {
@@ -438,7 +444,7 @@ public class SuTCbForm extends AbstractForm {
 							        			addJsonObjectToTable(newRow, value);
 						        			} else {
 						        				// value is a simple object
-						        				addElementToTable(parentRow, key.toString(), value != null ? value.toString() : null);
+						        				addElementToTable(parentRow, key.toString(), Objects.toString(value, null));
 						        			}
 						        		});
 						        	} else if (jObject instanceof JSONArray) {
@@ -448,8 +454,6 @@ public class SuTCbForm extends AbstractForm {
 						        		// handle as element without having a key
 						        		addElementToTable(parentRow, null, jObject.toString());
 						        	}
-						        	
-						        	return;
 						        }
 						        
 						        private ITableRow addElementToTable(final ITableRow parentRow, final String key, final String value) {
@@ -507,7 +511,7 @@ public class SuTCbForm extends AbstractForm {
 										// show save menu if a table value was changed
 										if (execIsSaveNeeded()) {
 											getSuTTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(true);
-										};
+										}
 									}	
 									
 									@Order(10)

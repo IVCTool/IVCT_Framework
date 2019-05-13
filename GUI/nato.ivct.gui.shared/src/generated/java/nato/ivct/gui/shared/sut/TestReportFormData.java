@@ -16,16 +16,10 @@ public class TestReportFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * access method for property ReportFileName.
-	 */
 	public String getReportFileName() {
 		return getReportFileNameProperty().getValue();
 	}
 
-	/**
-	 * access method for property ReportFileName.
-	 */
 	public void setReportFileName(String reportFileName) {
 		getReportFileNameProperty().setValue(reportFileName);
 	}
@@ -34,16 +28,10 @@ public class TestReportFormData extends AbstractFormData {
 		return getPropertyByClass(ReportFileNameProperty.class);
 	}
 
-	/**
-	 * access method for property SutId.
-	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property SutId.
-	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
 	}

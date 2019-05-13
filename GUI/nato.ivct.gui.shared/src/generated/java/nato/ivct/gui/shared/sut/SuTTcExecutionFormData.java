@@ -18,16 +18,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * access method for property BadgeId.
-	 */
 	public String getBadgeId() {
 		return getBadgeIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property BadgeId.
-	 */
 	public void setBadgeId(String badgeId) {
 		getBadgeIdProperty().setValue(badgeId);
 	}
@@ -40,16 +34,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getFieldByClass(ReqDescr.class);
 	}
 
-	/**
-	 * access method for property RequirementId.
-	 */
 	public String getRequirementId() {
 		return getRequirementIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property RequirementId.
-	 */
 	public void setRequirementId(String requirementId) {
 		getRequirementIdProperty().setValue(requirementId);
 	}
@@ -58,16 +46,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(RequirementIdProperty.class);
 	}
 
-	/**
-	 * access method for property SutId.
-	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property SutId.
-	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
 	}
@@ -84,16 +66,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getFieldByClass(TestCaseExecutionStatusTable.class);
 	}
 
-	/**
-	 * access method for property TestCaseId.
-	 */
 	public String getTestCaseId() {
 		return getTestCaseIdProperty().getValue();
 	}
 
-	/**
-	 * access method for property TestCaseId.
-	 */
 	public void setTestCaseId(String testCaseId) {
 		getTestCaseIdProperty().setValue(testCaseId);
 	}
@@ -106,16 +82,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getFieldByClass(TestCaseName.class);
 	}
 
-	/**
-	 * access method for property TestCaseProgress.
-	 */
 	public String getTestCaseProgress() {
 		return getTestCaseProgressProperty().getValue();
 	}
 
-	/**
-	 * access method for property TestCaseProgress.
-	 */
 	public void setTestCaseProgress(String testCaseProgress) {
 		getTestCaseProgressProperty().setValue(testCaseProgress);
 	}
@@ -124,16 +94,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(TestCaseProgressProperty.class);
 	}
 
-	/**
-	 * access method for property TestCaseStatus.
-	 */
 	public String getTestCaseStatus() {
 		return getTestCaseStatusProperty().getValue();
 	}
 
-	/**
-	 * access method for property TestCaseStatus.
-	 */
 	public void setTestCaseStatus(String testCaseStatus) {
 		getTestCaseStatusProperty().setValue(testCaseStatus);
 	}
@@ -142,16 +106,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(TestCaseStatusProperty.class);
 	}
 
-	/**
-	 * access method for property TestCaseVerdict.
-	 */
 	public String getTestCaseVerdict() {
 		return getTestCaseVerdictProperty().getValue();
 	}
 
-	/**
-	 * access method for property TestCaseVerdict.
-	 */
 	public void setTestCaseVerdict(String testCaseVerdict) {
 		getTestCaseVerdictProperty().setValue(testCaseVerdict);
 	}
