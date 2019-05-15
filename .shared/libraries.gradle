@@ -1,8 +1,6 @@
 // Provides a map of the dependency artifacts to use.
 // Allows centralized definition of the version of artifacts to use.
 ext {
-
-
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
         gradleVersion = '4.9'
         gradleWrapperVersion = "${gradleVersion}"
@@ -26,8 +24,6 @@ ext {
 
 		gradleDockerPluginVersion = '3.0.12'
 
-
-
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
 		//rti = "prti1516e"
 		rti = "IEEE1516e"
@@ -49,12 +45,8 @@ ext {
 
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
-
         libraries = [
-
-
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-
                 logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
                 logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
 

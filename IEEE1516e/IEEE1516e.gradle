@@ -1,3 +1,61 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing
+{
+    sign configurations.archives
+}
+
+group = 'io.github.msg134'
+archivesBaseName = "IEEE1516e"
+version = ivctVersion
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+                proxy(host: "proxy-ka.iosb.fraunhofer.de", port: 80, type: 'https')
+            }
+            pom.project {
+                name = "IEEE1516e"
+                description = "IEEE1516 API Library to be used as placeholder RTI"
+                url = "https://github.com/MSG134/IVCT_Framework/tree/master/IEEE1516e"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "rhzg"
+                        name = "Reinhard Herzog"
+                        email = "reinhard.herzog@iosb.fraunhofer.de"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/master/IEEE1516e"
+                    developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/master/IEEE1516e"
+                    url = "https://github.com/MSG134/IVCT_Framework/tree/master/IEEE1516e"
+                }
+            }
+        }
+    }
+}
+
+
 dependencies {
 	// emtpy
 }

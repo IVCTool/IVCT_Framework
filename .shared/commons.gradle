@@ -67,10 +67,7 @@ subprojects { subProject ->
 			options.tags = [ "noinspection" ]
 		}
 
-
-        apply plugin: 'maven' // for install task as well as deploy dependencies
-
-
+		apply plugin: 'maven' // for install task as well as deploy dependencies
 
         // custom tasks for creating source/javadoc jars
         // TODO: check if this can be removed
