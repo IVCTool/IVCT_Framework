@@ -57,7 +57,7 @@ uploadArchives {
 
 gradle.taskGraph.whenReady { taskGraph ->
     // Do not sign archives by default (a local build without gpg keyring should succeed)
-    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
+    if (taskGraph.allTasks.any {  it.name == 'install' || it.name == 'build' || it.name == 'assemble' }) {
         tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' || it.name == 'signSourcesJar' }.each { task ->
             task.enabled = false
         }
