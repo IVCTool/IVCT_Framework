@@ -25,3 +25,4 @@ target
 gradle.properties
 
 /.sonarlint
+/TC.exec/src/main/resources/JMSTestRunner_logback.xml
