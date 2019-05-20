@@ -54,6 +54,12 @@ public class SuTTcNodePage extends AbstractPageWithNodes {
 	}
 
 	@Override
+	public Object getPrimaryKey() {
+		// TODO Auto-generated method stub
+		return getBadgeId()+"."+getRequirementId();
+	}
+	
+	@Override
 	protected void execPageActivated() throws ProcessingException {
 	  if (getDetailForm() == null) {
 	    // TODO use constructor with title argument?
