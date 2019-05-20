@@ -1,0 +1,15 @@
+{
+  "federationName" : "HelloWorld",
+  "rtiHostName" : "crc",
+  "rtiPort" : "8989",
+  "sutFederateName" : "A",
+  "sleepTestTimeWaitSeconds" : "60",
+  "fomFiles"        : [
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/hw_iosb/TS_HLA_EncodingRulesTester-2017/HelloWorld.xml" },
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/hw_iosb/TS_HLA_EncodingRulesTester-2017/BasicSimpleTypes.xml" }
+  ],
+  "somFiles"        : [
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/hw_iosb/TS_HLA_EncodingRulesTester-2017/BasicSimpleTypes.xml" },
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/hw_iosb/TS_HLA_EncodingRulesTester-2017/HelloWorld.xml" }
+  ]
+}

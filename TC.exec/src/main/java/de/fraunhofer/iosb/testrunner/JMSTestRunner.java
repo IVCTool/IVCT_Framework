@@ -44,7 +44,6 @@ public class JMSTestRunner extends TestRunner
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
 
-	private Factory cmdFactory;
 	private CmdListBadges badges;
 	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
@@ -62,8 +61,6 @@ public class JMSTestRunner extends TestRunner
 	 *            The command line arguments
 	 */
 	public static void main(final String[] args) {
-		// LogConfigurationHelper.configureLogging(JMSTestRunner.class);
-		LogConfigurationHelper.configureLogging();
 		try {
 			final JMSTestRunner runner = new JMSTestRunner();
 		} catch (final IOException ex) {
@@ -80,8 +77,10 @@ public class JMSTestRunner extends TestRunner
 	public JMSTestRunner() throws IOException {
 
 		// initialize the IVCT Commander Factory
-		cmdFactory = new Factory();
-		cmdFactory.initialize();
+		Factory.initialize();
+
+		// Configure the logger
+		LogConfigurationHelper.configureLogging();
 
 		// start command listeners
 		(new CmdSetLogLevelListener(this)).execute();
@@ -142,7 +141,7 @@ public class JMSTestRunner extends TestRunner
 					URL[] urls = new URL[filesList.length];
 					for (int i = 0; i < filesList.length; i++) {
 						try {
-							urls[i] = new URL("file:/" + filesList[i]);
+							urls[i] = filesList[i].toURI().toURL();
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
@@ -160,10 +159,19 @@ public class JMSTestRunner extends TestRunner
 			logger.info("JMSTestRunner:onMessageConsumer:run: " + info.testCaseId);
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
-			MDC.put("badge", info.badge);
+            MDC.put("badge", info.badge);
+            MDC.put("testcase", info.testCaseId);
+			
 
-			logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + info.tsRunFolder);
-			if (setCurrentDirectory(info.tsRunFolder)) {
+			BadgeDescription b = badges.badgeMap.get(info.badge);
+			if (b == null) {
+				logger.error("JMSTestRunner:onMessageConsumer:run: unknown badge " + info.badge);
+				return;
+			}
+			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + b.tsRunTimeFolder;
+			
+			logger.info("JMSTestRunner:onMessageConsumer:run: tsRunFolder is " + runFolder);
+			if (setCurrentDirectory(runFolder)) {
 				logger.info("JMSTestRunner:onMessageConsumer:run: setCurrentDirectory true");
 			}
 
@@ -176,12 +184,19 @@ public class JMSTestRunner extends TestRunner
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
 			extendThreadClassLoader (info.badge);
+
 			this.testRunner.executeTests(logger, info.sutName, testcases, info.testCaseParam.toString(), verdicts);
+
+			// The JMSLogSink waits on this message!
+			// The following pair of lines will cause the JMSLogSink to close the log file!
+			MDC.put("tcStatus", "ended");
+			logger.info("Test Case Ended");
+
 			for (int i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
 						verdicts[i].text).execute();
 			}
-			logger.debug("JMSTestRunner:onMessageConsumer:run: after");
+			MDC.put("tcStatus", "inactive");
 		}
 
 	}

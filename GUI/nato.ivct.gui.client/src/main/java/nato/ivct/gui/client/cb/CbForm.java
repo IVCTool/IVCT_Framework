@@ -1,34 +1,43 @@
 package nato.ivct.gui.client.cb;
 
 import java.io.InputStream;
+import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
+import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
+import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.util.TriState;
+import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.ResourceBase;
-import nato.ivct.gui.client.cb.CbForm.MainBox.CancelButton;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDependenciesField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbDescriptionField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbImageField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.GeneralBox.CbNameField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.IncludedCbBox.IncludedCbField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.OkButton;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbDescriptionField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbImageField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbNameField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbDependenciesTreeBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField;
+import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
@@ -42,22 +51,28 @@ public class CbForm extends AbstractForm {
 
 	@Override
 	protected String getConfiguredTitle() {
-		// TODO [hzg] verify translation
-		return TEXTS.get("Capability");
+		return TEXTS.get("Badge");
 	}
 
 	@Override
 	protected int getConfiguredDisplayHint() {
-		// TODO Auto-generated method stub
 		return IForm.DISPLAY_HINT_VIEW;
 	}
 
 	@Override
+	protected String getConfiguredDisplayViewId() {
+	  return IForm.VIEW_ID_CENTER;
+	}
+
+	@Override
 	public Object computeExclusiveKey() {
-		// TODO Auto-generated method stub
 		return getCbId();
 	}
 
+	public void startView() throws ProcessingException {
+		 startInternal(new ViewHandler());
+	}
+	
 	public void startModify() {
 		startInternalExclusive(new ModifyHandler());
 	}
@@ -66,9 +81,9 @@ public class CbForm extends AbstractForm {
 		startInternal(new NewHandler());
 	}
 
-	public CancelButton getCancelButton() {
-		return getFieldByClass(CancelButton.class);
-	}
+//	public CancelButton getCancelButton() {
+//		return getFieldByClass(CancelButton.class);
+//	}
 
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
@@ -80,10 +95,6 @@ public class CbForm extends AbstractForm {
 
 	public IncludedCbBox getIncludedCbBox() {
 		return getFieldByClass(IncludedCbBox.class);
-	}
-
-	public IncludedCbField getIncludedCbField() {
-		return getFieldByClass(IncludedCbField.class);
 	}
 
 	public CbNameField getCbNameField() {
@@ -98,8 +109,12 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(CbImageField.class);
 	}
 
-	public CbDependenciesField getCbDependenciesField() {
-		return getFieldByClass(CbDependenciesField.class);
+	public CbDependenciesTreeBox getCbDependenciesTreeField() {
+		return getFieldByClass(CbDependenciesTreeBox.class);
+	}
+
+	public CbRequirementsTableField getCbRequirementsTableField() {
+		return getFieldByClass(CbRequirementsTableField.class);
 	}
 
 	public OkButton getOkButton() {
@@ -123,143 +138,346 @@ public class CbForm extends AbstractForm {
 		protected int getConfiguredGridColumnCount() {
 			return 5;
 		}
-
+		
+		// main box shall not be scrollable to keep it in its size
+		@Override
+		protected TriState getConfiguredScrollable() {
+			return TriState.FALSE;
+		}
+		
 		@Order(1000)
-		public class GeneralBox extends AbstractGroupBox {
+		public class BadgeHorizontalSplitBox extends AbstractSplitBox {
 			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("GeneralCapabilityInformation");
+			protected boolean getConfiguredSplitHorizontal() {
+				// split horizontal
+				return false;
+			}
+			
+			@Override
+			protected double getConfiguredSplitterPosition() {
+			return 0.35;
 			}
 
 			@Order(1000)
-			public class CbNameField extends AbstractStringField {
+			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("CapabilityName");
+					return TEXTS.get("GeneralCapabilityInformation");
+				}
+				
+				// set all fields of this box to read-only
+				@Override
+				public boolean isEnabled() {
+					return false;
+				}
+				
+				@Order(1000)
+				public class CbNameField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("CbName");
+					}
+
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
 				}
 
-				@Override
-				protected int getConfiguredGridW() {
-					// TODO Auto-generated method stub
-					return 3;
+				@Order(2000)
+				public class CbDescriptionField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("CbDescription");
+					}
+
+					@Override
+					protected int getConfiguredGridH() {
+						return 2;
+					}
+
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+
+					@Override
+					protected boolean getConfiguredMultilineText() {
+						return true;
+					}
+
+					@Override
+					protected boolean getConfiguredWrapText() {
+						return true;
+					}
+				}
+
+				@Order(3000)
+				public class CbImageField extends AbstractImageField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("CbImage");
+					}
+
+					@Override
+					protected boolean getConfiguredLabelVisible() {
+						return false;
+					}
+
+					@Override
+					protected boolean getConfiguredAutoFit() {
+						return false;
+					}
+
+					@Override
+					protected int getConfiguredGridH() {
+						return 3;
+					}
+
+					@Override
+					protected int getConfiguredGridW() {
+						return 2;
+					}
+					
+					@Override
+					protected int getConfiguredHorizontalAlignment() {
+						// align to left
+						return -1;
+					}
+					
+					@Override
+					protected int getConfiguredVerticalAlignment() {
+						// align to top
+						return -1;
+					}
+					
+					// fit the image into the field size
+					@Override
+					public boolean isAutoFit() {
+						return true;
+					}
 				}
 			}
-
+			
 			@Order(2000)
-			public class CbDescriptionField extends AbstractStringField {
+			public class IncludedCbBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("CapabilityDescription");
+					return TEXTS.get("InclRequirements");
 				}
 
-				@Override
-				protected int getConfiguredGridH() {
-					// TODO Auto-generated method stub
-					return 2;
-				}
+//				@Override
+//				protected int getConfiguredGridColumnCount() {
+//					return 5;
+//				}
+				
+				@Order(1000)
+				public class DependenciesHorizontalSplitterBox extends AbstractSplitBox {
+					@Override
+					protected boolean getConfiguredSplitHorizontal() {
+						// split horizontal
+						return false;
+					}
+					
+					@Override
+					protected double getConfiguredSplitterPosition() {
+					return 0.35;
+					}
 
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
+					@Order(1000)
+					public class CbDependenciesTreeBox extends AbstractTreeBox<String> {
+						@Override
+						protected int getConfiguredGridH() {
+							return 3;
+						}
+						
+						@Override
+						protected int getConfiguredGridW() {
+							return 3;
+						}
+						
+						@Override 
+						protected String getConfiguredLabel() { 
+							return TEXTS.get("BadgeDependencies"); 
+						}
 
-				@Override
-				protected boolean getConfiguredMultilineText() {
-					return true;
-				}
+				        @Override
+				        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+				        	return CbDependenciesLookupCall.class;
+				        }
 
-				@Override
-				protected boolean getConfiguredWrapText() {
-					// TODO Auto-generated method stub
-					return true;
+				        @Override
+				        protected void execPrepareLookup(ILookupCall<String> call, ITreeNode parent) {
+							CbFormData formData = new CbFormData();
+							exportFormData(formData);
+							CbDependenciesLookupCall c = (CbDependenciesLookupCall) call;
+							c.setCbId(formData.getCbId());
+				        }
+				        
+				        // do not expand all nodes initially
+				        @Override
+				        protected boolean getConfiguredAutoExpandAll() {
+				        	return false;
+				        }
+				        
+				        // check all child notes if their parent is checked
+				        @Override
+				        protected boolean getConfiguredAutoCheckChildNodes() {
+				        	return true;
+				        }
+					}
+
+					@Order(2000)
+					public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
+
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Requirements");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 1;
+                        }
+
+                        @Override
+						protected int getConfiguredGridW() {
+							return 3;
+						}
+						
+						public class CbRequirementsTable extends AbstractTable {
+
+							@Order(1000)
+							public class RequirementIdColumn extends AbstractStringColumn {
+
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("RequirementId");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 100;
+								}
+							}
+
+							@Order(2000)
+							public class RequirementDescColumn extends AbstractStringColumn {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("RequirementDescription");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 400;
+								}
+							}
+
+							@Order(3000)
+							public class AbstractTCColumn extends AbstractStringColumn {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("TC");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 200;
+								}
+							}
+							
+							public RequirementIdColumn getRequirementIdColumn() {
+								return getColumnSet().getColumnByClass(RequirementIdColumn.class);
+							}
+
+							public RequirementDescColumn getRequirementDescColumn() {
+								return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+							}
+
+							public AbstractTCColumn getAbstractTCColumn() {
+								return getColumnSet().getColumnByClass(AbstractTCColumn.class);
+							}
+						}
+						
+						@Override
+						protected Class<? extends IValueField<Set<String>>> getConfiguredMasterField() {
+							return CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbDependenciesTreeBox.class;
+						}
+				
+						@Override
+						protected void execChangedMasterValue(Object newMasterValue) {
+							// get dependencies badges from the dependencies badge tree
+							Set<String> badges = getCbDependenciesTreeField().getCheckedKeys();
+							// add the selected badge
+							badges.add(getCbId());
+							
+							// get the requirements for the selected badges
+							ICbService CbService = BEANS.get(ICbService.class);
+							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirements(badges);
+							
+							CbRequirementsTable requirementsTable = getTable();
+							
+							// cleanup table
+							requirementsTable.deleteAllRows();
+							
+							// add requirements to table
+							requirementsTable.importFromTableBeanData(requirementTableRows);
+							// sort the table
+							boolean tableSortEnable = requirementsTable.isSortEnabled();
+							requirementsTable.setSortEnabled(true);
+							requirementsTable.getColumnSet().addSortColumn(requirementsTable.getRequirementIdColumn(), true);
+							requirementsTable.sort();
+							requirementsTable.setSortEnabled(tableSortEnable);
+							
+							super.execChangedMasterValue(newMasterValue);
+						}
+						
+						@Override
+						protected void execInitField() {
+							Set<String> badges = CollectionUtility.hashSet(getCbId());
+							
+							// get the requirements for the selected badges
+							ICbService CbService = BEANS.get(ICbService.class);
+							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirements(badges);
+							
+							CbRequirementsTable requirementsTable = getTable();
+							
+							// add requirements to table
+							requirementsTable.importFromTableBeanData(requirementTableRows);
+						}
+					}
 				}
 			}
-
-			@Order(2500)
-			public class CbDependenciesField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Dependencies");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
-			}
-
-			@Order(3000)
-			public class CbImageField extends AbstractImageField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("CbImage");
-				}
-
-				@Override
-				protected boolean getConfiguredAutoFit() {
-					return false;
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 4;
-				}
-
-				@Override
-				protected int getConfiguredGridW() {
-					// TODO Auto-generated method stub
-					return 2;
-				}
-
-				@Override
-				protected boolean getConfiguredLabelVisible() {
-					return false;
-				}
-			}
-
 		}
 
-		@Order(2000)
-		public class IncludedCbBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("InclCb");
-			}
 
-			@Order(1000)
-			public class IncludedCbField extends AbstractTreeField {
-				public class Tree extends AbstractTree {
-				}
+//		@Order(100000)
+//		public class CloseButton extends AbstractButton {
+//			
+//			  @Override
+//			  protected int getConfiguredSystemType() {
+//			    return SYSTEM_TYPE_CLOSE;
+//			  }
+//
+//			  @Override
+//			  protected String getConfiguredLabel() {
+//			    return TEXTS.get("CloseButton");
+//			  }
+//
+//			  @Override
+//			  protected String getConfiguredKeyStroke() {
+//			    return IKeyStroke.ESCAPE;
+//			  }
+//		}
 
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Capabilities");
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
-				}
-			}
-
-		}
-
-		@Order(100000)
-		public class OkButton extends AbstractOkButton {
-		}
-
-		@Order(101000)
-		public class CancelButton extends AbstractCancelButton {
-		}
+//		@Order(101000)
+//		public class CancelButton extends AbstractCancelButton {
+//
+//		}
 	}
 
-	public class ModifyHandler extends AbstractFormHandler {
-
+	protected abstract class AbstractCbFormHandler extends AbstractFormHandler {
 		@Override
 		protected void execLoad() {
 			ICbService service = BEANS.get(ICbService.class);
@@ -268,17 +486,31 @@ public class CbForm extends AbstractForm {
 			formData = service.load(formData);
 			importFormData(formData);
 			// load badge image
-			try (InputStream in = ResourceBase.class
-					.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
+			try (InputStream in = ResourceBase.class.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
 				getCbImageField().setImage(IOUtility.readBytes(in));
 				getCbImageField().setImageId(formData.getCbId());
 			} catch (Exception e) {
 				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
 			}
-
 			getForm().setSubTitle(formData.getCbName().getValue());
-			
 			setEnabledPermission(new UpdateCbPermission());
+		}
+	}
+	
+	public class ViewHandler extends AbstractCbFormHandler {
+
+		@Override
+		protected void execLoad() {
+			super.execLoad();
+//			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
+		}
+	}
+
+	public class ModifyHandler extends AbstractCbFormHandler {
+
+		@Override
+		protected void execLoad() {
+			super.execLoad();
 		}
 
 		@Override
@@ -290,7 +522,7 @@ public class CbForm extends AbstractForm {
 		}
 	}
 
-	public class NewHandler extends AbstractFormHandler {
+	public class NewHandler extends AbstractCbFormHandler {
 
 		@Override
 		protected void execLoad() {

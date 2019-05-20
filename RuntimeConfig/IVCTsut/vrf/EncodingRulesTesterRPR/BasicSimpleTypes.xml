@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objectModel xmlns="http://www.sisostds.org/schemas/IEEE1516-2010"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.sisostds.org/schemas/IEEE1516-2010 http://www.sisostds.org/schemas/IEEE1516-DIF-2010.xsd">
+   <modelIdentification>
+      <name>Chat.xml</name>
+      <type>FOM</type>
+      <version>1.0</version>
+      <modificationDate>2001-05-21</modificationDate>
+      <securityClassification>Undefined</securityClassification>
+      <purpose>DDM and MOM stuffs are added.</purpose>
+      <applicationDomain>HLA RTI Verification</applicationDomain>
+      <description>Undefined</description>
+      <poc>
+         <pocType>Primary author</pocType>
+         <pocName>Susan Symington</pocName>
+         <pocOrg>MITRE W150</pocOrg>
+         <pocTelephone>+1 703-883-7209</pocTelephone>
+         <pocEmail>susan@mitre.org</pocEmail>
+      </poc>
+      <poc>
+         <pocType>Sponsor</pocType>
+         <pocName>DMSO</pocName>
+      </poc>
+      <reference>
+         <type>Text</type>
+         <identification>http://www.dmso.mil/index.php?page=72</identification>
+      </reference>
+      <reference>
+         <type>HLA Evolved Conversion Tool</type>
+         <identification>Pitch Visual OMT 1516 v1.5.1</identification>
+      </reference>
+      <reference>
+         <type>Converted From</type>
+         <identification>Chat.xml</identification>
+      </reference>
+   </modelIdentification>
+   <objects>
+	<objectClass>
+        <name>HLAobjectRoot</name>
+	</objectClass>
+   </objects>
+   <interactions>
+      <interactionClass>
+         <name>HLAinteractionRoot</name>
+      </interactionClass>
+   </interactions>
+   <dimensions>
+   </dimensions>
+   <time>
+   </time>
+   <synchronizations>
+   </synchronizations>
+   <transportations/>
+   <switches>
+   </switches>
+   <dataTypes>
+      <basicDataRepresentations>
+         <basicData>
+            <name>HLAinteger16BE</name>
+            <size>16</size>
+            <interpretation>Integer in the range [-2^15, 2^15 - 1]</interpretation>
+            <endian>Big</endian>
+            <encoding>16-bit two’s complement signed integer. The most significant bit contains the sign.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAinteger32BE</name>
+            <size>32</size>
+            <interpretation>Integer in the range [-2^31, 2^31 - 1]</interpretation>
+            <endian>Big</endian>
+            <encoding>32-bit two’s complement signed integer. The most significant bit contains the sign.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAinteger64BE</name>
+            <size>64</size>
+            <interpretation>Integer in the range [-2^63, 2^63 - 1]</interpretation>
+            <endian>Big</endian>
+            <encoding>64-bit two’s complement signed integer. The most significant bit contains the sign.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAfloat32BE</name>
+            <size>32</size>
+            <interpretation>32-bit IEEE normalized single-precision format. See IEEE Std 754-1985.</interpretation>
+            <endian>Big</endian>
+            <encoding>16-bit unsigned integer.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAfloat64BE</name>
+            <size>64</size>
+            <interpretation>Double-precision floating point number</interpretation>
+            <endian>Big</endian>
+            <encoding>64-bit IEEE normalized double-precision format. See IEEE Std 754-1985.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAoctetPairBE</name>
+            <size>16</size>
+            <interpretation>16-bit value</interpretation>
+            <endian>Big</endian>
+            <encoding>Assumed to be portable among hardware devices.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAinteger16LE</name>
+            <size>16</size>
+            <interpretation>Integer in the range [-2^15, 2^15 - 1]</interpretation>
+            <endian>Little</endian>
+            <encoding>16-bit two’s complement signed integer. The most significant bit contains the sign.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAinteger32LE</name>
+            <size>32</size>
+            <interpretation>Integer in the range [-2^31, 2^31 - 1]</interpretation>
+            <endian>Little</endian>
+            <encoding>32-bit two’s complement signed integer. The most significant bit contains the sign.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAinteger64LE</name>
+            <size>64</size>
+            <interpretation>Integer in the range [-2^63, 2^63 - 1]</interpretation>
+            <endian>Little</endian>
+            <encoding>64-bit two’s complement signed integer. The most significant bit contains the sign.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAfloat32LE</name>
+            <size>32</size>
+            <interpretation>Single-precision floating point number</interpretation>
+            <endian>Little</endian>
+            <encoding>32-bit IEEE normalized single-precision format. See IEEE Std 754-1985.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAfloat64LE</name>
+            <size>64</size>
+            <interpretation>Double-precision floating point number</interpretation>
+            <endian>Little</endian>
+            <encoding>64-bit IEEE normalized double-precision format. See IEEE Std 754-1985.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAoctetPairLE</name>
+            <size>16</size>
+            <interpretation>16-bit value</interpretation>
+            <endian>Little</endian>
+            <encoding>Assumed to be portable among hardware devices.</encoding>
+         </basicData>
+         <basicData>
+            <name>HLAoctet</name>
+            <size>8</size>
+            <interpretation>8-bit value</interpretation>
+            <endian>Big</endian>
+            <encoding>Assumed to be portable among hardware devices.</encoding>
+         </basicData>
+         <basicData>
+            <name>UnsignedShort</name>
+            <size>16</size>
+            <interpretation>Integer in the range [0, 2^16 - 1]</interpretation>
+            <endian>Big</endian>
+            <encoding>16-bit unsigned integer.</encoding>
+         </basicData>
+      </basicDataRepresentations>
+      <simpleDataTypes>
+         <simpleData>
+            <name>HLAASCIIchar</name>
+            <representation>HLAoctet</representation>
+            <units>NA</units>
+            <resolution>NA</resolution>
+            <accuracy>NA</accuracy>
+            <semantics>Standard ASCII character (see ANSI X3.4-1986)</semantics>
+         </simpleData>
+         <simpleData>
+            <name>HLAunicodeChar</name>
+            <representation>HLAoctetPairBE</representation>
+            <units>NA</units>
+            <resolution>NA</resolution>
+            <accuracy>NA</accuracy>
+            <semantics>Unicode UTF-16 character (see The Unicode Standard, Version 3.0)</semantics>
+         </simpleData>
+         <simpleData>
+            <name>HLAbyte</name>
+            <representation>HLAoctet</representation>
+            <units>NA</units>
+            <resolution>NA</resolution>
+            <accuracy>NA</accuracy>
+            <semantics>Uninterpreted 8-bit byte</semantics>
+         </simpleData>
+         <simpleData>
+            <name>HLAinteger64time</name>
+            <representation>HLAinteger64BE</representation>
+            <units>NA</units>
+            <resolution>1</resolution>
+            <accuracy>0</accuracy>
+            <semantics>Standardized integer HLA time type according to IEEE Std 1516.1- 2010</semantics>
+         </simpleData>
+         <simpleData>
+            <name>HLAfloat64time</name>
+            <representation>HLAfloat64BE</representation>
+            <units>NA</units>
+            <resolution>NA</resolution>
+            <accuracy>NA</accuracy>
+            <semantics>Standardized float HLA time type according to IEEE Std 1516.1-2010</semantics>
+         </simpleData>
+      </simpleDataTypes>
+      <enumeratedDataTypes/>
+      <arrayDataTypes>
+            <arrayData>
+                <name>HLAunicodeString</name>
+                <dataType>HLAunicodeChar</dataType>
+                <cardinality>Dynamic</cardinality>
+                <encoding>HLAvariableArray</encoding>
+                <semantics>Unicode string representation</semantics>
+            </arrayData>
+      </arrayDataTypes>
+      <fixedRecordDataTypes/>
+      <variantRecordDataTypes/>
+   </dataTypes>
+</objectModel>

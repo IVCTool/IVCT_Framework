@@ -2,15 +2,15 @@ package de.fraunhofer.iosb.ivct.logsink;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdQuitListener;
+import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
@@ -24,9 +24,9 @@ import nato.ivct.commander.Factory;
 public class LogSink {
 
     private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
-    private Properties    properties = new Properties();
     //private JMSTopicSink  jmsTopicSink;
-    private JMSLogSink  jmsLogSink;
+    private static JMSLogSink  jmsLogSink;
+    private static ReportEngine reportEngine = new ReportEngine();
 
 
     /**
@@ -37,32 +37,11 @@ public class LogSink {
     public static void main(final String[] args) {
         MDC.put("testcase", "LogSink");
         LOGGER.info("in main");
-        final ReportEngine reportEngine = new ReportEngine();
 		Factory.initialize();
-		(new CmdStartTestResultListener(reportEngine)).execute();
-		(new CmdQuitListener(reportEngine)).execute();
         final LogSink instance = new LogSink();
-        instance.loadProperties();
         instance.init();
-        reportEngine.tcListener = instance.jmsLogSink;
         instance.execute();
         System.exit(0);;
-    }
-
-
-    /**
-     * load the properties from the file LogSink.properties in the default
-     * package
-     */
-    protected void loadProperties() {
-        final InputStream in = this.getClass().getResourceAsStream("/LogSink.properties");
-        try {
-            this.properties.load(in);
-            in.close();
-        }
-        catch (final IOException ex) {
-            LOGGER.error("Could not load properties. ", ex);
-        }
     }
 
 
@@ -70,19 +49,23 @@ public class LogSink {
      * initialize the LogSink.
      */
     protected void init() {
-        final String tcfBindingName = this.properties.getProperty("logsink.tcf.bindingname");
-        final String topicBindingName = this.properties.getProperty("logsink.topic.bindingname");
-        final String username = this.properties.getProperty("logsink.user");
-        final String password = this.properties.getProperty("logsink.password");
-        this.jmsLogSink = new JMSLogSink(tcfBindingName, topicBindingName, username, password);
+        LogSink.jmsLogSink = new JMSLogSink(reportEngine);
+		(new CmdStartTestResultListener(jmsLogSink)).execute();
+        (new CmdQuitListener(jmsLogSink)).execute();
+        (new CmdStartTcListener(jmsLogSink)).execute();
+        (new CmdLogMsgListener(jmsLogSink)).execute();
     }
+
+	public String getTestCaseResults() {
+		return reportEngine.status.toString();
+	}
 
 
     /**
      * execute = do wait for termination.
      */
     protected void execute() {
-        LOGGER.debug("successfully initialized for topic {} .", this.properties.getProperty("java.naming.provider.url"));
+        LOGGER.debug("successfully initialized for topic {} .", Factory.props.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // Loop until "exit", "quit" or "q" is typed
         LOGGER.info("Type \"quit\" to exit JMSTopicSink.");
@@ -90,7 +73,22 @@ public class LogSink {
             String s;
             try {
                 s = stdin.readLine();
-                if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
+                if(s == null) {
+                	// ignore - probably running in a container so we don't have system in
+                	// LogSink will be killed when the container is killed.
+
+                    // now lets wait forever to avoid the JVM terminating immediately
+                    Object lock = new Object();
+                    synchronized (lock) {
+                        try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                    }
+                }
+                else if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
                 	LOGGER.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
                     return;
                 }

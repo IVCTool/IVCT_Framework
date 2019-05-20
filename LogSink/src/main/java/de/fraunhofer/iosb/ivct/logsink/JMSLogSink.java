@@ -14,25 +14,16 @@ limitations under the License. */
 
 package de.fraunhofer.iosb.ivct.logsink;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Properties;
+import java.util.Map;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSession;
-import javax.jms.TopicSubscriber;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.apache.log4j.MDC;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
@@ -41,111 +32,132 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
+import nato.ivct.commander.CmdLogMsgListener.LogMsg;
+import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
+import nato.ivct.commander.CmdQuitListener.OnQuitListener;
+import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
+import nato.ivct.commander.CmdStartTcListener.TcInfo;
+import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
+import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutPathsFiles;
 
-public class JMSLogSink implements MessageListener, TcChangedListener {
+public class JMSLogSink implements OnResultListener, OnQuitListener,
+        OnStartTestCaseListener, OnLogMsgListener {
 
-	private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
-	// private Logger log;
-	private HashMap<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
+    static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
-	public JMSLogSink(String tcfBindingName, String topicBindingName, String username, String password) {
+    private Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
+    // private Logger log;
+    private Map<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<String, FileAppender<ILoggingEvent>>();
+    private Map<String, String> tcLogMap = new HashMap<String, String>();
+    private ReportEngine reportEngine;
 
-		try {
-			Properties env = new Properties();
-			env.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-			env.put(Context.PROVIDER_URL, "tcp://localhost:61616");
-			Context ctx = new InitialContext(env);
-			TopicConnectionFactory topicConnectionFactory;
-			topicConnectionFactory = (TopicConnectionFactory) lookup(ctx, tcfBindingName);
-			logger.info("Topic Cnx Factory found");
-			Topic topic = (Topic) ctx.lookup(topicBindingName);
-			logger.info("Topic found: " + topic.getTopicName());
+    public JMSLogSink(ReportEngine reportEngine) {
+        this.reportEngine = reportEngine;
+    }
 
-			TopicConnection topicConnection = topicConnectionFactory.createTopicConnection(username, password);
-			logger.info("Topic Connection created");
+    protected Object lookup(Context ctx, String name) throws NamingException {
+        try {
+            return ctx.lookup(name);
+        } catch (NameNotFoundException e) {
+            logger.error("Could not find name [" + name + "].");
+            throw e;
+        }
+    }
 
-			TopicSession topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-			TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
-			topicSubscriber.setMessageListener(this);
-			topicConnection.start();
-			logger.info("Topic Connection started");
+    /**
+     * Finds or creates a logger for the test case called tcName with an appender
+     * writing to file named <tcName>.log
+     * 
+     * @param tcName
+     * @return
+     */
+    private Logger getTestCaseLogger(String tcName, String sutName, String tcLogDir) {
+        FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tcName);
+        if (fileAppender == null) {
+            logger.debug("create new Appender for " + tcName);
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            PatternLayoutEncoder ple = new PatternLayoutEncoder();
 
-		} catch (Exception e) {
-			logger.error("Could not read JMS message.", e);
-		}
-	}
+//            ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
+            ple.setPattern("[%level] %msg%n");
+            ple.setContext(lc);
+            ple.start();
+            LocalDateTime ldt = LocalDateTime.now();
+            String formattedMM = String.format("%02d", ldt.getMonthValue());
+            String formatteddd = String.format("%02d", ldt.getDayOfMonth());
+            String formattedhh = String.format("%02d", ldt.getHour());
+            String formattedmm = String.format("%02d", ldt.getMinute());
+            String formattedss = String.format("%02d", ldt.getSecond());
+            fileAppender = new FileAppender<ILoggingEvent>();
+            Date date = new Date();
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat("ZZZ");
+            String tcLogName = tcName + "-" + ldt.getYear() + "-" + formattedMM + "-" + formatteddd + "T" + formattedhh
+                    + formattedmm + formattedss + sdf.format(date) + ".log";
+            fileAppender.setFile(tcLogDir + '/' + tcLogName);
+            fileAppender.setEncoder(ple);
+            fileAppender.setContext(lc);
+            fileAppender.start();
+            appenderMap.put(tcName, fileAppender);
+            tcLogMap.put(tcName, tcLogName);
+        }
 
-	protected Object lookup(Context ctx, String name) throws NamingException {
-		try {
-			return ctx.lookup(name);
-		} catch (NameNotFoundException e) {
-			logger.error("Could not find name [" + name + "].");
-			throw e;
-		}
-	}
+        Logger logger = (Logger) LoggerFactory.getLogger(tcName);
+        logger.addAppender(fileAppender);
+        return logger;
+    }
 
-	/**
-	 * receives messages from the JMS bus and forward them to test case logger  
-	 * if the logging events are marked with an testcase name
-	 */
-	@Override
-	public void onMessage(Message message) {
-		ILoggingEvent event;
-		try {
-			if (message.getJMSRedelivered()) {
-				logger.warn("ReportEngine:onMessage: MESSAGE REDELIVERED");
-			} else if (message instanceof ObjectMessage) {
-				ObjectMessage objectMessage = (ObjectMessage) message;
-				event = (ILoggingEvent) objectMessage.getObject();
+    @Override
+    public void onQuit() {
+        reportEngine.onQuit();
+        System.exit(0);
+    }
 
-				String tc = event.getMDCPropertyMap().get("testcase");
-				if (tc != null) {
-					String sutName = event.getMDCPropertyMap().get("sutName");
-					String sutDir = event.getMDCPropertyMap().get("sutDir");
-					String badge = event.getMDCPropertyMap().get("badge");
-					Logger log = getTestCaseLogger(tc, sutName, sutDir, badge);
-					log.callAppenders(event);
-				}
-			} else {
-				logger.warn("Received message is of type " + message.getJMSType() + ", was expecting ObjectMessage.");
-			}
-		} catch (JMSException jmse) {
-			logger.error("Exception thrown while processing incoming message.", jmse);
-		}
-	}
+    /** {@inheritDoc} */
+    @Override
+    public void onResult(TcResult result) {
+        String tcLogName = tcLogMap.get(result.testcase);
+        if (tcLogName == null) {
+            tcLogName = "test case log file not found";
+        } else {
+            tcLogMap.remove(result.testcase);
+        }
 
-	/**
-	 * Finds or creates a logger for the test case called tcName with an appender writing 
-	 * to file named <tcName>.log
-	 * 
-	 * @param tcName
-	 * @return
-	 */
-	private Logger getTestCaseLogger(String tcName, String sutName, String sutDir, String testScheduleName) {
-		FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tcName);
-		if (fileAppender == null) {
-			LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-			PatternLayoutEncoder ple = new PatternLayoutEncoder();
+        FileAppender<ILoggingEvent> fileAppender = appenderMap.get(result.testcase);
+        if (fileAppender != null) {
+            fileAppender.stop();
+            appenderMap.remove(result.testcase);
+        }
 
-			ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
-			ple.setContext(lc);
-			ple.start();
-			fileAppender = new FileAppender<ILoggingEvent>();
-			fileAppender.setFile(sutDir + '/' + testScheduleName + '/' + tcName + ".log");
-			fileAppender.setEncoder(ple);
-			fileAppender.setContext(lc);
-			fileAppender.start();
-			appenderMap.put(tcName, fileAppender);
-		}
+        reportEngine.onResult(result, tcLogName);
+    }
 
-		Logger logger = (Logger) LoggerFactory.getLogger(tcName);
-		logger.addAppender(fileAppender);
-		return logger;
-	}
+    public void onStartTestCase(TcInfo info) {
+        logger.info("Test Case changed to :" + info.testCaseId);
+    }
 
-	@Override
-	public void tcChanged(String newTcName) {
-		logger.info("Test Case changed to :" + newTcName);
-	}
+    @Override
+    public void onLogMsg(LogMsg msg) {
+        if (msg.tc != null) {
+            SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
+            String tcLogDir = sutPathsFiles.getSutLogPathName(msg.sut, msg.badge);
+            Logger log = getTestCaseLogger(msg.tc, msg.sut, tcLogDir);
+            String ds = dateFormatter.format(new Date (msg.time));
+            switch (msg.level) {
+            case "INFO":
+                log.info(ds + ": " + msg.txt);
+                break;
+            case "WARN":
+                log.warn(ds + ": " + msg.txt);
+                break;
+            case "ERROR":
+                log.error(ds + ": " + msg.txt);
+                break;
+            }
+        }
+
+    }
 
 }

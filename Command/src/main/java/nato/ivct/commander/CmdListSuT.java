@@ -26,42 +26,53 @@ import org.json.simple.parser.ParseException;
 
 public class CmdListSuT implements Command {
 	
-	public class SutDescription {
-		public String ID;
-		public String description;
-		public String vendor;
-		public String[] conformanceStatment;
-	}
-
-
 	public HashMap<String, SutDescription> sutMap = new HashMap<String, SutDescription>();
 
 	@Override
 	public void execute() {
 		// file loader to read the JSON descriptions of SuT's
 
+		// If property is not set, do not have any access to any SUTs
+		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+			return;
+		}
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			if (file.isDirectory()) {
+				FileReader fReader = null;
 				Object obj;
 				JSONParser parser = new JSONParser();
 				try {
 					SutDescription sut = new SutDescription();
-					obj = parser.parse(new FileReader(file + "/CS.json"));
+					fReader = new FileReader(file + "/CS.json");
+					obj = parser.parse(fReader);
 					JSONObject jsonObj = (JSONObject) obj;
 					sut.ID = (String) jsonObj.get("id");
+					sut.name = (String) jsonObj.get("name");
+					if (sut.name == null) {
+						sut.name = sut.ID;
+					}
+					sut.version = (String) jsonObj.get("version");
 					sut.description = (String) jsonObj.get("description");
 					sut.vendor = (String) jsonObj.get("vendor");
 					JSONArray cs = (JSONArray) jsonObj.get("badge");
-					sut.conformanceStatment = new String[cs.size()];
 					for (int i=0; i < cs.size(); i++) {
-						sut.conformanceStatment[i] = cs.get(i).toString();
+						sut.badges.add(cs.get(i).toString());
 					}
 					sutMap.put(sut.ID, sut);
 				} catch (IOException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} finally {
+					if (fReader != null) {
+						try {
+							fReader.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 
 			}

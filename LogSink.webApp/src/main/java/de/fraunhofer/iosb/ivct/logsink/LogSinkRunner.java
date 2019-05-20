@@ -29,7 +29,6 @@ import nato.ivct.commander.Factory;
  */
 public class LogSinkRunner extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static ReportEngine reportEngine = null;
 	private static LogSink logSink;
 
 
@@ -41,18 +40,14 @@ public class LogSinkRunner extends HttpServlet {
 	}
 
 	public String getTestCaseResults() {
-		return reportEngine.status.toString();
+		return logSink.getTestCaseResults();
 	}
 
 	/**
 	 * 
 	 */
 	public void init(ServletConfig config) throws ServletException {
-		reportEngine = new ReportEngine();
-		(Factory.createCmdStartTestResultListener(reportEngine)).execute();
-		(Factory.createCmdQuitListener(reportEngine)).execute();
 		logSink = new LogSink();
-		logSink.loadProperties();
 		logSink.init();
 	}
 

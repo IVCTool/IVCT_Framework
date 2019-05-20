@@ -1,0 +1,9 @@
+apply plugin: 'java'
+
+description = """IVCT HTML UI WAR Development"""
+
+dependencies {
+  compile     project(':GUI:nato.ivct.gui.server')
+
+    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.dev.jetty', version:"${scoutVersion}"
+}

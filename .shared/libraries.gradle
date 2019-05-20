@@ -1,15 +1,12 @@
 // Provides a map of the dependency artifacts to use.
 // Allows centralized definition of the version of artifacts to use.
 ext {
-
-
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-		//artifactCache = "${artifactory_contextUrl}/gradle"
-        gradleVersion = '2.9'
+        gradleVersion = '4.9'
         gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-		ivctVersion = '1.0.0'
+        ivctVersion = '2.0.1'
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
         junitVersion = '4.+'
@@ -17,12 +14,19 @@ ext {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
         logbackVersion = '1.1.3'
         slf4jVersion = '1.7.10'
-		activemqVersion = '5.12.0'
+		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
+		scoutVersion = '8.0.0.010_Photon'
+		jsonSimpleVersion = '1.1.1'
+		javaxServletVersion = '3.0.1'
+		geronimoJmsVersion = '1.1.1'
+		jsonIoVersion = '4.10.1'
+
+		gradleDockerPluginVersion = '3.0.12'
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		rti = "prti1516e"
-		//rti = "IEEE1516e"
+		//rti = "prti1516e"
+		rti = "IEEE1516e"
 		//rti = "mak"
 
 		switch (rti) {
@@ -41,12 +45,8 @@ ext {
 
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
-
         libraries = [
-
-
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-
                 logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
                 logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
 
@@ -57,7 +57,14 @@ ext {
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
 
+				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+
+				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
+
+
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
-                junit:                          "junit:junit:${junitVersion}"
+                junit:                          "junit:junit:${junitVersion}",
+				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}",
+				docker:	                        "com.bmuschko:gradle-docker-plugin:${gradleDockerPluginVersion}"
         ]
 }

@@ -1,19 +1,24 @@
 package nato.ivct.gui.server.cb;
 
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
+import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.cb.CbFormData;
+import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable;
+import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable.CbRequirementsTableRowData;
 import nato.ivct.gui.shared.cb.CbTablePageData;
 import nato.ivct.gui.shared.cb.CbTablePageData.CbTableRowData;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
@@ -27,8 +32,18 @@ public class CbService implements ICbService {
 
 	HashMap<String, BadgeDescription> cb_hm = null;
 
+	@Override
+	public Set<String> loadBadges() {
+		if (cb_hm == null)
+			// load badge descriptions
+			waitForBadgeLoading(); 
+
+		return new TreeSet<>(cb_hm.keySet());
+	}
+
 	public BadgeDescription getBadgeDescription(String cb) {
-		if (cb_hm == null) waitForBadgeLoading();
+		if (cb_hm == null)
+			waitForBadgeLoading();
 		return cb_hm.get(cb);
 	}
 
@@ -38,13 +53,14 @@ public class CbService implements ICbService {
 		CmdListBadges badgeCmd = (CmdListBadges) future.awaitDoneAndGet();
 		cb_hm = badgeCmd.badgeMap;		
 	}
-	
+
 	@Override
 	public CbTablePageData getCbTableData(SearchFilter filter) {
 		LOG.info("getCbTableData");
 		CbTablePageData pageData = new CbTablePageData();
 		// wait until load badges job is finished
-		if (cb_hm == null) waitForBadgeLoading();
+		if (cb_hm == null)
+			waitForBadgeLoading();
 		
 		CbTableRowData row;
 		for (BadgeDescription value : cb_hm.values()) {
@@ -52,7 +68,6 @@ public class CbService implements ICbService {
 			row.setCpId(value.ID);
 			row.setCapabilityName(value.name);
 			row.setCapabilityDescription(value.description);
-			row.setCbVisual(value.cbVisual);
 			cb_hm.put(value.ID, value);
 		}
 		return pageData;
@@ -60,8 +75,6 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbTablePageData getCbTableData(SearchFilter filter, String sutId) {
-		// TODO Auto-generated method stub
-
 		LOG.info("getCbTableData with SuT restriction");
 		CbTablePageData pageData = new CbTablePageData();
 		return pageData;
@@ -73,7 +86,6 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
 		return formData;
 	}
 
@@ -83,7 +95,6 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new CreateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
 		return formData;
 	}
 
@@ -94,17 +105,11 @@ public class CbService implements ICbService {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
 		BadgeDescription cb = cb_hm.get(formData.getCbId());
-		formData.getCbName().setValue(cb.ID);
+		formData.getCbName().setValue(cb.name);
+		
 		formData.getCbDescription().setValue(cb.description);
-		String dependencies = "";
-		for (String s : cb.dependency) {
-			if (dependencies.equals("")) {
-				dependencies = s;
-			} else {
-				dependencies = dependencies + ", " + s;
-			}
-		}
-		formData.getCbDependencies().setValue(dependencies);
+
+		// dependencies tree is built in CbDependenciesLookupService class
 		return formData;
 	}
 
@@ -114,7 +119,22 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new UpdateCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		// TODO [hzg] add business logic here.
 		return formData;
+	}
+
+	@Override
+	public CbRequirementsTable loadRequirements(final Set<String> badges) {
+		CbRequirementsTable requirementTableRows = new CbRequirementsTable();
+		for (String badge:badges) {
+			BadgeDescription bd = getBadgeDescription(badge);
+			for (InteroperabilityRequirement requirement:bd.requirements) {
+				CbRequirementsTableRowData row = requirementTableRows.addRow();
+				row.setRequirementId(requirement.ID);
+				row.setRequirementDesc(requirement.description);
+				row.setAbstractTC(requirement.TC);
+			}
+		}
+
+		return requirementTableRows;
 	}
 }

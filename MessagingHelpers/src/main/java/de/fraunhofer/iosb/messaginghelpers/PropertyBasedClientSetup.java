@@ -33,19 +33,19 @@ public final class PropertyBasedClientSetup {
     /**
      * properties key for username for JMS connection.
      */
-    public static final String        PROPERTY_USER     = "messaging.user";
+    public static final String        PROPERTY_USER     = "ACTIVEMQ_USER";
     /**
      * properties key for password for JMS connection
      */
-    public static final String        PROPERTY_PASSWORD = "messaging.password";
+    public static final String        PROPERTY_PASSWORD = "ACTIVEMQ_PASSWORD";
     /**
      * properties key for hostname for JMS connection
      */
-    public static final String        PROPERTY_HOST     = "messaging.host";
+    public static final String        PROPERTY_HOST     = "ACTIVEMQ_HOST";
     /**
      * properties key for port number for JMS connection
      */
-    public static final String        PROPERTY_PORT     = "messaging.port";
+    public static final String        PROPERTY_PORT     = "ACTIVEMQ_PORT";
 
     private final Properties          properties;
 
@@ -135,10 +135,12 @@ public final class PropertyBasedClientSetup {
         try {
             this.user = this.properties.getProperty(PROPERTY_USER, "admin");
             this.password = this.properties.getProperty(PROPERTY_PASSWORD, "password");
-            this.host = this.properties.getProperty(PROPERTY_HOST, "localhost");
-            final String portString = this.properties.getProperty(PROPERTY_PORT, "61616");
+            this.host = this.properties.getProperty(PROPERTY_HOST);
+            String portString;
+            portString = this.properties.getProperty(PROPERTY_PORT);
             this.port = Integer.parseInt(portString);
             this.factory = new ActiveMQConnectionFactory("tcp://" + this.host + ":" + this.port);
+            this.factory.setTrustAllPackages(true);
             this.state = State.PROPERTIES_PARSED;
         }
         catch (final IllegalArgumentException iae) {
@@ -159,19 +161,37 @@ public final class PropertyBasedClientSetup {
      */
     public synchronized boolean initConnection() {
         this.checkAllowedState(State.PROPERTIES_PARSED, State.DISCONNECTED);
-        try {
-            this.connection = this.factory.createConnection(this.user, this.password);
-            this.connection.start();
-            this.state = State.CONNECTED;
+        boolean tryAgain = true;
+        int count = 1;
+        LOGGER.info("initConnection: connect to activemq please wait...");
+        for (;tryAgain;) {
+            try {
+                this.connection = this.factory.createConnection(this.user, this.password);
+                this.connection.start();
+                tryAgain = false;
+                this.state = State.CONNECTED;
+                continue;
+            }
+            catch (final JMSException ex) {
+                if (count > 10) {
+                    LOGGER.error("Problems during initializing connection.", ex);
+                    tryAgain = false;
+                    this.state = State.FAILURE;
+                    LOGGER.error("initConnection: failed to connect to activemq.");
+                    System.exit(-1);
+                }
+            }
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("State: {}", this.state.toString());
+            }
+            try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+                LOGGER.error("initConnection: sleep interrupted: ", e);
+			}
+			count++;
         }
-        catch (final JMSException ex) {
-            LOGGER.error("Problems during initializing connection.", ex);
-            this.state = State.FAILURE;
-            return true;
-        }
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("State: {}", this.state.toString());
-        }
+        LOGGER.info("initConnection: connect to activemq OK");
         return false;
     }
 

@@ -9,7 +9,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.CancelButton;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
@@ -33,7 +33,6 @@ public class OptionsForm extends AbstractForm {
 
 	@Override
 	protected void execInitForm() {
-		// TODO Auto-generated method stub
 		super.execInitForm();
 	}
 

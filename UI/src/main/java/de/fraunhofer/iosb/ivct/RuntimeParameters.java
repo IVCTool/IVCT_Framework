@@ -19,55 +19,94 @@ limitations under the License.
  */
 package de.fraunhofer.iosb.ivct;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
+import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.Factory;
-import nato.ivct.commander.CmdSetLogLevel.LogLevel;
+import nato.ivct.commander.SutDescription;
 
 public final class RuntimeParameters {
+    private static Logger LOGGER = LoggerFactory.getLogger(RuntimeParameters.class);
 	private static boolean abortTestScheduleBool = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
-	private int counter = 0;
+	private int countSemaphore = 0;
 	private CmdListBadges cmdListBadges = null;
 	private CmdListSuT sutList = null;
-	private static List<String> suts = null;
+	private PrintStream printStream = new PrintStream(System.out);
+	private static Semaphore semaphore = new Semaphore(0);
 	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private String testSuiteName = null;
+	private SutDescription sutDescription;
 
     public RuntimeParameters () {
     }
 
-	protected boolean checkSutKnown(final String sut) {
-		for (String entry : suts) {
-			if (sut.equals(entry)) {
-				return false;
-			}
-		}
+    public void acquireSemaphore() {
+        try {
+            countSemaphore++;
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            LOGGER.error("acquireSemaphore: ", e);
+        }
+    }
 
-		return true;
-	}
+    public void releaseSemaphore() {
+        if (countSemaphore > 0) {
+            semaphore.release();
+            countSemaphore--;
+        }
+    }
+
+    /*
+     * Check if a test case or test schedule are running.
+     *
+     * @param theCaller name of the calling method
+     * @param out the calling method
+     *
+     * @return whether a critical task is running
+     */
+    protected boolean checkCtTcTsRunning(final String theCaller) {
+        if (theCaller == null) {
+            printStream.println("checkCtTcTsRunning: theCaller: null pointer found");
+            return true;
+        }
+        if (testCaseRunningBool) {
+            printStream.println(theCaller + ": Warning test case is running - command not allowed");
+            return true;
+        }
+        if (testScheduleRunningBool) {
+            printStream.println(theCaller + ": Warning test schedule is running - command not allowed");
+            return true;
+        }
+        return false;
+    }
 
 	/*
 	 * Some commands have no meaning without knowing the SUT involved.
 	 */
-	protected boolean checkSUTselected() {
-		if (sutName == null) {
-			return true;
-		}
-		return false;
+	protected boolean checkSutNotSelected() {
+	    if (sutName == null) {
+	        return true;
+	    }
+	    return false;
 	}
 	
 	protected String getFullTestcaseName(final String testsuite, final String testCase) {
@@ -121,12 +160,6 @@ public final class RuntimeParameters {
 	 */
 	protected boolean checkTestSuiteNameNew() {
 		return testSuiteNameNew;
-	}
-
-	protected int fetchCounters(int n) {
-		int ret = counter;
-		counter += n;
-		return ret;
 	}
 
 	public static boolean getAbortTestScheduleBool() {
@@ -203,26 +236,22 @@ public final class RuntimeParameters {
 		return tsRunFolder;
 	}
 	
-	protected static List<String> getSUTS() {
-		return suts;
-	}
-
-	protected List<String> getSutBadges(final String theSutName) {
+	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
 		List<String> badges = null;
 		listSUTs();
 		for (String it: sutList.sutMap.keySet()) {
-			int len = sutList.sutMap.get(it).conformanceStatment.length;
 			if (it.equals(theSutName)) {
 				getTestSuiteNames();
 				badges = new ArrayList<String>();
-				String[] conformanceStatment = sutList.sutMap.get(it).conformanceStatment;
-				for (int i = 0; i < len; i++) {
-					int ind = badges.indexOf(conformanceStatment[i]);
+				for (String entry : sutList.sutMap.get(it).badges) {
+					int ind = badges.indexOf(entry);
 					if (ind < 0) {
-						badges.add(conformanceStatment[i]);
+						badges.add(entry);
 					}
-					if (getRecursiveBadges(badges, conformanceStatment[i])) {
-						return null;
+					if (recursive) {
+						if (getRecursiveBadges(badges, entry)) {
+							return null;
+						}
 					}
 				}
 				return badges;
@@ -248,16 +277,8 @@ public final class RuntimeParameters {
 	}
 	
 	private void listSUTs() {
-		suts = new LinkedList<>();
 		sutList = Factory.createCmdListSut();
 		sutList.execute();
-	}
-
-	protected void setSUTS() {
-		listSUTs();
-		for (String it: sutList.sutMap.keySet()) {
-			suts.add(it);
-		}
 	}
 
 	protected String getSutName() {
@@ -271,12 +292,22 @@ public final class RuntimeParameters {
 		}
 
 		// Set the sut name.
+		listSUTs();
 		sutName = theSutName;
+		sutDescription = sutList.sutMap.get(sutName);
 
 		// Reset values.
 		testCaseName = null;
 		testScheduleName = null;
 		testSuiteName = null;
+	}
+
+	protected String getSutDescription() {
+		return this.sutDescription.description;
+	}
+
+	protected String getVendorName() {
+		return this.sutDescription.vendor;
 	}
 
 	protected static String getTestCaseName() {

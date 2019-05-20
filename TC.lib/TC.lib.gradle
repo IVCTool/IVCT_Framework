@@ -1,11 +1,89 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing
+{
+    sign configurations.archives
+}
+
+group = 'io.github.msg134'
+archivesBaseName = "TC.lib"
+version = ivctVersion
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            pom.project {
+                name = "IVCT Test Case Library"
+                description = "Library to be used by IVCT test case developers"
+                url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "rhzg"
+                        name = "Reinhard Herzog"
+                        email = "reinhard.herzog@iosb.fraunhofer.de"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.git"
+                    developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib-git"
+                    url = "https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib"
+                }
+            }
+        }
+    }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    // Do not sign archives by default (a local build without gpg keyring should succeed)
+    if (taskGraph.allTasks.any {  it.name == 'install' || it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' || it.name == 'signSourcesJar' }.each { task ->
+            task.enabled = false
+        }
+    }
+}
+
+// publishing {
+//     publications {
+//         mavenJava(MavenPublication) {
+//             groupId = 'io.github.msg134'
+//             artifactId = 'TC.lib'
+//             archivesBaseName = "TC.lib"
+//             version = ivctVersion
+//
+//             from components.java
+//         }
+//     }
+// }
+
+
 dependencies {
-	compile     project(':Command')
-	compile     project(':MessagingHelpers')
+    compileOnly project(':Command')
+    compileOnly project(':IEEE1516e')
 
-	compile     libraries.slf4j_api
-	compile     'com.googlecode.json-simple:json-simple:1.1.1'
+	compileOnly libraries.slf4j_api
+	compileOnly libraries.jsonSimple
 
-	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
 
@@ -13,17 +91,5 @@ dependencies {
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 
-    switch (rti) {
-		case "prti1516e":
-			logger.warn (':TC:pRTI is used. Make sure pRTI is installed on target machine to run any test case')
-			compile files (rti_lib + "/" + rti_jar)
-			runtime fileTree (dir: rti_lib, include: '*.jar')
-			break
-		case "mak":
-			logger.warn (':TC:MAK RTI is not configure. HelloWorld will not be runnable')
-		case "IEEE1516e":
-		default:
-			logger.warn (':TC:No RTI is used. Test Engine will not be able to run test cases')
-			compile     group: 'msg134-ivct-framework', name: 'IEEE1516e', version: ivctVersion
-	}
+//	compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
 }

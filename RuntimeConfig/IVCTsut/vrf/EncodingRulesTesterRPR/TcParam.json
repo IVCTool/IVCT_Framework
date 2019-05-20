@@ -1,0 +1,15 @@
+{
+  "federationName" : "TheWorld",
+  "rtiHostName" : "crc",
+  "rtiPort" : "8989",
+  "sutFederateName" : "VRF/UG",
+  "sleepTestTimeWaitSeconds" : "60",
+  "fomFiles"        : [
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/vrf/EncodingRulesTesterRPR/RPR_FOM_v2.0_1516-2010.xml" },
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/vrf/EncodingRulesTesterRPR/BasicSimpleTypes.xml" }
+  ],
+  "somFiles"        : [
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/vrf/EncodingRulesTesterRPR/BasicSimpleTypes.xml" },
+    { "fileName"    : "$(IVCT_SUT_HOME_ID)/vrf/EncodingRulesTesterRPR/RPR_FOM_v2.0_1516-2010.xml" }
+  ]
+}

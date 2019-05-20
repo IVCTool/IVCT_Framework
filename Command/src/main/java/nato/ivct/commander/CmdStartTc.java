@@ -24,7 +24,6 @@ public class CmdStartTc implements Command {
 	private String sut;
 	private String badge;
 	private String tc;
-	private String runFolder;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
@@ -32,7 +31,6 @@ public class CmdStartTc implements Command {
 		sut = _sut;
 		tc = _tc;
 		badge = _badge;
-		runFolder = _runFolder;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -41,17 +39,19 @@ public class CmdStartTc implements Command {
 	 * The Structure of start test case command message looks like the
 	 * following:
 	 *
-	 * { "sequence":"0",
+	 * { 
 	 *   "commandType":"startTestCase",
+	 *   "sequence":"0",
 	 *   "testScheduleName":"HelloWorld",
 	 *   "sutName":"hw_iosb",
-	 *   "sutDir":"C:\\projects\\MSG134\\IVCT_Runtime\\IVCTsut\\hw_iosb",
-	 *   "tsRunFolder":"C:\\projects\\MSG134\\IVCT_Runtime\\Badges\\HelloWorld",
+	 *   "sutDir":"C:/projects/IVCT_Runtime/IVCTsut/hw_iosb",
+	 *   "badge":"C:/projects/IVCT_Runtime/Badges/HelloWorld-1.0.0",
+	 *   "testCaseId":"TC0002",
 	 *   "tcParam":{
 	 *     "rtiHostName":"localhost",
 	 *     "federationName":"HelloWorld",
-	 *     "sutFederateName":"A" },
-	 *   "testCaseId":"TC0002"}
+	 *     "sutFederateName":"A" }
+	 *   }
 	 *
 	 * @see nato.ivct.commander.Command#execute()
 	 */
@@ -68,12 +68,16 @@ public class CmdStartTc implements Command {
 			startCmd.put("sutDir", sutHome + '/' + sut);
 			startCmd.put("badge", badge);
 			startCmd.put("testCaseId", tc);
-			startCmd.put("tsRunFolder", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + runFolder);
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
+			if (paramFileContentString != null) {
 			String tmpString = Factory.replaceMacro(paramFileContentString);
 			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 			startCmd.put("tcParam", jsonParam);
+			} else {
+				LOGGER.error("File not found: " + paramFileName);
+				return;
+			}
 
 			// send the start message
 			Factory.sendToJms(startCmd.toString());
@@ -107,14 +111,6 @@ public class CmdStartTc implements Command {
 
 	public void setBadge(String _badge) {
 		this.badge = _badge;
-	}
-
-	public String getRunFolder() {
-		return runFolder;
-	}
-
-	public void setRunFolder(String runFolder) {
-		this.runFolder = runFolder;
 	}
 
 }

@@ -21,14 +21,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutDescription;
+import nato.ivct.commander.SutPathsFiles;
 
 /*
  * Dialog program using keyboard input.
@@ -36,7 +41,8 @@ import nato.ivct.commander.Factory;
 public class CmdLineTool {
     Thread writer;
 	private boolean keepGoing = true;
-    private Command command = null;
+    private nato.ivct.commander.Command command = null;
+    private CmdUpdateSUT cmdUpdateSUT = null;
 	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
@@ -66,6 +72,9 @@ public class CmdLineTool {
     	// LogConfigurationHelper.configureLogging(JMSTestRunner.class);
     	LogConfigurationHelper.configureLogging();
 
+        // Handle callbacks
+		Factory.initialize();
+
     	try {
     		new CmdLineTool();
     	} catch (IOException e) {
@@ -73,9 +82,6 @@ public class CmdLineTool {
     		System.out.println("CmdLineTool: new IVCTcommander: " + e);
     		return;
     	}
-
-    	// Handle callbacks
-		Factory.initialize();
 		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
     }
 
@@ -99,7 +105,10 @@ public class CmdLineTool {
     			} catch (InterruptedException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
-    			}
+    			} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
     		}
     	}
@@ -137,17 +146,15 @@ class TcRunnable implements Runnable {
 
 	    	BufferedReader stdError = new BufferedReader(new InputStreamReader(CmdLineTool.p.getErrorStream()));
 
-	    	// read the output from the command
-	        String s = null;
 	    	System.out.println("Here is the standard output of the command:\n");
-	    	while ((s = stdInput.readLine()) != null) {
+	    	while ((stdInput.readLine()) != null) {
 //	    		System.out.println(s);
 	    	}
 
 	    	// read any errors from the attempted command
 
 	    	System.out.println("Here is the standard error of the command (if any):\n");
-	    	while ((s = stdError.readLine()) != null) {
+	    	while ((stdError.readLine()) != null) {
 //	    		System.out.println(s);
 	    	}
 		} catch (IOException e) {
@@ -161,16 +168,138 @@ class TcRunnable implements Runnable {
   	}
 }
 
+class SutDescriptionVendor {
+	String sutID;
+	String sutName;
+	String sutDescription;
+	String vendorName;
+	String version;
+}
 
 // This thread reads user input from the console and sends it to the server.
 class Writer extends Thread {
 	IVCTcommander ivctCommander;
+	SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
 
     public Writer(IVCTcommander i) {
         super("CmdLineTool Writer");
         ivctCommander = i;
     }
     
+    /**
+     * This method will get the sut name, sut description and vendor from the user input
+     * @param out the logging stream
+     * @param line the user input
+     * @param addMode whether add or modify mode
+     * @return the sut name, sut description and vendor in a class structure or
+     *         null when error
+     */
+    private SutDescriptionVendor getSutDescriptionVendor(final PrintStream out, final String line, final boolean addMode) {
+    	String split[]= line.trim().split("\\s+");
+    	String sutID = split[1];
+
+    	// Get name
+        int posName = line.indexOf("\"");
+        if (posName == -1) {
+    		out.println("getSutDescriptionVendor: missing sut name start quote: " + line);
+    		return null;
+        }
+        int posNameEnd = line.indexOf("\"", posName + 1);
+        if (posNameEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing sut name end quote: " + line);
+    		return null;
+        }
+    	if (posNameEnd == posName + 1) {
+    		out.println("getSutDescriptionVendor: no sut name: " + line);
+    		return null;
+    	}
+    	String sutName = line.substring(posName + 1, posNameEnd);
+
+    	if (addMode) {
+    	    // Generate ID
+    	    sutID = sutName.replaceAll("\\W", "_");
+    	}
+    	// check if SUT entered exists in SUT list
+        boolean sutFound = false;
+        List<String> suts = sutPathsFiles.getSuts();
+        for (String t : suts) {
+            if (t.equals(sutID)) {
+                sutFound = true;
+            }
+        }
+        
+    	if (addMode) {
+            if (sutFound) {
+    			out.println("getSutDescriptionVendor: SUT already exists: " + sutID);
+    			return null;
+    		}
+    	} else {
+            if (sutFound == false) {
+    			out.println("getSutDescriptionVendor: SUT does not exist: " + sutID);
+    			return null;
+    		}
+    	}
+
+    	// Get description
+        int posDesc = line.indexOf("\"", posNameEnd + 1);
+        if (posDesc == -1) {
+    		out.println("getSutDescriptionVendor: missing description start quote: " + line);
+    		return null;
+        }
+        int posDescEnd = line.indexOf("\"", posDesc + 1);
+        if (posDescEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing description end quote: " + line);
+    		return null;
+        }
+    	if (posDescEnd == posDesc + 1) {
+    		out.println("getSutDescriptionVendor: no description: " + line);
+    		return null;
+    	}
+    	String sutDescription = line.substring(posDesc + 1, posDescEnd);
+
+    	// Get vendor
+        int posVen = line.indexOf("\"", posDescEnd + 1);
+        if (posVen == -1) {
+    		out.println("getSutDescriptionVendor: missing vendor start quote: " + line);
+    		return null;
+        }
+        int posVenEnd = line.indexOf("\"", posVen + 1);
+        if (posVenEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing vendor end quote: " + line);
+    		return null;
+        }
+    	if (posVenEnd == posVen + 1) {
+    		out.println("getSutDescriptionVendor: no vendor: " + line);
+    		return null;
+    	}
+    	String vendorName = line.substring(posVen + 1, posVenEnd);
+
+    	// Get version
+        int posVersion = line.indexOf("\"", posVenEnd + 1);
+        if (posVersion == -1) {
+    		out.println("getSutDescriptionVendor: missing version start quote: " + line);
+    		return null;
+        }
+        int posVersionEnd = line.indexOf("\"", posVersion + 1);
+        if (posVersionEnd == -1) {
+    		out.println("getSutDescriptionVendor: missing version end quote: " + line);
+    		return null;
+        }
+    	if (posVersionEnd == posVersion + 1) {
+    		out.println("getSutDescriptionVendor: no version: " + line);
+    		return null;
+    	}
+    	String versionName = line.substring(posVersion + 1, posVersionEnd);
+
+    	SutDescriptionVendor sutDescriptionVendor = new SutDescriptionVendor();
+
+    	sutDescriptionVendor.sutID = sutID;
+    	sutDescriptionVendor.sutName = sutName;
+    	sutDescriptionVendor.sutDescription = sutDescription;
+    	sutDescriptionVendor.vendorName = vendorName;
+    	sutDescriptionVendor.version = versionName;
+    	return sutDescriptionVendor;
+    }
     /*
      * Read user input and execute valid commands.
      */
@@ -180,13 +309,12 @@ class Writer extends Thread {
         PrintStream out = null;
         String logLevelString = "default";
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
-    	String tsNotSelected = new String("Testsuite not selected yet: use setTestSuite command first");
 
     	try {
             String line;
             in = new BufferedReader(new InputStreamReader(System.in));
             out = new PrintStream(System.out);
-            out.println ("Enter command: or help (h)");
+            out.println ("\nEnter command: or help (h)");
             out.print("> ");
             while(true) {
                 line = in.readLine();
@@ -195,27 +323,221 @@ class Writer extends Thread {
                 switch(split[0]) {
                 case "":
                 	break;
+                case "addSUT":
+                case "asut":
+            		// If property is not set, do not have any access to any SUTs
+            		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+            			out.println("No IVCT_SUT_HOME_ID environment variable found: cannot add SUT");
+            			break;
+            		}
+            		// The SUT is placed in a known folder
+            		String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+            		File f = new File(sutsDir);
+            		if (f.exists() == false) {
+            			out.println("No SUT directory found");
+            			break;
+            		}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("addSUT: need SUT name");
+                        break;
+                	}
+                	SutDescriptionVendor sutDescriptionVendorAdd = getSutDescriptionVendor(out, line, true);
+                	if (sutDescriptionVendorAdd == null) {
+                		break;
+                	}
+                	SutDescription sutDescriptionAsut = new SutDescription();
+                	sutDescriptionAsut.ID = sutDescriptionVendorAdd.sutID;
+                	sutDescriptionAsut.name = sutDescriptionVendorAdd.sutName;
+                	sutDescriptionAsut.description = sutDescriptionVendorAdd.sutDescription;
+                	sutDescriptionAsut.vendor = sutDescriptionVendorAdd.vendorName;
+                	sutDescriptionAsut.version = sutDescriptionVendorAdd.version;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAsut);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	break;
+					}
+                    List<String> sutsAsut = sutPathsFiles.getSuts();
+                	if (sutsAsut.isEmpty()) {
+                		out.println("addSUT: cannot load SUT onto the file system.");
+                		break;
+                	}
+                	ivctCommander.rtp.setSutName(split[1]);
+                    ivctCommander.resetSUT();
+                	break;
+                case "modifySUT":
+                case "msut":
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUT: need SUT name");
+                        break;
+                	}
+                    List<String> sutsMsut = sutPathsFiles.getSuts();
+                    if (sutsMsut.isEmpty()) {
+                        out.println("modifySUT: cannot find any SUT on the file system.");
+                        break;
+                    }
+                    boolean sutFoundMsut = false;
+                    for (String t : sutsMsut) {
+                        if (t.equals(split[1])) {
+                            sutFoundMsut = true;
+                        }
+                    }
+                    if (sutFoundMsut == false) {
+                        out.println("modifySUT: cannot find SUT: " + split[1]);
+                        break;
+                    }
+                	SutDescriptionVendor sutDescriptionVendorModify = getSutDescriptionVendor(out, line, false);
+                	if (sutDescriptionVendorModify == null) {
+                		break;
+                	}
+                	SutDescription sutDescriptionMsut = new SutDescription();
+                	sutDescriptionMsut.ID = sutDescriptionVendorModify.sutID;
+                	sutDescriptionMsut.name = sutDescriptionVendorModify.sutName;
+                	sutDescriptionMsut.description = sutDescriptionVendorModify.sutDescription;
+                	sutDescriptionMsut.vendor = sutDescriptionVendorModify.vendorName;
+                	sutDescriptionMsut.version = sutDescriptionVendorModify.version;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionMsut);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                	ivctCommander.rtp.setSutName(split[1]);
+                    ivctCommander.resetSUT();
+                	break;
+                case "listBadges":
+                case "lbg":
+                	// Warn about extra parameter
+                	if (split.length > 1) {
+                        out.println("listBadges: Warning extra parameter: " + split[1]);
+                	}
+            		List<String> badges = null;
+            		badges = ivctCommander.rtp.getTestSuiteNames();
+            		for (String entry  : badges) {
+                        out.println(entry);
+            		}
+                	break;
+                case "addBadge":
+                case "abg":
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
+                		out.println(sutNotSelected);
+                		break;
+                	}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("addBadge: need badge name");
+                        break;
+                	}
+                	List<String> allBadges = ivctCommander.rtp.getTestSuiteNames();
+                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), false);
+                	boolean errorOccurred = false;
+                	String newBadge = null;
+                	for (int i = 0; i < split.length - 1; i++) {
+                		newBadge = split[i + 1];
+                		if (allBadges.contains(newBadge) == false) {
+                            out.println("addBadge: unknown badge name: " + newBadge);
+                            errorOccurred = true;
+                            break;
+                		}
+                		if (sutBadges.contains(newBadge) == false) {
+                		sutBadges.add(newBadge);
+                		}
+                	}
+                    Set<String> badgesAbg = new HashSet<String>();
+                	for (String Entry : sutBadges) {
+                		if (allBadges.contains(newBadge) == false) {
+                            out.println("addBadge: unknown badge name: " + newBadge);
+                            errorOccurred = true;
+                            break;
+                		}
+                        badgesAbg.add(new String (Entry));
+                	}
+                	if (errorOccurred) {
+                		break;
+                	}
+                	SutDescription sutDescriptionAbg = new SutDescription();
+                	sutDescriptionAbg.ID = ivctCommander.rtp.getSutName();
+                	sutDescriptionAbg.name = ivctCommander.rtp.getSutName();
+                	sutDescriptionAbg.description = ivctCommander.rtp.getSutDescription();
+                	sutDescriptionAbg.vendor = ivctCommander.rtp.getVendorName();
+                	for (String entry : badgesAbg) {
+						sutDescriptionAbg.badges.add(entry);
+					}
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAbg);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+                	command = null;
+                	break;
+                case "deleteBadge":
+                case "dbg":
+                	if (ivctCommander.rtp.checkSutNotSelected()) {
+                		out.println(sutNotSelected);
+                		break;
+                	}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                		out.println("deleteBadge: need badge name(s)");
+                		break;
+                	}
+                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), false);
+                	String newBadgeDbg = null;
+                	for (int i = 0; i < split.length - 1; i++) {
+                		newBadgeDbg = split[i + 1];
+                		if (sutBadgesDbg.contains(newBadgeDbg) == false) {
+                			out.println("deleteBadge: badge name not in SUT list: " + newBadgeDbg);
+                			break;
+                		}
+            			sutBadgesDbg.remove(newBadgeDbg);
+                	}
+                    Set<String> badgesDbg = new HashSet<String>();
+                	for (String Entry : sutBadgesDbg) {
+                        badgesDbg.add(new String (Entry));
+                	}
+                	SutDescription sutDescriptionDbg = new SutDescription();
+                	sutDescriptionDbg.ID = ivctCommander.rtp.getSutName();
+                	sutDescriptionDbg.name = ivctCommander.rtp.getSutName();
+                	sutDescriptionDbg.description = ivctCommander.rtp.getSutDescription();
+                	sutDescriptionDbg.vendor = ivctCommander.rtp.getVendorName();
+                	for (String entry : badgesDbg) {
+						sutDescriptionDbg.badges.add(entry);
+					}
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionDbg);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+                	command = null;
+                	break;
                 case "listSUT":
                 case "lsut":
                 	// Warn about extra parameter
                 	if (split.length > 1) {
                         out.println("listSUT: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> suts1 = ivctCommander.listSUT();
-                	if (suts1.isEmpty()) {
+                    List<String> sutsLsut = sutPathsFiles.getSuts();
+                    if (sutsLsut.isEmpty()) {
                 		System.out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
                 	}
         			System.out.println("The SUTs are:");
-        			for (String entry : suts1)
-        			{
+                    for (String entry : sutsLsut) {
         				System.out.println(entry);
         			}
                     break;
                 case "setSUT":
                 case "ssut":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("setSUT", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("setSUT")) {
                 		break;
                 	}
 
@@ -226,22 +548,28 @@ class Writer extends Thread {
                 	}
 
                 	// get SUT list
-                	List<String> suts2 = ivctCommander.listSUT();
-                	if (suts2.isEmpty()) {
+                    List<String> sutsSetSut = sutPathsFiles.getSuts();
+                    if (sutsSetSut.isEmpty()) {
                 		out.println("No SUT found. Please load a SUT onto the file system.");
                 		break;
                 	}
                 	// check if SUT entered exists in SUT list
-                	if (ivctCommander.checkSutKnown(split[1])) {
+                    boolean sutFoundSetSut = false;
+                    for (String t : sutsSetSut) {
+                        if (t.equals(split[1])) {
+                            sutFoundSetSut = true;
+                        }
+                    }
+                    if (sutFoundSetSut == false) {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}
                 	ivctCommander.rtp.setSutName(split[1]);
-                	IVCTcommander.resetSUT();
+                    ivctCommander.resetSUT();
                 	break;
                 case "listTestSchedules":
                 case "lts":
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                 		System.out.println(sutNotSelected);
                 		break;
                 	}
@@ -249,7 +577,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls2 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	List<String> ls2 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
                 	for (String temp : ls2) {
                 		System.out.println(temp);
                 	}
@@ -257,10 +585,10 @@ class Writer extends Thread {
                 case "startTestSchedule":
                 case "sts":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("startTestSchedule", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("startTestSchedule")) {
                 		break;
                 	}
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -269,7 +597,7 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	List<String> ls1 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	List<String> ls1 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
                 	boolean gotTestSchedule = false;
         			for (String entry : ls1) {
                 		if (split[1].equals(entry)) {
@@ -299,12 +627,12 @@ class Writer extends Thread {
                 case "abortTestSchedule":
                 case "ats":
                 	// Cannot abort test schedule if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
                 	// Cannot abort test schedule if it is not running
-                	if (ivctCommander.getTestScheduleRunningBool() == false) {
+                    if (ivctCommander.rtp.getTestScheduleRunningBool() == false) {
                         out.println("abortTestSchedule: no test schedule is running");
                 		break;
                 	}
@@ -318,7 +646,7 @@ class Writer extends Thread {
                     break;
                 case "listTestCases":
                 case "ltc":
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -326,7 +654,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls3 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName());
+                	List<String> ls3 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
                 	for (String temp : ls3) {
                 		System.out.println(temp);
                     	List<String> testcases1 = ivctCommander.rtp.getTestcases(temp);
@@ -338,10 +666,10 @@ class Writer extends Thread {
                 case "startTestCase":
                 case "stc":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("startTestCase", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("startTestCase")) {
                 		break;
                 	}
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -365,12 +693,12 @@ class Writer extends Thread {
                 case "abortTestCase":
                 case "atc":
                 	// Cannot abort test case if SUT is not set
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
                 	// Cannot abort test case if it is not running
-                	if (ivctCommander.getTestCaseRunningBool() == false) {
+                    if (ivctCommander.rtp.getTestCaseRunningBool() == false) {
                         out.println("abortTestCase: no test case is running");
                         break;
                 	}
@@ -385,10 +713,11 @@ class Writer extends Thread {
                 case "sll":
                 	// Need an input parameter
                 	if (split.length == 1) {
-                		out.println("setLogLevel: Error missing log level: error, warning, info, debug or trace");
+                        // Do NOT allow ERROR, since end test case relies on a warn message to close log file.
+                        out.println("setLogLevel: Error missing log level: warning, info, debug or trace");
                 		break;
                 	}
-                	if (split[1].equalsIgnoreCase("error") || split[1].equalsIgnoreCase("warning") || split[1].equalsIgnoreCase("info") || split[1].equalsIgnoreCase("debug") || split[1].equalsIgnoreCase("trace")) {
+                    if (split[1].equalsIgnoreCase("warning") || split[1].equalsIgnoreCase("info") || split[1].equalsIgnoreCase("debug") || split[1].equalsIgnoreCase("trace")) {
                 		logLevelString = split[1].toLowerCase();
                 		CmdSetLogLevel cmdSetLogLevel = ivctCommander.rtp.createCmdSetLogLevel(split[1]);
                 		cmdSetLogLevel.execute();
@@ -399,7 +728,7 @@ class Writer extends Thread {
                 	break;
                 case "listVerdicts":
                 case "lv":
-                	if (ivctCommander.checkSUTselected()) {
+                    if (ivctCommander.rtp.checkSutNotSelected()) {
                         out.println(sutNotSelected);
                 		break;
                 	}
@@ -438,7 +767,7 @@ class Writer extends Thread {
                 case "quit":
                 case "q":
                 	// Check any critical tasks are running
-                	if (ivctCommander.checkCtTcTsRunning("quit", out)) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("quit")) {
                 		out.println("Do you want to quit anyway? (answer yes to quit UI)");
                         line = in.readLine();
                         if (line == null) break;
@@ -453,6 +782,11 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
+                    out.println("addSUT (asut) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\"- add an SUT");
+                    out.println("modifySUT (msut) sut \"name text quoted\" \"description text quoted\" \"vendor text quoted\"- modify an SUT");
+                    out.println("listBadges (lbg) - list all available badges");
+                    out.println("addBadge (abg) badge ... badge - add one or more badges to SUT");
+                    out.println("deleteBadge (dbg) badge ... badge - delete one or more badges from SUT");
                     out.println("listSUT (lsut) - list SUT folders");
                     out.println("setSUT (ssut) sut - set active SUT");
                     out.println("listTestSchedules (lts) - list the available test schedules for the test suite");
@@ -480,8 +814,11 @@ class Writer extends Thread {
             }
         }
         catch (IOException e) { System.err.println("Writer: " + e); }
-        finally { if (out != null) out.close(); }
-        System.exit(0);
+        finally {
+        	if (out != null) {
+        		out.close();
+        	}
+        }
     }
 }
 }

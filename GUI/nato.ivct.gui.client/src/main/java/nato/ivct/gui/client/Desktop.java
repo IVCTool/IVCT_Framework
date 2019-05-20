@@ -15,11 +15,10 @@ import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
-import org.eclipse.scout.rt.shared.TEXTS;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
-import nato.ivct.gui.client.badges.BadgeOutline;
+import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.client.search.SearchOutline;
-import nato.ivct.gui.client.sut.SuTForm;
 import nato.ivct.gui.shared.Icons;
 
 /**
@@ -66,18 +65,18 @@ public class Desktop extends AbstractDesktop {
 		}
 
 
-		@Order(0)
-		public class NewSuTMenu extends AbstractMenu {
-			@Override
-			protected String getConfiguredText() {
-				return TEXTS.get("NewSuT");
-			}
-
-			@Override
-			protected void execAction() {
-				new SuTForm(TEXTS.get("SuT")).startNew();
-			}
-		}
+//		@Order(0)
+//		public class NewSuTMenu extends AbstractMenu {
+//			@Override
+//			protected String getConfiguredText() {
+//				return TEXTS.get("NewSuT");
+//			}
+//
+//			@Override
+//			protected void execAction() {
+//				new SuTForm(TEXTS.get("SuT")).startNew();
+//			}
+//		}
 
 		
 		@Order(1000)
@@ -93,10 +92,9 @@ public class Desktop extends AbstractDesktop {
 				ClientSessionProvider.currentSession(ClientSession.class).stop();
 			}
 		}
-		
-		
 	}
 
+	
 	@Order(1500)
 	public class OptionsMenu extends AbstractFormMenu<OptionsForm> {
 		@Override
@@ -111,7 +109,6 @@ public class Desktop extends AbstractDesktop {
 
 		@Override
 		protected String getConfiguredIconId() {
-			// TODO Auto-generated method stub
 			return AbstractIcons.Gear;
 		}
 		
@@ -127,7 +124,7 @@ public class Desktop extends AbstractDesktop {
 
 		@Override
 		protected String getConfiguredIconId() {
-			return AbstractIcons.Person;
+			return AbstractIcons.PersonSolid;
 		}
 		
 		@Order(1000)

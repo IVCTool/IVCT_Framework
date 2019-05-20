@@ -14,44 +14,93 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
-import nato.ivct.commander.CmdListSuT.SutDescription;
+import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 
-
 public class FactoryTest {
 	@Test
 	public void testCreateCmdListBadgesMethod() {
-		assertTrue("Factory Test createCmdListBadges should return CmdListBadges",
-				Factory.createCmdListBadges() != null);
+		CmdListBadges lb = Factory.createCmdListBadges();
+		assertTrue("Factory Test createCmdListBadges should return CmdListBadges", lb != null);
+		lb.execute();
+		if (lb.badgeMap.size() == 0) {
+//			throw new AssumptionViolatedException("Inconclusive");
+			return;
+		}
+		assertTrue("Some Badges should be found", lb.badgeMap.size() > 0);
 	}
 
 	@Test
 	public void testCreateCmdListSutMethod() {
-		assertTrue("Factory Test createCmdListSut should return CmdListSut", Factory.createCmdListSut() != null);
+		CmdListSuT cl = Factory.createCmdListSut();
+		assertTrue("Factory Test createCmdListSut should return CmdListSut", cl != null);
+		cl.execute();
+		if (cl.sutMap.size() == 0) {
+//			throw new AssumptionViolatedException("Inconclusive");
+			return;
+		}
+		assertTrue("Some SuT's should be found", cl.sutMap.size() > 0);
 	}
 
 	@Test
 	public void testCreateCmdQuitMethod() {
-		assertTrue("Factory Test createCmdQuit should return CmdQuit", Factory.createCmdQuit() != null);
+		CmdQuit qc = Factory.createCmdQuit();
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", qc != null);
+		qc.execute();
+	}
+
+	@Test
+	public void testCmdSendTcStatus() {
+		CmdSendTcStatus cmd = Factory.createCmdSendTcStatus();
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", cmd != null);
+		cmd.execute();
+	}
+
+	@Test
+	public void testCmdSendTcVerdict() {
+		CmdSendTcVerdict cmd = Factory.createCmdSendTcVerdict("sut", "sutDir", "testScheduleName", "testcase", "verdict", "verdictText");
+		assertTrue("Factory Test createCmdQuit should return CmdQuit", cmd != null);
+		cmd.execute();
 	}
 
 	@Test
 	public void testCreateCmdSetLogLevelMethod() {
-		assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel",
-				Factory.createCmdSetLogLevel(LogLevel.DEBUG) != null);
+		CmdSetLogLevel sll = Factory.createCmdSetLogLevel(LogLevel.DEBUG);
+		assertTrue("Factory Test createCmdSetLogLevel should return CmdSetLogLevel", sll != null);
+		sll.setLogLevel(LogLevel.TRACE);
+		sll.execute();
+		sll.setLogLevel(LogLevel.DEBUG);
+		sll.execute();
+		sll.setLogLevel(LogLevel.INFO);
+		sll.execute();
+		sll.setLogLevel(LogLevel.WARNING);
+		sll.execute();
+		sll.setLogLevel(LogLevel.ERROR);
+		sll.execute();
 	}
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		assertTrue("Factory Test createCmdStartTc should return CmdStartTc",
-				Factory.createCmdStartTc("hw_iosb", "TS_HelloWorld", "some.test.case", "c:/tmp") != null);
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-1.0.0", "some.test.case", "c:/tmp");
+		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
+		stc.execute();
+		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
+		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-1.0.0"));
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "c:/tmp");
+		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
+		stc.execute();
+		assertTrue("Get SuT name", stc.getSut() != null);
+		assertTrue("Get Badge name", stc.getBadge() != null);
 	}
 
 	@Test
@@ -60,12 +109,12 @@ public class FactoryTest {
 
 			@Override
 			public void onResult(TcResult result) {
-				assertTrue (result.sutName != null);
-				assertTrue (result.sutDir != null);
-				assertTrue (result.testScheduleName != null);
-				assertTrue (result.testcase != null);
-				assertTrue (result.verdict != null);
-				assertTrue (result.verdictText != null);	
+				assertTrue(result.sutName != null);
+				assertTrue(result.sutDir != null);
+				assertTrue(result.testScheduleName != null);
+				assertTrue(result.testcase != null);
+				assertTrue(result.verdict != null);
+				assertTrue(result.verdictText != null);
 			}
 
 		}
@@ -75,10 +124,82 @@ public class FactoryTest {
 	}
 
 	@Test
+	public void testCreateCmdUpdateSUTMethod() {
+
+		// If property is not set, do not have any access to any SUTs
+		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+			return;
+		}
+		String vendorName = "Fraunhofer IOSB";
+		Set<BadgeTcParam> badgeTcParams = new HashSet<BadgeTcParam>();
+		SutDescription sutDescription = new SutDescription();
+		sutDescription.name = "hw_iosb";
+		sutDescription.description = "HelloWorld system under federate for IVCT demonstration";
+		sutDescription.vendor = "Fraunhofer IOSB";
+		sutDescription.badges.add("HLA-BASE-2017");
+		sutDescription.badges.add("TS_HLA_EncodingRulesTester-2017");
+		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutDescription);
+		try {
+			cus.execute();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.name + "/" + "CS.json";
+		try {
+			// The parameters should be the same. Thus expected false.
+			assertFalse("CS.json values should be equal", cus.compareCSdata(csJsonFilename, sutDescription));
+			SutDescription tmpSutDescription = new SutDescription();
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.name = "dummy";
+			// The name is changed. Thus expected true.
+			assertTrue("CS.json sut name change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.description = "dummy";
+			// The description is changed. Thus expected true.
+			assertTrue("CS.json sut description change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.vendor = "dummy";
+			// The vendor has changed. Thus expected true.
+			assertTrue("CS.json vendor change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.version = "dummy";
+			// The version has changed. Thus expected true.
+			assertTrue("CS.json version change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+
+			copySUT(tmpSutDescription, sutDescription);
+			tmpSutDescription.badges.add("dummy");
+			// The badges have changed. Thus expected true.
+			assertTrue("CS.json badge change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void copySUT(SutDescription tmpSutDescription, SutDescription sutDescription) {
+		tmpSutDescription.ID = sutDescription.ID;
+		tmpSutDescription.name = sutDescription.name;
+		tmpSutDescription.description = sutDescription.description;
+		tmpSutDescription.vendor = sutDescription.vendor;
+		for (String entry : sutDescription.badges) {
+			tmpSutDescription.badges.add(entry);
+		}
+	}
+
+	@Test
 	public void testHelloWorldFederate() {
 		CmdListSuT cmd = Factory.createCmdListSut();
 		cmd.execute();
 		assertTrue("should have a list of SuTs", cmd.sutMap != null);
+		if (cmd.sutMap.containsKey("hw_iosb") == false) {
+//			throw new AssumptionViolatedException("Inconclusive");
+			return;
+		}
 		assertTrue("hw_iosb should exist", cmd.sutMap.containsKey("hw_iosb"));
 		SutDescription hw = cmd.sutMap.get("hw_iosb");
 		assertTrue(hw.vendor.equals("Fraunhofer IOSB"));

@@ -30,7 +30,6 @@ public class CmdStartTcListener implements MessageListener, Command {
 	public class TcInfo {
 		public String sutName;
 		public String sutDir;
-		public String tsRunFolder;
 		public String badge;
 		public String testCaseId;
 		public String testCaseParam;
@@ -69,7 +68,6 @@ public class CmdStartTcListener implements MessageListener, Command {
 
 						info.sutName = (String) jsonObject.get("sutName");
 						info.sutDir = (String) jsonObject.get("sutDir");
-						info.tsRunFolder = (String) jsonObject.get("tsRunFolder");
 						info.badge = (String) jsonObject.get("badge");
 						info.testCaseId = (String) jsonObject.get("testCaseId");
 						info.testCaseParam = jsonObject.get("tcParam").toString();

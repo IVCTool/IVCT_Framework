@@ -4,37 +4,60 @@ import java.util.List;
 
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
-import org.eclipse.scout.rt.shared.TEXTS;
-
-import nato.ivct.gui.client.sut.CapabilityTablePage;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
 public class CbNodePage extends AbstractPageWithNodes {
+	private String m_badgeId = null;
+	private String m_pageTitle = null;
 
-	private String suId;
+	public CbNodePage() {
+		m_pageTitle = TEXTS.get("CbNodePage");
+	}
 	
-	@Override
-	protected String getConfiguredTitle() {
-		// TODO [hzg] verify translation
-		return TEXTS.get("CbNodePage");
+	public CbNodePage(final String badgeId) {
+		m_pageTitle = m_badgeId = badgeId;
 	}
 	
 	@Override
-	protected boolean getConfiguredLeaf() {
-		// TODO Auto-generated method stub
-		return false;
+	protected String getConfiguredTitle() {
+		return m_pageTitle;
 	}
 
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-		CapabilityTablePage cbTablePage = new CapabilityTablePage();
-		cbTablePage.setSutId(getSutId());
-		pageList.add(cbTablePage);
+		super.execCreateChildPages(pageList);
 	}
 
-	public String getSutId() {
-		return suId;
-	}	
-	public void setSutId(String Id) {
-		this.suId = Id;
+	@Override
+	protected boolean getConfiguredLeaf() {
+		// do not show child notes
+		return true;
+	}
+
+	@Override
+	protected void execPageActivated() throws ProcessingException {
+	  if (getDetailForm() == null) {
+	    CbForm form = new CbForm();
+	    form.setCbId(getBadgeId());
+	    setDetailForm(form);
+	    form.startView();
+	  }
+	}
+	
+	@Override
+	protected void execPageDeactivated() throws ProcessingException {
+	  if (getDetailForm() != null) {
+	    getDetailForm().doClose();
+	    setDetailForm(null);
+	  }
+	}
+
+	public String getBadgeId() {
+		return m_badgeId;
+	}
+
+	public void setBadgeId(String badgeId) {
+		this.m_badgeId = badgeId;
 	}
 }

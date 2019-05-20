@@ -1,0 +1,27 @@
+{
+	"id" 			: 	"HLA-Verification-2017",
+	"version"		:	"2.0.0",
+	"name" 			: 	"HLA Verification Test 2017",
+	"description"	:	"This test case is equivalent to the FCTT_NG configuration verification step.",
+	"graphics"		:	"HLA-Verification-2017.png",
+	"tsRunTimeFolder":	"TS_CS_Verification-2.0.0/bin",
+	"tsLibTimeFolder":	"TS_CS_Verification-2.0.0/lib",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-DOC-0001",
+			"description"	:	"SuT interoperability capabilities shall be documented in a Conformance Statement including a SOM and a FOM with a minimum set of supporting FOM modules",
+			"TC"			:	"nato.ivct.etc.fr.tc_cs_verification.TC_001_Files_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0001",
+			"description"	:	"SuT CS/SOM shall be valid",
+			"TC"			:	"nato.ivct.etc.fr.tc_cs_verification.TC_001_Files_Check"
+		},
+		{
+			"id"			:	"IR-SOM-0002",
+			"description"	:	"SuT CS/SOM shall be consistent",
+			"TC"			:	"nato.ivct.etc.fr.tc_cs_verification.TC_001_Files_Check"
+		}
+	]
+}

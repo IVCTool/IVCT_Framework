@@ -16,14 +16,19 @@ package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.basic.table.ITable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
-import nato.ivct.gui.client.badges.BadgeOutline;
+import nato.ivct.gui.client.outlines.SuTOutline;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField.Table;
+import nato.ivct.gui.shared.sut.ISuTTcService;
+import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 
 public class TcStatusNotificationHandler implements INotificationHandler<TcStatusNotification> {
@@ -32,22 +37,43 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
 
 	@Override
 	public void handleNotification(TcStatusNotification notification) {
-		// inform client about test case verdict
+		// inform client about test case progress
 		ModelJobs.schedule(new IRunnable() {
 			@Override
 			public void run() throws Exception {
-				logger.trace("Test Case Status Notification " + notification.getTc() + " is at "
+				logger.trace("Test Case Status Notification " + notification.getTcId() + " is at "
 						+ notification.getPercent() + "%");
-
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
-					if (outline instanceof BadgeOutline) {
-						CapabilityTablePage cTP = (CapabilityTablePage) outline.getActivePage();
-						for (ITableRow tr : cTP.getTable().getRows()) {
+					if (outline instanceof SuTOutline) {
+						// set TC execution status in table
+						SuTTcNodePage tcNP = (SuTTcNodePage) outline.getSelectedNode();
+						SuTCbTablePage cbNode = (SuTCbTablePage) tcNP.getParentNode();
+						for (ITableRow tr : cbNode.getTable().getRows()) {
 							// find row with test case name
-							if (tr.getCellValue(3).equals(notification.getTc())) {
-								tr.setCellValue(4, notification.getStatus() + ": " + notification.getPercent() + "%");
+							if (cbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTcId())) {
+								cbNode.getTable().getTCresultColumn().setValue(tr, notification.getStatus() + ": " + notification.getPercent() + "%");
 							}
 						}
+
+						// set TC execution status in TC execution form
+						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
+							// set TC execution status in detail form
+							if (form.getSutId().equalsIgnoreCase(notification.getSutId()) 
+								&& form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
+								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
+								tbl.discardAllRows();
+								ITableRow row = tbl.addRow();
+								// set verdict
+								((Table) tbl).getTcStatusColumn().setValue(row, notification.getStatus());
+								
+								// set execution progress
+								((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
+								
+								//record status and progress in the form
+								form.setTestCaseStatus(notification.getStatus());
+								form.setTestCaseProgress(Integer.toString(notification.getPercent()));
+							}
+						});
 					}
 				}
 			}

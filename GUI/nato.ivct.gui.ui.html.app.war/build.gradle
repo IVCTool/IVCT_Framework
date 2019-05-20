@@ -1,0 +1,15 @@
+apply plugin: "war"
+
+apply from: "../../.shared/libraries.gradle"
+apply from: "../../.shared/commons.gradle"
+
+description = """IVCT HTML UI WAR"""
+
+war {
+    baseName = 'ivct.gui.ui.html'
+	archiveName = "${baseName}##${version}.${extension}"
+}
+
+dependencies {
+	compile     project(':GUI:nato.ivct.gui.ui.html')
+}

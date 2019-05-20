@@ -1,22 +1,62 @@
 apply plugin: 'application'
 
+// -----------------------------------------------------------------------------
+// Docker
+// -----------------------------------------------------------------------------
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.4'
+    }
+}
+apply plugin: 'com.bmuschko.docker-java-application'
+
 mainClassName = 'de.fraunhofer.iosb.ivct.logsink.LogSink'
 
 
+docker {
+    javaApplication {
+        baseImage = 'openjdk:8-jre-alpine'
+        maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
+        tag = "ivct/logsink:${ivctVersion}"
+    }
+}
+
 
 dependencies {
-	compile     project(':MessagingHelpers')
 	compile     project(':Command')
 	compile 	libraries.actimemqClient
 	compile 	libraries.logback_classic
 	compile     libraries.slf4j_api
-	compile 'com.googlecode.json-simple:json-simple:1.1.1'
-	
+	compile		libraries.jsonSimple
+
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
-	
+
 	runtime     libraries.slf4j_jcl_over_slf4j
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j
 }
 
+distributions {
+    main {
+        contents {
+            from('src/conf/logback.xml') {
+                into 'lib'
+            }
+        }
+    }
+}
+
+tasks.withType(CreateStartScripts) {
+    classpath += files('lib')
+doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib')
+    }}

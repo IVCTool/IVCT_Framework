@@ -6,12 +6,11 @@ repositories {
 
 dependencies {
 	compile     project(':LogSink')
-	compile     project(':MessagingHelpers')
 
-	compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
 
 	compile     libraries.slf4j_api
-	
+
 	runtime     libraries.slf4j_jcl_over_slf4j
 	runtime     libraries.slf4j_jul_to_slf4j
 	runtime     libraries.slf4j_log4j_over_slf4j

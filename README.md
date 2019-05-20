@@ -1,8 +1,6 @@
-| Branch | Build status |
-| ------ | ------------ |
-| Master | [![Build Status master branch](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=master)](https://travis-ci.org/MSG134/IVCT_Framework) |
-| Development | [![Build Status development branch](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=development)](https://travis-ci.org/MSG134/IVCT_Framework) |
+[![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=travis-ci)](https://travis-ci.org/MSG134/IVCT_Framework) Master
 
+[![Build Status](https://travis-ci.org/MSG134/IVCT_Framework.svg?branch=development)](https://travis-ci.org/MSG134/IVCT_Framework) Development
 
 # IVCT README
 
@@ -14,5 +12,6 @@ LICENSE
 ------------
 
 Copyright 2015 NATO MSG-134.
+Copyright 2018 NATO MSG-163.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

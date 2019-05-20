@@ -1,42 +1,31 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.List;
-
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
+import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
+import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.treefield.AbstractTreeField;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.shared.TEXTS;
-import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 
-import nato.ivct.gui.client.sut.SuTForm.MainBox.CancelButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.CapabilitiesBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.DetailsBox.TestResultsField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.EventsField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.ExecuteButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.ExecutionBox.TerminateButton;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.CapabilitiesField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.DescrField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.NameField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.GeneralBox.SutVendorField;
-import nato.ivct.gui.client.sut.SuTForm.MainBox.OkButton;
-import nato.ivct.gui.shared.sut.CreateSuTPermission;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.CloseButton;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
-import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 @FormData(value = SuTFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTForm extends AbstractForm {
@@ -56,16 +45,12 @@ public class SuTForm extends AbstractForm {
 			return TEXTS.get("SuT");
 	}
 
-	public void startModify() {
-		startInternalExclusive(new ModifyHandler());
+	public void startView() {
+		startInternal/*Exclusive*/(new ViewHandler());
 	}
 
-	public void startNew() {
-		startInternal(new NewHandler());
-	}
-
-	public CancelButton getCancelButton() {
-		return getFieldByClass(CancelButton.class);
+	public CloseButton getCloseButton() {
+		return getFieldByClass(CloseButton.class);
 	}
 
 	public MainBox getMainBox() {
@@ -84,44 +69,12 @@ public class SuTForm extends AbstractForm {
 		return getFieldByClass(SutVendorField.class);
 	}
 
-	public CapabilitiesBox getCapabilitiesBox() {
-		return getFieldByClass(CapabilitiesBox.class);
-	}
-
-	public TestResultsField getTestResultsField() {
-		return getFieldByClass(TestResultsField.class);
-	}
-
-	public DetailsBox getDetailsBox() {
-		return getFieldByClass(DetailsBox.class);
-	}
-
-	public ExecutionBox getExecutionBox() {
-		return getFieldByClass(ExecutionBox.class);
-	}
-
-	public ExecuteButton getExecuteButton() {
-		return getFieldByClass(ExecuteButton.class);
-	}
-
-	public TerminateButton getTerminateButton() {
-		return getFieldByClass(TerminateButton.class);
-	}
-
-	public EventsField getEventsField() {
-		return getFieldByClass(EventsField.class);
-	}
-
-	public CapabilitiesField getCapabilitiesField() {
-		return getFieldByClass(CapabilitiesField.class);
+	public CapabilityStatusBox getDetailsBox() {
+		return getFieldByClass(CapabilityStatusBox.class);
 	}
 
 	public NameField getNameField() {
 		return getFieldByClass(NameField.class);
-	}
-
-	public OkButton getOkButton() {
-		return getFieldByClass(OkButton.class);
 	}
 
 	@FormData
@@ -130,8 +83,8 @@ public class SuTForm extends AbstractForm {
 	}
 
 	@FormData
-	public void setSutId(String sutId) {
-		this.sutId = sutId;
+	public void setSutId(final String _sutId) {
+		this.sutId = _sutId;
 	}
 
 	@Override
@@ -147,181 +100,252 @@ public class SuTForm extends AbstractForm {
 
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
-
+		
 		@Order(1000)
-		public class GeneralBox extends AbstractGroupBox {
+		public class MainBoxHorizontalSplitBox extends AbstractSplitBox {
 			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("GeneralSuTInformation");
+			protected boolean getConfiguredSplitHorizontal() {
+				// split horizontal
+				return false;
+			}
+			
+			@Override
+			protected double getConfiguredSplitterPosition() {
+			return 0.35;
 			}
 
 			@Order(1000)
-			public class NameField extends AbstractStringField {
+			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTName");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-			@Order(2000)
-			public class DescrField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTDescription");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-			@Order(3000)
-			public class SutVendorField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTVendor");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
-			@Order(4000)
-			public class CapabilitiesField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Capabilities");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-			
-			
-			
-		}
-
-		@Order(2000)
-		public class DetailsBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("Details");
-			}
-
-			@Order(4000)
-			public class CapabilitiesBox extends AbstractListBox<String> {
-
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Capabilities");
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
-				}
-
-				@Override
-				protected void execInitField() {
-					// TODO Auto-generated method stub
-					super.execInitField();
-				}
-				@Override
-				protected List<? extends ILookupRow<String>> execLoadTableData() {
-					// TODO Auto-generated method stub
-					return super.execLoadTableData();
+					return TEXTS.get("GeneralSuTInformation");
 				}
 				
-			}
-
-			@Order(5000)
-			public class TestResultsField extends AbstractTreeField {
-				public class Tree extends AbstractTree {
-				}
-
+				// set all fields of this box to read-only
 				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SuTResults");
+				public boolean isEnabled() {
+					return false;
 				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
+	
+				@Order(1000)
+				public class NameField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("SuTName");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 128;
+					}
 				}
-			}
-
-		}
-
-		@Order(3000)
-		public class ExecutionBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("Execution");
-			}
-
-			@Order(1000)
-			public class ExecuteButton extends AbstractButton {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Execute");
+				
+				@Order(1500)
+				public class VersionField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("Version");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 64;
+					}
 				}
-
-				@Override
-				protected void execClickAction() {
+	
+				@Order(2000)
+				public class SutVendorField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("SuTVendor");
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 128;
+					}
+				}
+	
+				@Order(3000)
+				public class DescrField extends AbstractStringField {
+					@Override
+					protected String getConfiguredLabel() {
+						return TEXTS.get("SuTDescription");
+					}
+	
+					@Override
+					protected int getConfiguredGridW() {
+						return 3;
+					}
+	
+					@Override
+					protected int getConfiguredGridH() {
+						return 2;
+					}
+	
+					@Override
+					protected int getConfiguredMaxLength() {
+						return 256;
+					}
+					
+					// set to multi-line
+					@Override
+					protected boolean getConfiguredMultilineText() {
+						return true;
+					}
 				}
 			}
 
 			@Order(2000)
-			public class TerminateButton extends AbstractButton {
+			public class DetailsHorizontalSplitterBox extends AbstractSplitBox {
+				
 				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Terminate");
+				protected boolean getConfiguredSplitHorizontal() {
+					// split horizontal
+					return false;
+				}
+				
+				@Override
+				protected double getConfiguredSplitterPosition() {
+				return 0.35;
+				}
+				
+				@Order(1000)
+				public class CapabilityStatusBox extends AbstractGroupBox {
+					@Override
+					protected boolean getConfiguredVisible() {
+						// !!! TODO Hide this box until it has no real content !!!
+						return false;
+					}
+					
+					@Order(1000)
+					public class SutCapabilityStatusTableField extends AbstractTableField<SutCapabilityStatusTableField.SutCapabilityStatusTable> {
+						@Override
+						protected int getConfiguredGridW() {
+							return 3;
+						}
+						
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("CapabilityStatus");
+						}
+
+						public class SutCapabilityStatusTable extends AbstractTable {
+							@Order(1000)
+							public class CbBadgeID extends AbstractColumn<String> {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("BadgeId");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 200;
+								}
+							}
+							
+							@Order(2000)
+							public class CbBadgeStatus extends AbstractColumn<String> {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("BadgeConformanceStatus");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 100;
+								}
+							}
+						}
+					}
 				}
 
-				@Override
-				protected void execClickAction() {
+				@Order(2000)
+				public class TestReportBox extends AbstractGroupBox {
+
+					@Order(2000)
+					public class TestReportTableField extends AbstractTableField<TestReportTableField.TestReportTable> {
+						
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("TestReports");
+						}
+
+//						@Override
+//						protected int getConfiguredGridW() {
+//							return 3;
+//						}
+						
+						@Order(1000)
+						public class TestReportTable extends AbstractTable {
+							
+							@Override
+							protected boolean getConfiguredMultiSelect() {
+								// only a single row can be selected
+								return false;
+							}
+
+							@Order(1000)
+							public class FileNameColumn extends AbstractStringColumn {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("FileName");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 400;
+								}
+							}
+							
+							public FileNameColumn getFileNameColumn() {
+								return this.getColumnSet().getColumnByClass(FileNameColumn.class);
+							}
+							
+							// called on double-click on a row
+							@Override
+							protected void execRowAction(ITableRow row) {
+								TestReportForm form = new TestReportForm();
+								// set SUT Id and requested report file name
+								form.setSutId(getSutId());
+							    form.setReportFileName(getTable().getFileNameColumn().getValue(getSelectedRow()));
+								//load and open the form
+							    form.startView();
+							}
+						}
+					}
 				}
 			}
-
-			@Order(3000)
-			public class EventsField extends AbstractTreeField {
-				public class Tree extends AbstractTree {
-				}
-
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("Logging");
-				}
-
-				@Override
-				protected int getConfiguredGridH() {
-					return 6;
-				}
-			}
-
 		}
-
+		
 		@Order(100000)
-		public class OkButton extends AbstractOkButton {
-		}
-
-		@Order(101000)
-		public class CancelButton extends AbstractCancelButton {
+		public class CloseButton extends AbstractButton {
+			
+			public CloseButton() {
+				super();
+				// set button invisible by default
+				setVisible(false);
+			}
+			
+			@Override
+			protected int getConfiguredSystemType() {
+			    return SYSTEM_TYPE_CLOSE;
+			}
+			
+			@Override
+			protected String getConfiguredLabel() {
+			    return TEXTS.get("CloseButton");
+			}
+			
+			@Override
+			protected String getConfiguredKeyStroke() {
+			    return IKeyStroke.ESCAPE;
+			}
 		}
 	}
 
-	public class ModifyHandler extends AbstractFormHandler {
-
+	public class ViewHandler extends AbstractFormHandler {
+		
 		@Override
 		protected void execLoad() {
 			ISuTService service = BEANS.get(ISuTService.class);
@@ -329,39 +353,8 @@ public class SuTForm extends AbstractForm {
 			exportFormData(formData);
 			formData = service.load(formData);
 			importFormData(formData);
-			getForm().setSubTitle(formData.getName().getValue());
 
-			setEnabledPermission(new UpdateSuTPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTFormData formData = new SuTFormData();
-			exportFormData(formData);
-			service.store(formData);
-		}
-	}
-
-	public class NewHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTFormData formData = new SuTFormData();
-			exportFormData(formData);
-			formData = service.prepareCreate(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new CreateSuTPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			ISuTService service = BEANS.get(ISuTService.class);
-			SuTFormData formData = new SuTFormData();
-			exportFormData(formData);
-			service.create(formData);
+//			setEnabledPermission(new UpdateSuTPermission());
 		}
 	}
 }
