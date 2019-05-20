@@ -4,8 +4,8 @@
 	"name" 			: 	"HelloWorld Tutorial Badge",
 	"description"	:	"This is a simple example for capability badge to test the compliance of an federate to the hello world federation.",
 	"graphics"		:	"HelloWorld-2017.png",
-	"tsRunTimeFolder":	"TS_HelloWorld-2017/bin",
-	"tsLibTimeFolder":	"TS_HelloWorld-2017/lib",
+	"tsRunTimeFolder":	"TS_HelloWorld-2.0.0/bin",
+	"tsLibTimeFolder":	"TS_HelloWorld-2.0.0/lib",
 	"dependency"	:	[],
 	"requirements"	:	[
 		{
