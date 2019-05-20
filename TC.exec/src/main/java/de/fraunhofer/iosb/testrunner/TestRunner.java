@@ -69,8 +69,10 @@ public class TestRunner {
 				logger.error("Could not instantiate " + classname + " !", ex);
 			}
 			if (testCase == null) {
+				verdicts[i] = new IVCT_Verdict();
 				verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-				verdicts[i++].text = "Could not instantiate " + classname;
+				verdicts[i].text = "Could not instantiate " + classname;
+				i++;
 				continue;
 			}
 			testCase.setSutName(sutName);

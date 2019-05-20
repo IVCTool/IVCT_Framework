@@ -138,6 +138,11 @@ public class JMSTestRunner extends TestRunner
 					String lib_path = ts_path + "/" + bd.tsLibTimeFolder;
 					File dir = new File(lib_path);
 					File[] filesList = dir.listFiles();
+					if (filesList == null) {
+						logger.info("No files found in folder {}", dir.getPath());
+						return;
+					}
+						
 					URL[] urls = new URL[filesList.length];
 					for (int i = 0; i < filesList.length; i++) {
 						try {
