@@ -74,6 +74,15 @@ public class CmdStartTcListener implements MessageListener, Command {
                         info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
                         info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
 						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
+
+						// check for missing values
+                        if (info.sutName == null) Factory.LOGGER.error("sutName is missing");
+                        if (info.sutDir == null) Factory.LOGGER.error("sutDir is missing");
+                        if (info.badge == null) Factory.LOGGER.error("badge is missing");
+                        if (info.testCaseId == null) Factory.LOGGER.error("testCaseId is missing");
+                        if (info.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is missing");
+                        if (info.federationName == null) Factory.LOGGER.error("federationName is missing");
+                        if (info.testCaseParam == null) Factory.LOGGER.error("testCaseParam is missing");
 						
 						listener.onStartTestCase(info);
 					}

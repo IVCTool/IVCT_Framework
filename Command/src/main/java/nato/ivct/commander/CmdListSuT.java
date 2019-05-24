@@ -25,9 +25,36 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class CmdListSuT implements Command {
-	
+
+    public static final String ID                  = "id";
+    public static final String NAME                = "name";
+    public static final String DESCRIPTION         = "description";
+    public static final String VENDOR              = "vendor";
+    public static final String VERSION             = "version";
+    public static final String BADGE               = "badge";
+    public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
+    public static final String FEDERATION_NAME     = "federationName";
+
+    
 	public HashMap<String, SutDescription> sutMap = new HashMap<String, SutDescription>();
 
+	/**
+	 * The CmdListSuT command reads the SuT conformance statement JSON files, and creates a hashMap <id,SutDescription>
+	 * 
+	 * The format of a conformance statement is expected as follows:
+	 * 
+	 * {
+     *    "id"                 : "hw_iosb",
+     *    "name"               : "HelloWorld",
+     *    "description"        : "HelloWorld system under federate for IVCT demonstration",
+     *    "vendor"             : "Fraunhofer IOSB",
+     *    "version"            : "1.0",
+     *    "badge"              : ["HLA-BASE-2017"],
+     *    "settingsDesignator" : "crcAddress=localhost:8989",
+     *    "federationName"     : "TheWorld"
+     * }
+     * 
+	 */
 	@Override
 	public void execute() {
 		// file loader to read the JSON descriptions of SuT's
@@ -48,15 +75,26 @@ public class CmdListSuT implements Command {
 					fReader = new FileReader(file + "/CS.json");
 					obj = parser.parse(fReader);
 					JSONObject jsonObj = (JSONObject) obj;
-					sut.ID = (String) jsonObj.get("id");
-					sut.name = (String) jsonObj.get("name");
+					sut.ID = (String) jsonObj.get(ID);
+					sut.name = (String) jsonObj.get(NAME);
 					if (sut.name == null) {
 						sut.name = sut.ID;
 					}
-					sut.version = (String) jsonObj.get("version");
-					sut.description = (String) jsonObj.get("description");
-					sut.vendor = (String) jsonObj.get("vendor");
-					JSONArray cs = (JSONArray) jsonObj.get("badge");
+					sut.version = (String) jsonObj.get(VERSION);
+					sut.description = (String) jsonObj.get(DESCRIPTION);
+                    sut.vendor = (String) jsonObj.get(VENDOR);
+                    sut.settingsDesignator = (String) jsonObj.get(SETTINGS_DESIGNATOR);
+                    sut.federation = (String) jsonObj.get(FEDERATION_NAME);
+					JSONArray cs = (JSONArray) jsonObj.get(BADGE);
+					
+                    if (sut.ID == null) Factory.LOGGER.error("ID is undefined");
+                    if (sut.name == null) Factory.LOGGER.error("name is undefined");
+                    if (sut.version == null) Factory.LOGGER.warn("version is undefined");
+                    if (sut.description == null) Factory.LOGGER.warn("description is undefined");
+                    if (sut.vendor == null) Factory.LOGGER.warn("vendor is undefined");
+                    if (sut.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is undefined");
+                    if (sut.federation == null) Factory.LOGGER.error("federation is undefined");
+					
 					for (int i=0; i < cs.size(); i++) {
 						sut.badges.add(cs.get(i).toString());
 					}

@@ -383,6 +383,11 @@ public class Factory {
 		initialize();
 		return new SutPathsFiles();
 	}
+	
+	public static CmdListSuT createCmdListSuT() {
+	    initialize();
+	    return new CmdListSuT();
+	}
 	public static int getCmdCounter() {
 		return cmdCounter;
 	}

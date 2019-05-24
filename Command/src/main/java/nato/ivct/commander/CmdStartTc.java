@@ -90,9 +90,9 @@ public class CmdStartTc implements Command {
 			
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
-			String tmpString = Factory.replaceMacro(paramFileContentString);
-			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
-			startCmd.put("tcParam", jsonParam);
+    			String tmpString = Factory.replaceMacro(paramFileContentString);
+    			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
+    			startCmd.put("tcParam", jsonParam);
 			} else {
 				LOGGER.error("File not found: " + paramFileName);
 				return;
