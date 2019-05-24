@@ -13,7 +13,6 @@ import org.slf4j.MDC;
 
 import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
-import de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
@@ -35,24 +34,16 @@ import nato.ivct.commander.Factory;
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
-public class JMSTestRunner extends TestRunner
+public class TestEngine extends TestRunner
 		implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener {
 
-	private static Logger logger = LoggerFactory.getLogger(JMSTestRunner.class);
-	private PropertyBasedClientSetup jmshelper;
+	private static Logger logger = LoggerFactory.getLogger(TestEngine.class);
 
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
 
 	private CmdListBadges badges;
 	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
-
-	/**
-	 * disconnect from JMS
-	 */
-	public void disconnect() {
-		jmshelper.disconnect();
-	}
 
 	/**
 	 * Main entry point from the command line.
@@ -62,7 +53,8 @@ public class JMSTestRunner extends TestRunner
 	 */
 	public static void main(final String[] args) {
 		try {
-			final JMSTestRunner runner = new JMSTestRunner();
+			@SuppressWarnings("unused")
+            final TestEngine runner = new TestEngine();
 		} catch (final IOException ex) {
 			logger.error(ex.getMessage(), ex);
 		}
@@ -74,7 +66,7 @@ public class JMSTestRunner extends TestRunner
 	 * @throws IOException
 	 *             problems with loading properties
 	 */
-	public JMSTestRunner() throws IOException {
+	public TestEngine() throws IOException {
 
 		// initialize the IVCT Commander Factory
 		Factory.initialize();
