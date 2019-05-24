@@ -130,7 +130,8 @@ public final class RuntimeParameters {
 	 * 
 	 */
 	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
-		CmdStartTc cmdStartTc = Factory.createCmdStartTc(sutName, theTestSuiteName, testCase);
+	    
+		CmdStartTc cmdStartTc = Factory.createCmdStartTc(sutName, theTestSuiteName, testCase, sutDescription.settingsDesignator, sutDescription.federation);
 		setTestCaseRunningBool(true);
 		cmdStartTc.execute();
 		return false;
