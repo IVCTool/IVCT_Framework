@@ -27,7 +27,7 @@ public class CmdStartTc implements Command {
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	public CmdStartTc(String _sut, String _badge, String _tc, String _runFolder) {
+	public CmdStartTc(String _sut, String _badge, String _tc) {
 		sut = _sut;
 		tc = _tc;
 		badge = _badge;

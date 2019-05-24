@@ -130,7 +130,7 @@ public final class RuntimeParameters {
 	 * 
 	 */
 	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
-		CmdStartTc cmdStartTc = Factory.createCmdStartTc(sutName, theTestSuiteName, testCase, getTsRunFolder(theTestSuiteName));
+		CmdStartTc cmdStartTc = Factory.createCmdStartTc(sutName, theTestSuiteName, testCase);
 		setTestCaseRunningBool(true);
 		cmdStartTc.execute();
 		return false;
@@ -223,19 +223,6 @@ public final class RuntimeParameters {
 		return ls;
 	}
     
-	private String getTsRunFolder(final String testsuite) {
-		String tsRunFolder = null;
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			BadgeDescription bd = s.getValue();
-			if (bd.ID.equals(testsuite) == true) {
-				tsRunFolder = bd.tsRunTimeFolder;
-				break;
-			}
-		}
-		return tsRunFolder;
-	}
-	
 	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
 		List<String> badges = null;
 		listSUTs();

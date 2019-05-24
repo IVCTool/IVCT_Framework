@@ -235,18 +235,16 @@ public class ServerSession extends AbstractServerSession {
 		private String sut;
 		private String tc;
 		private String badge;
-		private String runFolder;
 
-		public ExecuteTestCase(String _sut, String _tc, String _badge, String _runFolder) {
+		public ExecuteTestCase(String _sut, String _tc, String _badge) {
 			sut = _sut;
 			tc = _tc;
 			badge = _badge;
-			runFolder = _runFolder;
 		}
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, runFolder);
+			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc);
 			tcCmd.execute();
 			return null;
 		}
@@ -342,9 +340,9 @@ public class ServerSession extends AbstractServerSession {
 		return loadTcResultsJob;
 	}
 
-	public void execStartTc(String sut, String tc, String badge, String runFolder) {
+	public void execStartTc(String sut, String tc, String badge) {
 		LOG.info("starting test case");
-		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, runFolder), Jobs.newInput());
+		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge), Jobs.newInput());
 
 	}
 

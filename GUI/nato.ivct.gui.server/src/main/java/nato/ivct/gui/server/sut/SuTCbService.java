@@ -75,7 +75,7 @@ public class SuTCbService implements ISuTCbService {
 		// execute the CmdStartTc commands
 		CbService cbService = BEANS.get(CbService.class);
 		BadgeDescription b = cbService.getBadgeDescription(badgeId);
-		ServerSession.get().execStartTc(sutId, tc, badgeId, b.tsRunTimeFolder);
+		ServerSession.get().execStartTc(sutId, tc, badgeId);
 		// mark test cases as being started
 		SuTCbTablePageData capPage = cap_hm.get(badgeId);
 		if (capPage == null) {
