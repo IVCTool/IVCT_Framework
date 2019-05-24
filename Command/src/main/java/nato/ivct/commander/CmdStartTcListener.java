@@ -33,7 +33,8 @@ public class CmdStartTcListener implements MessageListener, Command {
 		public String badge;
 		public String testCaseId;
 		public String testCaseParam;
-
+		public String settingsDesignator;
+		public String federationName;
 	}
 
 	public interface OnStartTestCaseListener {
@@ -60,17 +61,19 @@ public class CmdStartTcListener implements MessageListener, Command {
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
-					String commandTypeName = (String) jsonObject.get("commandType");
+					String commandTypeName = (String) jsonObject.get(CmdStartTc.COMMAND_ID);
 
-					if (commandTypeName.equals("startTestCase")) {
+					if (commandTypeName.equals(CmdStartTc.COMMAND)) {
 						Factory.LOGGER.trace("JMS Message received: " + content);
 						TcInfo info = new TcInfo();
 
-						info.sutName = (String) jsonObject.get("sutName");
-						info.sutDir = (String) jsonObject.get("sutDir");
-						info.badge = (String) jsonObject.get("badge");
-						info.testCaseId = (String) jsonObject.get("testCaseId");
-						info.testCaseParam = jsonObject.get("tcParam").toString();
+						info.sutName = (String) jsonObject.get(CmdStartTc.SUT_NAME);
+						info.sutDir = (String) jsonObject.get(CmdStartTc.SUT_DIR);
+						info.badge = (String) jsonObject.get(CmdStartTc.BADGE);
+                        info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
+                        info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
+                        info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
+						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
 						
 						listener.onStartTestCase(info);
 					}

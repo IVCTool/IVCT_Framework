@@ -91,12 +91,12 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-1.0.0", "some.test.case");
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
 		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-1.0.0"));
-		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case");
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut() != null);
