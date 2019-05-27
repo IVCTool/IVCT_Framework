@@ -829,6 +829,17 @@ public class SuTCbForm extends AbstractForm {
 									public FileNameColumn getFileNameColumn() {
 										return getColumnSet().getColumnByClass(FileNameColumn.class);
 									}
+									
+									@Override
+									protected void execRowsSelected(List<? extends ITableRow> rows) {
+										if (rows.size() == 1) {
+											// set downlowad menu visible
+											getMenuByClass(FileDownloadMenu.class).setVisible(true);
+										} else {
+											// hide download menu if no row is selected
+											getMenuByClass(FileDownloadMenu.class).setVisible(false);
+										}
+									}
 
 									@Order(1000)
 									public class FileNameColumn extends AbstractStringColumn {
@@ -885,6 +896,11 @@ public class SuTCbForm extends AbstractForm {
 										@Override
 										protected Set<? extends IMenuType> getConfiguredMenuTypes() {
 											return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+										}
+										
+										@Override
+										protected boolean getConfiguredVisible() {
+											return false;
 										}
 
 										@Override

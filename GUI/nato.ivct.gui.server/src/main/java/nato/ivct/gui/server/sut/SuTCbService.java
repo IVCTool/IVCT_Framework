@@ -118,7 +118,8 @@ public class SuTCbService implements ISuTCbService {
 		
 		try {
 			fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, cbId)).resolve(fileName)));
-		} catch (IOException exc) {
+		} catch (IOException | InvalidPathException exc) {
+			LOG.error("error to access fileName %", fileName);
 			// TODO Auto-generated catch block
 			exc.printStackTrace();
 			fileContent = new BinaryResource(fileName, null);
