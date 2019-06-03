@@ -190,6 +190,10 @@ public class SuTCbService implements ISuTCbService {
         Path paramFile = null;
         try {
             paramFile = getParamFile(sutId, badgeId);
+			if (paramFile == null) {
+				LOG.info("badge parameter file for SuT" + sutId + " and badge " + badgeId + " does not exist");
+				return false;
+			}
             LOG.debug("store TC parameters to file " + paramFile.toString());
             Files.write(paramFile, parameters.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
             return true;
