@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
@@ -73,9 +74,8 @@ public class SuTCbService implements ISuTCbService {
 
 	public void executeTestCase(String sutId, String tc, String badgeId) {
 		// execute the CmdStartTc commands
-		CbService cbService = BEANS.get(CbService.class);
-		BadgeDescription b = cbService.getBadgeDescription(badgeId);
-		ServerSession.get().execStartTc(sutId, tc, badgeId);
+		SutDescription sut =BEANS.get(SuTService.class).getSutDescription(sutId);
+		ServerSession.get().execStartTc(sutId, tc, badgeId, sut.settingsDesignator, sut.federation);
 		// mark test cases as being started
 		SuTCbTablePageData capPage = cap_hm.get(badgeId);
 		if (capPage == null) {

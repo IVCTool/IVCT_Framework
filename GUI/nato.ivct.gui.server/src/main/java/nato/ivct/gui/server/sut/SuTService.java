@@ -50,6 +50,9 @@ public class SuTService implements ISuTService {
 	}
 	
 	public SutDescription getSutDescription(String sutId) {
+		if (sutMap == null)
+			// load SuT descriptions
+			waitForSutLoading(); 
 		return sutMap.get(sutId);
 	}
 	
