@@ -24,12 +24,14 @@ public interface IVCT_TcParam {
     /**
      * @return the federate name
      */
+    @Deprecated
     public String getFederationName();
 
 
     /**
      * @return the settings designator
      */
+    @Deprecated
     public String getSettingsDesignator();
 
 

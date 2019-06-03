@@ -87,12 +87,13 @@ public class CmdStartTc implements Command {
 			startCmd.put(BADGE, badge);
             startCmd.put(TC_ID, tc);
             startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
+            startCmd.put(FEDERATION, federationName);
 			
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
     			String tmpString = Factory.replaceMacro(paramFileContentString);
     			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
-    			startCmd.put("tcParam", jsonParam);
+    			startCmd.put(TC_PARAM, jsonParam);
 			} else {
 				LOGGER.error("File not found: " + paramFileName);
 				return;

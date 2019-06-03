@@ -54,6 +54,8 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     private IVCT_RTIambassador ivct_rti;
     private Logger logger;
     private IVCT_TcParam ivct_TcParam;
+    private String settingsDesignator;
+    private String federationName;  
 
 
     /**
@@ -78,13 +80,13 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     	
         // Connect to rti
         try {
-            if (this.ivct_TcParam.getSettingsDesignator().equals("")) {
+            if (this.settingsDesignator.equals("")) {
                 this.logger.info("initiateRTI: settingsDesignator is empty, using installation defaults");
                 ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE);
             }
             else {
-                this.logger.info("initiateRTI: settingsDesignator is set to " + this.ivct_TcParam.getSettingsDesignator());
-                ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.ivct_TcParam.getSettingsDesignator());
+                this.logger.info("initiateRTI: settingsDesignator is set to " + this.settingsDesignator);
+                ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.settingsDesignator);
             }
         }
         catch (AlreadyConnected e) {
@@ -97,7 +99,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
         // Create federation execution using tc_param foms
         try {
-        	ivct_rti.createFederationExecution(this.ivct_TcParam.getFederationName(), this.ivct_TcParam.getUrls(), "HLAfloat64Time");
+        	ivct_rti.createFederationExecution(this.federationName, this.ivct_TcParam.getUrls(), "HLAfloat64Time");
         }
         catch (final FederationExecutionAlreadyExists e) {
             this.logger.warn("initiateRti: FederationExecutionAlreadyExists (ignored)");
@@ -109,7 +111,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
         // Join federation execution
         try {
-            return ivct_rti.joinFederationExecution(federateName, this.ivct_TcParam.getFederationName(), this.ivct_TcParam.getUrls());
+            return ivct_rti.joinFederationExecution(federateName, this.federationName, this.ivct_TcParam.getUrls());
         }
         catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
             this.logger.error("initiateRti: ", e);
@@ -137,7 +139,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
         // Destroy federation execution
         try {
-        	ivct_rti.destroyFederationExecution(this.ivct_TcParam.getFederationName());
+        	ivct_rti.destroyFederationExecution(this.federationName);
         }
         catch (final FederatesCurrentlyJoined e1) {
             this.logger.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
@@ -157,5 +159,15 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
     		this.logger.error("disconnect exception=" + e.getMessage());
         }
+    }
+
+
+    public void setSettingsDesignator(String settingsDesignator) {
+        this.settingsDesignator = settingsDesignator;
+    }
+
+
+    public void setFederationName(String federationName) {
+        this.federationName = federationName;
     }
 }

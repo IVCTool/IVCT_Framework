@@ -92,8 +92,14 @@ public class CmdListSuT implements Command {
                     if (sut.version == null) Factory.LOGGER.warn("version is undefined");
                     if (sut.description == null) Factory.LOGGER.warn("description is undefined");
                     if (sut.vendor == null) Factory.LOGGER.warn("vendor is undefined");
-                    if (sut.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is undefined");
-                    if (sut.federation == null) Factory.LOGGER.error("federation is undefined");
+                    if (sut.settingsDesignator == null) {
+                        Factory.LOGGER.error("settingsDesignator is undefined, using default: " + Factory.SETTINGS_DESIGNATOR_DEFLT);
+                        sut.settingsDesignator = Factory.SETTINGS_DESIGNATOR_DEFLT;
+                    }
+                    if (sut.federation == null) {
+                        Factory.LOGGER.error("federation is undefined, using default: " + Factory.FEDERATION_NAME_DEFLT);
+                        sut.federation = Factory.FEDERATION_NAME_DEFLT;
+                    }
 					
 					for (int i=0; i < cs.size(); i++) {
 						sut.badges.add(cs.get(i).toString());

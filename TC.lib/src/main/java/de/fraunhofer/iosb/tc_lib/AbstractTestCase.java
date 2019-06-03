@@ -45,7 +45,8 @@ public abstract class AbstractTestCase {
 	
 	private String tcName = null;
 	private String sutName = null;
-	
+    private String settingsDesignator;
+    private String federationName;  
 
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
@@ -111,6 +112,8 @@ public abstract class AbstractTestCase {
     	
     	try {
 			ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
+			ivct_BaseModel.setFederationName(federationName);
+			ivct_BaseModel.setSettingsDesignator(settingsDesignator);
 		} catch (TcInconclusive e) {
 			String s = "getIVCT_BaseModel unsuccessful";
         	logger.info("TC INCONCLUSIVE " + s);
@@ -220,4 +223,14 @@ public abstract class AbstractTestCase {
 	public void setSutName(String sutName) {
 		this.sutName = sutName;
 	}
+
+    public void setSettingsDesignator(String settingsDesignator) {
+        this.settingsDesignator = settingsDesignator;
+    }
+
+
+    public void setFederationName(String federationName) {
+        this.federationName = federationName;
+    }
+
 }
