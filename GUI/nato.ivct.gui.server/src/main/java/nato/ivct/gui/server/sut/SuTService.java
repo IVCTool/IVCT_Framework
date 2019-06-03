@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdUpdateSUT;
-import nato.ivct.commander.Command;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
