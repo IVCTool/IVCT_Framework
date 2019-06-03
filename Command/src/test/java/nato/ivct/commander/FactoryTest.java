@@ -91,12 +91,12 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-1.0.0", "some.test.case", "c:/tmp");
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2017", "some.test.case", "crcAddress=localhost:8989", "TheWorld");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
-		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-1.0.0"));
-		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "c:/tmp");
+		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-2017"));
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut() != null);
@@ -119,8 +119,14 @@ public class FactoryTest {
 
 		}
 		OnResultListener testListener = new OnResultListenerTest();
+		CmdStartTestResultListener resultListener = Factory.createCmdStartTestResultListener(testListener);
 		assertTrue("Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener",
-				Factory.createCmdStartTestResultListener(testListener) != null);
+				resultListener != null);
+		resultListener.execute();
+		
+		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2017", "some.test.case", "verdict", "verdictText");
+        assertTrue("Factory Test CmdSendTcVerdict should return some value", stc != null);
+        stc.execute();
 	}
 
 	@Test

@@ -20,17 +20,33 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
 public class CmdStartTc implements Command {
+    
+    public static final String COMMAND_ID          = "commandType";
+    public static final String COMMAND             = "startTestCase";
+    public static final String SEQ                 = "sequence";
+    public static final String SUT_NAME            = "sutName";
+    public static final String SUT_DIR             = "sutDir";
+    public static final String BADGE               = "badge";
+    public static final String TC_ID               = "testCaseId";
+    public static final String TC_PARAM            = "tcParam";
+    public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
+    public static final String FEDERATION          = "federationName";
+            
 	// private MessageProducer producer;
 	private String sut;
 	private String badge;
-	private String tc;
+    private String tc;
+    private String settingsDesignator;
+    private String federationName;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	public CmdStartTc(String _sut, String _badge, String _tc, String _runFolder) {
+	public CmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName) {
 		sut = _sut;
 		tc = _tc;
 		badge = _badge;
+		settingsDesignator = _settingsDesignator;
+		federationName = _federationName;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,10 +63,12 @@ public class CmdStartTc implements Command {
 	 *   "sutDir":"C:/projects/IVCT_Runtime/IVCTsut/hw_iosb",
 	 *   "badge":"C:/projects/IVCT_Runtime/Badges/HelloWorld-1.0.0",
 	 *   "testCaseId":"TC0002",
+	 *   "settingsDesignator":"crcAddress=localhost:8989",
+	 *   "federationName":"TheWorld",
 	 *   "tcParam":{
-	 *     "rtiHostName":"localhost",
-	 *     "federationName":"HelloWorld",
-	 *     "sutFederateName":"A" }
+     *     "sutFederateName":"A" 
+     *     "testDuration":"120" 
+	 *     }
 	 *   }
 	 *
 	 * @see nato.ivct.commander.Command#execute()
@@ -62,18 +80,19 @@ public class CmdStartTc implements Command {
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
 			String paramFileName = sutHome + '/' + sut + '/' + badge + "/TcParam.json";
-			startCmd.put("commandType", "startTestCase");
-			startCmd.put("sequence", Integer.toString(Factory.newCmdCount()));
-			startCmd.put("sutName", sut);
-			startCmd.put("sutDir", sutHome + '/' + sut);
-			startCmd.put("badge", badge);
-			startCmd.put("testCaseId", tc);
-
+			startCmd.put(COMMAND_ID, COMMAND);
+			startCmd.put(SEQ, Integer.toString(Factory.newCmdCount()));
+			startCmd.put(SUT_NAME, sut);
+			startCmd.put(SUT_DIR, sutHome + '/' + sut);
+			startCmd.put(BADGE, badge);
+            startCmd.put(TC_ID, tc);
+            startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
+			
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
-			String tmpString = Factory.replaceMacro(paramFileContentString);
-			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
-			startCmd.put("tcParam", jsonParam);
+    			String tmpString = Factory.replaceMacro(paramFileContentString);
+    			JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
+    			startCmd.put("tcParam", jsonParam);
 			} else {
 				LOGGER.error("File not found: " + paramFileName);
 				return;
@@ -112,5 +131,21 @@ public class CmdStartTc implements Command {
 	public void setBadge(String _badge) {
 		this.badge = _badge;
 	}
+
+    public String getSettingsDesignator() {
+        return settingsDesignator;
+    }
+
+    public void setSettingsDesignator(String settingsDesignator) {
+        this.settingsDesignator = settingsDesignator;
+    }
+
+    public String getFederationName() {
+        return federationName;
+    }
+
+    public void setFederationName(String federationName) {
+        this.federationName = federationName;
+    }
 
 }

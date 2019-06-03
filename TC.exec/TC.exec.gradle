@@ -13,7 +13,7 @@ buildscript {
 apply plugin: 'com.bmuschko.docker-java-application'
 apply plugin: 'application'
 
-mainClassName = 'de.fraunhofer.iosb.testrunner.JMSTestRunner'
+mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
 
 docker {
     javaApplication {

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
-import de.fraunhofer.iosb.testrunner.JMSTestRunner;
+import de.fraunhofer.iosb.testrunner.TestEngine;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.Factory;
 
@@ -34,7 +34,7 @@ import nato.ivct.commander.Factory;
 public class TcRunner extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static boolean initialized = false;
-	private static JMSTestRunner runner = null;
+	private static TestEngine runner = null;
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
 	/**
@@ -59,7 +59,7 @@ public class TcRunner extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
         LogConfigurationHelper.configureLogging();
         try {
-            runner = new JMSTestRunner();
+            runner = new TestEngine();
         }
         catch (final IOException ex) {
         	LOGGER.error(ex.getMessage(), ex);
@@ -73,7 +73,6 @@ public class TcRunner extends HttpServlet {
 	 */
 	public void destroy() {
 		initialized = false;
-		runner.disconnect();
 		LOGGER.info("TcRunner destroyed");
 	}
 
