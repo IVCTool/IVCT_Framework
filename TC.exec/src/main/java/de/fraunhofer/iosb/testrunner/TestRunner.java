@@ -77,6 +77,7 @@ public class TestRunner {
 			}
 			testCase.setSutName(sutName);
 			testCase.setTcName(classname);
+			
 			verdicts[i++] = testCase.execute(paramJson, logger);
 		}
 	}

@@ -82,8 +82,10 @@ public class Factory {
 	public static final String LOGSINK_PASSWORD_ID = "logsink.password";
 	public static final String LOGSINK_PASSWORD_DEFLT = "";
 
-	public static final String SETTINGS_DESIGNATOR = "SETTINGS_DESIGNATOR";
-	public static final String SETTINGS_DESIGNATOR_DEFLT = "";
+    public static final String SETTINGS_DESIGNATOR = "SETTINGS_DESIGNATOR";
+    public static final String SETTINGS_DESIGNATOR_DEFLT = "crcAddress=localhost:8989";
+    public static final String FEDERATION_NAME = "FEDERATION_NAME";
+    public static final String FEDERATION_NAME_DEFLT = "TheWorld";
 
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
@@ -191,7 +193,8 @@ public class Factory {
 			overwriteWithEnv(LOGSINK_TOPIC_BINDINGNAME_ID);
 			overwriteWithEnv(LOGSINK_USER_ID);
 			overwriteWithEnv(LOGSINK_PASSWORD_ID);
-			overwriteWithEnv(SETTINGS_DESIGNATOR);
+            overwriteWithEnv(SETTINGS_DESIGNATOR);
+            overwriteWithEnv(FEDERATION_NAME);
 
 			LOGGER.info("Properties used: {}", props);
 

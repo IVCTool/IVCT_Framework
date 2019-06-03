@@ -6,7 +6,7 @@ ext {
         gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-        ivctVersion = '2.0.1'
+        ivctVersion = '2.1.0-SNAPSHOT'
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
         junitVersion = '4.+'
@@ -25,14 +25,14 @@ ext {
 		gradleDockerPluginVersion = '3.0.12'
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		//rti = "prti1516e"
-		rti = "IEEE1516e"
+		rti = "prti1516e"
+		//rti = "IEEE1516e"
 		//rti = "mak"
 
 		switch (rti) {
 			case "prti1516e":
 				rti_jar =   "prti1516e.jar"
-				rti_lib =   "C:/Program Files/prti1516e/lib"
+				rti_lib =   "C:/Program Files (x86)/prti1516e/lib"
 				break
 			case "mak":
 				logger.warn ('MAK RTI not configured yet')
