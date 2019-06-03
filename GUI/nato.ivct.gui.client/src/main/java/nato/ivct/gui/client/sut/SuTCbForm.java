@@ -1,5 +1,6 @@
 package nato.ivct.gui.client.sut;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +22,12 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.ui.form.fields.filechooserbutton.AbstractFileChooserButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -37,6 +41,7 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
+import org.eclipse.scout.rt.shared.ui.UserAgentUtility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -814,8 +819,25 @@ public class SuTCbForm extends AbstractForm {
 								@Order (2100)
 								public class SutTcExtraParameterTable extends AbstractTable {
 
+									@Override
+									protected boolean getConfiguredMultiSelect() {
+										// only a single row can be selected
+										return false;
+									}
+
 									public FileNameColumn getFileNameColumn() {
 										return getColumnSet().getColumnByClass(FileNameColumn.class);
+									}
+									
+									@Override
+									protected void execRowsSelected(List<? extends ITableRow> rows) {
+										if (rows.size() == 1) {
+											// set downlowad menu visible
+											getMenuByClass(FileDownloadMenu.class).setVisible(true);
+										} else {
+											// hide download menu if no row is selected
+											getMenuByClass(FileDownloadMenu.class).setVisible(false);
+										}
 									}
 
 									@Order(1000)
@@ -862,8 +884,39 @@ public class SuTCbForm extends AbstractForm {
 											getTable().sort();
 										}
 									}
-									
-									
+
+									@Order(3000)
+									public class FileDownloadMenu extends AbstractMenu {
+										@Override
+										protected String getConfiguredText() {
+											return TEXTS.get("FileDownload");
+										}
+
+										@Override
+										protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+											return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+										}
+										
+										@Override
+										protected boolean getConfiguredVisible() {
+											return false;
+										}
+
+										@Override
+										protected void execAction() {
+											// get the selected file name from the table
+											ITableRow row = getTable().getSelectedRow();
+											if (row == null)
+												// no row selected - nothing to do
+												return;
+											// get the content of the selected file
+											BinaryResource downloadFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getCbId(), getTable().getFileNameColumn().getValue(row));
+											if (downloadFileResource.getContentLength() != -1) {
+												getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+											}
+										}
+
+									}
 								}
 							}
 						}

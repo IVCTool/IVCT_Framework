@@ -107,9 +107,25 @@ public class SuTCbService implements ISuTCbService {
 		
 		// load extra TC parameter files
 		loadTcExtraParameterFiles(formData);
-		
 
 		return formData;
+	}
+
+
+	@Override
+	public BinaryResource getFileContent(final String sutId, final String cbId, final String fileName) {
+		BinaryResource fileContent = null;
+		
+		try {
+			fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, cbId)).resolve(fileName)));
+		} catch (IOException | InvalidPathException exc) {
+			LOG.error("error to access fileName %", fileName);
+			// TODO Auto-generated catch block
+			exc.printStackTrace();
+			fileContent = new BinaryResource(fileName, null);
+		}  
+		
+		return fileContent;
 	}
 
 	@Override
