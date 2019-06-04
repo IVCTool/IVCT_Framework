@@ -1,6 +1,5 @@
 package nato.ivct.gui.client.sut;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,12 +21,10 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
-import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
-import org.eclipse.scout.rt.client.ui.form.fields.filechooserbutton.AbstractFileChooserButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.imagefield.AbstractImageField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -41,7 +38,6 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
-import org.eclipse.scout.rt.shared.ui.UserAgentUtility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -596,8 +592,20 @@ public class SuTCbForm extends AbstractForm {
 						            		
 						            		// enable for use of adding/deleting parameters
 						            		// N.B.: excluded from usage for the moment until functionality is completely implemented
-	//					            		tbl.getMenuByClass(NewMenu.class).setVisible(true);
-	//					            		tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
+						            		if (false) {
+							            		tbl.getMenuByClass(NewMenu.class).setVisible(true);
+							            		tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
+						            		} 
+						            		else {
+						            			tbl.getRows().forEach(row -> {
+						            				if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[")
+						            						|| row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
+						            					row.setEnabled(false);
+						            					tbl.getMenuByClass(AbortMenu.class).setVisible(true);
+						            					row.   getCell(getParameterNameColumn());
+						            				}
+						            			});
+						            		}
 						            		
 						            		tbl.getMenuByClass(AbortMenu.class).setVisible(true);
 							            }
