@@ -55,7 +55,7 @@ dependencies {
 distributions {
     main {
         contents {
-            from('src/conf/JMSTestRunner_logback.xml') {
+            from('src/conf/TestEngine_logback.xml') {
                 into 'lib'
             }
         }
