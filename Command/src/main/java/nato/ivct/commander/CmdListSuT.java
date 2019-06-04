@@ -39,7 +39,8 @@ public class CmdListSuT implements Command {
 	public HashMap<String, SutDescription> sutMap = new HashMap<String, SutDescription>();
 
 	/**
-	 * The CmdListSuT command reads the SuT conformance statement JSON files, and creates a hashMap <id,SutDescription>
+	 * The CmdListSuT command reads the SuT conformance statement JSON files, and creates a 
+	 * hashMap for (id,SutDescription)
 	 * 
 	 * The format of a conformance statement is expected as follows:
 	 * 
