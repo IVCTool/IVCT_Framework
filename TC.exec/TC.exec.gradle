@@ -25,7 +25,6 @@ docker {
 
 dependencies {
   compile     project(':Command')
-//  compileOnly     project(':IEEE1516e')
 	compile     project(':TC.lib')
 
 	compile     libraries.slf4j_api
@@ -34,10 +33,6 @@ dependencies {
 	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
-
-	runtime     libraries.slf4j_jcl_over_slf4j
-	runtime     libraries.slf4j_jul_to_slf4j
-	runtime     libraries.slf4j_log4j_over_slf4j
 
     switch (rti) {
 		case "prti1516e":
