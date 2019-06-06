@@ -45,14 +45,15 @@ public class CmdListBadges implements Command {
 	@Override
 	public void execute() {
 		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
+        String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
 		if (dir.isDirectory()) {
 			Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
+            JSONParser parser = new JSONParser();
 			File[] filesList = dir.listFiles();
 			for (File file : filesList) {
 				Object obj;
-				JSONParser parser = new JSONParser();
-				if (file.isFile()) {
+				if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
 					FileReader fr = null;
 					try {
 						BadgeDescription badge = new BadgeDescription();
@@ -66,6 +67,9 @@ public class CmdListBadges implements Command {
 						badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
 						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 						badge.cbVisual = (String) jsonObj.get("graphics");
+						if (badge.cbVisual != null) {
+						    badge.cbVisual = iconsFolder + "/" + badge.cbVisual;
+						}
 						JSONArray depend = (JSONArray) jsonObj.get("dependency");
 						if (depend != null) {
 							badge.dependency = new String[depend.size()];
