@@ -1,5 +1,6 @@
 apply from: "./.shared/libraries.gradle"
 
-project.group = 'io.github.msg134'
+
+project.group = 'io.github.ivctool'
 project.version = "${ivctVersion}"
 apply from: "./.shared/commons.gradle"
