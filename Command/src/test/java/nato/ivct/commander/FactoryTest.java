@@ -39,6 +39,11 @@ public class FactoryTest {
 		}
 		assertTrue("Some Badges should be found", lb.badgeMap.size() > 0);
 	}
+	
+	@Test
+	public void testReadVersion() {
+	    Factory.readVersion();
+	}
 
 	@Test
 	public void testCreateCmdListSutMethod() {

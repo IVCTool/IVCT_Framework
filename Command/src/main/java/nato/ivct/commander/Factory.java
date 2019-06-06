@@ -89,6 +89,9 @@ public class Factory {
 
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
+    private static String version = null;
+    private static String build = null;
+	
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
@@ -116,6 +119,20 @@ public class Factory {
 			props.setProperty(key, value);
 		}
 	}
+	
+	
+	public static void readVersion() {
+	    Properties versionProperties = new Properties();
+	    try {
+            versionProperties.load(Command.class.getResourceAsStream("/dev.properties"));
+            setVersion(versionProperties.getProperty("version"));
+            setBuild(versionProperties.getProperty("build"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    
+	}
 
 	/*
 	 * Factory has to be initialized before any commands are being created.
@@ -123,6 +140,9 @@ public class Factory {
 	public static void initialize() {
 
 		if (props == null) {
+		    readVersion();
+		    LOGGER.info("IVCT Version " + getVersion() + ", build " + getBuild());
+		    
 			Properties fallback = new Properties();
 			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
 			fallback.put(IVCT_SUT_HOME_ID, IVCT_SUT_HOME_ID_DEFLT);
@@ -160,7 +180,7 @@ public class Factory {
 					} else {
 						// if not, just try to read the properties file with the default name
 						props.load(new FileInputStream(home + "/IVCT.properties"));
-						LOGGER.info("Properties file loaded");
+						LOGGER.debug("Properties file loaded");
 					}
 				} catch (final Exception e) {
 					LOGGER.error("Environment Variable IVCT_CONF = {} not found - creating default values", IVCT_CONF);
@@ -175,7 +195,7 @@ public class Factory {
 					}
 				}
 			} else {
-				LOGGER.info("no Properties file loaded");
+				LOGGER.warn("no Properties file loaded");
 			}
 
 			// overwrite with environment settings
@@ -196,7 +216,7 @@ public class Factory {
             overwriteWithEnv(SETTINGS_DESIGNATOR);
             overwriteWithEnv(FEDERATION_NAME);
 
-			LOGGER.info("Properties used: {}", props);
+			LOGGER.debug("Properties used: {}", props);
 
 			jmsHelper = new PropertyBasedClientSetup(props);
 			jmsHelper.parseProperties();
@@ -398,5 +418,21 @@ public class Factory {
 	public static int newCmdCount() {
 		return ++cmdCounter;
 	}
+
+    public static String getVersion() {
+        return version;
+    }
+
+    private static void setVersion(String version) {
+        Factory.version = version;
+    }
+
+    public static String getBuild() {
+        return build;
+    }
+
+    private static void setBuild(String build) {
+        Factory.build = build;
+    }
 
 }

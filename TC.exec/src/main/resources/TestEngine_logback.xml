@@ -4,7 +4,7 @@
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>./logs/LogSinkTest.log</file>
+		<file>./logs/TestEngine.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
 			<fileNamePattern>./logs/LogSinkTest.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -37,7 +37,7 @@
 
 	<!-- TRACE < DEBUG < INFO < WARN < ERROR - ALL,OFF,NULL(=INHERITED) -->
 	<!--  configure root -->
-	<root level="INFO">
+	<root level="ERROR">
 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="reporter" />

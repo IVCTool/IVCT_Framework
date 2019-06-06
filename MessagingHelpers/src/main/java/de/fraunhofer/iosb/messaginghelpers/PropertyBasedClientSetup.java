@@ -163,7 +163,7 @@ public final class PropertyBasedClientSetup {
         this.checkAllowedState(State.PROPERTIES_PARSED, State.DISCONNECTED);
         boolean tryAgain = true;
         int count = 1;
-        LOGGER.info("initConnection: connect to activemq please wait...");
+        LOGGER.debug("initConnection: connect to activemq please wait...");
         for (;tryAgain;) {
             try {
                 this.connection = this.factory.createConnection(this.user, this.password);
@@ -191,7 +191,7 @@ public final class PropertyBasedClientSetup {
 			}
 			count++;
         }
-        LOGGER.info("initConnection: connect to activemq OK");
+        LOGGER.debug("initConnection: connect to activemq OK");
         return false;
     }
 
