@@ -424,11 +424,12 @@ public class CmdUpdateSUT {
         obj.put(CmdListSuT.VENDOR, this.sutDescription.vendor);
         
         // check for defaults
-        if (sutDescription.settingsDesignator != null) {
+        if (sutDescription.settingsDesignator == null) {
             sutDescription.settingsDesignator = Factory.SETTINGS_DESIGNATOR_DEFLT;
         }
         obj.put(CmdListSuT.SETTINGS_DESIGNATOR, this.sutDescription.settingsDesignator);
-        if (sutDescription.federation != null) {
+        
+        if (sutDescription.federation == null) {
             sutDescription.federation = Factory.FEDERATION_NAME_DEFLT;
         }
         obj.put(CmdListSuT.FEDERATION_NAME, this.sutDescription.federation);
