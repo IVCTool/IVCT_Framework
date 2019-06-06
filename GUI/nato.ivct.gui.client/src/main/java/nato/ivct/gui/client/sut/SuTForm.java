@@ -211,6 +211,11 @@ public class SuTForm extends AbstractForm {
 					@Order(4100)
 					public class RtiSettingDesignator extends AbstractStringField {
 						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("RTIConnection");
+						}
+
+						@Override
 						protected int getConfiguredGridW() {
 							return 1;
 						}
@@ -218,6 +223,11 @@ public class SuTForm extends AbstractForm {
 					
 					@Order(4200)
 					public class FederationName extends AbstractStringField {
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("FederationName");
+						}
+
 						@Override
 						protected int getConfiguredGridW() {
 							return 1;
