@@ -83,6 +83,8 @@ public class SuTService implements ISuTService {
 		formData.getVersion().setValue(sut.version);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
+		formData.getRtiSettingDesignator().setValue(sut.settingsDesignator);
+		formData.getFederationName().setValue(sut.federation);
 
 		// fill the form data: SuTCapabilities table with conformance status
 
@@ -179,6 +181,8 @@ public class SuTService implements ISuTService {
 		formData.getVersion().setValue(sut.version);
 		formData.getSutVendor().setValue(sut.vendor);
 		formData.getDescr().setValue(sut.description);
+		formData.getRtiSettingDesignator().setValue(sut.settingsDesignator);
+		formData.getFederationName().setValue(sut.federation);
         
         return formData;
     }
@@ -207,6 +211,8 @@ public class SuTService implements ISuTService {
         sut.version = formData.getVersion().getValue();
         sut.description = formData.getDescr().getValue();
         sut.vendor = formData.getSutVendor().getValue();
+        sut.settingsDesignator = formData.getRtiSettingDesignator().getValue();
+        sut.federation = formData.getFederationName().getValue();
         
         // get the selected capabilities
         sut.badges = formData.getSuTCapabilityBox().getValue();
@@ -243,6 +249,8 @@ public class SuTService implements ISuTService {
         sut.version = formData.getVersion().getValue();
         sut.description = formData.getDescr().getValue();
         sut.vendor = formData.getSutVendor().getValue();
+        sut.settingsDesignator = formData.getRtiSettingDesignator().getValue();
+        sut.federation = formData.getFederationName().getValue();
 
         // get the selected capabilities
         sut.badges = formData.getSuTCapabilityBox().getValue();

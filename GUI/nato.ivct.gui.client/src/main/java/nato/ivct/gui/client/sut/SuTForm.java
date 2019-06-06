@@ -194,6 +194,46 @@ public class SuTForm extends AbstractForm {
 						return true;
 					}
 				}
+				
+				@Order(4000)
+				public class FederationSettingsBox extends AbstractGroupBox {
+					@Override
+					protected int getConfiguredGridColumnCount() {
+						return 2;
+					}
+					
+					// don't show border
+					@Override
+					protected boolean getConfiguredBorderVisible() {
+						return false;
+					}
+					
+					@Order(4100)
+					public class RtiSettingDesignator extends AbstractStringField {
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("RTIConnection");
+						}
+
+						@Override
+						protected int getConfiguredGridW() {
+							return 1;
+						}
+					}
+					
+					@Order(4200)
+					public class FederationName extends AbstractStringField {
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("FederationName");
+						}
+
+						@Override
+						protected int getConfiguredGridW() {
+							return 1;
+						}
+					}
+				}
 			}
 
 			@Order(2000)
