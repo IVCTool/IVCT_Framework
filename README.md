@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IVCTool/IVCT_Framework.svg?branch=travis-ci)](https://travis-ci.org/IVCTool/IVCT_Framework) Master
+[![Build Status](https://travis-ci.org/IVCTool/IVCT_Framework.svg?branch=master)](https://travis-ci.org/IVCTool/IVCT_Framework) Master
 
 [![Build Status](https://travis-ci.org/IVCTool/IVCT_Framework.svg?branch=development)](https://travis-ci.org/IVCTool/IVCT_Framework) Development
 
