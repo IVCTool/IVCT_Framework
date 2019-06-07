@@ -36,7 +36,6 @@ public class LogSink {
      */
     public static void main(final String[] args) {
         MDC.put("testcase", "LogSink");
-        LOGGER.info("in main");
 		Factory.initialize();
         final LogSink instance = new LogSink();
         instance.init();
