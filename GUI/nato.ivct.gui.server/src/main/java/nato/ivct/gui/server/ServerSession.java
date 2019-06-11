@@ -352,7 +352,5 @@ public class ServerSession extends AbstractServerSession {
 	public void setLogLevel(String level) {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
-
 	}
-
 }

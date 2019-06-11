@@ -137,7 +137,8 @@ public class Desktop extends AbstractDesktop {
 
 			@Override
 			protected void execAction() {
-				ScoutInfoForm form = new ScoutInfoForm();
+//				ScoutInfoForm form = new ScoutInfoForm();
+				IvctInfoForm form = new IvctInfoForm();
 				form.startModify();
 			}
 		}
