@@ -1,14 +1,13 @@
 task writeVersion {
     group = "Build"
     description = "Creates a properties file with version information"
-    
+
     doLast {
-        println "create version propeties"
         def prop = new Properties()
         prop.version = ivctVersion
         prop.build = "git describe --tags".execute().text.trim()
-        def propFile = new File("${project(':Command').projectDir}/src/main/resources/dev.properties")
-        propFile.createNewFile()
+        mkdir "src/main/resources"
+        File propFile = file('src/main/resources/dev.properties')
         prop.store(propFile.newWriter(), null)
     }
 }
