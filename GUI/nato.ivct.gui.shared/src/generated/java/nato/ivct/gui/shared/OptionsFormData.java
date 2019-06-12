@@ -19,6 +19,10 @@ public class OptionsFormData extends AbstractFormData {
 		return getFieldByClass(BadgeHome.class);
 	}
 
+	public Locale getLocale() {
+		return getFieldByClass(Locale.class);
+	}
+
 	public LogLevel getLogLevel() {
 		return getFieldByClass(LogLevel.class);
 	}
@@ -32,6 +36,11 @@ public class OptionsFormData extends AbstractFormData {
 	}
 
 	public static class BadgeHome extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class Locale extends AbstractValueFieldData<java.util.Locale> {
 
 		private static final long serialVersionUID = 1L;
 	}

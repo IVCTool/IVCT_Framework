@@ -1,23 +1,32 @@
 package nato.ivct.gui.client;
 
+import java.util.Locale;
+
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.CancelButton;
+import nato.ivct.gui.client.OptionsForm.MainBox.LocaleField;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.BadgeHomeField;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.SutHomeField;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.TsHomeField;
+import nato.ivct.gui.shared.AvailableLocaleLookupCall;
 import nato.ivct.gui.shared.CreateOptionsPermission;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.OptionsFormData;
@@ -33,7 +42,8 @@ public class OptionsForm extends AbstractForm {
 
 	@Override
 	protected void execInitForm() {
-		super.execInitForm();
+		String localeString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.PREF_USER_LOCALE, null);
+		getLocaleField().setValue(LocaleUtility.parse(localeString));
 	}
 
 	public void startModify() {
@@ -50,6 +60,10 @@ public class OptionsForm extends AbstractForm {
 
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
+	}
+	
+	public LocaleField getLocaleField() {
+		return getFieldByClass(LocaleField.class);
 	}
 
 	public LogLevelField getLogLevelField() {
@@ -91,6 +105,25 @@ public class OptionsForm extends AbstractForm {
 				return 128;
 			}
 
+		}
+		
+		@Order(1100)
+		public class LocaleField extends AbstractSmartField<Locale> {
+			
+			@Override
+			protected String getConfiguredLabel() {
+				return TEXTS.get("Language");
+			}
+			
+			@Override
+			protected boolean getConfiguredStatusVisible() {
+				return false;
+			}
+			
+			@Override
+			protected Class<? extends ILookupCall<Locale>> getConfiguredLookupCall() {
+				return (Class<? extends ILookupCall<Locale>>) AvailableLocaleLookupCall.class;
+			}
 		}
 
 		@Order(1500)
@@ -147,7 +180,8 @@ public class OptionsForm extends AbstractForm {
 			protected void execClickAction() {
 				IOptionsService service = BEANS.get(IOptionsService.class);
 				String level = getLogLevelField().getValue();
-				service.setLogLevel(level);
+//				service.setLogLevel(level);
+				storeOptions();
 				// super.execClickAction();
 			}
 		}
@@ -155,6 +189,18 @@ public class OptionsForm extends AbstractForm {
 		@Order(101000)
 		public class CancelButton extends AbstractCancelButton {
 		}
+	}
+	
+	protected void storeOptions() {
+		// not inside form handler, because the for is used in a FormToolButton without a handler
+	    boolean localeChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.PREF_USER_LOCALE, getLocaleField().getValue().toString());
+	    if (localeChanged) {
+	    	ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+	    	
+	    	MessageBoxes.createOk()
+	    		.withBody(TEXTS.get("ChangeOfLanguageApplicationOnNextLogin"))
+	    		.show();
+	    }
 	}
 
 	public class ModifyHandler extends AbstractFormHandler {
