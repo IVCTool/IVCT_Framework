@@ -11,7 +11,7 @@ import org.eclipse.scout.rt.client.ui.desktop.AbstractDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormMenu;
-import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm;
+import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
@@ -116,7 +116,12 @@ public class Desktop extends AbstractDesktop {
 	    protected Class<OptionsForm> getConfiguredForm() {
 	      return OptionsForm.class;
 	    }
-
+	    
+		@Override
+		protected void execInitForm(IForm form) {
+			// TODO Auto-generated method stub
+			super.execInitForm(form);
+		}
 	}
 
 	@Order(2000)

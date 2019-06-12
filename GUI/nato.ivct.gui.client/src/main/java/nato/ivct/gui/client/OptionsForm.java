@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
-import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -27,10 +26,8 @@ import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.BadgeHomeField;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.SutHomeField;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.TsHomeField;
 import nato.ivct.gui.shared.AvailableLocaleLookupCall;
-import nato.ivct.gui.shared.CreateOptionsPermission;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.OptionsFormData;
-import nato.ivct.gui.shared.UpdateOptionsPermission;
 
 @FormData(value = OptionsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class OptionsForm extends AbstractForm {
@@ -46,13 +43,14 @@ public class OptionsForm extends AbstractForm {
 		getLocaleField().setValue(LocaleUtility.parse(localeString));
 	}
 
-	public void startModify() {
-		startInternalExclusive(new ModifyHandler());
-	}
-
-	public void startNew() {
-		startInternal(new NewHandler());
-	}
+// Both handlers are not used by this form
+//	public void startModify() {
+//		startInternalExclusive(new ModifyHandler());
+//	}
+//
+//	public void startNew() {
+//		startInternal(new NewHandler());
+//	}
 
 	public CancelButton getCancelButton() {
 		return getFieldByClass(CancelButton.class);
@@ -203,47 +201,48 @@ public class OptionsForm extends AbstractForm {
 	    }
 	}
 
-	public class ModifyHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-			IOptionsService service = BEANS.get(IOptionsService.class);
-			OptionsFormData formData = new OptionsFormData();
-			exportFormData(formData);
-			formData = service.load(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new UpdateOptionsPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			IOptionsService service = BEANS.get(IOptionsService.class);
-			OptionsFormData formData = new OptionsFormData();
-			exportFormData(formData);
-			service.store(formData);
-		}
-	}
-
-	public class NewHandler extends AbstractFormHandler {
-
-		@Override
-		protected void execLoad() {
-			IOptionsService service = BEANS.get(IOptionsService.class);
-			OptionsFormData formData = new OptionsFormData();
-			exportFormData(formData);
-			formData = service.prepareCreate(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new CreateOptionsPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			IOptionsService service = BEANS.get(IOptionsService.class);
-			OptionsFormData formData = new OptionsFormData();
-			exportFormData(formData);
-			service.create(formData);
-		}
-	}
+// Not used by this form
+//	public class ModifyHandler extends AbstractFormHandler {
+//
+//		@Override
+//		protected void execLoad() {
+//			IOptionsService service = BEANS.get(IOptionsService.class);
+//			OptionsFormData formData = new OptionsFormData();
+//			exportFormData(formData);
+//			formData = service.load(formData);
+//			importFormData(formData);
+//
+//			setEnabledPermission(new UpdateOptionsPermission());
+//		}
+//
+//		@Override
+//		protected void execStore() {
+//			IOptionsService service = BEANS.get(IOptionsService.class);
+//			OptionsFormData formData = new OptionsFormData();
+//			exportFormData(formData);
+//			service.store(formData);
+//		}
+//	}
+//
+//	public class NewHandler extends AbstractFormHandler {
+//
+//		@Override
+//		protected void execLoad() {
+//			IOptionsService service = BEANS.get(IOptionsService.class);
+//			OptionsFormData formData = new OptionsFormData();
+//			exportFormData(formData);
+//			formData = service.prepareCreate(formData);
+//			importFormData(formData);
+//
+//			setEnabledPermission(new CreateOptionsPermission());
+//		}
+//
+//		@Override
+//		protected void execStore() {
+//			IOptionsService service = BEANS.get(IOptionsService.class);
+//			OptionsFormData formData = new OptionsFormData();
+//			exportFormData(formData);
+//			service.create(formData);
+//		}
+//	}
 }
