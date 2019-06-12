@@ -180,7 +180,7 @@ public class OptionsForm extends AbstractForm {
 			protected void execClickAction() {
 				IOptionsService service = BEANS.get(IOptionsService.class);
 				String level = getLogLevelField().getValue();
-//				service.setLogLevel(level);
+				service.setLogLevel(level);
 				storeOptions();
 				// super.execClickAction();
 			}
@@ -192,7 +192,7 @@ public class OptionsForm extends AbstractForm {
 	}
 	
 	protected void storeOptions() {
-		// not inside form handler, because the for is used in a FormToolButton without a handler
+		// not inside form handler, because the form is used in a FormToolButton without a handler
 	    boolean localeChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.PREF_USER_LOCALE, getLocaleField().getValue().toString());
 	    if (localeChanged) {
 	    	ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
