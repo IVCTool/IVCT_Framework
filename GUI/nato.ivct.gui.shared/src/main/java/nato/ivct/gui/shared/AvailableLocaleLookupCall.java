@@ -14,7 +14,7 @@ import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
 
 public class AvailableLocaleLookupCall extends LocalLookupCall<Locale> {
 	
-	private static final Locale[] AVAILABLE_LOCALES = new Locale[]{Locale.US, LocaleUtility.parse("de_DE")};
+	private static final Locale[] AVAILABLE_LOCALES = new Locale[]{Locale.ENGLISH, Locale.GERMAN};
 	private static final long serialVersionUID = 1L;
 	
 	protected Locale[] sort(Locale[] locales) {
