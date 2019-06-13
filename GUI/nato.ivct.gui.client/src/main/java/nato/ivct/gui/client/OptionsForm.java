@@ -27,6 +27,7 @@ import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.SutHomeField;
 import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.TsHomeField;
 import nato.ivct.gui.shared.AvailableLocaleLookupCall;
 import nato.ivct.gui.shared.IOptionsService;
+import nato.ivct.gui.shared.LogLevelLookupCall;
 import nato.ivct.gui.shared.OptionsFormData;
 
 @FormData(value = OptionsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -92,17 +93,21 @@ public class OptionsForm extends AbstractForm {
 	public class MainBox extends AbstractGroupBox {
 
 		@Order(1000)
-		public class LogLevelField extends AbstractStringField {
+		public class LogLevelField extends AbstractSmartField<String> {
 			@Override
 			protected String getConfiguredLabel() {
 				return TEXTS.get("LogLevel");
 			}
 
 			@Override
-			protected int getConfiguredMaxLength() {
-				return 128;
+			protected boolean getConfiguredStatusVisible() {
+				return false;
 			}
-
+			
+			@Override
+			protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+				return (Class<? extends ILookupCall<String>>) LogLevelLookupCall.class;
+			}
 		}
 		
 		@Order(1100)
