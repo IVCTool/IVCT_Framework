@@ -9,7 +9,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
-import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -21,10 +20,6 @@ import nato.ivct.gui.client.OptionsForm.MainBox.CancelButton;
 import nato.ivct.gui.client.OptionsForm.MainBox.LocaleField;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
-import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox;
-import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.BadgeHomeField;
-import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.SutHomeField;
-import nato.ivct.gui.client.OptionsForm.MainBox.PropertiesBox.TsHomeField;
 import nato.ivct.gui.shared.AvailableLocaleLookupCall;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
@@ -44,15 +39,6 @@ public class OptionsForm extends AbstractForm {
 		getLocaleField().setValue(LocaleUtility.parse(localeString));
 	}
 
-// Both handlers are not used by this form
-//	public void startModify() {
-//		startInternalExclusive(new ModifyHandler());
-//	}
-//
-//	public void startNew() {
-//		startInternal(new NewHandler());
-//	}
-
 	public CancelButton getCancelButton() {
 		return getFieldByClass(CancelButton.class);
 	}
@@ -69,49 +55,25 @@ public class OptionsForm extends AbstractForm {
 		return getFieldByClass(LogLevelField.class);
 	}
 
-	public TsHomeField getTsHomeField() {
-		return getFieldByClass(TsHomeField.class);
-	}
-
-	public SutHomeField getSutHomeField() {
-		return getFieldByClass(SutHomeField.class);
-	}
-
-	public BadgeHomeField getBadgeHomeField() {
-		return getFieldByClass(BadgeHomeField.class);
-	}
-
-	public PropertiesBox getPropertiesBox() {
-		return getFieldByClass(PropertiesBox.class);
-	}
-
 	public OkButton getOkButton() {
 		return getFieldByClass(OkButton.class);
 	}
 
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
-
-		@Order(1000)
-		public class LogLevelField extends AbstractSmartField<String> {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("LogLevel");
-			}
-
-			@Override
-			protected boolean getConfiguredStatusVisible() {
-				return false;
-			}
-			
-			@Override
-			protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-				return (Class<? extends ILookupCall<String>>) LogLevelLookupCall.class;
-			}
+		
+		@Override
+		protected int getConfiguredGridColumnCount() {
+			return 1;
 		}
 		
-		@Order(1100)
+		@Order(1000)
 		public class LocaleField extends AbstractSmartField<Locale> {
+			
+			@Override
+			protected int getConfiguredGridW() {
+				return 1;
+			}
 			
 			@Override
 			protected String getConfiguredLabel() {
@@ -129,53 +91,29 @@ public class OptionsForm extends AbstractForm {
 			}
 		}
 
-		@Order(1500)
-		public class PropertiesBox extends AbstractGroupBox {
+		@Order(1100)
+		public class LogLevelField extends AbstractSmartField<String> {
+			
+			@Override
+			protected int getConfiguredGridW() {
+				return 1;
+			}
 			@Override
 			protected String getConfiguredLabel() {
-				return TEXTS.get("Properties");
+				return TEXTS.get("LogLevel");
 			}
 
-			@Order(2000)
-			public class TsHomeField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("TS_HOME");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
+			@Override
+			protected boolean getConfiguredStatusVisible() {
+				return false;
 			}
-
-			@Order(3000)
-			public class SutHomeField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("SutHome");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
+			
+			@Override
+			protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+				return (Class<? extends ILookupCall<String>>) LogLevelLookupCall.class;
 			}
-
-			@Order(4000)
-			public class BadgeHomeField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("BadgeHome");
-				}
-
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
-
 		}
+
 
 		@Order(100000)
 		public class OkButton extends AbstractOkButton {
