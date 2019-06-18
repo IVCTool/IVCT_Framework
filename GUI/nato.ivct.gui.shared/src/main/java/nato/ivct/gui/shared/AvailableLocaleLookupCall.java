@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.platform.nls.NlsLocale;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.shared.services.lookup.LocalLookupCall;
