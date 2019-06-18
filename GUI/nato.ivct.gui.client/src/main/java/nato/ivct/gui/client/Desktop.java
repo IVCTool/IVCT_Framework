@@ -7,7 +7,9 @@ import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.view.IViewButton.DisplayStyle;
 import org.eclipse.scout.rt.client.ui.desktop.AbstractDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.ContributionCommand;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormMenu;
@@ -17,8 +19,11 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
+import nato.ivct.gui.client.Desktop.AlterSuTMenu.EditSutMenu;
 import nato.ivct.gui.client.outlines.BadgeOutline;
-import nato.ivct.gui.client.search.SearchOutline;
+import nato.ivct.gui.client.outlines.SuTOutline;
+import nato.ivct.gui.client.sut.SuTEditForm;
+import nato.ivct.gui.client.sut.SuTForm;
 import nato.ivct.gui.shared.Icons;
 
 /**
@@ -39,22 +44,70 @@ public class Desktop extends AbstractDesktop {
 
 	@Override
 	protected List<Class<? extends IOutline>> getConfiguredOutlines() {
-		return CollectionUtility.<Class<? extends IOutline>>arrayList(BadgeOutline.class, SearchOutline.class);
+		return CollectionUtility.<Class<? extends IOutline>>arrayList(BadgeOutline.class, SuTOutline.class);
 	}
 
 	@Override
 	protected void execDefaultView() {
-		selectFirstVisibleOutline();
+		setOutline(SuTOutline.class);
 	}
+	
+    @Order(100)
+    public class AlterSuTMenu extends AbstractMenu {
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("AlterSutList");
+        }
+        
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.hashSet();
+        }
 
-	protected void selectFirstVisibleOutline() {
-		for (IOutline outline : getAvailableOutlines()) {
-			if (outline.isEnabled() && outline.isVisible()) {
-				setOutline(outline.getClass());
-				return;
+		@Order(110)
+		public class NewSuTMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("NewSuT");
+			}
+
+			@Override
+			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+				return CollectionUtility.hashSet();
+			}
+		    
+			@Override
+			protected void execAction() {
+	            SuTEditForm form = new SuTEditForm("");
+	            form.startNew();
 			}
 		}
-	}
+
+		@Order(120)
+		public class EditSutMenu extends AbstractMenu {
+			@Override
+			protected String getConfiguredText() {
+				return TEXTS.get("EditSUT");
+			}
+
+			@Override
+			protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+				return CollectionUtility.hashSet();
+			}
+			
+			@Override
+			protected boolean getConfiguredVisible() {
+				// set to invisible by default until a SUT is selected
+				return false;
+			}
+			
+			@Override
+			protected void execAction() {
+	            SuTEditForm form = new SuTEditForm("");
+	            form.startModify();
+			}
+		}
+    }
 
 	@Order(1000)
 	public class QuickAccessMenu extends AbstractMenu {
@@ -64,21 +117,6 @@ public class Desktop extends AbstractDesktop {
 			return TEXTS.get("QuickAccess");
 		}
 
-
-//		@Order(0)
-//		public class NewSuTMenu extends AbstractMenu {
-//			@Override
-//			protected String getConfiguredText() {
-//				return TEXTS.get("NewSuT");
-//			}
-//
-//			@Override
-//			protected void execAction() {
-//				new SuTForm(TEXTS.get("SuT")).startNew();
-//			}
-//		}
-
-		
 		@Order(1000)
 		public class ExitMenu extends AbstractMenu {
 
@@ -93,7 +131,6 @@ public class Desktop extends AbstractDesktop {
 			}
 		}
 	}
-
 	
 	@Order(1500)
 	public class OptionsMenu extends AbstractFormMenu<OptionsForm> {
@@ -162,30 +199,45 @@ public class Desktop extends AbstractDesktop {
 
 		@Override
 		protected String getConfiguredKeyStroke() {
-			return IKeyStroke.F2;
+//			return IKeyStroke.F2;
+			return "ctrl-shift-b";
 		}
 	}
+	
+    @Order(2000)
+    public class SuTOutlineViewButton extends AbstractOutlineViewButton {
+    
+        public SuTOutlineViewButton() {
+            super(Desktop.this, SuTOutline.class);
+        }
+        
+        @Override
+        protected DisplayStyle getConfiguredDisplayStyle() {
+            return DisplayStyle.TAB;
+        }
+    
+        @Override
+        protected String getConfiguredKeyStroke() {
+          return "ctrl-shift-s";
+        }
+    }
+	
 
-	@Order(2000)
-	public class SearchOutlineViewButton extends AbstractOutlineViewButton {
 
-		public SearchOutlineViewButton() {
-			this(SearchOutline.class);
-		}
-
-		protected SearchOutlineViewButton(Class<? extends SearchOutline> outlineClass) {
-			super(Desktop.this, outlineClass);
-		}
-
-		@Override
-		protected DisplayStyle getConfiguredDisplayStyle() {
-			return DisplayStyle.TAB;
-		}
-
-		@Override
-		protected String getConfiguredKeyStroke() {
-			return IKeyStroke.F3;
-		}
-	}
+    @Override
+    protected void execPageDetailFormChanged(IForm oldForm, IForm newForm) {
+    	 if (newForm instanceof SuTForm)
+             this.getMenuByClass(EditSutMenu.class).setVisible(true);
+    	 else
+    		 this.getMenuByClass(EditSutMenu.class).setVisible(false);
+    }
+    
+    @Override
+    protected void execOutlineChanged(IOutline oldOutline, IOutline newOutline) {
+        if (newOutline instanceof SuTOutline)
+            this.getMenuByClass(AlterSuTMenu.class).setVisible(true);
+        else
+            this.getMenuByClass(AlterSuTMenu.class).setVisible(false);
+    }
 
 }
