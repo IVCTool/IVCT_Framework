@@ -104,38 +104,73 @@ public class CmdUpdateSUT {
 				jsonObject = (JSONObject) jsonParser.parse(sb.toString());
 				// get a String from the JSON object
 				String oldSUTid = (String) jsonObject.get(CmdListSuT.ID);
-				if (!Objects.equals(oldSUTid, tmpSutDescription.ID))
+				if (oldSUTid != null) {
+					if (oldSUTid.equals(tmpSutDescription.ID) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
 				// get a String from the JSON object
 				String oldSUTname = (String) jsonObject.get(CmdListSuT.NAME);
-				if (!Objects.equals(oldSUTname, tmpSutDescription.name))
+				if (oldSUTname != null) {
+					if (oldSUTname.equals(tmpSutDescription.name) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
 				// get a String from the JSON object
 				String oldSUTversion = (String) jsonObject.get(CmdListSuT.VERSION);
-				if (!Objects.equals(oldSUTversion, tmpSutDescription.version))
+				if (oldSUTversion != null) {
+					if (oldSUTversion.equals(tmpSutDescription.version) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 				
 				// get a String from the JSON object
 				String oldDescription = (String) jsonObject.get(CmdListSuT.DESCRIPTION);
-				if (!Objects.equals(oldDescription, tmpSutDescription.description))
+				if (oldDescription != null) {
+					if (oldDescription.equals(tmpSutDescription.description) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
                 // get a String from the JSON object
                 String oldVendor = (String) jsonObject.get(CmdListSuT.VENDOR);
-                if (!Objects.equals(oldVendor, tmpSutDescription.vendor))
-                    return true;
+				if (oldVendor != null) {
+					if (oldVendor.equals(tmpSutDescription.vendor) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
 
                 // get a String from the JSON object
                 String oldSettingsDesignator = (String) jsonObject.get(CmdListSuT.SETTINGS_DESIGNATOR);
-                if (!Objects.equals(oldSettingsDesignator, tmpSutDescription.settingsDesignator))
-                    return true;
+				if (oldSettingsDesignator != null) {
+					if (oldSettingsDesignator.equals(tmpSutDescription.settingsDesignator) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
 
                 // get a String from the JSON object
                 String oldFederationName = (String) jsonObject.get(CmdListSuT.FEDERATION_NAME);
-                if (!Objects.equals(oldFederationName, tmpSutDescription.federation))
-                    return true;
+				if (oldFederationName != null) {
+					if (oldFederationName.equals(tmpSutDescription.federation) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
 
 				// get badge files list from the JSON object
 				JSONArray badgeArray = (JSONArray) jsonObject.get(CmdListSuT.BADGE);
