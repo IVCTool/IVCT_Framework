@@ -19,6 +19,8 @@ import nato.ivct.gui.client.Desktop;
 public class ClientSession extends AbstractClientSession {
 	
 	public static final String PREF_USER_LOCALE = "PREF_USER_LOCALE";
+	public static final String DEF_LOG_LEVEL = "DEF_LOG_LEVEL";
+	public static final String CUR_LOG_LEVEL = "CUR_LOG_LEVEL";
 
 	public ClientSession() {
 		super(true);
