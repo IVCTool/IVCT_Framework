@@ -6,10 +6,12 @@ import org.eclipse.scout.rt.client.AbstractClientSession;
 import org.eclipse.scout.rt.client.IClientSession;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.shared.services.common.code.CODES;
 
 import nato.ivct.gui.client.Desktop;
+import nato.ivct.gui.shared.IOptionsService;
 
 /**
  * <h3>{@link ClientSession}</h3>
@@ -41,6 +43,11 @@ public class ClientSession extends AbstractClientSession {
 		
 		// pre-load all known code types
 		CODES.getAllCodeTypes("nato.ivct.gui.shared");
+		
+		// communicate this user's last used log level
+		String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
+		IOptionsService service = BEANS.get(IOptionsService.class);
+		service.setLogLevel(logLevel);
 
 	    // The locale needs to be set before the Desktop is created.
 	    String localeString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(PREF_USER_LOCALE, null);
