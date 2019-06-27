@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  24.06.2019) 
+(v  27.06.2019) 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class CmdHeartbeatSend  implements Command {
     
     private boolean health;
     
-    private String healthStatus = "true";
+    private String healthState = "true";
     
     private String heartbeatSender;
     
@@ -99,7 +99,7 @@ public class CmdHeartbeatSend  implements Command {
                         logger.info("### CmdHeartbeatSend.execute sendet: "+heartbeatjson.toString()); // Debug
 
                     } else {
-                        healthStatus = "false";
+                        healthState = "false";
                         //heartbeatjson.put("HealthState", healthStatus);
                         heartbeatjson.put("SenderHealthState", health);
                         sendMessage(heartbeatjson.toString());
