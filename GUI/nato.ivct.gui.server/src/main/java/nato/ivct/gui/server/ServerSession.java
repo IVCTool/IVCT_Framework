@@ -260,7 +260,7 @@ public class ServerSession extends AbstractServerSession {
 		private LogLevel logLevel;
 
 		public ExecuteSetLogLevel(String level) {
-			switch (level) {
+			switch (level==null ? "" : level) {
 			case "debug":
 				logLevel = LogLevel.DEBUG;
 				break;
@@ -352,7 +352,5 @@ public class ServerSession extends AbstractServerSession {
 	public void setLogLevel(String level) {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
-
 	}
-
 }

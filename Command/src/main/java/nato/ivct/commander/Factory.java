@@ -51,8 +51,10 @@ public class Factory {
 	public static final String IVCT_TS_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/IVCTtestSuites";
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
 	public static final String IVCT_SUT_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/IVCTsut";
-	public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
-	public static final String IVCT_BADGE_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/Badges";
+    public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
+    public static final String IVCT_BADGE_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/Badges";
+    public static final String IVCT_BADGE_ICONS_ID = "IVCT_BADGE_ICONS";
+    public static final String IVCT_BADGE_ICONS_ID_DEFLT = "C:/MSG134/DemoFolders/Badges";
 
 	public static final String RTI_ID = "RTI_ID";
 	public static final String RTI_ID_DEFLT = "pRTI";
@@ -100,7 +102,15 @@ public class Factory {
 	/*
 	 * read string environment variable if defined, otherwise return default
 	 */
-	public static String getEnv(String key, String deflt) {
+    public static String getEnv(String key) {
+        String value = System.getenv(key);
+        return value;
+    }
+
+    /*
+     * read environment variable and provide default if not found
+     */
+    public static String getEnv(String key, String deflt) {
 		String value = System.getenv(key);
 		if (value == null) {
 			return deflt;
@@ -146,7 +156,8 @@ public class Factory {
 			Properties fallback = new Properties();
 			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
 			fallback.put(IVCT_SUT_HOME_ID, IVCT_SUT_HOME_ID_DEFLT);
-			fallback.put(IVCT_BADGE_HOME_ID, IVCT_BADGE_HOME_ID_DEFLT);
+            fallback.put(IVCT_BADGE_HOME_ID, IVCT_BADGE_HOME_ID_DEFLT);
+            fallback.put(IVCT_BADGE_ICONS_ID, IVCT_BADGE_ICONS_ID_DEFLT);
 			fallback.put(RTI_ID, RTI_ID_DEFLT);
 			fallback.put(MESSAGING_USER_ID, MESSAGING_USER_DEFLT);
 			fallback.put(MESSAGING_PASSWORD_ID, MESSAGING_PASSWORD_DEFLT);
@@ -201,7 +212,8 @@ public class Factory {
 			// overwrite with environment settings
 			overwriteWithEnv(IVCT_TS_HOME_ID);
 			overwriteWithEnv(IVCT_SUT_HOME_ID);
-			overwriteWithEnv(IVCT_BADGE_HOME_ID);
+            overwriteWithEnv(IVCT_BADGE_HOME_ID);
+            overwriteWithEnv(IVCT_BADGE_ICONS_ID);
 			overwriteWithEnv(RTI_ID);
 			overwriteWithEnv(MESSAGING_USER_ID);
 			overwriteWithEnv(MESSAGING_PASSWORD_ID);
@@ -222,7 +234,7 @@ public class Factory {
 			jmsHelper.parseProperties();
 			jmsHelper.initConnection();
 			jmsHelper.initSession();
-			producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, "commands"));
+			producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, JMS_QUEUE_DEFLT));
 		} // otherwise consider to be already initialized
 	}
 	

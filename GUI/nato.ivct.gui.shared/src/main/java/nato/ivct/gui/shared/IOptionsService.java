@@ -15,4 +15,8 @@ public interface IOptionsService extends IService {
 	OptionsFormData store(OptionsFormData formData);
 	
 	void setLogLevel (String level);
+	
+	String getIvctVersion();
+	
+	String getIvctBuild();
 }
