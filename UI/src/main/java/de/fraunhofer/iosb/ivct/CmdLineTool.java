@@ -35,6 +35,10 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
 
+class NamePosition {
+	String string;
+	int position;
+}
 /*
  * Dialog program using keyboard input.
  */
@@ -174,6 +178,8 @@ class SutDescriptionVendor {
 	String sutDescription;
 	String vendorName;
 	String version;
+	String settingsDesignator;
+	String federation;
 }
 
 // This thread reads user input from the console and sends it to the server.
@@ -194,31 +200,16 @@ class Writer extends Thread {
      * @return the sut name, sut description and vendor in a class structure or
      *         null when error
      */
-    private SutDescriptionVendor getSutDescriptionVendor(final PrintStream out, final String line, final boolean addMode) {
-    	String split[]= line.trim().split("\\s+");
-    	String sutID = split[1];
-
+    private SutDescriptionVendor getSutDescriptionVendor(final PrintStream out, final String line) {
     	// Get name
-        int posName = line.indexOf("\"");
-        if (posName == -1) {
-    		out.println("getSutDescriptionVendor: missing sut name start quote: " + line);
-    		return null;
-        }
-        int posNameEnd = line.indexOf("\"", posName + 1);
-        if (posNameEnd == -1) {
-    		out.println("getSutDescriptionVendor: missing sut name end quote: " + line);
-    		return null;
-        }
-    	if (posNameEnd == posName + 1) {
-    		out.println("getSutDescriptionVendor: no sut name: " + line);
+    	NamePosition nameStr = getQuotedString(out, line, 0, "SUT name");
+    	if (nameStr == null) {
     		return null;
     	}
-    	String sutName = line.substring(posName + 1, posNameEnd);
+    	String sutName = new String(nameStr.string);
 
-    	if (addMode) {
-    	    // Generate ID
-    	    sutID = sutName.replaceAll("\\W", "_");
-    	}
+    	// Generate ID
+    	String sutID = sutName.replaceAll("\\W", "_");
     	// check if SUT entered exists in SUT list
         boolean sutFound = false;
         List<String> suts = sutPathsFiles.getSuts();
@@ -228,77 +219,73 @@ class Writer extends Thread {
             }
         }
         
-    	if (addMode) {
-            if (sutFound) {
-    			out.println("getSutDescriptionVendor: SUT already exists: " + sutID);
-    			return null;
-    		}
-    	} else {
-            if (sutFound == false) {
-    			out.println("getSutDescriptionVendor: SUT does not exist: " + sutID);
-    			return null;
-    		}
-    	}
+        if (sutFound) {
+			out.println("getSutDescriptionVendor: SUT already exists: " + sutID);
+			return null;
+		}
 
     	// Get description
-        int posDesc = line.indexOf("\"", posNameEnd + 1);
-        if (posDesc == -1) {
-    		out.println("getSutDescriptionVendor: missing description start quote: " + line);
-    		return null;
-        }
-        int posDescEnd = line.indexOf("\"", posDesc + 1);
-        if (posDescEnd == -1) {
-    		out.println("getSutDescriptionVendor: missing description end quote: " + line);
-    		return null;
-        }
-    	if (posDescEnd == posDesc + 1) {
-    		out.println("getSutDescriptionVendor: no description: " + line);
+    	NamePosition descriptionStr = getQuotedString(out, line, nameStr.position, "SUT description");
+    	if (descriptionStr == null) {
     		return null;
     	}
-    	String sutDescription = line.substring(posDesc + 1, posDescEnd);
 
     	// Get vendor
-        int posVen = line.indexOf("\"", posDescEnd + 1);
-        if (posVen == -1) {
-    		out.println("getSutDescriptionVendor: missing vendor start quote: " + line);
-    		return null;
-        }
-        int posVenEnd = line.indexOf("\"", posVen + 1);
-        if (posVenEnd == -1) {
-    		out.println("getSutDescriptionVendor: missing vendor end quote: " + line);
-    		return null;
-        }
-    	if (posVenEnd == posVen + 1) {
-    		out.println("getSutDescriptionVendor: no vendor: " + line);
+    	NamePosition vendorStr = getQuotedString(out, line, descriptionStr.position, "SUT vendor");
+    	if (vendorStr == null) {
     		return null;
     	}
-    	String vendorName = line.substring(posVen + 1, posVenEnd);
 
     	// Get version
-        int posVersion = line.indexOf("\"", posVenEnd + 1);
-        if (posVersion == -1) {
-    		out.println("getSutDescriptionVendor: missing version start quote: " + line);
-    		return null;
-        }
-        int posVersionEnd = line.indexOf("\"", posVersion + 1);
-        if (posVersionEnd == -1) {
-    		out.println("getSutDescriptionVendor: missing version end quote: " + line);
-    		return null;
-        }
-    	if (posVersionEnd == posVersion + 1) {
-    		out.println("getSutDescriptionVendor: no version: " + line);
+    	NamePosition versionStr = getQuotedString(out, line, vendorStr.position, "SUT version");
+    	if (versionStr == null) {
     		return null;
     	}
-    	String versionName = line.substring(posVersion + 1, posVersionEnd);
+
+    	// Get settingsDesignator
+    	NamePosition settingsDesignatorStr = getQuotedString(out, line, versionStr.position, "SUT settingsDesignator");
+    	if (settingsDesignatorStr == null) {
+    		return null;
+    	}
+
+    	// Get federate
+    	NamePosition federationStr = getQuotedString(out, line, settingsDesignatorStr.position, "SUT federate");
+    	if (federationStr == null) {
+    		return null;
+    	}
 
     	SutDescriptionVendor sutDescriptionVendor = new SutDescriptionVendor();
 
     	sutDescriptionVendor.sutID = sutID;
-    	sutDescriptionVendor.sutName = sutName;
-    	sutDescriptionVendor.sutDescription = sutDescription;
-    	sutDescriptionVendor.vendorName = vendorName;
-    	sutDescriptionVendor.version = versionName;
+    	sutDescriptionVendor.sutName = nameStr.string;
+    	sutDescriptionVendor.sutDescription = descriptionStr.string;
+    	sutDescriptionVendor.vendorName = vendorStr.string;
+    	sutDescriptionVendor.version = versionStr.string;
+    	sutDescriptionVendor.settingsDesignator = settingsDesignatorStr.string;
+    	sutDescriptionVendor.federation = federationStr.string;
     	return sutDescriptionVendor;
+    }
+
+    // Get quoted string
+    private NamePosition getQuotedString(final PrintStream out, final String line, final int posInString, final String callerAdvice) {
+    	NamePosition namePosition = new NamePosition();
+        int posBegin = line.indexOf("\"", posInString + 1);
+        if (posBegin == -1) {
+    		out.println("getQuotedString: missing start quote: " + callerAdvice + ": " + line);
+    		return null;
+        }
+        int posEnd = line.indexOf("\"", posBegin + 1);
+        if (posEnd == -1) {
+    		out.println("getQuotedString: missing end quote: " + callerAdvice + ": " + line);
+    		return null;
+        }
+    	if (posEnd == posBegin + 1) {
+    		out.println("getQuotedString: no string: " + callerAdvice + ": " + line);
+    		return null;
+    	}
+    	namePosition.string = line.substring(posBegin + 1, posEnd);
+    	namePosition.position = posEnd;
+    	return namePosition;
     }
     /*
      * Read user input and execute valid commands.
@@ -309,6 +296,8 @@ class Writer extends Thread {
         PrintStream out = null;
         String logLevelString = "default";
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
+    	String sutName = null;
+    	SutDescription sutDescription = new SutDescription();
 
     	try {
             String line;
@@ -342,17 +331,18 @@ class Writer extends Thread {
                         out.println("addSUT: need SUT name");
                         break;
                 	}
-                	SutDescriptionVendor sutDescriptionVendorAdd = getSutDescriptionVendor(out, line, true);
+                	SutDescriptionVendor sutDescriptionVendorAdd = getSutDescriptionVendor(out, line);
                 	if (sutDescriptionVendorAdd == null) {
                 		break;
                 	}
-                	SutDescription sutDescriptionAsut = new SutDescription();
-                	sutDescriptionAsut.ID = sutDescriptionVendorAdd.sutID;
-                	sutDescriptionAsut.name = sutDescriptionVendorAdd.sutName;
-                	sutDescriptionAsut.description = sutDescriptionVendorAdd.sutDescription;
-                	sutDescriptionAsut.vendor = sutDescriptionVendorAdd.vendorName;
-                	sutDescriptionAsut.version = sutDescriptionVendorAdd.version;
-                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAsut);
+                	sutDescription.ID = sutDescriptionVendorAdd.sutID;
+                	sutDescription.name = sutDescriptionVendorAdd.sutName;
+                	sutDescription.description = sutDescriptionVendorAdd.sutDescription;
+                	sutDescription.vendor = sutDescriptionVendorAdd.vendorName;
+                	sutDescription.version = sutDescriptionVendorAdd.version;
+                	sutDescription.settingsDesignator = sutDescriptionVendorAdd.settingsDesignator;
+                	sutDescription.federation = sutDescriptionVendorAdd.federation;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
 					} catch (Exception e2) {
@@ -364,42 +354,26 @@ class Writer extends Thread {
                 		out.println("addSUT: cannot load SUT onto the file system.");
                 		break;
                 	}
-                	ivctCommander.rtp.setSutName(split[1]);
+                	ivctCommander.rtp.resetSut();
                     ivctCommander.resetSUT();
                 	break;
-                case "modifySUT":
-                case "msut":
+                case "modifySUTname":
+                case "msnam":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
                 	// Need an input parameter
                 	if (split.length < 2) {
-                        out.println("modifySUT: need SUT name");
+                        out.println("modifySUTname: need SUT name");
                         break;
                 	}
-                    List<String> sutsMsut = sutPathsFiles.getSuts();
-                    if (sutsMsut.isEmpty()) {
-                        out.println("modifySUT: cannot find any SUT on the file system.");
-                        break;
-                    }
-                    boolean sutFoundMsut = false;
-                    for (String t : sutsMsut) {
-                        if (t.equals(split[1])) {
-                            sutFoundMsut = true;
-                        }
-                    }
-                    if (sutFoundMsut == false) {
-                        out.println("modifySUT: cannot find SUT: " + split[1]);
-                        break;
-                    }
-                	SutDescriptionVendor sutDescriptionVendorModify = getSutDescriptionVendor(out, line, false);
-                	if (sutDescriptionVendorModify == null) {
+                	NamePosition namePosition = getQuotedString(out, line, 0, "SUT name");
+                	if (namePosition == null) {
                 		break;
                 	}
-                	SutDescription sutDescriptionMsut = new SutDescription();
-                	sutDescriptionMsut.ID = sutDescriptionVendorModify.sutID;
-                	sutDescriptionMsut.name = sutDescriptionVendorModify.sutName;
-                	sutDescriptionMsut.description = sutDescriptionVendorModify.sutDescription;
-                	sutDescriptionMsut.vendor = sutDescriptionVendorModify.vendorName;
-                	sutDescriptionMsut.version = sutDescriptionVendorModify.version;
-                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionMsut);
+                	sutDescription.name = namePosition.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
 					} catch (Exception e2) {
@@ -408,8 +382,136 @@ class Writer extends Thread {
 	                	break;
 					}
                 	command = null;
-                	ivctCommander.rtp.setSutName(split[1]);
-                    ivctCommander.resetSUT();
+                	break;
+                case "modifySUTversion":
+                case "msver":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUTname: need SUT name");
+                        break;
+                	}
+                	NamePosition versionStr = getQuotedString(out, line, 0, "SUT version");
+                	if (versionStr == null) {
+                		break;
+                	}
+                	sutDescription.version = versionStr.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                	break;
+                case "modifySUTdescription":
+                case "msdes":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUTname: need SUT name");
+                        break;
+                	}
+                	NamePosition descriptionStr = getQuotedString(out, line, 0, "SUT description");
+                	if (descriptionStr == null) {
+                		break;
+                	}
+                	sutDescription.description = descriptionStr.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                	break;
+                case "modifySUTvendor":
+                case "msven":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUTname: need SUT name");
+                        break;
+                	}
+                	NamePosition vendorStr = getQuotedString(out, line, 0, "SUT vendor");
+                	if (vendorStr == null) {
+                		break;
+                	}
+                	sutDescription.vendor = vendorStr.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                	break;
+                case "modifySUTsettingsDesignator":
+                case "mssde":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUTname: need SUT name");
+                        break;
+                	}
+                	NamePosition settingsDesignatorStr = getQuotedString(out, line, 0, "SUT settings designator");
+                	if (settingsDesignatorStr == null) {
+                		break;
+                	}
+                	sutDescription.settingsDesignator = settingsDesignatorStr.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                	break;
+                case "modifySUTfederation":
+                case "msfed":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUTname: need SUT name");
+                        break;
+                	}
+                	NamePosition federationStr = getQuotedString(out, line, 0, "SUT federation");
+                	if (federationStr == null) {
+                		break;
+                	}
+                	sutDescription.federation = federationStr.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
                 	break;
                 case "listBadges":
                 case "lbg":
@@ -425,17 +527,17 @@ class Writer extends Thread {
                 	break;
                 case "addBadge":
                 case "abg":
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
+            	    if (sutName == null) {
                 		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Need an input parameter
                 	if (split.length < 2) {
                         out.println("addBadge: need badge name");
                         break;
                 	}
                 	List<String> allBadges = ivctCommander.rtp.getTestSuiteNames();
-                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), false);
+                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(sutName, false);
                 	boolean errorOccurred = false;
                 	String newBadge = null;
                 	for (int i = 0; i < split.length - 1; i++) {
@@ -461,15 +563,11 @@ class Writer extends Thread {
                 	if (errorOccurred) {
                 		break;
                 	}
-                	SutDescription sutDescriptionAbg = new SutDescription();
-                	sutDescriptionAbg.ID = ivctCommander.rtp.getSutName();
-                	sutDescriptionAbg.name = ivctCommander.rtp.getSutName();
-                	sutDescriptionAbg.description = ivctCommander.rtp.getSutDescription();
-                	sutDescriptionAbg.vendor = ivctCommander.rtp.getVendorName();
+                	sutDescription = ivctCommander.rtp.getSutDescription(sutName);
                 	for (String entry : badgesAbg) {
-						sutDescriptionAbg.badges.add(entry);
+						sutDescription.badges.add(entry);
 					}
-					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionAbg);
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
 					} catch (Exception e1) {
@@ -479,16 +577,16 @@ class Writer extends Thread {
                 	break;
                 case "deleteBadge":
                 case "dbg":
-                	if (ivctCommander.rtp.checkSutNotSelected()) {
+            	    if (sutName == null) {
                 		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Need an input parameter
                 	if (split.length < 2) {
                 		out.println("deleteBadge: need badge name(s)");
                 		break;
                 	}
-                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), false);
+                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(sutName, false);
                 	String newBadgeDbg = null;
                 	for (int i = 0; i < split.length - 1; i++) {
                 		newBadgeDbg = split[i + 1];
@@ -502,15 +600,36 @@ class Writer extends Thread {
                 	for (String Entry : sutBadgesDbg) {
                         badgesDbg.add(new String (Entry));
                 	}
-                	SutDescription sutDescriptionDbg = new SutDescription();
-                	sutDescriptionDbg.ID = ivctCommander.rtp.getSutName();
-                	sutDescriptionDbg.name = ivctCommander.rtp.getSutName();
-                	sutDescriptionDbg.description = ivctCommander.rtp.getSutDescription();
-                	sutDescriptionDbg.vendor = ivctCommander.rtp.getVendorName();
-                	for (String entry : badgesDbg) {
-						sutDescriptionDbg.badges.add(entry);
+                	sutDescription = ivctCommander.rtp.getSutDescription(sutName);
+                	sutDescription.badges = badgesDbg;
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescriptionDbg);
+                	command = null;
+                	break;
+                case "ssd":
+                case "setSettingsDesignator":
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Check any critical tasks are running
+                    if (ivctCommander.rtp.checkCtTcTsRunning("setSettingsDesignator")) {
+                		break;
+                	}
+                	// Warn about missing parameter
+                	if (split.length < 2) {
+                        out.println("setSettingsDesignator: Warning missing SettingsDesignator");
+                	}
+                	// Warn about extra parameter
+                	if (split.length > 2) {
+                        out.println("setSettingsDesignator: Warning extra parameter: " + split[3]);
+                	}
+                	sutDescription.settingsDesignator = split[1];
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
 					} catch (Exception e) {
@@ -564,20 +683,22 @@ class Writer extends Thread {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}
-                	ivctCommander.rtp.setSutName(split[1]);
+                    sutName = split[1];
+                	ivctCommander.rtp.resetSut();
+                	sutDescription = ivctCommander.rtp.getSutDescription(sutName);
                     ivctCommander.resetSUT();
                 	break;
                 case "listTestSchedules":
                 case "lts":
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                		System.out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Warn for extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls2 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
+                	List<String> ls2 = ivctCommander.rtp.getSutBadges(sutName, true);
                 	for (String temp : ls2) {
                 		System.out.println(temp);
                 	}
@@ -588,16 +709,16 @@ class Writer extends Thread {
                     if (ivctCommander.rtp.checkCtTcTsRunning("startTestSchedule")) {
                 		break;
                 	}
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                        out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Need an input parameter
                 	if (split.length == 1) {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	List<String> ls1 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
+                	List<String> ls1 = ivctCommander.rtp.getSutBadges(sutName, true);
                 	boolean gotTestSchedule = false;
         			for (String entry : ls1) {
                 		if (split[1].equals(entry)) {
@@ -620,17 +741,17 @@ class Writer extends Thread {
                 	CommandCache commandCache = new CommandCache(split[1], testcases0);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(commandCache, ivctCommander);
+                	command = new StartTestSchedule(sutName, sutDescription, commandCache, ivctCommander);
                 	gotNewCommand = true;
                 	RuntimeParameters.setTestScheduleName(split[1]);
                     break;
                 case "abortTestSchedule":
                 case "ats":
                 	// Cannot abort test schedule if SUT is not set
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                        out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Cannot abort test schedule if it is not running
                     if (ivctCommander.rtp.getTestScheduleRunningBool() == false) {
                         out.println("abortTestSchedule: no test schedule is running");
@@ -646,15 +767,15 @@ class Writer extends Thread {
                     break;
                 case "listTestCases":
                 case "ltc":
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                        out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Warn about extra parameter
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls3 = ivctCommander.rtp.getSutBadges(ivctCommander.rtp.getSutName(), true);
+                	List<String> ls3 = ivctCommander.rtp.getSutBadges(sutName, true);
                 	for (String temp : ls3) {
                 		System.out.println(temp);
                     	List<String> testcases1 = ivctCommander.rtp.getTestcases(temp);
@@ -669,10 +790,10 @@ class Writer extends Thread {
                     if (ivctCommander.rtp.checkCtTcTsRunning("startTestCase")) {
                 		break;
                 	}
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                        out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Need an input parameter
                 	if (split.length < 3) {
                 		if (split.length < 2) {
@@ -687,16 +808,16 @@ class Writer extends Thread {
                         out.println("startTestCase: unknown testSchedule testCase: " + split[1] + " " + split[2]);
                         break;
                 	}
-                	ivctCommander.rtp.startTestCase(split[1], fullTestcaseName);
+                	ivctCommander.rtp.startTestCase(sutName, sutDescription, split[1], fullTestcaseName);
                 	RuntimeParameters.setTestCaseName(split[2]);
                     break;
                 case "abortTestCase":
                 case "atc":
                 	// Cannot abort test case if SUT is not set
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                        out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Cannot abort test case if it is not running
                     if (ivctCommander.rtp.getTestCaseRunningBool() == false) {
                         out.println("abortTestCase: no test case is running");
@@ -728,23 +849,28 @@ class Writer extends Thread {
                 	break;
                 case "listVerdicts":
                 case "lv":
-                    if (ivctCommander.rtp.checkSutNotSelected()) {
-                        out.println(sutNotSelected);
+            	    if (sutName == null) {
+                		out.println(sutNotSelected);
                 		break;
-                	}
+            	    }
                 	// Warn about extra parameter
                 	if (split.length > 1) {
                         out.println("listVerdicts: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.listVerdicts();
+                	ivctCommander.listVerdicts(sutName);
                 	break;
                 case "status":
                 case "s":
-                	String sut = ivctCommander.rtp.getSutName();
-                	if (sut == null) {
+                	if (sutName == null) {
                 		out.println("SUT:");
                 	} else {
-                		out.println("SUT: " + sut);
+                		sutDescription = ivctCommander.rtp.getSutDescription(sutName);
+                		out.println("SUT ID: " + sutDescription.ID);
+                		out.println("SUT version: " + sutDescription.version);
+                		out.println("SUT description: " + sutDescription.description);
+                		out.println("SUT vendor: " + sutDescription.vendor);
+                		out.println("SUT settingsDesignator: " + sutDescription.settingsDesignator);
+                		out.println("SUT federation: " + sutDescription.federation);
                 	}
                 	String testScheduleName = RuntimeParameters.getTestScheduleName();
                 	if (testScheduleName != null) {
@@ -782,24 +908,30 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
-                    out.println("addSUT (asut) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\"- add an SUT");
-                    out.println("modifySUT (msut) sut \"name text quoted\" \"description text quoted\" \"vendor text quoted\"- modify an SUT");
-                    out.println("listBadges (lbg) - list all available badges");
-                    out.println("addBadge (abg) badge ... badge - add one or more badges to SUT");
-                    out.println("deleteBadge (dbg) badge ... badge - delete one or more badges from SUT");
-                    out.println("listSUT (lsut) - list SUT folders");
-                    out.println("setSUT (ssut) sut - set active SUT");
-                    out.println("listTestSchedules (lts) - list the available test schedules for the test suite");
-                    out.println("startTestSchedule (sts) testSchedule - start the named test schedule");
-                    out.println("abortTestSchedule (ats) - abort the running test schedule");
-                    out.println("listTestCases (ltc) - list the available test cases for the test suite");
-                    out.println("startTestCase (stc) testSchedule testcase - start the named test case");
-                    out.println("abortTestCase (atc) - abort the running test case");
-                    out.println("setLogLevel (sll) loglevel - set the log level for logging - error, warning, info, debug, trace");
-                    out.println("listVerdicts (lv) - list the verdicts of the current session");
-                    out.println("status (s) - display status information");
-                    out.println("quit (q) - quit the program");
-                    out.println("help (h) - display the help information");
+                    out.println("asut (addSUT) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"federation text quoted\" - add an SUT");
+                    out.println("msnam (modifySUTname) sut \"name text quoted\" - modify the SUT name");
+                    out.println("msver (modifySUTversion) sut \"name text quoted\" - modify the SUT version");
+                    out.println("msdes (modifySUTdescription ) sut \"name text quoted\" - modify the SUT description");
+                    out.println("msven (modifySUTvendor ) sut \"name text quoted\" - modify the SUT vendor");
+                    out.println("mssde (modifySUTsettingsDesignator ) sut \"name text quoted\" - modify the SUT settingsDesignator");
+                    out.println("msfed (modifySUTfederation ) sut \"name text quoted\" - modify the SUT federation");
+                    out.println("lbg (listBadges) - list all available badges");
+                    out.println("abg (addBadge) badge ... badge - add one or more badges to SUT");
+                    out.println("dbg (deleteBadge) badge ... badge - delete one or more badges from SUT");
+                    out.println("ssd (setSettingsDesignator) settingsDesignator - set settings designator");
+                    out.println("lsut (listSUT) - list SUT folders");
+                    out.println("ssut (setSUT) sut - set active SUT");
+                    out.println("lts (listTestSchedules) - list the available test schedules for the test suite");
+                    out.println("sts (startTestSchedule) testSchedule - start the named test schedule");
+                    out.println("ats (abortTestSchedule) - abort the running test schedule");
+                    out.println("ltc (listTestCases) - list the available test cases for the test suite");
+                    out.println("stc (startTestCase) testSchedule testcase - start the named test case");
+                    out.println("atc (abortTestCase) - abort the running test case");
+                    out.println("sll (setLogLevel) loglevel - set the log level for logging - error, warning, info, debug, trace");
+                    out.println("lv (listVerdicts) - list the verdicts of the current session");
+                    out.println("s (status) - display status information");
+                    out.println("q (quit) - quit the program");
+                    out.println("h (help) - display the help information");
                     break;
                 default:
                     out.println("Unknown command: " + split[0]);
