@@ -19,6 +19,10 @@ import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import nato.ivct.commander.CmdHeartbeatSend;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Simple test environment. The TestRunner takes the classnames of the tests as
@@ -27,6 +31,10 @@ import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
  * @author sen (Fraunhofer IOSB)
  */
 public class TestRunner {
+    
+    
+    private boolean health;
+    
 
 	/**
 	 * Command line entry point for the TestRunner.
@@ -34,12 +42,20 @@ public class TestRunner {
 	 * @param args
 	 *            command line parameters
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args)    {
 		final Logger LOGGER = LoggerFactory.getLogger(TestRunner.class);
 		String paramJson = null;
 		IVCT_Verdict verdicts[] = new IVCT_Verdict[1];
-		new TestRunner().executeTests(LOGGER, "SuT", args, paramJson, verdicts);
-
+		//new TestRunner().executeTests(LOGGER, "SuT", args, paramJson, verdicts);
+		TestRunner testrunner = new TestRunner();
+		testrunner.executeTests(LOGGER, "SuT", args, paramJson, verdicts);
+		
+		try {
+		  testrunner.sendHeartbeat(LOGGER);
+	    } catch (Exception ex) {
+	        LOGGER.error("could not start  sendHeartbeat " + ex);
+        }
+		
 	}
 
 	/**
@@ -81,5 +97,77 @@ public class TestRunner {
 			verdicts[i++] = testCase.execute(paramJson, logger);
 		}
 	}
+	
+	
+	/*  implement a heartbeat
+	 *  we instanciate CmdHeartbeatSend and set some variables there.
+     *  When we call its execute method,
+     *  CmdHeartbeatSend will send all 5 Seconds a message to ActiveMQ
+     *  We can change the value of the variables to change the tenor of the message
+     *  eg. heartbeatSend.setHealth(false)
+     *  if this thread is stopped, CmdHeardbeatListen will give out an Alert-Status
+     */
+    
+	public void sendHeartbeat(Logger _logger) throws Exception{ 
+        
+        this.health=true;
 
+        CmdHeartbeatSend heartbeatSend = new CmdHeartbeatSend();
+
+        // Basic Information for the Heartbeat
+        heartbeatSend.setHeartbeatSender("TestRunner");     
+        heartbeatSend.setHealth(this.health);
+        
+        heartbeatSend.execute();        
+
+       // we check all 5 seconds our healthState and if it is false we inform CmdHeartbeatSend        
+       Timer timer = new Timer();
+       timer.schedule(new TimerTask() {
+           @Override
+           public void run() {
+               
+               if (getHealth()== false) {
+                   _logger.warn("### TestRunner health State changed to false ### ");  // Debug
+                 heartbeatSend.setHealth(getHealth() );
+               }
+               
+           }
+       }, 0, 5000);
+       
+       
+    // --------------- for testing ------------------
+       int count = 0;
+       while (count < 15) {
+           Thread.sleep(3000);
+           //_logger.info("###  TestRunner CmdHeartbeatSend.health should be true ");  // Debug
+           count++;
+       }        
+       _logger.info("### We change the CmdHeartbeatSend.health to false ");
+       this.health=false;
+              
+       count = 0;
+       while (count < 15) {
+           Thread.sleep(3000);
+           count++;
+       }       
+      System.exit(0) ;
+      //-------------------------------------------------------
+
+    }
+    
+    
+    
+    
+    
+    
+    
+
+    public boolean getHealth() {
+        return health;
+    }
+
+    public void setHealth(boolean health) {
+        this.health = health;
+    }
+    
 }
