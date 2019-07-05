@@ -2,5 +2,5 @@
 	"id" 			: 	"vrf",
 	"description"	:	"VR-Forces is MAK's Computer Generated Forces platform",
 	"vendor"		:	"VT MAK",
-	"badge"			:	["EncodingRulesTesterRPR"]
+	"badge"			:	["RPR-Encoding-2.0"]
 }
