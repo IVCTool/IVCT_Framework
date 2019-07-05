@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  27.06.2019) 
+(v  05.07.2019)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,6 +34,14 @@ import java.util.TimerTask;
 
 
 public class CmdHeartbeatSend  implements Command {
+    
+    // ----  Organize communication  mechanism (the client has to implement this interface.)
+    public interface OnCmdHeartbeatSend { 
+          public boolean getMyHealth ();
+          public String getMyClassName();
+      }
+    
+    
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CmdHeartbeatSend.class);
 
@@ -41,37 +49,48 @@ public class CmdHeartbeatSend  implements Command {
     
     public static final String LOG_MSG_TOPIC = "HeartBeat";
     
-    private boolean health;
-    
-    private String healthState = "true";
-    
+    private boolean health;    
+       
     private String heartbeatSender;
     
+    private OnCmdHeartbeatSend sender;
     
+    //public CmdHeartbeatSend_Call() {
+    //    Factory.initialize();
+    //    logProducer = Factory.createTopicProducer(LOG_MSG_TOPIC);
+    //    this.health=true;
+    // }
     
-    public CmdHeartbeatSend() {
+    public CmdHeartbeatSend(OnCmdHeartbeatSend _sender) {
         Factory.initialize();
         logProducer = Factory.createTopicProducer(LOG_MSG_TOPIC);
-        this.health=true;
+        this.sender=_sender;
     }
     
     
     /*
-     *  this execute method is started by a application which instanciate this class     
-     *  the application set some variable in this instance,
-     *  which give a part of the values of a json object
-     *  execute send all 5 seconds this json - object to AcitveMQ 
+     *  this execute method is started by a application which instanciate this class  
+     *  we fetch all xy seconds some variables from that application,
+     *  build a json -object with this Informations and other Values 
+     *  and send this to ActiveMQ
      *  
      *  if the application change the variables, the values in the json will be changed
      */
     
     @SuppressWarnings("unchecked")
-    public void execute()  throws Exception   {        
-                 
-        //logger.info(" CmdHeartbeatSend.execute wurde gestartet");    // Debug        
+    public void execute()  throws Exception   {    
+        
+        // we try to get Informations about our  Client
+        
+        if (sender != null) {
+            this.health = sender.getMyHealth();
+            this.heartbeatSender= sender.getMyClassName();
+            } else {
+            logger.warn("In CmdHeartbeatSend_sender  is null !!!!");
+        }
         
         // Info:   for the Message we put  following Keys in a json object
-        //HeartbeatSender   LastSendingPeriod  LastSendingTime   SenderHealthState  (later MessageState)
+        //HeartbeatSender   LastSendingPeriod  LastSendingTime   SenderHealthState
          
         JSONObject heartbeatjson = new JSONObject();              
         heartbeatjson.put("HeartbeatSender", heartbeatSender);
@@ -83,6 +102,8 @@ public class CmdHeartbeatSend  implements Command {
         timer.schedule(new TimerTask() {
           public void run() {
               
+                   health=sender.getMyHealth();                                
+              
                 try {
 
                     Date datum = new java.util.Date();
@@ -93,14 +114,11 @@ public class CmdHeartbeatSend  implements Command {
                     heartbeatjson.put("LastSendingTime",dateString);
 
                     if (health) {
-                        //heartbeatjson.put("HealthState", healthStatus);                        
                         heartbeatjson.put("SenderHealthState", health); 
                         sendMessage(heartbeatjson.toString());                        
                         logger.info("### CmdHeartbeatSend.execute sendet: "+heartbeatjson.toString()); // Debug
 
                     } else {
-                        healthState = "false";
-                        //heartbeatjson.put("HealthState", healthStatus);
                         heartbeatjson.put("SenderHealthState", health);
                         sendMessage(heartbeatjson.toString());
                     }
@@ -118,25 +136,4 @@ public class CmdHeartbeatSend  implements Command {
          logProducer.send(message);        
     }
     
-    
-    // The client - application  set the Status of health
-    public boolean getHealth() {
-        return health;
-    }
-
-    public void setHealth(boolean health) {
-        this.health = health;
-    }
-
-
-    public void setHeartbeatSender(String heartbeatSender) {
-        this.heartbeatSender = heartbeatSender;
-    } 
-    
-    
-    
-    
-    
-    
-
 }

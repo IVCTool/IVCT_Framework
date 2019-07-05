@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  24.06.2019) 
+(v  05.07.2019) 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
         
      // creating a instance of this 'client'  to  deliver it to the listener
      Use_CmdHeartbeatListen client = new Use_CmdHeartbeatListen();
-     System.out.println("Start_CmdHeartbeatListener_main create his instance: " +client);    // Debug
+     //logger.info("Start_CmdHeartbeatListener_main create his instance: " +client);    // Debug
      
     
      // instantiating a new heartbeatListener and deliver this client
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
     /*  */
     @Override
     public void hearHeartbeat(String backinfo) {
-        System.out.println("Rueckgabe an Use_CmdHeartbeatListen ist: " + backinfo);
+        logger.info("Rueckgabe an Use_CmdHeartbeatListen ist: " + backinfo);
         
         // work with the  json  what's comming back  , an example
         /*

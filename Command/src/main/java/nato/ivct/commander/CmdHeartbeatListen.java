@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  24.06.2019) 
+(v  05.07.2019) 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
                 String alerttime = df.format(now);
 
-                logger.info("### monitor ist runnuning - timestamp: " + now); // Debug
+                //logger.info("### monitor ist runnuning - timestamp: " + now); // Debug
 
                 Timestamp myFirst = getFirst();
                 Timestamp myLast = getLast();
@@ -119,26 +119,15 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                 if ((myFirst != null) && (myLast != null)) {
 
                     JSONObject myJsonObject = getJsonObject();
-                    if (myJsonObject != null) {
-                        /*
-                        if (now.getTime() - myFirst.getTime() > 11000) {
-                            setMessageState("alert");
-                        } else if (now.getTime() - myLast.getTime() > 5100) {
-                            setMessageState("waiting");
-                        } else if (now.getTime() - myLast.getTime() <= 5100) {
-                            setMessageState("inTime");
-                        } else {
-                            setMessageState("unknown");
-                        }  */
-                        
+                    if (myJsonObject != null) {                                             
                         
                         long mySendingPeriod = getSendingPeriod();  
                         
-                        if (now.getTime() - myFirst.getTime() >  ((mySendingPeriod *1000 *2)+1000) ) { // ca 11 Sec
+                        if (now.getTime() - myFirst.getTime() >  ((mySendingPeriod *1000 *2)+1000) ) { // > 1100 Sec
                             setMessageState("alert");
                         } else if (now.getTime() - myLast.getTime() > ((mySendingPeriod *1000 +100)) ) { //  > 5100
                             setMessageState("waiting");
-                        } else if (now.getTime() - myLast.getTime() <= ((mySendingPeriod *1000 +100)) ) {// < 5100
+                        } else if (now.getTime() - myLast.getTime() <= ((mySendingPeriod *1000 +100)) ) {// <= 5100
                             setMessageState("inTime");
                         } else {
                             setMessageState("unknown");
@@ -147,8 +136,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                         myJsonObject.put("MessageState", messageState);
                         
                         // adapt the json - object for our purpose
-                         //if ((now.getTime() - myFirst.getTime() > 30000)) { 
-                         if (now.getTime() - myFirst.getTime() >  ((mySendingPeriod *1000 *6)+1000) ) {  // ca 30 Sec
+                         if (now.getTime() - myFirst.getTime() >  ((mySendingPeriod *1000 *6)+1000) ) {  // ca > 30000
                             setMessageState("dead");
                             myJsonObject.put("MessageState", messageState);
                             myJsonObject.put("Alert-Time", alerttime);

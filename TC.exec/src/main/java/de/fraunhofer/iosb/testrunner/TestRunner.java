@@ -17,12 +17,13 @@ package de.fraunhofer.iosb.testrunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.util.SystemInfo;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+
 import nato.ivct.commander.CmdHeartbeatSend;
 
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 /**
  * Simple test environment. The TestRunner takes the classnames of the tests as
@@ -30,10 +31,11 @@ import java.util.TimerTask;
  *
  * @author sen (Fraunhofer IOSB)
  */
-public class TestRunner {
+public class TestRunner implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     
     
     private boolean health;
+    private String myClassName = "TestRunner";
     
 
 	/**
@@ -54,8 +56,7 @@ public class TestRunner {
 		  testrunner.sendHeartbeat(LOGGER);
 	    } catch (Exception ex) {
 	        LOGGER.error("could not start  sendHeartbeat " + ex);
-        }
-		
+        }		
 	}
 
 	/**
@@ -99,54 +100,38 @@ public class TestRunner {
 	}
 	
 	
-	/*  implement a heartbeat
-	 *  we instanciate CmdHeartbeatSend and set some variables there.
+	/*  implement a heartbeat ,  brf 05.07.2019 (Fraunhofer IOSB)
+	 *  we instanciate CmdHeartbeatSend and deliver a instance of this class
      *  When we call its execute method,
-     *  CmdHeartbeatSend will send all 5 Seconds a message to ActiveMQ
-     *  We can change the value of the variables to change the tenor of the message
-     *  eg. heartbeatSend.setHealth(false)
+     *  CmdHeartbeatSend will fetch all 5 Seconds the health state from  'here'
+     *  and send all 5 Seconds a message to ActiveMQ
+     *  So if the value for health is changed here, this will change the tenor 
+     *  of the message  CmdHeartbeatSend  sends to ActiveMQ
      *  if this thread is stopped, CmdHeardbeatListen will give out an Alert-Status
      */
     
 	public void sendHeartbeat(Logger _logger) throws Exception{ 
         
-        this.health=true;
+        this.health=true; 
 
-        CmdHeartbeatSend heartbeatSend = new CmdHeartbeatSend();
-
-        // Basic Information for the Heartbeat
-        heartbeatSend.setHeartbeatSender("TestRunner");     
-        heartbeatSend.setHealth(this.health);
+        System.out.println("Start_CmdHeartbeatListener_main create his instance: " +this);    // Debug
+        CmdHeartbeatSend heartbeatSend = new  CmdHeartbeatSend(this);
         
-        heartbeatSend.execute();        
-
-       // we check all 5 seconds our healthState and if it is false we inform CmdHeartbeatSend        
-       Timer timer = new Timer();
-       timer.schedule(new TimerTask() {
-           @Override
-           public void run() {
-               
-               if (getHealth()== false) {
-                   _logger.warn("### TestRunner health State changed to false ### ");  // Debug
-                 heartbeatSend.setHealth(getHealth() );
-               }
-               
-           }
-       }, 0, 5000);
-       
+        heartbeatSend.execute();
+        
        
     // --------------- for testing ------------------
        int count = 0;
-       while (count < 15) {
+       while (count < 10) {
            Thread.sleep(3000);
            //_logger.info("###  TestRunner CmdHeartbeatSend.health should be true ");  // Debug
            count++;
        }        
-       _logger.info("### We change the CmdHeartbeatSend.health to false ");
+       _logger.info("### For Testing - we change the CmdHeartbeatSend.health to false ");
        this.health=false;
               
        count = 0;
-       while (count < 15) {
+       while (count < 10) {
            Thread.sleep(3000);
            count++;
        }       
@@ -155,18 +140,15 @@ public class TestRunner {
 
     }
     
-    
-   
-    
-    
-    
 
-    public boolean getHealth() {
-        return health;
+    
+	public String getMyClassName() {
+        return myClassName;
     }
+    
 
-    public void setHealth(boolean health) {
-        this.health = health;
+    public boolean getMyHealth() {
+        return health;
     }
     
 }
