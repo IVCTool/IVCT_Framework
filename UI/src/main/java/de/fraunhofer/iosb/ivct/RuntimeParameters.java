@@ -49,11 +49,9 @@ public final class RuntimeParameters {
 	private CmdListSuT sutList = null;
 	private PrintStream printStream = new PrintStream(System.out);
 	private static Semaphore semaphore = new Semaphore(0);
-	private String sutName = null;
 	private static String testCaseName = null;
 	private static String testScheduleName = null;
 	private String testSuiteName = null;
-	private SutDescription sutDescription;
 
     public RuntimeParameters () {
     }
@@ -99,16 +97,6 @@ public final class RuntimeParameters {
         return false;
     }
 
-	/*
-	 * Some commands have no meaning without knowing the SUT involved.
-	 */
-	protected boolean checkSutNotSelected() {
-	    if (sutName == null) {
-	        return true;
-	    }
-	    return false;
-	}
-	
 	protected String getFullTestcaseName(final String testsuite, final String testCase) {
 		getTestSuiteNames();
 		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
@@ -129,7 +117,7 @@ public final class RuntimeParameters {
 	/*
 	 * 
 	 */
-	protected boolean startTestCase(final String theTestSuiteName, final String testCase) {
+	protected boolean startTestCase(final String sutName, final SutDescription sutDescription, final String theTestSuiteName, final String testCase) {
 	    
 		CmdStartTc cmdStartTc = Factory.createCmdStartTc(sutName, theTestSuiteName, testCase, sutDescription.settingsDesignator, sutDescription.federation);
 		setTestCaseRunningBool(true);
@@ -225,12 +213,11 @@ public final class RuntimeParameters {
 	}
     
 	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
-		List<String> badges = null;
+		List<String> badges = new ArrayList<String>();
 		listSUTs();
 		for (String it: sutList.sutMap.keySet()) {
 			if (it.equals(theSutName)) {
 				getTestSuiteNames();
-				badges = new ArrayList<String>();
 				for (String entry : sutList.sutMap.get(it).badges) {
 					int ind = badges.indexOf(entry);
 					if (ind < 0) {
@@ -238,7 +225,7 @@ public final class RuntimeParameters {
 					}
 					if (recursive) {
 						if (getRecursiveBadges(badges, entry)) {
-							return null;
+							return badges;
 						}
 					}
 				}
@@ -269,33 +256,16 @@ public final class RuntimeParameters {
 		sutList.execute();
 	}
 
-	protected String getSutName() {
-		return sutName;
-	}
-
-	protected void setSutName(String theSutName) {
-		// Same sut just return.
-		if (theSutName.equals(sutName)) {
-			return;
-		}
-
-		// Set the sut name.
-		listSUTs();
-		sutName = theSutName;
-		sutDescription = sutList.sutMap.get(sutName);
-
+	protected void resetSut() {
 		// Reset values.
 		testCaseName = null;
 		testScheduleName = null;
 		testSuiteName = null;
 	}
 
-	protected String getSutDescription() {
-		return this.sutDescription.description;
-	}
-
-	protected String getVendorName() {
-		return this.sutDescription.vendor;
+	protected SutDescription getSutDescription(final String sutName) {
+		listSUTs();
+		return sutList.sutMap.get(sutName);
 	}
 
 	protected static String getTestCaseName() {
