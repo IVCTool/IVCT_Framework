@@ -296,7 +296,7 @@ class Writer extends Thread {
         PrintStream out = null;
         String logLevelString = "default";
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
-    	String sutName = null;
+    	String sutID = null;
     	SutDescription sutDescription = new SutDescription();
 
     	try {
@@ -335,6 +335,7 @@ class Writer extends Thread {
                 	if (sutDescriptionVendorAdd == null) {
                 		break;
                 	}
+                	sutID = sutDescriptionVendorAdd.sutID;
                 	sutDescription.ID = sutDescriptionVendorAdd.sutID;
                 	sutDescription.name = sutDescriptionVendorAdd.sutName;
                 	sutDescription.description = sutDescriptionVendorAdd.sutDescription;
@@ -359,7 +360,7 @@ class Writer extends Thread {
                 	break;
                 case "modifySUTname":
                 case "msnam":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -385,7 +386,7 @@ class Writer extends Thread {
                 	break;
                 case "modifySUTversion":
                 case "msver":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -411,7 +412,7 @@ class Writer extends Thread {
                 	break;
                 case "modifySUTdescription":
                 case "msdes":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -437,7 +438,7 @@ class Writer extends Thread {
                 	break;
                 case "modifySUTvendor":
                 case "msven":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -463,7 +464,7 @@ class Writer extends Thread {
                 	break;
                 case "modifySUTsettingsDesignator":
                 case "mssde":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -489,7 +490,7 @@ class Writer extends Thread {
                 	break;
                 case "modifySUTfederation":
                 case "msfed":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -527,7 +528,7 @@ class Writer extends Thread {
                 	break;
                 case "addBadge":
                 case "abg":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -537,7 +538,7 @@ class Writer extends Thread {
                         break;
                 	}
                 	List<String> allBadges = ivctCommander.rtp.getTestSuiteNames();
-                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(sutName, false);
+                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(sutID, false);
                 	boolean errorOccurred = false;
                 	String newBadge = null;
                 	for (int i = 0; i < split.length - 1; i++) {
@@ -563,7 +564,7 @@ class Writer extends Thread {
                 	if (errorOccurred) {
                 		break;
                 	}
-                	sutDescription = ivctCommander.rtp.getSutDescription(sutName);
+                	sutDescription = ivctCommander.rtp.getSutDescription(sutID);
                 	for (String entry : badgesAbg) {
 						sutDescription.badges.add(entry);
 					}
@@ -577,7 +578,7 @@ class Writer extends Thread {
                 	break;
                 case "deleteBadge":
                 case "dbg":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -586,7 +587,7 @@ class Writer extends Thread {
                 		out.println("deleteBadge: need badge name(s)");
                 		break;
                 	}
-                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(sutName, false);
+                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(sutID, false);
                 	String newBadgeDbg = null;
                 	for (int i = 0; i < split.length - 1; i++) {
                 		newBadgeDbg = split[i + 1];
@@ -600,7 +601,7 @@ class Writer extends Thread {
                 	for (String Entry : sutBadgesDbg) {
                         badgesDbg.add(new String (Entry));
                 	}
-                	sutDescription = ivctCommander.rtp.getSutDescription(sutName);
+                	sutDescription = ivctCommander.rtp.getSutDescription(sutID);
                 	sutDescription.badges = badgesDbg;
 					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
@@ -612,7 +613,7 @@ class Writer extends Thread {
                 	break;
                 case "ssd":
                 case "setSettingsDesignator":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -683,14 +684,14 @@ class Writer extends Thread {
                 		out.println("setSUT: unknown SUT: " + split[1]);
                 		break;
                 	}
-                    sutName = split[1];
+                    sutID = split[1];
                 	ivctCommander.rtp.resetSut();
-                	sutDescription = ivctCommander.rtp.getSutDescription(sutName);
+                	sutDescription = ivctCommander.rtp.getSutDescription(sutID);
                     ivctCommander.resetSUT();
                 	break;
                 case "listTestSchedules":
                 case "lts":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -698,7 +699,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls2 = ivctCommander.rtp.getSutBadges(sutName, true);
+                	List<String> ls2 = ivctCommander.rtp.getSutBadges(sutID, true);
                 	for (String temp : ls2) {
                 		System.out.println(temp);
                 	}
@@ -709,7 +710,7 @@ class Writer extends Thread {
                     if (ivctCommander.rtp.checkCtTcTsRunning("startTestSchedule")) {
                 		break;
                 	}
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -718,7 +719,7 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	List<String> ls1 = ivctCommander.rtp.getSutBadges(sutName, true);
+                	List<String> ls1 = ivctCommander.rtp.getSutBadges(sutID, true);
                 	boolean gotTestSchedule = false;
         			for (String entry : ls1) {
                 		if (split[1].equals(entry)) {
@@ -741,14 +742,14 @@ class Writer extends Thread {
                 	CommandCache commandCache = new CommandCache(split[1], testcases0);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(sutName, sutDescription, commandCache, ivctCommander);
+                	command = new StartTestSchedule(sutID, sutDescription, commandCache, ivctCommander);
                 	gotNewCommand = true;
                 	RuntimeParameters.setTestScheduleName(split[1]);
                     break;
                 case "abortTestSchedule":
                 case "ats":
                 	// Cannot abort test schedule if SUT is not set
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -767,7 +768,7 @@ class Writer extends Thread {
                     break;
                 case "listTestCases":
                 case "ltc":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -775,7 +776,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls3 = ivctCommander.rtp.getSutBadges(sutName, true);
+                	List<String> ls3 = ivctCommander.rtp.getSutBadges(sutID, true);
                 	for (String temp : ls3) {
                 		System.out.println(temp);
                     	List<String> testcases1 = ivctCommander.rtp.getTestcases(temp);
@@ -790,7 +791,7 @@ class Writer extends Thread {
                     if (ivctCommander.rtp.checkCtTcTsRunning("startTestCase")) {
                 		break;
                 	}
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -808,13 +809,13 @@ class Writer extends Thread {
                         out.println("startTestCase: unknown testSchedule testCase: " + split[1] + " " + split[2]);
                         break;
                 	}
-                	ivctCommander.rtp.startTestCase(sutName, sutDescription, split[1], fullTestcaseName);
+                	ivctCommander.rtp.startTestCase(sutID, sutDescription, split[1], fullTestcaseName);
                 	RuntimeParameters.setTestCaseName(split[2]);
                     break;
                 case "abortTestCase":
                 case "atc":
                 	// Cannot abort test case if SUT is not set
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -849,7 +850,7 @@ class Writer extends Thread {
                 	break;
                 case "listVerdicts":
                 case "lv":
-            	    if (sutName == null) {
+            	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
@@ -857,15 +858,16 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                         out.println("listVerdicts: Warning extra parameter: " + split[1]);
                 	}
-                	ivctCommander.listVerdicts(sutName);
+                	ivctCommander.listVerdicts(sutID);
                 	break;
                 case "status":
                 case "s":
-                	if (sutName == null) {
+                	if (sutID == null) {
                 		out.println("SUT:");
                 	} else {
-                		sutDescription = ivctCommander.rtp.getSutDescription(sutName);
+                		sutDescription = ivctCommander.rtp.getSutDescription(sutID);
                 		out.println("SUT ID: " + sutDescription.ID);
+                		out.println("SUT name: " + sutDescription.name);
                 		out.println("SUT version: " + sutDescription.version);
                 		out.println("SUT description: " + sutDescription.description);
                 		out.println("SUT vendor: " + sutDescription.vendor);
