@@ -1,7 +1,9 @@
 package nato.ivct.gui.shared.cb;
 
+import java.io.InputStream;
 import java.util.Set;
 
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
@@ -26,4 +28,6 @@ public interface ICbService extends IService {
 	CbRequirementsTable loadRequirements(Set<String> badges);
 
 	Set<String> loadBadges();
+
+	byte[] loadBadgeIcon(String cbId);
 }

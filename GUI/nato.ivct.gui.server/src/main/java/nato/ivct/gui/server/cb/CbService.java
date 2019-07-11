@@ -1,5 +1,10 @@
 package nato.ivct.gui.server.cb;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
@@ -111,6 +116,22 @@ public class CbService implements ICbService {
 
 		// dependencies tree is built in CbDependenciesLookupService class
 		return formData;
+	}
+	
+	public byte[] loadBadgeIcon(String badgeId) {
+		BadgeDescription cb = cb_hm.get(badgeId);
+		
+		if (cb.cbVisual == null) {
+			LOG.error("No icon file for badge ID " + cb.ID);
+			return null;
+		}
+		
+		try {
+			return Files.readAllBytes((Paths.get(cb.cbVisual)));
+		} catch (IOException exe) {
+			LOG.error("Could not open icon file " + cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
+			return null;
+		}
 	}
 
 	@Override

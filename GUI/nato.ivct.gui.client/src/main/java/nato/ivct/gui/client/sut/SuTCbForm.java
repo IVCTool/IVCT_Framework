@@ -54,6 +54,8 @@ import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.Gene
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTCbDetailsBox.DetailsHorizontalSplitterBox.SutParameterBox.ParameterHorizontalSplitterBox.SuTTcParameterTableField.SuTTcParameterTable.SaveMenu;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTCbDetailsBox.DetailsHorizontalSplitterBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
+import nato.ivct.gui.shared.cb.CbFormData;
+import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
@@ -1042,13 +1044,14 @@ public class SuTCbForm extends AbstractForm {
 			formData = service.load(formData);
 			importFormData(formData);
 			// load badge image
-			try (InputStream in = ResourceBase.class.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
-				getCbImageField().setImage(IOUtility.readBytes(in));
-				getCbImageField().setImageId(formData.getCbId());
-			} catch (Exception e) {
-				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
+			byte[] badgeIcon = BEANS.get(ICbService.class).loadBadgeIcon(formData.getCbId());
+			if (badgeIcon != null) {
+				getCbImageField().setImage(badgeIcon);
+				getForm().setSubTitle(formData.getCbName().getValue());
 			}
-			getForm().setSubTitle(formData.getCbName().getValue());
+			else {
+				logger.warn("Could not load image file for badge ID " + formData.getCbId());
+			}
 //			setEnabledPermission(new UpdateCbPermission());
 		}
 	}
