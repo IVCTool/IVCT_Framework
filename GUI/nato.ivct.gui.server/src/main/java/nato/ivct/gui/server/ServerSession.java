@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
-import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdSetLogLevel;

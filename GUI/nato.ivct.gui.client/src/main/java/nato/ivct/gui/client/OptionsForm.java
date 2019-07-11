@@ -16,6 +16,8 @@ import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
+import com.google.api.client.repackaged.com.google.common.base.Strings;
+
 import nato.ivct.gui.client.OptionsForm.MainBox.CancelButton;
 import nato.ivct.gui.client.OptionsForm.MainBox.LocaleField;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
@@ -35,8 +37,13 @@ public class OptionsForm extends AbstractForm {
 
 	@Override
 	protected void execInitForm() {
+		// set the language
 		String localeString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.PREF_USER_LOCALE, null);
-		getLocaleField().setValue(LocaleUtility.parse(localeString));
+		getLocaleField().setValue(LocaleUtility.parse(Strings.nullToEmpty(localeString)));
+		
+		// set the log level
+		String logLevelString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
+		getLogLevelField().setValue(Strings.nullToEmpty(logLevelString));
 	}
 
 	public CancelButton getCancelButton() {
@@ -119,9 +126,13 @@ public class OptionsForm extends AbstractForm {
 		public class OkButton extends AbstractOkButton {
 			@Override
 			protected void execClickAction() {
+				// publish log level
 				IOptionsService service = BEANS.get(IOptionsService.class);
 				String level = getLogLevelField().getValue();
 				service.setLogLevel(level);
+				// store log level
+				storeLogLevel(level);
+				// store gui language
 				storeLanguageOptions();
 			}
 		}
@@ -129,6 +140,13 @@ public class OptionsForm extends AbstractForm {
 		@Order(101000)
 		public class CancelButton extends AbstractCancelButton {
 		}
+	}
+	
+	protected void storeLogLevel(String logLevel) {
+	    boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue().toString());
+	    if (logLevelChanged) {
+	    	ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+	    }
 	}
 	
 	protected void storeLanguageOptions() {

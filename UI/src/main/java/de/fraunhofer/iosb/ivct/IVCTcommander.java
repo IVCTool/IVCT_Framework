@@ -50,8 +50,8 @@ public class IVCTcommander implements OnResultListener {
 		listOfVerdicts.addElement(blank);    	
     }
 
-      public void listVerdicts() {
-			System.out.println("SUT: " + rtp.getSutName());
+      public void listVerdicts(final String sutName) {
+			System.out.println("SUT: " + sutName);
 			if (listOfVerdicts.isEmpty()) {
 	            System.out.println("--No verdicts found--");
 			}

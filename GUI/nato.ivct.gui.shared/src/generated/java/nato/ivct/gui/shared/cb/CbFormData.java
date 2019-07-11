@@ -20,10 +20,24 @@ public class CbFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
+	public CbDependenciesTreeBox getCbDependenciesTreeBox() {
+		return getFieldByClass(CbDependenciesTreeBox.class);
+	}
+
+	public CbDescription getCbDescription() {
+		return getFieldByClass(CbDescription.class);
+	}
+
+	/**
+	 * access method for property CbId.
+	 */
 	public String getCbId() {
 		return getCbIdProperty().getValue();
 	}
 
+	/**
+	 * access method for property CbId.
+	 */
 	public void setCbId(String cbId) {
 		getCbIdProperty().setValue(cbId);
 	}
@@ -34,13 +48,6 @@ public class CbFormData extends AbstractFormData {
 
 	public CbName getCbName() {
 		return getFieldByClass(CbName.class);
-	}
-	public CbDependenciesTreeBox getCbDependenciesTreeBox() {
-		return getFieldByClass(CbDependenciesTreeBox.class);
-	}
-
-	public CbDescription getCbDescription() {
-		return getFieldByClass(CbDescription.class);
 	}
 
 	public CbRequirementsTable getCbRequirementsTable() {

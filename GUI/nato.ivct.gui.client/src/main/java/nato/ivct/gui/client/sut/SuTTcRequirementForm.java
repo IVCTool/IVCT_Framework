@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -20,6 +21,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
+import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.ReqDescrField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCaseExecutionStatusField;
@@ -27,6 +29,7 @@ import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.GeneralBox.TestCase
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
 import nato.ivct.gui.client.sut.SuTTcRequirementForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
+import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
@@ -404,6 +407,11 @@ public class SuTTcRequirementForm extends AbstractForm {
 
 					@Override
 					public void run() throws Exception {
+						// before starting the TC, communicate this user's last used log level
+						String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
+						IOptionsService service = BEANS.get(IOptionsService.class);
+						service.setLogLevel(logLevel);
+						// now start the TC
 						ISuTCbService sutCbService = BEANS.get(ISuTCbService.class);
 							sutCbService.executeTestCase(getSutId(), getTestCaseId(), getBadgeId());
 					}

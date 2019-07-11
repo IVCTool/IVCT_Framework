@@ -454,9 +454,23 @@ public class CmdUpdateSUT {
         JSONObject obj = new JSONObject();
         obj.put(CmdListSuT.ID, this.sutDescription.ID);
         obj.put(CmdListSuT.NAME, this.sutDescription.name);
-        obj.put(CmdListSuT.VERSION, this.sutDescription.version);
-        obj.put(CmdListSuT.DESCRIPTION, this.sutDescription.description);
-        obj.put(CmdListSuT.VENDOR, this.sutDescription.vendor);
+        if (this.sutDescription.version == null) {
+            obj.put(CmdListSuT.VERSION, "");
+        } else {
+        	obj.put(CmdListSuT.VERSION, this.sutDescription.version);
+        }
+
+        if (this.sutDescription.description == null) {
+        	obj.put(CmdListSuT.DESCRIPTION, "");
+        } else {
+        	obj.put(CmdListSuT.DESCRIPTION, this.sutDescription.description);
+        }
+
+        if (this.sutDescription.vendor == null) {
+        	obj.put(CmdListSuT.VENDOR, "");
+        } else {
+        	obj.put(CmdListSuT.VENDOR, this.sutDescription.vendor);
+        }
         
         // check for defaults
         if (sutDescription.settingsDesignator == null) {
