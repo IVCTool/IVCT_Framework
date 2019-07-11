@@ -8,7 +8,10 @@ buildscript {
   }
 }
 
-// docker plugin
+
+
+// apply plugin: 'java'
+
 apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
 
 // import remote API plugin task groups
@@ -16,10 +19,10 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 
 task dockerBuildImage(type: DockerBuildImage) {
-	dependsOn subprojects.install
+	dependsOn subprojects.build
 	group = 'Docker'
-	description = 'Builds the GUI docker image'
+	description = 'Runtime configuration'
 
 	inputDir = file('.')
-	tag="ivct/ivct-gui:${ivctVersion}"
+	tag="ivct/runtime-config:${ivctVersion}"
 }
