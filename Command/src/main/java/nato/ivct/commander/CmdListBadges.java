@@ -17,6 +17,9 @@ package nato.ivct.commander;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
@@ -68,7 +71,13 @@ public class CmdListBadges implements Command {
 						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 						badge.cbVisual = (String) jsonObj.get("graphics");
 						if (badge.cbVisual != null) {
-						    badge.cbVisual = iconsFolder + "/" + badge.cbVisual;
+							// if the icon is in the folder of the badge description, take this one.
+							// Otherwise, look into the icon folder
+							Path iconFile = Paths.get(dir.getPath(), badge.cbVisual);
+							if (Files.exists(iconFile))
+								badge.cbVisual = iconFile.toString();
+							else
+							    badge.cbVisual = Paths.get(iconsFolder, badge.cbVisual).toString();
 						}
 						JSONArray depend = (JSONArray) jsonObj.get("dependency");
 						if (depend != null) {
