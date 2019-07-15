@@ -240,6 +240,9 @@ public class CmdUpdateSUT {
 					logger.trace(lib_path);
 					File dir = new File(lib_path);
 					File[] filesList = dir.listFiles();
+					if (filesList == null) {
+						throw new Exception("getBadgeUrls no badges found in: " + lib_path);
+					}
 					URL[] urls = new URL[filesList.length];
 					for (int i = 0; i < filesList.length; i++) {
 						try {
