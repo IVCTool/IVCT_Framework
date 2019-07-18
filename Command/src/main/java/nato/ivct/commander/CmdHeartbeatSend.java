@@ -47,7 +47,7 @@ public class CmdHeartbeatSend  implements Command {
     public static MessageProducer logProducer;
     
     //  definition of all  keys  for our  json-object    
-    public static final String LOG_MSG_TOPIC = "HeartBeat";    
+    public static final String HB_MSG_TOPIC = "HeartBeat";    
     public static final String HB_SENDER="HeartbeatSender";    
     public static final String HB_LASTSENDINGPERIOD= "LastSendingPeriod";    
     public static final String HB_LASTSENDINGTIME= "LastSendingTime";    
@@ -66,7 +66,7 @@ public class CmdHeartbeatSend  implements Command {
       
     public CmdHeartbeatSend(OnCmdHeartbeatSend _sender) {
         Factory.initialize();
-        logProducer = Factory.createTopicProducer(LOG_MSG_TOPIC);
+        logProducer = Factory.createTopicProducer(HB_MSG_TOPIC);
         this.sender=_sender;
     }
         

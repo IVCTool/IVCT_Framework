@@ -52,7 +52,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CmdHeartbeatListen.class);
     
-    public static final String LOG_MSG_TOPIC = "HeartBeat";
+    public static final String HB_MSG_TOPIC = "HeartBeat";
     
     JSONParser jsonParser = new JSONParser();
     private JSONObject jsonObject;
