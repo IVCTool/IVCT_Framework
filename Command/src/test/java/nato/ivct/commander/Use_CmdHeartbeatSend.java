@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  24.06.2019) 
+(v  18.07.2019) 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 	 */
 
 	 private boolean health;
+	 
 	 private String myClassName = "Use_CmdHeartbeatSend";
 	
 	
@@ -41,15 +42,15 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 	      
 	      logger.info(" UserDir ist : " + System.getProperty("user.dir")  );      // Debug
 
-		  logger.info(" Use_CmdHeartbeatSend  wurde gestartet");      // Debug
+		  logger.info(" Use_CmdHeartbeatSend  has started");      // Debug
 		  
 		  // we need a Instance of this class
 		  Use_CmdHeartbeatSend testHeartbeatSender = new  Use_CmdHeartbeatSend();
 		  
 		  // and deliver it to  CmdHeartbeatSend
 		  CmdHeartbeatSend  cmdHeartbeatSend = new CmdHeartbeatSend(testHeartbeatSender);
-		  	 
-		 
+		  
+		  testHeartbeatSender.health=true;
 		  
 		  
 	      // for testing the CmdHeartbeatSend  we start it and change the 'health' - variable after a while
@@ -72,6 +73,7 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 	       
 	       count = 0;
            while (count < 15) {
+           //while (count < 100) {
                Thread.sleep(3000);
                count++;
            }

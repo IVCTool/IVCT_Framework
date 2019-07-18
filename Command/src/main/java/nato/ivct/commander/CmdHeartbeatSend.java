@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  05.07.2019)
+(v  18.07.2019)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -41,37 +41,40 @@ public class CmdHeartbeatSend  implements Command {
           public String getMyClassName();
       }
     
-    
-
+   
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CmdHeartbeatSend.class);
 
     public static MessageProducer logProducer;
     
-    public static final String LOG_MSG_TOPIC = "HeartBeat";
-    
+    //  definition of all  keys  for our  json-object    
+    public static final String LOG_MSG_TOPIC = "HeartBeat";    
+    public static final String HB_SENDER="HeartbeatSender";    
+    public static final String HB_LASTSENDINGPERIOD= "LastSendingPeriod";    
+    public static final String HB_LASTSENDINGTIME= "LastSendingTime";    
+    public static final String HB_SENDERHEALTHSTATE= "SenderHealthState";    
+    public static final String HB_MESSAGESTATE= "MessageState";    
+    public static final String HB_ALLERTTIME= "Alert-Time";
+    public static final String HB_COMMENT= "Comment";
+        
+      
     private boolean health;    
        
-    private String heartbeatSender;
+    private String heartbeatSenderName;
     
     private OnCmdHeartbeatSend sender;
     
-    //public CmdHeartbeatSend_Call() {
-    //    Factory.initialize();
-    //    logProducer = Factory.createTopicProducer(LOG_MSG_TOPIC);
-    //    this.health=true;
-    // }
-    
+      
     public CmdHeartbeatSend(OnCmdHeartbeatSend _sender) {
         Factory.initialize();
         logProducer = Factory.createTopicProducer(LOG_MSG_TOPIC);
         this.sender=_sender;
     }
-    
+        
     
     /*
      *  this execute method is started by a application which instanciate this class  
      *  we fetch all xy seconds some variables from that application,
-     *  build a json -object with this Informations and other Values 
+     *  build a json-object with this Informations and other Values 
      *  and send this to ActiveMQ
      *  
      *  if the application change the variables, the values in the json will be changed
@@ -80,21 +83,18 @@ public class CmdHeartbeatSend  implements Command {
     @SuppressWarnings("unchecked")
     public void execute()  throws Exception   {    
         
-        // we try to get Informations about our  Client
-        
+        // we try to get Informations about our  Client        
         if (sender != null) {
             this.health = sender.getMyHealth();
-            this.heartbeatSender= sender.getMyClassName();
+            this.heartbeatSenderName= sender.getMyClassName();
             } else {
-            logger.warn("In CmdHeartbeatSend_sender  is null !!!!");
+            logger.warn("In CmdHeartbeatSend sender  is null !!!!");
         }
         
-        // Info:   for the Message we put  following Keys in a json object
-        //HeartbeatSender   LastSendingPeriod  LastSendingTime   SenderHealthState
-         
+        // Info:   for the Message we put some Keys/values in a json object        
         JSONObject heartbeatjson = new JSONObject();              
-        heartbeatjson.put("HeartbeatSender", heartbeatSender);
-        heartbeatjson.put("LastSendingPeriod", 5);
+        heartbeatjson.put(HB_SENDER, this.heartbeatSenderName);
+        heartbeatjson.put(HB_LASTSENDINGPERIOD,new Integer(5000));
         
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
@@ -108,20 +108,15 @@ public class CmdHeartbeatSend  implements Command {
 
                     Date datum = new java.util.Date();
 
-                    SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
                     String dateString = df.format(datum);
 
-                    heartbeatjson.put("LastSendingTime",dateString);
-
-                    if (health) {
-                        heartbeatjson.put("SenderHealthState", health); 
-                        sendMessage(heartbeatjson.toString());                        
-                        logger.info("### CmdHeartbeatSend.execute sendet: "+heartbeatjson.toString()); // Debug
-
-                    } else {
-                        heartbeatjson.put("SenderHealthState", health);
-                        sendMessage(heartbeatjson.toString());
-                    }
+                    heartbeatjson.put(HB_LASTSENDINGTIME,dateString);                    
+                    heartbeatjson.put(HB_SENDERHEALTHSTATE, health);                    
+                    sendMessage(heartbeatjson.toString());
+                    
+                    logger.info("### CmdHeartbeatSend.execute is sending: "+heartbeatjson.toString()); // Debug                    
+                    
                 } catch (Exception ex) {
                     logger.error("could not send command: " + ex);
                 }
@@ -135,5 +130,7 @@ public class CmdHeartbeatSend  implements Command {
         //logger.info("heartbeatClient Test message ist: " + message);  // Debug          
          logProducer.send(message);        
     }
+    
+    
     
 }

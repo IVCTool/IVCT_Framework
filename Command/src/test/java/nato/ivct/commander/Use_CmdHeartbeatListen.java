@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  05.07.2019) 
+(v  18.07.2019) 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,24 +23,31 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.LoggerFactory;
 
 
-    public class Use_CmdHeartbeatListen implements CmdHeartbeatListen.OnHeartbeatListener {
+    public class Use_CmdHeartbeatListen implements CmdHeartbeatListen.OnCmdHeartbeatListen {
         
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Use_CmdHeartbeatListen.class);
 
-    static Use_CmdHeartbeatListen client;
+    static Use_CmdHeartbeatListen client; 
+    
+    // You can choose a special  Class to be monitored
+    //private static String desiredHeartBeatSenderClass="Use_CmdHeartbeatSend";
+    private static String desiredHeartBeatSenderClass="TestRunner";
         
-        
-    public static void main(String[] args) throws Exception {        
+    public static void main(String[] args) throws Exception {     
         
      // creating a instance of this 'client'  to  deliver it to the listener
-     Use_CmdHeartbeatListen client = new Use_CmdHeartbeatListen();
-     //logger.info("Start_CmdHeartbeatListener_main create his instance: " +client);    // Debug
+     Use_CmdHeartbeatListen querryClient = new Use_CmdHeartbeatListen();
      
     
-     // instantiating a new heartbeatListener and deliver this client
-     CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(client);
-     heartbeatListener.execute();
+     // instantiating a new heartbeatListener and deliver this client  without a special Sender-class to observe
+     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
 
+     // instantiating a new heartbeatListener and deliver this client  an  a special Sender-class to observe
+     CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient, Use_CmdHeartbeatListen.desiredHeartBeatSenderClass );
+     
+
+     heartbeatListener.execute();
+     
         // The process has to run for a while
         int count = 0;
         while (count < 100) {
@@ -49,13 +56,11 @@ import org.slf4j.LoggerFactory;
         }
     }
 
-    /*  */
+    /*   // work with the  json as a String  what's comming back  , an example
     @Override
     public void hearHeartbeat(String backinfo) {
-        logger.info("Rueckgabe an Use_CmdHeartbeatListen ist: " + backinfo);
+        logger.info("delivered string to Use_CmdHeartbeatListen is: " + backinfo);
         
-        // work with the  json  what's comming back  , an example
-        /*
         try {
             JSONParser jsonParser = new JSONParser();            
             JSONObject jsonObject = (JSONObject) jsonParser.parse(backinfo);
@@ -67,13 +72,14 @@ import org.slf4j.LoggerFactory;
             logger.info("## If we got back json following output shoud be correct: " + testOutput ); // Debug
             
         } catch (final Exception e) {
-            Factory.LOGGER.error("Use_CmdHeartbeatListen.hearHearbeat hat Probleme mit der Rueckgabe", e);
-        }
-        */
-        
-        
-      
-        
+            Factory.LOGGER.error("Use_CmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
+        } 
     }
+    */
+    
+    //  work with a Json Object as return
+    public void hearHeartbeat(JSONObject backJson) {        
+        logger.info("delivered Json to Use_CmdHeartbeatListen ist: " + backJson);        
+    }    
 
 }
