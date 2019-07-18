@@ -486,13 +486,14 @@ public class CbForm extends AbstractForm {
 			formData = service.load(formData);
 			importFormData(formData);
 			// load badge image
-			try (InputStream in = ResourceBase.class.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
-				getCbImageField().setImage(IOUtility.readBytes(in));
-				getCbImageField().setImageId(formData.getCbId());
-			} catch (Exception e) {
-				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
+			byte[] badgeIcon = service.loadBadgeIcon(formData.getCbId());
+			if (badgeIcon != null) {
+				getCbImageField().setImage(badgeIcon);
+				getForm().setSubTitle(formData.getCbName().getValue());
 			}
-			getForm().setSubTitle(formData.getCbName().getValue());
+			else {
+				logger.warn("Could not load image file for badge ID " + formData.getCbId());
+			}
 			setEnabledPermission(new UpdateCbPermission());
 		}
 	}

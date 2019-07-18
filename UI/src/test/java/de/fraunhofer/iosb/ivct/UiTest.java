@@ -85,21 +85,6 @@ public class UiTest {
 	}
 
 	@Test
-	public void testCheckSutNotSelected() {
-		System.out.println("testCheckSutNotSelected enter");
-
-		// Simple null pointer test
-		RuntimeParameters rp = new RuntimeParameters();
-		assertTrue("RuntimeParameters is a null pointer", rp != null);
-
-		// No SUT selected, thus should be not selected
-		boolean sutNotSelected = rp.checkSutNotSelected();
-		assertTrue("checkSutNotSelected: should not be selected", true == sutNotSelected);
-
-		System.out.println("testCheckSutNotSelected leave");
-	}
-
-	@Test
 	public void testResetSUTvariables() {
 		System.out.println("testResetSUTvariables enter");
 
@@ -114,9 +99,8 @@ public class UiTest {
 		assertTrue("IVCTcommander is a null pointer", ivctCommander != null);
 
 		// Reset SUT should reset verdict list
-    	ivctCommander.rtp.setSutName("mySUT");
+    	ivctCommander.rtp.resetSut();
     	ivctCommander.resetSUT();
-		ivctCommander.listVerdicts();
 		String tc = RuntimeParameters.getTestCaseName();
 		assertTrue("Testcase name is not a null pointer", tc == null);
 		String ts = RuntimeParameters.getTestScheduleName();
