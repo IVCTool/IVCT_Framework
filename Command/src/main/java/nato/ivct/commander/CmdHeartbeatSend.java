@@ -94,7 +94,7 @@ public class CmdHeartbeatSend  implements Command {
         // Info:   for the Message we put some Keys/values in a json object        
         JSONObject heartbeatjson = new JSONObject();              
         heartbeatjson.put(HB_SENDER, this.heartbeatSenderName);
-        heartbeatjson.put(HB_LASTSENDINGPERIOD,new Integer(5000));
+        heartbeatjson.put(HB_LASTSENDINGPERIOD, 5000L);
         
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped

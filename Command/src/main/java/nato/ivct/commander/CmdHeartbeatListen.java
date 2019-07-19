@@ -177,7 +177,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                          } else if (now.getTime() - myLast.getTime() > ((mySendingPeriod * 4) +1000 )) {   // ca > 21 000 ms
                             setMessageState("dead");
                             myJsonObject.put(CmdHeartbeatSend.HB_ALLERTTIME, alerttime);                            
-                            myJsonObject.put(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0);                            
+                            myJsonObject.put(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);                            
                             myJsonObject.put(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);                            
 
                          } else {
