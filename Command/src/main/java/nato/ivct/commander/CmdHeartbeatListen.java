@@ -111,13 +111,13 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     public void execute() {
         Factory.initialize();
         Factory.LOGGER.trace("subscribing the Heartbeat listener");
-        Factory.jmsHelper.setupTopicListener("HeartBeat", this);
+        Factory.jmsHelper.setupTopicListener(CmdHeartbeatSend.HB_MSG_TOPIC, this);
         monitor();
     }
     
     
     // we need a method to monitor if there even are messages and which, and give back the necessary Information
-   @SuppressWarnings("unchecked")  
+    @SuppressWarnings("unchecked")  
     public void monitor() {
        
         Timer timer = new Timer();
