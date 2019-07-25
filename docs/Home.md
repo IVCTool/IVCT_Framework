@@ -3,7 +3,7 @@
 This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software. 
 
 ## Preparations
-* [[IVCT Module Overview]]
+* [[IVCT Module Overview.md]]
 * [[Prerequisites for participating in IVCT_Framework development|prerequisites]]
 * [[Guidelines for branching and merging|Branching and Merging]]
 * [[IVCT Information Model (draft for discussion)]]
