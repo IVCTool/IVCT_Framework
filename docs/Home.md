@@ -11,7 +11,7 @@ This will be the place for all framework and test cases developers to get inform
 ## Building the software
 * [[Building the IVCT_Framework with gradle|gradleDoc]]
 * [[Using the framework with a 3rd-party RTI Implementation|3rdpartyRti]]
-* [[Test case logging|TClogging.md]]
+* [Test case logging](TClogging.md)
 * [[Configuration of the IVCT|IVCT_Configuration]]
 
 ## Docker Images
