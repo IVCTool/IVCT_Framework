@@ -9,17 +9,17 @@ This will be the place for all framework and test cases developers to get inform
 * [[IVCT Information Model (draft for discussion)]]
 
 ## Building the software
-* [[Building the IVCT_Framework with gradle|gradleDoc]]
-* [[Using the framework with a 3rd-party RTI Implementation|3rdpartyRti]]
+* [Building the IVCT_Framework with gradle](gradleDoc.nd)
+* [Using the framework with a 3rd-party RTI Implementation](3rdpartyRti.md)
 * [Test case logging](TClogging.md)
-* [[Configuration of the IVCT|IVCT_Configuration]]
+* [Configuration of the IVCT](IVCT_Configuration.md)
 
 ## Docker Images
-* [[IVCT Container design|IVCT-Container-Design]]
-* [[IVCT TC Runner Application-image|IVCT TC Runner Application image]]
-* [[IVCT GUI image|IVCT-GUI-image]]
-* [[IVCT LogSink Application image|IVCT-LogSink-Application-image]]
-* [[Building Docker images for IVCT Framework Components|Building-Docker-images]]
+* [IVCT Container design](IVCT-Container-Design.md)
+* [IVCT TC Runner Application-image](IVCT-TC-Runner-Application-image.md)
+* [IVCT GUI image](IVCT-GUI-image.md)
+* [IVCT LogSink Application image](IVCT-LogSink-Application-image.md)
+* [Building Docker images for IVCT Framework Components](Building-Docker-images.md)
 
 ## Continuous Integration and Automatic Deployment
 * [[Automatic testing, building, docker image building and deployment using Travis-CI|travis]]
