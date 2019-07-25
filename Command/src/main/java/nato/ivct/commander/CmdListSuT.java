@@ -35,15 +35,15 @@ public class CmdListSuT implements Command {
     public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
     public static final String FEDERATION_NAME     = "federationName";
 
-    
-	public HashMap<String, SutDescription> sutMap = new HashMap<String, SutDescription>();
+
+	public HashMap<String, SutDescription> sutMap = new HashMap<>();
 
 	/**
-	 * The CmdListSuT command reads the SuT conformance statement JSON files, and creates a 
+	 * The CmdListSuT command reads the SuT conformance statement JSON files, and creates a
 	 * hashMap for (id,SutDescription)
-	 * 
+	 *
 	 * The format of a conformance statement is expected as follows:
-	 * 
+	 *
 	 * {
      *    "id"                 : "hw_iosb",
      *    "name"               : "HelloWorld",
@@ -54,20 +54,16 @@ public class CmdListSuT implements Command {
      *    "settingsDesignator" : "crcAddress=localhost:8989",
      *    "federationName"     : "TheWorld"
      * }
-     * 
+     *
 	 */
 	@Override
 	public void execute() {
-		// file loader to read the JSON descriptions of SuT's
-
-		// If property is not set, do not have any access to any SUTs
-		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
-			return;
-		}
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
+		Factory.LOGGER.debug("searching in " + dir.getAbsolutePath());
 		File[] filesList = dir.listFiles();
 		for (File file : filesList) {
 			if (file.isDirectory()) {
+			    Factory.LOGGER.debug("entering directory " + file.getAbsolutePath());
 				FileReader fReader = null;
 				Object obj;
 				JSONParser parser = new JSONParser();
@@ -87,12 +83,22 @@ public class CmdListSuT implements Command {
                     sut.settingsDesignator = (String) jsonObj.get(SETTINGS_DESIGNATOR);
                     sut.federation = (String) jsonObj.get(FEDERATION_NAME);
 					JSONArray cs = (JSONArray) jsonObj.get(BADGE);
-					
-                    if (sut.ID == null) Factory.LOGGER.error("ID is undefined");
-                    if (sut.name == null) Factory.LOGGER.error("name is undefined");
-                    if (sut.version == null) Factory.LOGGER.warn("version is undefined");
-                    if (sut.description == null) Factory.LOGGER.warn("description is undefined");
-                    if (sut.vendor == null) Factory.LOGGER.warn("vendor is undefined");
+
+                    if (sut.ID == null) {
+                        Factory.LOGGER.error("ID is undefined");
+                    }
+                    if (sut.name == null) {
+                        Factory.LOGGER.error("name is undefined");
+                    }
+                    if (sut.version == null) {
+                        Factory.LOGGER.warn("version is undefined");
+                    }
+                    if (sut.description == null) {
+                        Factory.LOGGER.warn("description is undefined");
+                    }
+                    if (sut.vendor == null) {
+                        Factory.LOGGER.warn("vendor is undefined");
+                    }
                     if (sut.settingsDesignator == null) {
                         Factory.LOGGER.error("settingsDesignator is undefined, using default: " + Factory.SETTINGS_DESIGNATOR_DEFLT);
                         sut.settingsDesignator = Factory.SETTINGS_DESIGNATOR_DEFLT;
@@ -101,11 +107,12 @@ public class CmdListSuT implements Command {
                         Factory.LOGGER.error("federation is undefined, using default: " + Factory.FEDERATION_NAME_DEFLT);
                         sut.federation = Factory.FEDERATION_NAME_DEFLT;
                     }
-					
+
 					for (int i=0; i < cs.size(); i++) {
 						sut.badges.add(cs.get(i).toString());
 					}
-					sutMap.put(sut.ID, sut);
+					this.sutMap.put(sut.ID, sut);
+					Factory.LOGGER.debug("found SuT description: " + sut.toString());
 				} catch (IOException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -122,7 +129,7 @@ public class CmdListSuT implements Command {
 
 			}
 			else {
-				Factory.LOGGER.error(Factory.IVCT_SUT_HOME_ID + " folder not found");
+				Factory.LOGGER.error(file.getName() + " should be a folder");
 			}
 		}
 	}

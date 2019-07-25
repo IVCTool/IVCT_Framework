@@ -39,22 +39,23 @@ import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 /*
  * The Factory is used to create Command objects to be executed by a user interface.
  * Before any Command objects can be created, the factory object need to be initialized.
- * The Factory is also the container for all properties and JMS elements. The life cycle is managed by the 
+ * The Factory is also the container for all properties and JMS elements. The life cycle is managed by the
  * caller of the factory
  */
 public class Factory {
 
 	public static Properties props = null;
 	public static final String IVCT_CONF = "IVCT_CONF";
+	public static final String IVCT_CONF_DEFLT = "/root/conf/IVCT.properties";
 
 	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
-	public static final String IVCT_TS_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/IVCTtestSuites";
+	public static final String IVCT_TS_HOME_ID_DEFLT = "/root/conf/TestSuites";
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
-	public static final String IVCT_SUT_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/IVCTsut";
+	public static final String IVCT_SUT_HOME_ID_DEFLT = "/root/conf/IVCTsut";
     public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
-    public static final String IVCT_BADGE_HOME_ID_DEFLT = "C:/MSG134/DemoFolders/Badges";
+    public static final String IVCT_BADGE_HOME_ID_DEFLT = "/root/conf/Badges";
     public static final String IVCT_BADGE_ICONS_ID = "IVCT_BADGE_ICONS";
-    public static final String IVCT_BADGE_ICONS_ID_DEFLT = "C:/MSG134/DemoFolders/Badges";
+    public static final String IVCT_BADGE_ICONS_ID_DEFLT = "/root/conf/Badges";
 
 	public static final String RTI_ID = "RTI_ID";
 	public static final String RTI_ID_DEFLT = "pRTI";
@@ -93,7 +94,7 @@ public class Factory {
 	private static int cmdCounter = 0;
     private static String version = null;
     private static String build = null;
-	
+
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Factory.class);
 
@@ -129,8 +130,8 @@ public class Factory {
 			props.setProperty(key, value);
 		}
 	}
-	
-	
+
+
 	public static void readVersion() {
 	    Properties versionProperties = new Properties();
 	    try {
@@ -141,7 +142,7 @@ public class Factory {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-	    
+
 	}
 
 	/*
@@ -152,8 +153,9 @@ public class Factory {
 		if (props == null) {
 		    readVersion();
 		    LOGGER.info("IVCT Version " + getVersion() + ", build " + getBuild());
-		    
+
 			Properties fallback = new Properties();
+			fallback.put(IVCT_CONF, IVCT_CONF_DEFLT);
 			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
 			fallback.put(IVCT_SUT_HOME_ID, IVCT_SUT_HOME_ID_DEFLT);
             fallback.put(IVCT_BADGE_HOME_ID, IVCT_BADGE_HOME_ID_DEFLT);
@@ -176,37 +178,37 @@ public class Factory {
 
 			String home = System.getenv(IVCT_CONF);
 
-			if (home != null) {
-				try {
-					File f = new File(home);
-					// test if IVCT_CONF is already a filename
-					if (f.exists()) {
-						LOGGER.debug(home + " exists");
-					}
-					if (f.isDirectory()) {
-						LOGGER.debug(home + " is directory");
-					}
-					if (f.exists() && !f.isDirectory()) {
-						props.load(new FileInputStream(f));
-					} else {
-						// if not, just try to read the properties file with the default name
-						props.load(new FileInputStream(home + "/IVCT.properties"));
-						LOGGER.debug("Properties file loaded");
-					}
-				} catch (final Exception e) {
-					LOGGER.error("Environment Variable IVCT_CONF = {} not found - creating default values", IVCT_CONF);
-					try {
-						fallback.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
-						LOGGER.warn(
-								"New IVCT.properties file has been created with default values. Please verify settings!");
-						LOGGER.warn(props.toString());
-					} catch (IOException e1) {
-						LOGGER.error("Unable to write " + home + "/IVCT.properties file.");
-						e1.printStackTrace();
-					}
+			if (home == null) {
+			    LOGGER.debug("using IVCT_CONF default ("+ IVCT_CONF_DEFLT + ")");
+			    home = props.getProperty(IVCT_CONF);
+			}
+			try {
+				File f = new File(home);
+				// test if IVCT_CONF is already a filename
+				if (f.exists()) {
+					LOGGER.debug(home + " exists");
 				}
-			} else {
-				LOGGER.warn("no Properties file loaded");
+				if (f.isDirectory()) {
+					LOGGER.debug(home + " is directory");
+				}
+				if (f.exists() && !f.isDirectory()) {
+					props.load(new FileInputStream(f));
+				} else {
+					// if not, just try to read the properties file with the default name
+					props.load(new FileInputStream(home + "/IVCT.properties"));
+					LOGGER.debug("Properties file loaded");
+				}
+			} catch (final Exception e) {
+				LOGGER.error("Unable to read IVCT_CONF = {}  creating default values", IVCT_CONF_DEFLT);
+				try {
+					fallback.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
+					LOGGER.warn(
+							"New IVCT.properties file has been created with default values. Please verify settings!");
+					LOGGER.warn(props.toString());
+				} catch (IOException e1) {
+					LOGGER.error("Unable to write " + home + "/IVCT.properties file.");
+					e1.printStackTrace();
+				}
 			}
 
 			// overwrite with environment settings
@@ -237,7 +239,7 @@ public class Factory {
 			producer = jmsHelper.setupTopicProducer(props.getProperty(PROPERTY_IVCTCOMMANDER_QUEUE, JMS_QUEUE_DEFLT));
 		} // otherwise consider to be already initialized
 	}
-	
+
 	public static MessageProducer createTopicProducer (String topic) {
         return jmsHelper.setupTopicProducer(topic);
 	}
@@ -392,7 +394,7 @@ public class Factory {
 		initialize();
 		return new CmdTcStatusListener(listener);
 	}
-	
+
 	public static CmdLogMsgListener createCmdLogMsgListener(OnLogMsgListener listener) {
 		initialize();
 		return new CmdLogMsgListener(listener);
@@ -418,7 +420,7 @@ public class Factory {
 		initialize();
 		return new SutPathsFiles();
 	}
-	
+
 	public static CmdListSuT createCmdListSuT() {
 	    initialize();
 	    return new CmdListSuT();
