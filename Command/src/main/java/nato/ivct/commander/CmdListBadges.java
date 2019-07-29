@@ -50,6 +50,11 @@ public class CmdListBadges implements Command {
 		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
         String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
+		String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
+		if (dir.exists() == false){
+			Factory.LOGGER.error(dirName + ": does not exist");
+			return;
+		}
 		if (dir.isDirectory()) {
 			Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
@@ -113,7 +118,7 @@ public class CmdListBadges implements Command {
 				}
 			}
 		} else {
-			Factory.LOGGER.error(Factory.IVCT_BADGE_HOME_ID + " folder not found");
+			Factory.LOGGER.error(dirName + ": not a folder");
 			return;
 		}
 	}
