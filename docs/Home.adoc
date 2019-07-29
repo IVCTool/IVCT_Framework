@@ -1,10 +1,10 @@
-# Welcome to the IVCT wiki!
+# IVCT Documentation
 
 This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software.
 
 ## Preparations
 * xref:IVCT-Module-Overview.adoc[IVCT Module Overview]
-* [Prerequisites for participating in IVCT_Framework development](prerequisites.md)
+* xref:prerequisites.md[Prerequisites for participating in IVCT_Framework development]
 * [Guidelines for branching and merging](Branching-and-Merging.md)
 * [IVCT Information Model (draft for discussion)](model.md)
 
