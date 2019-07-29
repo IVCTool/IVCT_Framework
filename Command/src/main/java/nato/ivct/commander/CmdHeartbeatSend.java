@@ -24,11 +24,9 @@ import javax.jms.MessageProducer;
 import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 

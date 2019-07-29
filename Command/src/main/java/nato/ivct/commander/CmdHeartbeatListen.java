@@ -27,6 +27,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.sql.Timestamp;
@@ -57,7 +59,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     JSONParser jsonParser = new JSONParser();
     private JSONObject jsonObject;
     
-    String messageState  = "unknown";
+    HbMsgState messageState  = HbMsgState.UNKNOWN;
     
     String desiredHeartBeatSenderClass;
     
@@ -139,7 +141,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                 //  if we have not got any message with onMessage there is nothing to monitor!                
                 if (myLast==null) {                    
 
-                    setMessageState("unknown");
+                    setMessageState(HbMsgState.UNKNOWN);
                     String comment = ("there is'nt any HeartBeat yet");
                     failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState ); 
                     failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, comment ); 
@@ -151,7 +153,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                                                                                                  
                     logger.warn("fail, desired class "+desiredHeartBeatSenderClass+" does not send, but: " +myJsonObject.get(CmdHeartbeatSend.HB_SENDER));
                     
-                    setMessageState("fail");
+                    setMessageState(HbMsgState.FAIL);
                     String comment = (desiredHeartBeatSenderClass+" does not send");
                     failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState );
                     failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, comment ); 
@@ -165,23 +167,23 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                          long mySendingPeriod = getSendingPeriod();
                         
                          if  (now.getTime() - myLast.getTime()  <= (mySendingPeriod + 1000) ) {        // <= 6000 ms
-                            setMessageState("inTime");
+                            setMessageState(HbMsgState.INTIME);
                             
                          } else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 6000 ) ) {  // <= 11 000 ms
-                             setMessageState("waiting");
+                             setMessageState(HbMsgState.WAITING);
                         
                          } else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 16000) ) {  // <= 21 000 ms
-                             setMessageState("alert");    
+                             setMessageState(HbMsgState.ALERT);    
                              
 
                          } else if (now.getTime() - myLast.getTime() > ((mySendingPeriod * 4) +1000 )) {   // ca > 21 000 ms
-                            setMessageState("dead");
+                            setMessageState(HbMsgState.DEAD);
                             myJsonObject.put(CmdHeartbeatSend.HB_ALLERTTIME, alerttime);                            
                             myJsonObject.put(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);                            
                             myJsonObject.put(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);                            
 
                          } else {
-                            setMessageState("unknown");
+                            setMessageState(HbMsgState.UNKNOWN);
                          }
                        
                         myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState);    
@@ -212,12 +214,12 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     }
 
 
-    public String getMessageState() {
+    public HbMsgState getMessageState() {
         return messageState;
     }
 
 
-    public void setMessageState(String messageState) {
+    public void setMessageState(HbMsgState messageState) {
         this.messageState = messageState;
     }
 

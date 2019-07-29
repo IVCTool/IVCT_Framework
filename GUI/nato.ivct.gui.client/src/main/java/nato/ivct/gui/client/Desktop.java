@@ -3,6 +3,8 @@ package nato.ivct.gui.client;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -12,6 +14,8 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormMenu;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.annotations.ConfigProperty;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -47,6 +51,30 @@ public class Desktop extends AbstractDesktop {
 	@Override
 	protected void execDefaultView() {
 		setOutline(SuTOutline.class);
+	}
+	
+	@Order(90)
+	public class TcRunnerStatus extends AbstractFormMenu<HeartBeatInfoForm> {
+		@Override
+		protected String getConfiguredText() {
+			return TEXTS.get("TcRunnerStatus");
+		}
+		
+		@Override
+		protected String getConfiguredIconId() {
+			return Icons.WhiteBullet_32x32;//AbstractIcons.CircleSolid;
+		}
+		
+	    @Override
+	    protected Class<HeartBeatInfoForm> getConfiguredForm() {
+	      return HeartBeatInfoForm.class;
+	    }
+	    
+		@Override
+		protected void execInitForm(IForm form) {
+			// TODO Auto-generated method stub
+			super.execInitForm(form);
+		}
 	}
 	
     @Order(100)
@@ -151,11 +179,10 @@ public class Desktop extends AbstractDesktop {
 	      return OptionsForm.class;
 	    }
 	    
-		@Override
-		protected void execInitForm(IForm form) {
-			// TODO Auto-generated method stub
-			super.execInitForm(form);
-		}
+//		@Override
+//		protected void execInitForm(IForm form) {
+//			super.execInitForm(form);
+//		}
 	}
 
 	@Order(2000)
@@ -218,9 +245,7 @@ public class Desktop extends AbstractDesktop {
           return "ctrl-shift-s";
         }
     }
-	
-
-
+    
     @Override
     protected void execPageDetailFormChanged(IForm oldForm, IForm newForm) {
     	 if (newForm instanceof SuTForm)

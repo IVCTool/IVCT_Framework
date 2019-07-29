@@ -128,7 +128,7 @@ public class CbService implements ICbService {
 		
 		try {
 			return Files.readAllBytes((Paths.get(cb.cbVisual)));
-		} catch (IOException exe) {
+		} catch (IOException exc) {
 			LOG.error("Could not open icon file " + cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
 			return null;
 		}
