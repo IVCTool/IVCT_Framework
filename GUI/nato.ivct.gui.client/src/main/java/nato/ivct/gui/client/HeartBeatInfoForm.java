@@ -1,6 +1,7 @@
 package nato.ivct.gui.client;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -11,33 +12,81 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.shared.notification.NotificationHandlerRegistry;
-
 import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.CloseButton;
 import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.HbLastSeenField;
 import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.StatusField;
 import nato.ivct.gui.shared.HeartBeatNotification;
+import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.OptionsFormData;
 
 @FormData(value = OptionsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class HeartBeatInfoForm extends AbstractForm {
 
-	@Override
-	protected String getConfiguredTitle() {
-		return TEXTS.get("HeartBeatInformation");
-	}
+//	@Override
+//	protected String getConfiguredTitle() {
+//		return TEXTS.get("HeartBeatInformation");
+//	}
 
 	@Override
 	protected void execInitForm() {
         final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
         final Timestamp now = new Timestamp(System.currentTimeMillis());
         
+        final long minuteInSeconds = 60;
+        final long hourInSeconds = minuteInSeconds*60;
+        final long dayInSeconds = hourInSeconds * 24;
+        final long weekInSeconds = dayInSeconds * 7;
+        final long monthInSeconds = dayInSeconds * 30;
+        final long yearInSeconds = dayInSeconds * 365;
+        
+        String appName = getTitle();
+        
 //        ClientSession.CURRENT.get().getData(key)
-        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get("Use_CmdHeartbeatSend");
+        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get("Use_CmdHeartbeatSend"); // for testing
+//        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get("TestRunner");
         if (hbn != null) {
 			getFieldByClass(StatusField.class).setValue(hbn.notifyState.name());
-			getFieldByClass(HbLastSeenField.class).setValue(hbn.lastSendingTime);
+			
+			long timedif;
+			String timeElapsed = "";
+			String timeUnit = "";
+			
+			try {
+					timedif = (now.getTime() - df.parse(hbn.lastSendingTime).getTime())/1000L;
+				if (timedif < minuteInSeconds) {
+					timeElapsed = Long.toString(timedif);
+					timeUnit = "second(s)";
+				}
+				else if (timedif < hourInSeconds) {
+					timeElapsed = Long.toString(timedif/minuteInSeconds);
+					timeUnit = "minute(s)";
+				}
+				else if (timedif < weekInSeconds) {
+					timeElapsed = Long.toString(timedif/hourInSeconds);
+					timeUnit = "hour(s)";
+				}
+				else if (timedif < monthInSeconds) {
+					timeElapsed = Long.toString(timedif/weekInSeconds);
+					timeUnit = "week(s)";
+				}
+				else if (timedif < yearInSeconds) {
+					timeElapsed = Long.toString(timedif/monthInSeconds);
+					timeUnit = "month(s)";
+				}
+				else {
+					timeElapsed = Long.toString(timedif/yearInSeconds);
+					timeUnit = "year(s)";
+				}
+			} catch (ParseException exc) {
+				exc.printStackTrace();
+				timeElapsed = "???";
+				timeUnit = "";
+			}
+				
+			getFieldByClass(HbLastSeenField.class).setValue(timeElapsed+" "+timeUnit+" ago");
         }
+        else
+        	getFieldByClass(StatusField.class).setValue(HbNotificationState.UNKNOWN.name());
 	}
 
 	public CloseButton getCloseButton() {

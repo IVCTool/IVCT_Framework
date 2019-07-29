@@ -3,8 +3,6 @@ package nato.ivct.gui.client;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.text.StyledEditorKit.ForegroundAction;
-
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -14,8 +12,6 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormMenu;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.platform.annotations.ConfigProperty;
-import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -73,7 +69,8 @@ public class Desktop extends AbstractDesktop {
 		@Override
 		protected void execInitForm(IForm form) {
 			// TODO Auto-generated method stub
-			super.execInitForm(form);
+//			super.execInitForm(form);
+			form.setTitle("TestRunner");
 		}
 	}
 	

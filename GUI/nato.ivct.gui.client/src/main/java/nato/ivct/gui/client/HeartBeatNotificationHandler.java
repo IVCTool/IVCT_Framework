@@ -32,7 +32,8 @@ public class HeartBeatNotificationHandler implements INotificationHandler<HeartB
 			public void run() throws Exception {
 				logger.trace("Heartbeat notification received for " + notification.heartBeatSender);
 				
-				hbLastReceivedMap.put(notification.heartBeatSender, notification);
+				if (!notification.heartBeatSender.isEmpty())
+					hbLastReceivedMap.put(notification.heartBeatSender, notification);
 				
 				IDesktop desktop = ClientSession.get().getDesktop();
 				
