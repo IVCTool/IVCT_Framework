@@ -27,7 +27,7 @@ This will be the place for all framework and test cases developers to get inform
 ## Running the tools
 * xref:Setup-the-JMS-broker.md[Setup the JMS broker]
 * xref:Graphical-User-Interface.adoc[The graphical user interface]
-* xref:[The command line interface]
+* xref:commandlinetool[The command line interface]
 * xref:Reading-and-understanding-Test-Case-logfiles.md[Reading and understanding Test Case logfiles]
 
 ## Extending the framework
