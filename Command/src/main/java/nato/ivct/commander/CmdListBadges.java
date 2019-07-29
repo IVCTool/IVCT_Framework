@@ -70,14 +70,14 @@ public class CmdListBadges implements Command {
 						badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
 						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 						badge.cbVisual = (String) jsonObj.get("graphics");
+						// if the badge defines an icon then try to get it from the icon folder 
+						// (respectively from its default folder)
 						if (badge.cbVisual != null) {
-							// if the icon is in the folder of the badge description, take this one.
-							// Otherwise, look into the icon folder
-							Path iconFile = Paths.get(dir.getPath(), badge.cbVisual);
-							if (Files.exists(iconFile))
+							Path iconFile = Paths.get(iconsFolder, badge.cbVisual);
+							if (iconFile.toFile().exists())
 								badge.cbVisual = iconFile.toString();
 							else
-							    badge.cbVisual = Paths.get(iconsFolder, badge.cbVisual).toString();
+							    badge.cbVisual = null;
 						}
 						JSONArray depend = (JSONArray) jsonObj.get("dependency");
 						if (depend != null) {

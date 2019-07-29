@@ -7,24 +7,20 @@ import java.util.List;
 public class SutPathsFiles {
 	/**
 	 * Get the path of the folder where SUTs are stored
-	 * 
+	 *
 	 * @return path to SUTs home folder
 	 */
 	public String getSutsHomePath() {
-		// If property is not set, do not have any access to any SUTs
-		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
-			return null;
-		}
 		return Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
 	}
 
 	/**
 	 * Get the names of SUTs available
-	 * 
+	 *
 	 * @return set of sut names
 	 */
 	public List<String> getSuts() {
-		List<String> sutNames = new ArrayList<String>();
+		List<String> sutNames = new ArrayList<>();
 
 		String sutsHomePath = getSutsHomePath();
 		// Do not have any access to any SUTs
@@ -62,7 +58,7 @@ public class SutPathsFiles {
 
 	/**
 	 * Get the names of report files without path prefix for the requested SUT
-	 * 
+	 *
 	 * @param sutId the ID of the desired SUT
 	 * @return a set of report file names
 	 */
@@ -72,13 +68,13 @@ public class SutPathsFiles {
 
 	/**
 	 * Get the names of report files with/without path prefix depending on withPath parameter
-	 * 
+	 *
 	 * @param sutId the ID of the desired SUT
 	 * @param withPath whether the path name is prefixed to report file name
 	 * @return a set of report file names
 	 */
 	public List<String> getSutReportFileNames(final String sutId, final boolean withPath) {
-		List<String> reportFileNames = new ArrayList<String>();
+		List<String> reportFileNames = new ArrayList<>();
 		String path = getReportPath(sutId);
 		final File folder = new File(path);
 		if (folder.exists() == false || folder.isDirectory() == false) {
@@ -91,14 +87,14 @@ public class SutPathsFiles {
 
 	/**
 	 * Get report file names with/without path prefix depending on withPath parameter
-	 * 
+	 *
 	 * @param folderName report file
 	 * @param path folder where to get the log files from
 	 * @param withPath whether the path name is prefixed to report file name
 	 * @return set of report file names
 	 */
 	private List<String> listReportFilesForFolder(final File folderName, final String path, final boolean withPath) {
-		List<String> reportFileNames = new ArrayList<String>();
+		List<String> reportFileNames = new ArrayList<>();
 		if (folderName == null) {
 			return reportFileNames;
 		}
@@ -138,7 +134,7 @@ public class SutPathsFiles {
 	/**
 	 * Get the names of the TcParam files available without path prefix.
 	 * Currently only one, may change in the future.
-	 * 
+	 *
 	 * @param sutId the desired SUT ID
 	 * @param badgeName the name of the badge under consideration
 	 * @return set of TcParam file names
@@ -158,7 +154,7 @@ public class SutPathsFiles {
 	 * @return set of TcParam file names
 	 */
 	public List<String> getTcParamFileNames(final String sutId, final String badgeId, final boolean withPath) {
-		List<String> tcParamFileNames = new ArrayList<String>();
+		List<String> tcParamFileNames = new ArrayList<>();
 
 		String folderName = getTcParamPath(sutId, badgeId);
 		if (folderName == null) {
@@ -187,7 +183,7 @@ public class SutPathsFiles {
 
 	/**
 	 * Get the names of log files without path prefix
-	 * 
+	 *
 	 * @param sutId the ID of the SUT
 	 * @param badgeId the name of the badge under consideration
 	 * @return a set of log file names
@@ -198,14 +194,14 @@ public class SutPathsFiles {
 
 	/**
 	 * Get the names of log files with/without path prefix depending on withPath parameter
-	 * 
+	 *
 	 * @param sutId the ID of the SUT
 	 * @param badgeId the name of the badge under consideration
 	 * @param withPath whether the path name is prefixed to log file name
 	 * @return a set of log file names
 	 */
 	public List<String> getSutLogFileNames(final String sutId, final String badgeId, final boolean withPath) {
-		List<String> logFileNames = new ArrayList<String>();
+		List<String> logFileNames = new ArrayList<>();
 		String path = getSutLogPathName(sutId, badgeId);
 		final File folder = new File(path);
 		if (folder.exists() == false || folder.isDirectory() == false) {
@@ -217,7 +213,7 @@ public class SutPathsFiles {
 
 	/**
 	 * Get the path where the log files are located
-	 * 
+	 *
 	 * @param sutId the ID of the SUT
 	 * @param badgeId the name of the badge under consideration
 	 * @return path where logfiles are located or null
@@ -232,14 +228,14 @@ public class SutPathsFiles {
 
 	/**
 	 * Get log file names with/without path prefix depending on withPath parameter
-	 * 
+	 *
 	 * @param folderName log file
 	 * @param path folder where to get the log files from
 	 * @param withPath whether the path name is prefixed to log file name
 	 * @return set of logfile names
 	 */
 	private List<String> listLogFilesForFolder(final File folderName, final String path, final boolean withPath) {
-		List<String> logFileNames = new ArrayList<String>();
+		List<String> logFileNames = new ArrayList<>();
 		if (folderName == null) {
 			return logFileNames;
 		}
