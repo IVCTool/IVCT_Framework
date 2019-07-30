@@ -6,7 +6,7 @@ The containerized version of the IVCT consists of several Docker container image
 
 The color coding of the images is:
 
-- **BLUE**: IVCT container images (xref:IVCT TC Runner Application image[IVCT TC Runner Application-image], [[IVCT GUI image|IVCT-GUI-image]], and [[IVCT LogSink Application image|IVCT-LogSink-Application-image]]).
+- **BLUE**: IVCT container images ([[IVCT TC Runner Application-image|IVCT TC Runner Application image]], [[IVCT GUI image|IVCT-GUI-image]], and [[IVCT LogSink Application image|IVCT-LogSink-Application-image]]).
 - **GREY**: IVCT data volumes (as container image or other storage class).
 - **WHITE**: These are outside the scope of this GitHub project. E.g. the HLA RTI related container images.
 
