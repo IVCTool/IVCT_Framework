@@ -52,7 +52,7 @@ public class CmdListBadges implements Command {
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
 		String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
 		if (dir.exists() == false){
-			Factory.LOGGER.error(dirName + ": does not exist");
+			Factory.LOGGER.error("badge: {} does not exist", dirName);
 			return;
 		}
 		if (dir.isDirectory()) {
@@ -118,7 +118,7 @@ public class CmdListBadges implements Command {
 				}
 			}
 		} else {
-			Factory.LOGGER.error(dirName + ": not a folder");
+			Factory.LOGGER.error("badge: {} value not a folder", dirName);
 			return;
 		}
 	}
