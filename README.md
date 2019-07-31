@@ -18,7 +18,7 @@ The user interface comes in two flavors, a [web based user interface](docs/Graph
 
 ## For Developers
 
-The IVCT tool is a open source projects that invites developers to share and contribute software and experience. The IVCT components and concepts are explained in some detail in the [document section](docs/Home.adoc). Other ways to contribute is to provide test case implementations for existing or possibly new interoperability requirement. There is a [tutorial to explain the concepts and the best practices for developing test cases](https://github.com/IVCTool/TS_HelloWorld/wiki) and description of the [test case libraries](https://github.com/IVCTool/IVCT_Framework/wiki/TcDevelGuide) to be used. You can find a list of [test suites which are already  available or currently under development](docs/testsuite-overview.adoc). 
+The IVCT tool is a open source projects that invites developers to share and contribute software and experience. The IVCT components and concepts are explained in some detail in the [document section](docs/Home.adoc). Other ways to contribute is to provide test case implementations for existing or possibly new interoperability requirement. There is a [tutorial to explain the concepts and the best practices for developing test cases](https://github.com/IVCTool/TS_HelloWorld/wiki) and description of the [test case libraries](https://github.com/IVCTool/IVCT_Framework/wiki/TcDevelGuide) to be used. You can find a list of [test suites](docs/testsuite-overview.adoc) which are already  available or currently under development.
 
 ## Futher Reading
 
