@@ -11,12 +11,11 @@ The following test suites are available for the IVCTool integration:
 | Test suite id | Test Purpose | Contributor
 
 | xref:https://github.com/IVCTool/TS_HelloWorld[TS_HelloWorld] | Tutorial test suite | DEU
-| xref:https://github.com/IVCTool/TS_HLA_BASE[TS_HLA_BASE]   | The Test suite HLA_BASE is a multi-test-suite for all basic HLA test suite described below. | DEU
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_EncodingRulesTester[TS_HLA_EncodingRulesTester] | This test suite will test whether a System Under Test (SUT) correctly encodes the data types used in interaction parameters or object attributes. | FRA
+| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_CS_Verification[TS_HLA_Verification] | This test case is equivalent to the "FCTT_NG" configuration verification step. | FRA
+| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Declaration[TS_HLA_Declaration] | This test case verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM. | FRA
 | xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Services[TS_HLA_Services] | This test suite verifies that the federate uses only the services specified in its SOM. | FRA
 | xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Object[TS_HLA_Object] | This test suite verifies that the federate sends and receives only the objects and interactions specified in its SOM. | FRA
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Declaration[TS_HLA_Declaration] | This test case verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM. | FRA
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_CS_Verification[TS_HLA_Verification] | This test case is equivalent to the "FCTT_NG" configuration verification step. | FRA
+| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_EncodingRulesTester[TS_HLA_EncodingRulesTester] | This test suite will test whether a System Under Test (SUT) correctly encodes the data types used in interaction parameters or object attributes. | DEU
 |===
 
 ## Test Suites under Development
