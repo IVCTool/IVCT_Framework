@@ -1,6 +1,6 @@
 # Test Suite Overview
 
-The test suites are the containers for the test cases verifying the interoperability requirements. A test suite is provided as a git repository following the structure of the tutorials test suite xref:https://github.com/IVCTool/TS_HelloWorld[TS_HelloWorld]. In order to use a test suite, it need to be integrated into the run-time configuration of the IVCTool, and a badged need to be included, containing an interoperability requirements which is being tested by test cases contained in such a test suite.
+The test suites are the containers for the test cases verifying the interoperability requirements. A test suite is provided as a git repository following the structure of the tutorials test suite link:https://github.com/IVCTool/TS_HelloWorld[TS_HelloWorld]. In order to use a test suite, it need to be integrated into the run-time configuration of the IVCTool, and a badged need to be included, containing an interoperability requirements which is being tested by test cases contained in such a test suite.
 
 
 ## Available Test Suites
@@ -10,12 +10,12 @@ The following test suites are available for the IVCTool integration:
 |===
 | Test suite id | Test Purpose | Contributor
 
-| xref:https://github.com/IVCTool/TS_HelloWorld[TS_HelloWorld] | Tutorial test suite | DEU
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_CS_Verification[TS_HLA_Verification] | This test case is equivalent to the "FCTT_NG" configuration verification step. | FRA
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Declaration[TS_HLA_Declaration] | This test case verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM. | FRA
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Services[TS_HLA_Services] | This test suite verifies that the federate uses only the services specified in its SOM. | FRA
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Object[TS_HLA_Object] | This test suite verifies that the federate sends and receives only the objects and interactions specified in its SOM. | FRA
-| xref:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_EncodingRulesTester[TS_HLA_EncodingRulesTester] | This test suite will test whether a System Under Test (SUT) correctly encodes the data types used in interaction parameters or object attributes. | DEU
+| link:https://github.com/IVCTool/TS_HelloWorld[TS_HelloWorld] | Tutorial test suite | DEU
+| link:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_CS_Verification[TS_HLA_Verification] | This test case is equivalent to the "FCTT_NG" configuration verification step. | FRA
+| link:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Declaration[TS_HLA_Declaration] | This test case verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM. | FRA
+| link:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Services[TS_HLA_Services] | This test suite verifies that the federate uses only the services specified in its SOM. | FRA
+| link:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_Object[TS_HLA_Object] | This test suite verifies that the federate sends and receives only the objects and interactions specified in its SOM. | FRA
+| link:https://github.com/IVCTool/TS_HLA_BASE/tree/master/TS_HLA_EncodingRulesTester[TS_HLA_EncodingRulesTester] | This test suite will test whether a System Under Test (SUT) correctly encodes the data types used in interaction parameters or object attributes. | DEU
 |===
 
 ## Test Suites under Development
@@ -25,9 +25,9 @@ Some test suites are currently under development any not yet integrated into any
 |===
 | Test suite id | Test Purpose | Contributor
 
-| xref:https://github.com/IVCTool/TS_EntityIntegrityChecker[TS_EntityIntegrityChecker] | The test validates the integrity of Base Entities instances published by the System under Test | CAN
-| xref:https://github.com/IVCTool/TS_DeadReckoning[TS_DeadReckoning] | Implements the Dead Reckoning test case. | UK
-| xref:https://github.com/IVCTool/TS_Warfare[TS_Warfare] | Implements the Warfare test cases, namely WeaponFire and MunitionDetonation. | UK
+| link:https://github.com/IVCTool/TS_EntityIntegrityChecker[TS_EntityIntegrityChecker] | The test validates the integrity of Base Entities instances published by the System under Test | CAN
+| link:https://github.com/IVCTool/TS_DeadReckoning[TS_DeadReckoning] | Implements the Dead Reckoning test case. | UK
+| link:https://github.com/IVCTool/TS_Warfare[TS_Warfare] | Implements the Warfare test cases, namely WeaponFire and MunitionDetonation. | UK
 |===
 
 ## Test Suites in Planning
@@ -40,4 +40,5 @@ For the following test suites an implementation is under consideration. Planing 
 | HLA Time Management | to be defined | FRA
 | Ownership Management | to be defined | FRA
 | Data Distribution Management (DDM) | to be defined | FRA
+| NETN-DiS | Desaster FOM development by IABG | DEU
 |===
