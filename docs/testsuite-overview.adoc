@@ -2,10 +2,6 @@
 
 The test suites are the containers for the test cases verifying the interoperability requirements. A test suite is provided as a git repository following the structure of the tutorials test suite xref:https://github.com/IVCTool/TS_HelloWorld[TS_HelloWorld]. In order to use a test suite, it need to be integrated into the run-time configuration of the IVCTool, and a badged need to be included, containing an interoperability requirements which is being tested by test cases contained in such a test suite.
 
-[NOTE]
-====
-The test suite structure is currently being re-designed and not yet fully implemented!
-====
 
 ## Available Test Suites
 
@@ -37,7 +33,7 @@ Some test suites are currently under development any not yet integrated into any
 
 ## Test Suites in Planning
 
-The following test suites have been named in the program of work:
+For the following test suites an implementation is under consideration. Planing details are not yet known.
 
 |===
 | Test suite id | Test Purpose | Contributor
