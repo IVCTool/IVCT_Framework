@@ -1,0 +1,23 @@
+== Linking Interoperability Badges with Test Suites
+
+=== The Concept
+
+In important concept for the IVCTool is the selection of test cases, to verify a interoperability specification. Such a interoperability specification is based on the concept of the so called **badges**, which are basically collections of individual **interoperability requirements** (IR).
+
+The figure below shows these concepts on the left side. In order to verify these interoperability requirements, the IVCTool contains several collections of **test cases** (TC). Such a collection is called a **test suite** (TS). Implementation-wise, the test suites are docker images, containing several java libraries and possible several implementations of the interface called **IVCT_AbstractTestCase**.
+
+These implementations are test cases, which are verifying the interoperability requirements. To the link between badges and the test suites is defined by the references from the test cases to the tested requirements.
+
+.Linking test cases to interoperability requirements
+image:images/Badge2TestCaseConcept.jpg[Badge to Testsuite Concept]
+
+=== The JSON-based Configuration Files
+
+The information about badges and test suites is defined by a set of JSON-files. The figure below shows some examples for these configurations. A starting point is the **conformance statement** (CS) of a **system under test** (SuT), which contains a list of badges to which the SuT claims to be compliant. The badges themselfs are also defined by JSON-files, and they are containing a list of requirements to be tested, in order to be **compliant** to the badge. The IVCTool is configured with JSON configuration file for each test suite, containing a list of testcases, where each test cases refers to the interoperability requirments it is testing.
+
+.JSON-Configuration files
+image:images/Badge2TestCase.jpg[JSON Configuration]
+
+The selection of the test cases to verify the conformance statement is done automatically by the IVCTool. For that reason it is important, that there is no ambiguity for finding the right test case for each requirement. It is therfor not allowed to have multible test cases for one requirement.
+
+NOTE: This might be changed in future version of the IVCTool.
