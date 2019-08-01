@@ -1,0 +1,271 @@
+= Command Line Tool
+
+== Purpose
+To accept requests from the IVCT operator, send them to JMS bus via the IVCT Commander and to display data returned from the IVCT Commander based on a IVCT operator request or a IVCT generated status information. This interface is intended to be simple and provides a basic means to operate the IVCT. The IVCT Commander interface is meant to be open for other user tools and allows for either a sophisticated Graphical User Interface or a Web Interface as an extension in the future (neither were part of the early IVCT project).
+
+== Configuration
+
+The UI requires a IVCT.properties file, a set of Badge descriptions and a set of SUT folders containing SUT specific information.
+
+A new test suite should not mean any code changes to this tool: a new test suite is added by adding the Badge descriptions for the new test suite. The IVCT tool reads this information to present it to the user.
+
+== Example: HelloWorld.json Badge
+
+The HelloWorld.json file provides the runtime folder, dependent Badges and fully qualified test case names in the test suite. The test scheduler does not internally know the package names for the test cases, it dynamically obtains this information through the Badges.
+
+    {
+        "id"              : "HelloWorld",
+        "name"            : "HelloWorld Tutorial Badge",
+        "description"     : "This is a simple example for capability badge to thest the compliance of an federate to the hello world federation.",
+        "graphics"        : "some/icon.png",
+        "tsRunTimeFolder" : "TS_HelloWorld/TS_HelloWorld/bin",
+        "dependency"      : ["HLA-BASE-2016"],
+        "requirements"    : [
+            {
+                "id"            : "IR-HW-0001",
+                "description"   : "Test population growing rate",
+                "TC"            : "de.fraunhofer.iosb.tc_helloworld.TC0001"
+            },
+            {
+                "id"            : "IP-HW-0002",
+                "description"   : "Test inter-country communication",
+                "TC"            : "de.fraunhofer.iosb.tc_helloworld.TC0002"
+            }
+        ]
+    }
+
+This badge has 2 explicitly defined interoperability requirements ("IR-HW-0001" and "IR-HW-0002") and the implicitly defined requirements from the dependend badge ("HLA-BASE-2016).
+
+Please note that this is a serialized JSON representation. That means that escape characters need to be quoted. Each interoperability requirement is defined by a unique identification ("id"), a description of the requirement ("description") and the fully qualified name of the executable test case class to test the requirement ("TC").
+
+It is necessary to set the name of a SUT to be able to run any test cases or test schedules.
+
+== SUT Folder Structure
+The _IVCTsut_ folder (found via the %IVCT_CONF\IVCTconfig.xml file) is read by the Command Line Tool and has the following structure: e.g.
+
+`sut1\badge1\TcParam.json`
+
+`sut1\badge2\TcParam.json`
+
+`sut2\badge1\TcParam.json`
+
+`sut2\badge2\TcParam.json`
+
+`sut2\badge3\TcParam.json`
+
+In the `sut1` level, a simple version of the report summary files is written. The name of the file is built as follows: Report_yyyy-MM-dd_hh-mm.txt where the time of creation determines the name.
+In a further development stage, the log files will also be stored for in the corresponding testsuite folder.
+
+To test the IVCT: have at least one SUT in the sut folder. After starting the UI, the installation can be checked by executing the following two commands: _listSUT_ to display the SUTs, load one of the SUTs with _setSUT_ and then _listTestSuites_. Both list commands should give a list of one or more items.
+
+== Run Environment for the TS_HelloWorld Demo Testsuite
+
+These commands lead to a folder structure that is described below. If a user wishes to use other tools or folder structure, he must be prepared to adjust the configuration to match. (Path names maybe an example only - real values depend on the environment where the IVCT is installed)
+
+1) Require an RTI (see RTI documentation to install and start) to run the HLA federation.
+
+2) Require an _Activemq_ Process to support the JMS communication. In the _apache-activemq_ root folder, use the _bin\activemq start_ command.
+
+3) Require the LogSink module: go to the folder _LogSink\build\install\LogSink\bin_, use the command:
+
+LogSink.bat
+
+to start the program.
+
+4) Require the TC module: go to the folder _TC\build\install\TC\bin_, use the command:
+
+TC.bat
+
+to start the program.
+
+5) Require an SUT Federate, use the _HelloWorld_ demo. In the folder _TS_HelloWorld\HelloWorld\build\install\HelloWorld\bin_, use the command:
+
+HelloWorld.bat
+
+to start the program. A dialogue will then ask for host (RETURN means localhost), country name (enter A),
+initial population (RETURN means 100) and number of cycles (RETURN means 1000).
+
+6) Require the CmdLineTool: go to the folder _UI\build\install\UI\bin_, use the command:
+
+UI.bat file
+
+to start the program. Continue by using the commands explained below.
+
+
+== Commands
+
+=== addSUT (asut) sut "description text quoted" "vendor text quoted"
+Add a SUT to the SUT folder. The description and vendor must always be quoted, since blanks
+allowed in these fields. It will create an initial CS.json file with
+the values SUT name, SUT description and vendor id. Sets the SUT as active
+SUT.
+
+=== modifySUT (msut) sut "description text quoted" "vendor text quoted"
+Modify the values SUT description and vendor id. The description and vendor
+must always be quoted, since blanks allowed in these fields. It will modify
+CS.json file with the values of SUT description and vendor id.
+
+=== listBadges (lbg) - list all available badges
+Lists the all the Badges available in the badge folder. It is useful to
+call this method before adding badges in order to get the right badge names.
+
+=== addBadge (abg) badge ... badge
+Adds the badge(s) to the active SUT.
+
+=== deleteBadge (dbg) badge ... badge
+Delete one or more badges from the active SUT.
+
+=== listSUT (lsut)
+Give the list of SUT specific folders currently available. The SUT files and folders are expected to be copied into the folder specified by the _sutDir_ in the _IVCTconfig.xml_ file using a standard file management tool. The name of the folder will be used as the reference to the SUT during testing.
+=== setSUT (ssut)
+Sets the name of the SUT within the IVCT in order to get the corresponding parameter files and provide a name for the location for writing the log files. It is necessary to set the SUT before running any tests.
+=== listTestSchedules (lts)
+Provides a list of test schedules which the IVCT operator can start. This list is specific to the currently active test suite.
+=== startTestSchedule (sts)
+Accept a test schedule name from user and start specific test cases for a specific SUT. Each test case name should be displayed when started. At the end of each test case the verdict should be displayed. At the end of the test schedule, the message that the test schedule is completed should be displayed.
+=== abortTestSchedule (ats)
+Will abort the currently running test case (the verdict for the test case should be inconclusive with the message “user aborted”) and end the test schedule by not executing any further test cases of the test schedule.
+=== listTestCases (ltc)
+Provides a list of test cases which the IVCT operator can start. This list is specific to the currently active test suite.
+=== startTestCase (stc)
+Accept **test schedule name** and a **test case name** from user and send them to the JMS bus via the IVCT Commander in order to start a specific test case in a specific test schedule for a specific SUT. A Json message with the specified parameters will be sent to the receiving module. In this case the receiving module must be able to interpret the Json message and start the test case with parameters to locate the SUT specific files.
+At the end of the test case the verdict should be displayed.
+=== abortTestCase (atc)
+Will abort the currently running test case. The verdict for the test case should be inconclusive with the message “user aborted”. If a test schedule is running, the next test case will be executed. **Not implemented yet.**
+=== setLogLevel (sll)
+Sets the log level for filtering log messages created by the test case.
+=== listVerdicts (lv)
+List the verdicts of the current session. A chronologically ordered list of test case verdicts will be displayed. Duplicate test cases will appear in the sequence in the order they were run. Where a comment was assigned in a test case for the verdict, the comment will also be displayed.
+=== status (s)
+Displays currently available information about the test session e.g. SUT name, test suite name, test schedule / case name.
+=== quit (q)
+End the command line program. A force quit dialogue has been implemented to allow the UI to be exited when a test case crashes.
+=== help (h)
+A list of available commands and parameters will be shown.
+
+== Internal Structure
+There are three threads:
+
+1.	A thread waiting to read user input. The user data will be parsed and checked for any errors before being passed to thread 3. below.
+
+2.	A thread to receive data to display via the IVCT Commander from the JMS bus. The data will be displayed as it was received unless it required to format it otherwise.
+
+3.	A thread to process commands entered asynchronously. The main thread is thus free to accept a restricted range of commands.
+
+== Usage of Management Commands
+
+A command is shown in **shown in bold**, "-->" means the following value was returned ie.
+
+
+**_Command_**
+
+--> _Response_
+
+**asut hw_iosb "HelloWorld system under federate for IVCT demonstration" "Fraunhofer IOSB"**
+
+**msut hw_iosb "HelloWorld system under federate for IVCT demonstration" "Fraunhofer IOSB"**
+
+**lbg**
+
+`-->	TS_HLA_EncodingRulesTester-2017`
+
+`-->	HelloWorld-1.0.1`
+
+**abg HelloWorld-1.0.1 TS_HLA_EncodingRulesTester-2017**
+
+**dbg HelloWorld-1.0.1 TS_HLA_EncodingRulesTester-2017**
+
+**h**
+
+`-->	addSUT (asut) sut "description text quoted" "vendor text quoted"- add an SUT`
+
+`-->	modifySUT (msut) sut "description text quoted" "vendor text quoted"- modify an SUT`
+
+`-->	listBadges (lbg) - list all available badges`
+
+`-->	addBadge (abg) badge ... badge - add one or more badges to SUT`
+
+`-->	deleteBadge (dbg) badge ... badge - delete one or more badges from SUT`
+
+`-->	listSUT (lsut) - list SUT folders`
+
+`-->	setSUT (ssut) - set active SUT`
+
+`-->	listTestSchedules (lts) - list the available test schedules for the test suite`
+
+`-->	startTestSchedule (sts) - start the named test schedule`
+
+`-->	abortTestSchedule (ats) - abort the running test schedule`
+
+`-->	listTestCases (ltc) - list the available test cases for the test suite`
+
+`-->	startTestCase (stc) - start the named test case`
+
+`-->	abortTestCase (atc) - abort the running test case`
+
+`-->	setLogLevel (sll) - set the log level for logging - error, warning, debug, info`
+
+`-->	listVerdicts (lv) - list the verdicts of the current session`
+
+`-->	status (s) - display status information`
+
+`-->	quit (q) - quit the program`
+
+`-->	help (h) - display the help information`
+
+== Sample Test Session
+
+An extract of an actual Test Session is shown below:
+
+**lsut**
+
+    -->	The SUTs are:
+    fed2
+    fed1
+
+**ssut fed2**
+
+**lts**
+
+    -->	Badge22
+    Badge12
+    Badge2
+    Badge1
+
+**sts Badge1**
+
+    -->	de.fraunhofer.iosb.tc_helloworld
+    Start Test Case: TC0001 {
+        "commandType" : "startTestCase",
+        "sequence" : "6",
+        "testCaseId" : "de.fraunhofer.iosb.tc_helloworld.TC0001",
+        "tcParam" : {
+            "federationName" : "HelloWorld",
+            "rtiHostName" : "localhost",
+            "sutFederateName" : "A"
+        }
+    }
+
+    The commandType name is: announceVerdict
+    The test case name is: TC0001
+    The test case verdict is: PASSED
+    The test case verdict text is: ok
+    de.fraunhofer.iosb.tc_helloworld
+    Start Test Case: TC0002 {
+        "commandType" : "startTestCase",
+        "sequence" : "7",
+        "testCaseId" : "de.fraunhofer.iosb.tc_helloworld.TC0002",
+        "tcParam" : {
+            "federationName" : "HelloWorld",
+            "rtiHostName" : "localhost",
+            "sutFederateName" : "A"
+            }
+    }
+
+    The commandType name is: announceVerdict
+    The test case name is: TC0002
+    The test case verdict is: PASSED
+    The test case verdict text is: ok
+    Test schedule finished: Badge1
+
+The above expands the help command, lists the SUTs, sets the SUT fed2, and starts the test schedule Badge1.

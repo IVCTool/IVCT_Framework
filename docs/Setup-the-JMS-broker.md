@@ -1,6 +1,0 @@
-For the IVCT test tool you need a local installation of ActiveMQ. Get a copy from http://activemq.apache.org/download.html and unpack ActiveMQ. Then open a command line window at the root folder (should be something like "c:\Tools\apache-activemq-5.12.0") and start the service with the command:  `bin\activemq start`
-
-Monitor the running activeMQ service with a web browser, by opening the page http://localhost:8161 (Login/Passw: admin/admin). You need to login to see the menu with links to topics, subscribers, etc. 
-
-**Remark:**
-If you want to run the examples with a RTI you have installed on your machine, you will have to adjust the classpath in the IVCT *.bat scripts: remove the IEEE1516e-0.1.jar from the classpath and replace it by the jars needed by your RTI.

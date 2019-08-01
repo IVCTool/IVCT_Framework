@@ -1,0 +1,53 @@
+= Travis-CI
+
+Travis-CI is a free Continuous Integration Framework for testing and deploying open source projects automatically. Travis-CI has been configured to automatically build and test the IVCT after each commit, and to build and deploy the corresponding [Docker Images](https://github.com/IVCTool/IVCT_Framework/wiki/docker) for the IVCT Components.
+
+You can observe of the Travis CI environment [here](https://travis-ci.org/IVCTool/IVCT_Framework) or by clicking the build <passing/failing> badge on the GitHub repository README page.
+
+== Travis-CI Configuration
+
+The Travis Build process is defined in the .travis.yml file in the root of the repository. Please see the [Travis Documentation](https://docs.travis-ci.com/user/customizing-the-build/) for details on how to use this yml file.
+
+The build automation with Travis as setup for the IVCT requires several user accounts to be in place, with encoded credentials in the .travis.yml file:
+- Docker Hub account (ivctci)
+- TNO MSaaS Registry account (ivct)
+- Maven Central Repository account (at the moment pushed manually)
+
+and obviously a GitHub and Travis account.
+
+This section will briefly outline some specifics for the IVCT Framework Travis configuration.
+
+=== Caching
+
+The Travis build processes can cache files between builds to improve build time.  For the IVCT build we only cache the Gradle wrapper to prevent downloading it again for every build.
+
+=== Install phase
+
+The install phase simply runs `gradle install` in the root of the IVCT_Framework repository as prescribed in the [installation instructions](https://github.com/MSG134/IVCT_Framework/wiki/gradleDoc). This builds the distributions for all IVCT Components
+
+=== Build script
+
+The build script logs in to the Dockerhub and TNO hosted container registries using the encrypted environment variables specified below. It then builds the Docker images for Logsink, the Testcase Runner, the GUI and the Runtime config using the [Dockerfiles](https://github.com/MSG134/IVCT_Framework/wiki/docker) that are present in the repository. Finally the resulting images are pushed to the public Dockerhub registry.
+
+=== IVCT Version Number Environment Variable
+
+The travis.yml determines the current version of the IVCT automatically from the gradle configuration by using a grep command:
+
+`export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')`
+
+This version number it is used together with the branch name (master or development) for tagging the Docker images before pushing it to the [IVCT Dockerhub Container registry](https://hub.docker.com/u/ivct/dashboard/).
+
+=== Encrypted Environment Variables for Docker image registries
+
+In order to push the built Docker Images to the Docker container registries, usernames and credentials need to be specified. These are specified in the .travis.yml by using so called encrypted environment variables. Please read the [documentation](https://docs.travis-ci.com/user/environment-variables/#Defining-encrypted-variables-in-.travis.yml) on how to define encrypted variables. The encrypted variables used in the IVCT Framework build are:
+
+| Environment Variable Name  | Description |
+| ------------- | ------------- |
+| DOCKER_USERNAME | Username used to push images to the Dockerhub image registry |
+| DOCKER_PASSWORD | Password for Docker Username |
+| TNO_DOCKER_USERNAME | Username used to pull base images from TNO hosted image registry |
+| TNO_DOCKER_PASSWORD | Password for TNO Docker Username |
+
+=== Build trigger restrictions
+
+It is possible to restrict Travis CI to only run for specific branches, or specific commits (for example only tagged commits). This is currently not done yet. It should be discussed for which branches Travis should run, and how it should tag the resulting Docker images accordingly.

@@ -39,7 +39,7 @@ If the selected SuT has already been tested, the test reports will be listed bel
 
 image:images/SutHw.PNG[SuT View]
 
-For the RTI configuration see [[Local Settings Designator]]
+For the RTI configuration see link:Local-Settings-Designator.adoc[Local Settings Designator]
 
 When selecting a SuT in the navigation frame, the underlying badges are shown. These are the badges which are named in the conformance statement when creating a SuT description. Selecting a badge will show the details to be used for testing the contained interoperability requirements. These are test case parameters, optionally some extra parameters as required by some test cases, and finally the list of interoperability requirements.
 

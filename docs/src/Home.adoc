@@ -1,37 +1,38 @@
-# IVCT Documentation
+= IVCT Documentation
 
 This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software.
 
-## Preparations
-* xref:IVCT-Module-Overview.adoc[IVCT Module Overview]
-* xref:prerequisites.md[Prerequisites for participating in IVCT_Framework development]
-* xref:Branching-and-Merging.md[Guidelines for branching and merging]
-* xref:model.md[IVCT Information Model (draft for discussion)]
+== Preparations
+* link:IVCT-Module-Overview.adoc[IVCT Module Overview]
+* link:prerequisites.adoc[Prerequisites for participating in IVCT_Framework development]
+* link:Branching-and-Merging.adoc[Guidelines for branching and merging]
+* link:model.adoc[IVCT Information Model (draft for discussion)]
 
-## Building the software
-* xref:gradleDoc.nd[Building the IVCT_Framework with gradle]
-* xref:3rdpartyRti.md[Using the framework with a 3rd-party RTI Implementation]
-* xref:TClogging.md[Test case logging]
-* xref:IVCT_Configuration.md[Configuration of the IVCT]
+== Building the software
+* link:gradleDoc.adoc[Building the IVCT_Framework with gradle]
+* link:3rdpartyRti.adoc[Using the framework with a 3rd-party RTI Implementation]
+* link:TClogging.adoc[Test case logging]
+* link:IVCT_Configuration.adoc[Configuration of the IVCT]
 
-## Docker Images
-* xref:IVCT-Container-Design.md[IVCT Container design]
-* xref:IVCT-TC-Runner-Application-image.md[IVCT TC Runner Application-image]
-* xref:IVCT-GUI-image.md[IVCT GUI image]
-* xref:IVCT-LogSink-Application-image.md[IVCT LogSink Application image]
-* xref:Building-Docker-images.md[Building Docker images for IVCT Framework Components]
+== Docker Images
+* link:IVCT-Container-Design.adoc[IVCT Container design]
+* link:IVCT-TC-Runner-Application-image.adoc[IVCT TC Runner Application-image]
+* link:IVCT-GUI-image.adoc[IVCT GUI image]
+* link:IVCT-LogSink-Application-image.adoc[IVCT LogSink Application image]
+* link:Building-Docker-images.adoc[Building Docker images for IVCT Framework Components]
 
-## Continuous Integration and Automatic Deployment
-* xref:travis.md[Automatic testing, building, docker image building and deployment using Travis-CI]
+== Continuous Integration and Automatic Deployment
+* link:travis.adoc[Automatic testing, building, docker image building and deployment using Travis-CI]
 
-## Running the tools
-* xref:Setup-the-JMS-broker.md[Setup the JMS broker]
-* xref:Graphical-User-Interface.adoc[The graphical user interface]
-* xref:commandlinetool[The command line interface]
-* xref:Reading-and-understanding-Test-Case-logfiles.md[Reading and understanding Test Case logfiles]
+== Running the tools
+* link:Setup-the-JMS-broker.adoc[Setup the JMS broker]
+* link:Graphical-User-Interface.adoc[The graphical user interface]
+* link:commandlinetool[The command line interface]
+* link:Reading-and-understanding-Test-Case-logfiles.adoc[Reading and understanding Test Case logfiles]
+* link:testsuite-overview.adoc[Testsuite Overview]
 
-## Extending the framework
-* xref:TcDevelGuide.md[Test Case Development Guide]
-* xref:Executable-Test-Case-Development-Rules.md[Executable Test Case Development Rules]
-* xref:futureenhancements.md[Future enhancements]
-* xref:Add-new-test-suites.md[Add new test suites]
+== Extending the framework
+* link:TcDevelGuide.adoc[Test Case Development Guide]
+* link:Executable-Test-Case-Development-Rules.adoc[Executable Test Case Development Rules]
+* link:futureenhancements.adoc[Future enhancements]
+* link:Add-new-test-suites.adoc[Add new test suites]
