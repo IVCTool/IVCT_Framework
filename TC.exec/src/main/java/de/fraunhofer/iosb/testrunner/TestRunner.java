@@ -121,21 +121,21 @@ public class TestRunner implements CmdHeartbeatSend.OnCmdHeartbeatSend {
         
        
     // --------------- for testing ------------------
-       int count = 0;
-       while (count < 10) {
-           Thread.sleep(3000);
-           //_logger.info("###  TestRunner CmdHeartbeatSend.health should be true ");  // Debug
-           count++;
-       }        
-       _logger.info("### For Testing - we change the CmdHeartbeatSend.health to false ");
-       this.health=false;
-              
-       count = 0;
-       while (count < 10) {
-           Thread.sleep(3000);
-           count++;
-       }       
-      System.exit(0) ;
+//       int count = 0;
+//       while (count < 10) {
+//           Thread.sleep(3000);
+//           //_logger.info("###  TestRunner CmdHeartbeatSend.health should be true ");  // Debug
+//           count++;
+//       }        
+//       _logger.info("### For Testing - we change the CmdHeartbeatSend.health to false ");
+//       this.health=false;
+//              
+//       count = 0;
+//       while (count < 10) {
+//           Thread.sleep(3000);
+//           count++;
+//       }       
+//      System.exit(0) ;
       //-------------------------------------------------------
 
     }

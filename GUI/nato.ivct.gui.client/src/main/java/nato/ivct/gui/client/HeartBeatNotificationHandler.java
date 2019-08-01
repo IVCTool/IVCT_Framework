@@ -1,6 +1,7 @@
 package nato.ivct.gui.client;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
@@ -10,7 +11,6 @@ import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.gui.client.Desktop.TcRunnerStatus;
 import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.Icons;
 
@@ -40,7 +40,19 @@ public class HeartBeatNotificationHandler implements INotificationHandler<HeartB
 				// try...catch to avoid exception when calling getMenuByClass and Desktop is still in the opening state
 				try {
 					if (desktop != null && desktop.isOpened()) {
-						IMenu statusMenu = Desktop.CURRENT.get().getMenuByClass(TcRunnerStatus.class);
+						IMenu statusMenu = null;
+						List<IMenu> menus = Desktop.CURRENT.get().getMenus();
+						for(IMenu menu : menus) {
+							if (menu.hasProperty("hbSender") && menu.getProperty("hbSender").toString().equalsIgnoreCase(notification.heartBeatSender)) {
+								statusMenu = menu;
+								break;
+							}
+						}
+						
+						if (statusMenu == null)
+							// no fitting menu found, hence nothing to do
+							return;
+						
 						switch (notification.notifyState) {
 							case OK:
 								statusMenu.setIconId(Icons.GreenBullet_32x32);

@@ -40,8 +40,7 @@ public class HeartBeatInfoForm extends AbstractForm {
         final long yearInSeconds = dayInSeconds * 365;
         
 //        ClientSession.CURRENT.get().getData(key)
-        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get("Use_CmdHeartbeatSend"); // for testing
-//        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get(getTitle());
+        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get(getTitle());
         if (hbn != null) {
 			getFieldByClass(StatusField.class).setValue(hbn.notifyState.name());
 			

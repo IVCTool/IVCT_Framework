@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
 
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.sql.Timestamp;
@@ -56,12 +57,12 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     
     public static final String HB_MSG_TOPIC = "HeartBeat";
     
-    JSONParser jsonParser = new JSONParser();
-    private JSONObject jsonObject;
+    private JSONParser jsonParser = new JSONParser();
     
-    HbMsgState messageState  = HbMsgState.UNKNOWN;
+    private JSONObject jsonObject = new JSONObject();
     
-    String desiredHeartBeatSenderClass;
+    private HbMsgState messageState  = HbMsgState.UNKNOWN;
+    private String desiredHeartBeatSenderClass;
     
     private Timestamp last;
     private Timestamp first;
@@ -72,13 +73,13 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     private  OnCmdHeartbeatListen querryClient;  
     
         
-    public CmdHeartbeatListen(OnCmdHeartbeatListen  caller) {
-        this.querryClient = caller;
+    public CmdHeartbeatListen(OnCmdHeartbeatListen caller) {
+    	new CmdHeartbeatListen(caller, null);
         //System.out.println ("client is delivered to the constructor CmdHeartbeatListen : " +client);   // Debug
     }
     
     // the client can use this with a special HeartbeatSender to observe
-    public CmdHeartbeatListen(OnCmdHeartbeatListen  caller,String _desiredHeartBeatSenderClass) {
+    public CmdHeartbeatListen(OnCmdHeartbeatListen  caller, String _desiredHeartBeatSenderClass) {
         this.querryClient = caller;
         this.desiredHeartBeatSenderClass= _desiredHeartBeatSenderClass;
     }
@@ -138,62 +139,58 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                 
                 JSONObject failJsonObject = new JSONObject();
                 
-                //  if we have not got any message with onMessage there is nothing to monitor!                
-                if (myLast==null) {                    
-
-                    setMessageState(HbMsgState.UNKNOWN);
-                    String comment = ("there is'nt any HeartBeat yet");
-                    failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState ); 
-                    failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, comment ); 
-                    sendbackToQuerryClient(failJsonObject );
-                    
-                    
-                // if someone wants to know about a special HeartBeatSender  and this is not sending
-                }else if (myLast!=null && (desiredHeartBeatSenderClass!=null)&&(!(myJsonObject.get(CmdHeartbeatSend.HB_SENDER).equals(desiredHeartBeatSenderClass) )  ) ) { 
-                                                                                                 
+                System.out.print("desHBS: " + desiredHeartBeatSenderClass);
+                System.out.println("---HBS: " + Optional.ofNullable(myJsonObject.get(CmdHeartbeatSend.HB_SENDER)).orElse("").toString());
+                
+                
+ 
+                if (desiredHeartBeatSenderClass!=null && !Optional.ofNullable(myJsonObject.get(CmdHeartbeatSend.HB_SENDER)).orElse("").equals(desiredHeartBeatSenderClass)) { 
                     logger.warn("fail, desired class "+desiredHeartBeatSenderClass+" does not send, but: " +myJsonObject.get(CmdHeartbeatSend.HB_SENDER));
-                    
-                    setMessageState(HbMsgState.FAIL);
-                    String comment = (desiredHeartBeatSenderClass+" does not send");
-                    failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState );
-                    failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, comment ); 
-                    sendbackToQuerryClient(failJsonObject );                    
-
-
-                } else if  ((myFirst != null) && (myLast != null)) {  
+//                    setMessageState(HbMsgState.FAIL);
+//                    failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState );
+//                    failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, desiredHeartBeatSenderClass+" does not send"); 
+//                    
+//                    sendbackToQuerryClient(failJsonObject );                    
+                } 
+                else if  (myFirst != null && myLast != null) {  
 
                      if (myJsonObject != null) {                                             
-                         
                          long mySendingPeriod = getSendingPeriod();
                         
                          if  (now.getTime() - myLast.getTime()  <= (mySendingPeriod + 1000) ) {        // <= 6000 ms
                             setMessageState(HbMsgState.INTIME);
-                            
-                         } else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 6000 ) ) {  // <= 11 000 ms
+                         }
+                         else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 6000 ) ) {  // <= 11 000 ms
                              setMessageState(HbMsgState.WAITING);
-                        
-                         } else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 16000) ) {  // <= 21 000 ms
+                          }
+                         else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 16000) ) {  // <= 21 000 ms
                              setMessageState(HbMsgState.ALERT);    
-                             
-
-                         } else if (now.getTime() - myLast.getTime() > ((mySendingPeriod * 4) +1000 )) {   // ca > 21 000 ms
+                         }
+                         else if (now.getTime() - myLast.getTime() > ((mySendingPeriod * 4) +1000 )) {   // ca > 21 000 ms
                             setMessageState(HbMsgState.DEAD);
                             myJsonObject.put(CmdHeartbeatSend.HB_ALLERTTIME, alerttime);                            
                             myJsonObject.put(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);                            
                             myJsonObject.put(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);                            
-
-                         } else {
+                         } 
+                         else {
                             setMessageState(HbMsgState.UNKNOWN);
                          }
                        
-                        myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState);    
+                         myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState);    
                          
                          // give the enhanced json-object back to the caller  
                          sendbackToQuerryClient(myJsonObject );
-                        
                     }
                 }
-
+                else if (myLast==null) {                    
+                    //  if we have not got any message with onMessage there is nothing to monitor!                
+                	setMessageState(HbMsgState.UNKNOWN);
+                    failJsonObject.put(CmdHeartbeatSend.HB_SENDER, desiredHeartBeatSenderClass);
+                    failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState); 
+                    failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, "there is'nt any HeartBeat yet");
+                    
+                    sendbackToQuerryClient(failJsonObject );
+                }
             }
         }, 0, 5000);
 
