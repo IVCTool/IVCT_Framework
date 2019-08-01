@@ -1,4 +1,4 @@
-= IVCT Module Overview
+== IVCT Module Overview
 
 The IVCT consists of the modules shown in the picture below
 

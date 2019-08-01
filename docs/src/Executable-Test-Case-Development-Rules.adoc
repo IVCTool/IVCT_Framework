@@ -1,4 +1,4 @@
-= Executable Test Case Development Rules
+== Executable Test Case Development Rules
 
 These rules were discussed between nations on 18 October 2016.
 

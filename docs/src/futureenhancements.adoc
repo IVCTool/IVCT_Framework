@@ -1,4 +1,4 @@
-= Future enhancements
+== Future enhancements
 
 Topics that might be adressed in the future to make the framework more comfortable
 

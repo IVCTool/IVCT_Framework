@@ -42,7 +42,8 @@ asciidoctor {
       'jmstestrunner.adoc',
       'Local-Settings-Designator.adoc',
       'testsuite-overview.adoc',
-      'TcDevelGuide.adoc'
+      'TcDevelGuide.adoc',
+      'IVCT-Book.adoc'
   }
   outputDir = file('build')
 }

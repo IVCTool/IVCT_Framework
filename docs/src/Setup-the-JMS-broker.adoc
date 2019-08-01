@@ -1,4 +1,4 @@
-= Setting up the JMS Broker
+== Setting up the JMS Broker
 
 For the IVCT test tool you need a local installation of ActiveMQ. Get a copy from http://activemq.apache.org/download.html and unpack ActiveMQ. Then open a command line window at the root folder (should be something like "c:\Tools\apache-activemq-5.12.0") and start the service with the command:  `bin\activemq start`
 

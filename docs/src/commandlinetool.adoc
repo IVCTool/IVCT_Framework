@@ -1,4 +1,4 @@
-= Command Line Tool
+== Command Line Tool
 
 == Purpose
 To accept requests from the IVCT operator, send them to JMS bus via the IVCT Commander and to display data returned from the IVCT Commander based on a IVCT operator request or a IVCT generated status information. This interface is intended to be simple and provides a basic means to operate the IVCT. The IVCT Commander interface is meant to be open for other user tools and allows for either a sophisticated Graphical User Interface or a Web Interface as an extension in the future (neither were part of the early IVCT project).

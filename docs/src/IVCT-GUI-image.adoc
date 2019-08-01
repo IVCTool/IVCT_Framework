@@ -1,8 +1,8 @@
-= IVCT GUI Image
+== IVCT GUI Image
 
 The IVCT GUI extends the official Tomcat JRE8 image. The war files for the GUI Server and GUI Frontend resulting from the Gradle build are simply added to the tomcat webapps folder.
 
-== Environment Variables
+=== Environment Variables
 
 |===
 | Environment Variable Name  | Description | Default if not set

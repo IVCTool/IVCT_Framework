@@ -1,4 +1,4 @@
-= Building Docker images for IVCT Framework Components
+== Building Docker images for IVCT Framework Components
 
 Every IVCT Component has a [Dockerfile](https://docs.docker.com/engine/reference/builder/) that describes how to build a Docker image for that component. After building the IVCT Framework using Gradle as described [here](https://github.com/MSG134/IVCT_Framework/wiki/gradleDoc) the Docker image build can be started as follows from the directory of the Dockerfile:
 

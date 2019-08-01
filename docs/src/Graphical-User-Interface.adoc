@@ -1,6 +1,6 @@
-= The Grapical User Interface
+== The Grapical User Interface
 
-== Introduction
+=== Introduction
 
 The Graphical User Interface (GUI) is browser application, based on a web server running in your IVCT installation. You need to open your preferred html browser and open up the URL to the web server. In a local installation, this would be typically
 
@@ -16,7 +16,7 @@ After successful login the IVCT GUI will be started. The general layout concept 
 
 The Navigation frame has two parts, selectable via the little ‘^’ in the top left corner. The first one is the so called “Badges” view, and the second one is the “System under Test” view. These views are described below in more detail.
 
-== The Badge View
+=== The Badge View
 
 In the badge view, all installed compliance badges are shown. While no badge is selected in the navigation frame, the content frame shows the same overview list in an iconic layout.
 
@@ -28,7 +28,7 @@ A badge also contains interoperability requirements, either directly assigned to
 ![Badge View](images/BadgeHla.PNG)
 
 
-== The SuT View
+=== The SuT View
 
 The System under Test (SuT) view, shows the configure systems to be tested. New systems for testing can be added with the menu <new SuT> and existing configurations can be edited, after selecting them. The selection of a SuT shows the details view for that system under test.
 

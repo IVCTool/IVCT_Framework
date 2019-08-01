@@ -1,10 +1,8 @@
-= Test Case Devloper Guide
-
-== Overview
+== Test Case Developer Guide
 
 A test case (TC) is a program designed to test a certain aspect of a communication protocol. The aspect to be tested is described by a test purpose. The task of a TC writer is to write a program that performs the test specified by a test purpose. To be able to write these programs it is necessary to understand the environment in which the TC program runs. The rest of this guide will describe the test system architecture, how logging is used and how to create TCs.
 
-== Test System Architecture
+=== Test System Architecture
 
 The test system is designed to support the TC writer by automatically logging all HLA services and parameters, support a TC structure with three distinct phases according to ISO 9646 and allow the TC writer to add routines of any required complexity into a test suite specific library. Thus after a certain design phase and initial implementation of the library, the TC writer can concentrate on the logic specific for a TC and let the rest of the test system handle the repeating and time consuming details within the library.
 

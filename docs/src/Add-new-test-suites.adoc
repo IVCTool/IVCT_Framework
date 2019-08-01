@@ -1,33 +1,27 @@
-= Add New Test Suites
+== Add New Test Suites
 
-== Set the global variables
+=== Set the global variables
 
-1. IVCT_CONF   to the absolute path of the folder where the   IVCTconfig.xml   file is located.
-
-1. IVCT_HOME   to the absolute path of the   IVCT_Framework   folder (inclusive).
-
-1. IVCT_TS_HOME   to the absolute path of the folder where the test suite sources (parent folder of e.g. TS_HelloWorld, TS_NETN_2.0 or TS_RPR_FOM_2.0) are located.
+. IVCT_CONF   to the absolute path of the folder where the   IVCTconfig.xml   file is located.
+. IVCT_HOME   to the absolute path of the   IVCT_Framework   folder (inclusive).
+. IVCT_TS_HOME   to the absolute path of the folder where the test suite sources (parent folder of e.g. TS_HelloWorld, TS_NETN_2.0 or TS_RPR_FOM_2.0) are located.
 
 
-== Edit the IVCTconfig.xml file
-1. Set the absolute path of the folders of   sutDir   and   testSuites   these can remain where they were extracted from the zip files or be moved to another folder of the file system as desired.
+=== Edit the IVCTconfig.xml file
 
-1. The   sutDir   contains the SUT folders where the SUT specific files are loaded e.g. the   TcParam.json   describing the SUT specific values that will be used in the test cases. The IVCT will, when implemented, write the log files and summary reports into the specific SUT\testsuite\log folder.
+. Set the absolute path of the folders of   sutDir   and   testSuites   these can remain where they were extracted from the zip files or be moved to another folder of the file system as desired.
+. The   sutDir   contains the SUT folders where the SUT specific files are loaded e.g. the   TcParam.json   describing the SUT specific values that will be used in the test cases. The IVCT will, when implemented, write the log files and summary reports into the specific SUT\testsuite\log folder.
+. The   testSuites   folder contains a   IVCTtestsuites.xml   file listing the currently valid testsuites. Older or newer testsuites may located in this folder, but are not visible to the IVCT unless included in the   IVCTtestsuites.xml   file. For each test suite, the badges (test schedules) are located in test suite specific folders.
 
-1. The   testSuites   folder contains a   IVCTtestsuites.xml   file listing the currently valid testsuites. Older or newer testsuites may located in this folder, but are not visible to the IVCT unless included in the   IVCTtestsuites.xml   file. For each test suite, the badges (test schedules) are located in test suite specific folders.
 
+=== To add a new test suite to the system
 
-== To add a new test suite to the system
-
-1. Add the new test suite folder to the   IVCT_TS_HOME   folder.
-
+. Add the new test suite folder to the   IVCT_TS_HOME   folder.
 1. Edit the   IVCTtestSuites\IVCTtestsuites.xml   and add the testSuite name, packageName and tsRunFolder for the new test suite.
 
 * The   name   is the folder name of the new test suite.
-
 * The   packageName   represents the java package name used by the testsuite. This name is normally supplied by the test suite developer.
-
 * The   tsRunFolder   represents the relative path to the bin folder produced by the   gradelew installDist   command, it is used by the IVCT to change working directory to this value relative to IVCT_TS_HOME. This is necessary to find the correct java jar files for the test suite.
 
-== Test Case Parameters
+=== Test Case Parameters
 Create the new   TcParam.json   to describe the test case parameters required for the new test suite. A sample file should be supplied by the test suite developer with each test suite release. The meaning of the parameters in this file must be well documented as to purpose and value range.

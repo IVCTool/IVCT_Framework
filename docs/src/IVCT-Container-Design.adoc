@@ -1,4 +1,4 @@
-= IVCT Container Design
+== IVCT Container Design
 
 The application of Docker container technology allows a user to run the IVCT without having to build and install the IVCT Framework and its dependencies. All that is required is a functional Docker engine installed on a host. See https://docs.docker.com/install/ for instructions on installing a Docker engine.
 
