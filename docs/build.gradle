@@ -43,7 +43,8 @@ asciidoctor {
       'Local-Settings-Designator.adoc',
       'testsuite-overview.adoc',
       'TcDevelGuide.adoc',
-      'IVCT-Book.adoc'
+      'IVCT-Book.adoc',
+      'badge2testsuite.adoc'
   }
   outputDir = file('build')
 }
