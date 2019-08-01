@@ -3,40 +3,36 @@
 This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software.
 
 == Preparations
-* link:IVCT-Module-Overview.adoc[IVCT Module Overview]
-* <<IVCT-Module-Overview.adoc#IVCT Module Overview,IVCT Module Overview>> mit allem
-* <<IVCT-Module-Overview.adoc#,IVCT Module Overview>> ohne section ref
-* <<IVCT-Module-Overview.adoc#IVCT Module Overview>> ohne label
-* <<IVCT-Module-Overview.adoc>> nur adoc ref
-* link:prerequisites.adoc[Prerequisites for participating in IVCT_Framework development]
-* link:Branching-and-Merging.adoc[Guidelines for branching and merging]
-* link:model.adoc[IVCT Information Model (draft for discussion)]
+* <<IVCT-Module-Overview.adoc#,IVCT Module Overview>> 
+* <<prerequisites.adoc#,Prerequisites for participating in IVCT_Framework development>>
+* <<Branching-and-Merging.adoc#,Guidelines for branching and merging>>
+* <<model.adoc#,IVCT Information Model (draft for discussion)>>
 
 == Building the software
-* link:gradleDoc.adoc[Building the IVCT_Framework with gradle]
-* link:3rdpartyRti.adoc[Using the framework with a 3rd-party RTI Implementation]
-* link:TClogging.adoc[Test case logging]
-* link:IVCT_Configuration.adoc[Configuration of the IVCT]
+* <<gradleDoc.adoc#,Building the IVCT_Framework with gradle>>
+* <<3rdpartyRti.adoc#,Using the framework with a 3rd-party RTI Implementation>>
+* <<TClogging.adoc#,Test case logging>>
+* <<IVCT_Configuration.adoc#,Configuration of the IVCT>>
 
 == Docker Images
-* link:IVCT-Container-Design.adoc[IVCT Container design]
-* link:IVCT-TC-Runner-Application-image.adoc[IVCT TC Runner Application-image]
-* link:IVCT-GUI-image.adoc[IVCT GUI image]
-* link:IVCT-LogSink-Application-image.adoc[IVCT LogSink Application image]
-* link:Building-Docker-images.adoc[Building Docker images for IVCT Framework Components]
+* <<IVCT-Container-Design.adoc#,IVCT Container design>>
+* <<IVCT-TC-Runner-Application-image.adoc#,IVCT TC Runner Application-image>>
+* <<IVCT-GUI-image.adoc#,IVCT GUI image>>
+* <<IVCT-LogSink-Application-image.adoc#,IVCT LogSink Application image>>
+* <<Building-Docker-images.adoc#,Building Docker images for IVCT Framework Components>>
 
 == Continuous Integration and Automatic Deployment
-* link:travis.adoc[Automatic testing, building, docker image building and deployment using Travis-CI]
+* <<travis.adoc#,Automatic testing, building, docker image building and deployment using Travis-CI>>
 
 == Running the tools
-* link:Setup-the-JMS-broker.adoc[Setup the JMS broker]
-* link:Graphical-User-Interface.adoc[The graphical user interface]
-* link:commandlinetool[The command line interface]
-* link:Reading-and-understanding-Test-Case-logfiles.adoc[Reading and understanding Test Case logfiles]
-* link:testsuite-overview.adoc[Testsuite Overview]
+* <<Setup-the-JMS-broker.adoc#,Setup the JMS broker>>
+* <<Graphical-User-Interface.adoc#,The graphical user interface>>
+* <<commandlinetool#,The command line interface>>
+* <<Reading-and-understanding-Test-Case-logfiles.adoc#,Reading and understanding Test Case logfiles>>
+* <<testsuite-overview.adoc#,Testsuite Overview>>
 
 == Extending the framework
-* link:TcDevelGuide.adoc[Test Case Development Guide]
-* link:Executable-Test-Case-Development-Rules.adoc[Executable Test Case Development Rules]
-* link:futureenhancements.adoc[Future enhancements]
-* link:Add-new-test-suites.adoc[Add new test suites]
+* <<TcDevelGuide.adoc#,Test Case Development Guide>>
+* <<Executable-Test-Case-Development-Rules.adoc#,Executable Test Case Development Rules>>
+* <<futureenhancements.adoc#,Future enhancements>>
+* <<Add-new-test-suites.adoc#,Add new test suites>>
