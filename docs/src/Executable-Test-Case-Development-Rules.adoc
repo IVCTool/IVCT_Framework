@@ -2,13 +2,13 @@
 
 These rules were discussed between nations on 18 October 2016.
 
-== RTI compatibility
+=== RTI compatibility
 The ETC must be developed and tested with both Pitch and MÄK RTI, last versions if possible.
 Some specific libraries (RTI adapters) will be developed in integrated in IVCT. ETC development must be done upon those RTI adapters.
 
-== Overall ETC structure
+=== Overall ETC structure
 
-=== GitHub project name / Java package project name / Class names
+==== GitHub project name / Java package project name / Class names
 GitHub Repository name: TC_[ETC name]
 Ex.: `TC_CS_Verification`
 
@@ -27,7 +27,7 @@ Ex.: `TC_CS_Verification_BaseModel.java` or `TC_CS_Verification_TcParam.java`
 
 **Warning:** The full name of a class may be very long. Ex.: `nato.ivct.etc.tc_hla_declaration_management.TC_0001_Object_Publication`
 
-=== 3rd party libraries
+==== 3rd party libraries
 Because one of the main problem with Java development is the management of dependencies (i.e. librairies), _**all new development (new ETC) must use already existing libraries**_. It will avoid some inconsistency and incompatibility between codes developed by different developers that may use different versions of the same library.
 All 3rd party libraries must be declared in ETC Gradle files, as it is done in HelloWorld example.
 
@@ -35,18 +35,18 @@ All 3rd party libraries must be declared in ETC Gradle files, as it is done in H
 
 **Question:** How to have access to the libraries list that are already used by developed ETC? Who is responsible for the management of that list?
 
-== Development best practices
-=== Test Case Parameters
+=== Development best practices
+==== Test Case Parameters
 It is mandatory to use JSON file to define parameter values.
 3 steps in the initialization of Test Case Parameters (file `TC_[ETC name]_TcParam.java`) :
   1. Declaration with a NULL value
   2. Assignation to the value read using JSON parser
   3. Systematic check to detect invalid value
 
-=== Test Case Variables
+==== Test Case Variables
 It is mandatory to manage Test Case Variables in the model source code (file `TC_[ETC name]_BaseModel.java`).
 
-=== Logging
+==== Logging
 
 It is mandatory to use of the logger implementation (lockback) delivered by the framework.
 Lockback configuration file: `[ETC name]/src/main/resources/logback.xml`.
@@ -59,10 +59,10 @@ Ex.: `*** Start of tc_hla_declaration_management.TC_0001_Object_Publication ***`
 `*** End of tc_[ETC name].TC_XXXX_[meaningful name] ***`
 Ex.: `*** End of tc_hla_declaration_management.TC_0001_Object_Publication ***`
 
-=== GUI
+==== GUI
 No GUI in the ETC, only parameters.
 
-=== Results
+==== Results
 The result of an ETC must be the following:
 * INCONCLUSIVE: Corresponds to an error during initialisation (preambleAction method) or termination (postambleAction method) of the test. It is equivalent to FAILED
 * FAILED: An error / a problem occurred during the execution of the ETC that leads to a failure
