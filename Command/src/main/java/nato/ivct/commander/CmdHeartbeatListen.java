@@ -93,9 +93,13 @@ public class CmdHeartbeatListen implements MessageListener, Command {
             try {
                 final String content = textMessage.getText();
                 // logger.info("CmdHeartbeatListener gets from ActiveMQ: " + content ); // Debug
-
+                JSONObject jMessage = (JSONObject) jsonParser.parse(content);
+                if (desiredHeartBeatSenderClass!=null && !Optional.ofNullable(jMessage.get(CmdHeartbeatSend.HB_SENDER)).orElse("").equals(desiredHeartBeatSenderClass))
+                	// discard message
+                	return;
+                
                 // put the contents of the message in a jsonObject               
-                this.jsonObject = (JSONObject) jsonParser.parse(content);
+                this.jsonObject = jMessage;
                 
                 // we need some kind of timestamp history   
                 Timestamp now = new Timestamp(System.currentTimeMillis());                
@@ -136,23 +140,9 @@ public class CmdHeartbeatListen implements MessageListener, Command {
                 Timestamp myLast = getLast();                
                 
                 JSONObject myJsonObject = getJsonObject();                
-                
                 JSONObject failJsonObject = new JSONObject();
-                
-                System.out.print("desHBS: " + desiredHeartBeatSenderClass);
-                System.out.println("---HBS: " + Optional.ofNullable(myJsonObject.get(CmdHeartbeatSend.HB_SENDER)).orElse("").toString());
-                
-                
- 
-                if (desiredHeartBeatSenderClass!=null && !Optional.ofNullable(myJsonObject.get(CmdHeartbeatSend.HB_SENDER)).orElse("").equals(desiredHeartBeatSenderClass)) { 
-                    logger.warn("fail, desired class "+desiredHeartBeatSenderClass+" does not send, but: " +myJsonObject.get(CmdHeartbeatSend.HB_SENDER));
-//                    setMessageState(HbMsgState.FAIL);
-//                    failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState );
-//                    failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, desiredHeartBeatSenderClass+" does not send"); 
-//                    
-//                    sendbackToQuerryClient(failJsonObject );                    
-                } 
-                else if  (myFirst != null && myLast != null) {  
+
+                if  (myFirst != null && myLast != null) {  
 
                      if (myJsonObject != null) {                                             
                          long mySendingPeriod = getSendingPeriod();
