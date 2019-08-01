@@ -42,12 +42,12 @@ This version number it is used together with the branch name (master or developm
 In order to push the built Docker Images to the Docker container registries, usernames and credentials need to be specified. These are specified in the .travis.yml by using so called encrypted environment variables. Please read the [documentation](https://docs.travis-ci.com/user/environment-variables/#Defining-encrypted-variables-in-.travis.yml) on how to define encrypted variables. The encrypted variables used in the IVCT Framework build are:
 
 |===
-| Environment Variable Name  | Description |
+| Environment Variable Name  | Description
 
-| DOCKER_USERNAME | Username used to push images to the Dockerhub image registry |
-| DOCKER_PASSWORD | Password for Docker Username |
-| TNO_DOCKER_USERNAME | Username used to pull base images from TNO hosted image registry |
-| TNO_DOCKER_PASSWORD | Password for TNO Docker Username |
+| DOCKER_USERNAME | Username used to push images to the Dockerhub image registry
+| DOCKER_PASSWORD | Password for Docker Username
+| TNO_DOCKER_USERNAME | Username used to pull base images from TNO hosted image registry
+| TNO_DOCKER_PASSWORD | Password for TNO Docker Username
 |===
 
 === Build trigger restrictions
