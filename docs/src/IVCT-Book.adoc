@@ -1,5 +1,7 @@
 = IVCT Documentation
 
+:toc:
+
 
 This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software.
 
@@ -12,6 +14,8 @@ include::prerequisites.adoc[]
 include::Branching-and-Merging.adoc[]
 
 include::model.adoc[]
+
+include::badge2testsuite.adoc[]
 
 // Building the software
 
