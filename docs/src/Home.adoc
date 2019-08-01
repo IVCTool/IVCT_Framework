@@ -1,18 +1,31 @@
 = IVCT Documentation
 
-This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software.
+This page gives an overview of the available documentation for the IVCT Framework code.
+It is designed for system integrators, framework and test case developers.
+
+NOTE: The documentation pages are currently under construction.
+Some pages might be outdated or unfinished.
+
 
 == Preparations
-* <<IVCT-Module-Overview.adoc#,IVCT Module Overview>> 
+
+A good starting point to get a bit of an background on the architecture are the
+following sections. 
+
+* <<IVCT-Module-Overview.adoc#,IVCT Module Overview>>
 * <<prerequisites.adoc#,Prerequisites for participating in IVCT_Framework development>>
 * <<Branching-and-Merging.adoc#,Guidelines for branching and merging>>
 * <<model.adoc#,IVCT Information Model (draft for discussion)>>
 
 == Building the software
+If you plan do build the software by yourself, the following sections will give
+you an overview on tools and the development environment.
+
 * <<gradleDoc.adoc#,Building the IVCT_Framework with gradle>>
 * <<3rdpartyRti.adoc#,Using the framework with a 3rd-party RTI Implementation>>
 * <<TClogging.adoc#,Test case logging>>
 * <<IVCT_Configuration.adoc#,Configuration of the IVCT>>
+* <<travis.adoc#,Automatic testing, building, docker image building and deployment using Travis-CI>>
 
 == Docker Images
 * <<IVCT-Container-Design.adoc#,IVCT Container design>>
@@ -21,8 +34,6 @@ This will be the place for all framework and test cases developers to get inform
 * <<IVCT-LogSink-Application-image.adoc#,IVCT LogSink Application image>>
 * <<Building-Docker-images.adoc#,Building Docker images for IVCT Framework Components>>
 
-== Continuous Integration and Automatic Deployment
-* <<travis.adoc#,Automatic testing, building, docker image building and deployment using Travis-CI>>
 
 == Running the tools
 * <<Setup-the-JMS-broker.adoc#,Setup the JMS broker>>

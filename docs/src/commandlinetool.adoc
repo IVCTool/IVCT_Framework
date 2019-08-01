@@ -41,17 +41,15 @@ Please note that this is a serialized JSON representation. That means that escap
 It is necessary to set the name of a SUT to be able to run any test cases or test schedules.
 
 == SUT Folder Structure
-The _IVCTsut_ folder (found via the %IVCT_CONF\IVCTconfig.xml file) is read by the Command Line Tool and has the following structure: e.g.
+The _IVCTsut_ folder is read by the Command Line Tool and has the following structure: e.g.
 
-`sut1\badge1\TcParam.json`
-
-`sut1\badge2\TcParam.json`
-
-`sut2\badge1\TcParam.json`
-
-`sut2\badge2\TcParam.json`
-
-`sut2\badge3\TcParam.json`
+----
+sut1\badge1\TcParam.json
+sut1\badge2\TcParam.json
+sut2\badge1\TcParam.json
+sut2\badge2\TcParam.json
+sut2\badge3\TcParam.json
+----
 
 In the `sut1` level, a simple version of the report summary files is written. The name of the file is built as follows: Report_yyyy-MM-dd_hh-mm.txt where the time of creation determines the name.
 In a further development stage, the log files will also be stored for in the corresponding testsuite folder.
@@ -62,33 +60,40 @@ To test the IVCT: have at least one SUT in the sut folder. After starting the UI
 
 These commands lead to a folder structure that is described below. If a user wishes to use other tools or folder structure, he must be prepared to adjust the configuration to match. (Path names maybe an example only - real values depend on the environment where the IVCT is installed)
 
-1) Require an RTI (see RTI documentation to install and start) to run the HLA federation.
+1. Require an RTI (see RTI documentation to install and start) to run the HLA federation.
 
-2) Require an _Activemq_ Process to support the JMS communication. In the _apache-activemq_ root folder, use the _bin\activemq start_ command.
+2. Require an _Activemq_ Process to support the JMS communication. In the _apache-activemq_ root folder, use the _bin\activemq start_ command.
 
-3) Require the LogSink module: go to the folder _LogSink\build\install\LogSink\bin_, use the command:
-
+3. Require the LogSink module: go to the folder _LogSink\build\install\LogSink\bin_, use the command:
++
+----
 LogSink.bat
-
+----
++
 to start the program.
 
-4) Require the TC module: go to the folder _TC\build\install\TC\bin_, use the command:
-
+4. Require the TC.exec module: go to the folder _TC\build\install\TC.exec\bin_, use the command:
++
+----
 TC.bat
-
+----
++
 to start the program.
 
-5) Require an SUT Federate, use the _HelloWorld_ demo. In the folder _TS_HelloWorld\HelloWorld\build\install\HelloWorld\bin_, use the command:
-
+5. Require an SUT Federate, use the _HelloWorld_ demo. In the folder _TS_HelloWorld\HelloWorld\build\install\HelloWorld\bin_, use the command:
++
+----
 HelloWorld.bat
+----
++
+to start the program. A dialogue will then ask for host (RETURN means localhost), country name (enter A), initial population (RETURN means 100) and number of cycles (RETURN means 1000).
 
-to start the program. A dialogue will then ask for host (RETURN means localhost), country name (enter A),
-initial population (RETURN means 100) and number of cycles (RETURN means 1000).
-
-6) Require the CmdLineTool: go to the folder _UI\build\install\UI\bin_, use the command:
-
+6. Require the CmdLineTool: go to the folder _UI\build\install\UI\bin_, use the command:
++
+----
 UI.bat file
-
+----
++
 to start the program. Continue by using the commands explained below.
 
 

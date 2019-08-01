@@ -8,11 +8,11 @@ The test system is designed to support the TC writer by automatically logging al
 
 image:images/IVCT IEEE1516.png[TC class diagram]
 
-=== IVCT_NullFederateAmbassador
+==== IVCT_NullFederateAmbassador
 
 Serves as a base class for a IVCT federate ambassador. The default behaviour for a callback is to log each method as "_method name_ not implemented". Wherever a TC writer wants to handle a callback, he needs overwrite an HLA federate ambassador service by adding a method in the TS_x_TC_y_Model with the same HLA service signature.
 
-=== IVCT_RTIambassador
+==== IVCT_RTIambassador
 
 The automatic RTIambassdor logging is achieved by using the IVCT_RTIambassador whose only purpose is to do the logging of the HLA services and parameters, and forward these services to the real RTIambassdor. Thus a HLA service call will be made to the IVCT_RTIambassador which then performs its tasks and forwards the service.
 
@@ -20,37 +20,37 @@ The IVCT_RTIambassador is available within the TC and also within the TS_x_TC_y_
 * if no data needs to be stored within the TS_x_TC_y_Model, call the IVCT_RTIambassador directly
 * if any data needs to be stored within the TS_x_TC_y_Model, then a method with the same HLA signature should be added to the TS_x_TC_y_Model. This method shall store the data and call the IVCT_RTIambassador
 
-=== IVCT_LoggingFederateAmbassador
+==== IVCT_LoggingFederateAmbassador
 
 The automatic federateAmbassador logging is achieved by using an extra logging federateAmbassador (IVCT_LoggingFederateAmbassador) whose only purpose is to do the logging of the HLA services and parameters, and forward these services to the TS_x_TC_y_Model. Thus the RTI will call the IVCT_LoggingFederateAmbassador and it will in turn forward the call to the TS_x_TC_y_Model.
 
-=== IVCT_BaseModel
+==== IVCT_BaseModel
 
 This is a base class to specify the how the generic TC library interfaces to other modules. The IVCT_BaseModel specifies how the TC library interfaces to the HLA services and contains some generic methods to initiate and terminate the federate membership in the federation.
 
-=== TS_x_TC_y_Model
+==== TS_x_TC_y_Model
 
 The test suite specific library (TS_x_TC_y_Model) is a crucial component used by the TC to handle HLA services and data. The TS_x_TC_y_Model has a reference to an extra logging RTIambassdor which is called for all HLA services. The TS_x_TC_y_Model itself is a federateAmbassador which receives any callback calls explicitly implemented with the relevant HLA method signatures, any calls that are not implemented are handled by the IVCT_NullFederateAmbassador.
 
 All callback services are logged by an extra logging federateAmbassador before being sent to the TS_x_TC_y_Model. The TS_x_TC_y_Model will be programmed to store any relevant data (may be from requests or callbacks) within the TS_x_TC_y_Model. The storage of data may become very complex depending on the protocol. The data should be stored in such a way that it can be easily retrieved and evaluated at a later point in time.
 
-=== IVCT_AbstractTestCase
+==== IVCT_AbstractTestCase
 
 The IVCT_AbstractTestCase is the base class for conformance TCs specified according to ISO 9646 and have the three phases: preamble, test_body and postamble. The TC will issue a verdict at the end of the TC execution.
 
 There are other kinds of TCs which are suitable for integration support that observe a particular aspect of an HLA application over many cycles and detects any issues. It has to be determined whether another abstract test case is required or this one can be used with certain interpretations of TC phases and verdicts.
 
-=== TS_x_TestCase_y
+==== TS_x_TestCase_y
 
 A test case is derived from AbstractTestCase which enforces the ISO 9646 concept of preamble, test_body and postamble. In the preambleAction the protocol sequence and data to bring the SUT into the state required for the test purpose is specified. In the performTest is the sequence and data to test the purpose of the TC. In the postambleAction is the sequence and data to bring the SUT back into a stable state.
 
-=== IVCT_TcParam
+==== IVCT_TcParam
 
 The IVCT_TcParam is the base class for SUT specific parameters. For most TCs, SUT specific values are required for certain HLA requests or occur in callbacks. These parameters usually are found in a config file or a properties file. Only general parameters are to be placed in this class, parameters for for specific test suites shall be placed in a derived class.
 
 At the point of writing this document, the mechanism for reading from a config file or a properties file has not been determined. Fixed values were used in the demo TCs.
 
-=== TS_x_TC_y_Parameter
+==== TS_x_TC_y_Parameter
 
 This class is derived from the IVCT_TcParam class and loads and contains specific SUT values required in a test suite. To protect the data values, it is advisable to write retrieval methods to get the data values. Examples of these values could be object names, subscription / publication classes etc.
 
@@ -117,7 +117,7 @@ The TC writer should decide what send services (with data), receiving callbacks 
 
 When writing a test suite, the same logic for handling a sequence of services or evaluation may be required for more than one TC. In such a case a method to handle this logic should be added to the TS_x_TC_y_Model. These methods should be written in a straight-forward manner so that they can be verified easily since they constitute put of a TC.
 
-==== Test Case Loops
+=== Test Case Loops
 
 It may be interesting to have a loop in the TC to do the same sequences in the test_body with different data values. The TC should be stopped upon detecting an error and the verdict message should include the index value of the loop when the error occurred.
 
