@@ -1,0 +1,60 @@
+= IVCT Documentation
+
+This page gives an overview of the available documentation for the IVCT Framework code.
+It is designed for system integrators, framework and test case developers.
+
+NOTE: The documentation pages are currently under construction.
+Some pages might be outdated or unfinished.
+
+
+== Preparations
+
+A good starting point to get a bit of an background on the architecture are the
+following sections.
+
+* <<IVCT-Module-Overview.adoc#,IVCT Module Overview>>
+* <<model.adoc#,IVCT Information Model (draft for discussion)>>
+* <<badge2testsuite.adoc#,Linking Interoperability Badges with Test Suites>>
+
+== Building the software
+If you plan do build the software by yourself, the following sections will give
+you an overview on tools and the development environment.
+
+* <<prerequisites.adoc#,Prerequisites for participating in IVCT_Framework development>>
+* <<Branching-and-Merging.adoc#,Guidelines for branching and merging>>
+* <<gradleDoc.adoc#,Building the IVCT_Framework with gradle>>
+* <<3rdpartyRti.adoc#,Using the framework with a 3rd-party RTI Implementation>>
+* <<TClogging.adoc#,Test case logging>>
+* <<IVCT_Configuration.adoc#,Configuration of the IVCT>>
+* <<travis.adoc#,Automatic testing, building, docker image building and deployment using Travis-CI>>
+
+== Docker Images
+The primary deployment typ for the IVCTool is the containerization with docker images.
+The underlying concept and configurations are explained below.
+
+* <<IVCT-Container-Design.adoc#,IVCT Container design>>
+* <<IVCT-TC-Runner-Application-image.adoc#,IVCT TC Runner Application-image>>
+* <<IVCT-GUI-image.adoc#,IVCT GUI image>>
+* <<IVCT-LogSink-Application-image.adoc#,IVCT LogSink Application image>>
+* <<Building-Docker-images.adoc#,Building Docker images for IVCT Framework Components>>
+
+
+== Running the tools
+To use the IVCTool there are two types of interfaces available, a web-based and a
+commandline-based UI. These are described below, as well as some background on
+reading log files and the available test suite.
+
+* <<Setup-the-JMS-broker.adoc#,Setup the JMS broker>>
+* <<Graphical-User-Interface.adoc#,The graphical user interface>>
+* <<commandlinetool#,The command line interface>>
+* <<Reading-and-understanding-Test-Case-logfiles.adoc#,Reading and understanding Test Case logfiles>>
+* <<testsuite-overview.adoc#,Testsuite Overview>>
+
+== Extending the framework
+Finally there are some guidelines on writing test cases and considerations for
+guture enhancements.
+
+* <<TcDevelGuide.adoc#,Test Case Development Guide>>
+* <<Executable-Test-Case-Development-Rules.adoc#,Executable Test Case Development Rules>>
+* <<Add-new-test-suites.adoc#,Add new test suites>>
+* <<futureenhancements.adoc#,Future enhancements>>
