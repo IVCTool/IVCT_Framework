@@ -87,8 +87,6 @@ public class CmdListBadges implements Command {
 						badge.version = (String) jsonObj.get("version");
 						badge.name = (String) jsonObj.get("name");
 						badge.description = (String) jsonObj.get("description");
-						badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
-						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 						badge.cbVisual = (String) jsonObj.get("graphics");
 						// if the badge defines an icon then try to get it from the icon folder
 						// (respectively from its default folder)
@@ -117,7 +115,6 @@ public class CmdListBadges implements Command {
 								badge.requirements[i] = badge.new InteroperabilityRequirement();
 								badge.requirements[i].ID = (String) req.get("id");
 								badge.requirements[i].description = (String) req.get("description");
-								badge.requirements[i].TC = (String) req.get("TC");
 							}
 						} else {
 							badge.requirements = null;

@@ -23,26 +23,24 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import nato.ivct.commander.SutDescription;
 
 public class CmdUpdateSUT {
 
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
     private SutDescription sutDescription = null;
-	private static Map<String, URL[]> badgeURLs = new HashMap<String, URL[]>();
-	private static CmdListBadges badges;
+	private static Map<String, URL[]> badgeURLs = new HashMap<>();
+    private static CmdListBadges badges;
+    private static CmdListTestSuites testsuite;
 
 	/**
-	 * 
+	 *
 	 * @param sutDescription the SUT description
 	 */
 	public CmdUpdateSUT(final SutDescription sutDescription) {
@@ -53,20 +51,28 @@ public class CmdUpdateSUT {
 		if (this.sutDescription.name == null) {
 			this.sutDescription.name = this.sutDescription.ID;
 		}
-		this.sutDescription.badges = sutDescription.badges == null || sutDescription.badges.isEmpty() ? new HashSet<String>() : sutDescription.badges;
+		this.sutDescription.badges = sutDescription.badges == null || sutDescription.badges.isEmpty() ? new HashSet<>() : sutDescription.badges;
 
 		// get the badge descriptions
 		badges = new CmdListBadges();
 		badges.execute();
+
+		// get testsuite descriptions
+		testsuite = new CmdListTestSuites();
+		try {
+            testsuite.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
-	
+
 	private void createSUTid() {
-		sutDescription.ID = sutDescription.name.replaceAll("\\W", "_");
+		this.sutDescription.ID = this.sutDescription.name.replaceAll("\\W", "_");
 	}
 
 	/**
 	 * This method will check the parameter values are different to those already in the CS.json file
-	 * 
+	 *
 	 * @param csJsonFileName the full name of the CS.json file
 	 * @param tmpSutDescription the sut description to be tested
 	 * @throws Exception in case of major error
@@ -84,7 +90,7 @@ public class CmdUpdateSUT {
 				while((s = br.readLine()) != null) {
 					sb.append(s);
 				}
-				fr.close(); 
+				fr.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new Exception("execute: IOException" + csJsonFileName);
@@ -131,7 +137,7 @@ public class CmdUpdateSUT {
 				} else {
 					return true;
 				}
-				
+
 				// get a String from the JSON object
 				String oldDescription = (String) jsonObject.get(CmdListSuT.DESCRIPTION);
 				if (oldDescription != null) {
@@ -224,7 +230,7 @@ public class CmdUpdateSUT {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param badge the required badge
 	 */
 	private static URL[] getBadgeUrls(final String badge) throws Exception {
@@ -264,7 +270,7 @@ public class CmdUpdateSUT {
 	/**
 	 * This method will extract a resource from a known badge resource location to
 	 * a specified directory
-	 * 
+	 *
 	 * @param badge the name of the badge of the resource required
 	 * @param dirName the name of the directory where the resource should be copied to
 	 * @param resourceName the name of the resource
@@ -281,7 +287,7 @@ public class CmdUpdateSUT {
 
 		// If the desired file exists, do not overwrite
 		File f = new File(dirName + "/" + resourceName);
-		if (f.exists()) { 
+		if (f.exists()) {
 			if (f.isDirectory()) {
 				throw new Exception("Target resource is a directory: " + dirName + "/" + resourceName);
 			}
@@ -328,7 +334,7 @@ public class CmdUpdateSUT {
 	/**
 	 * This function will extract a named file from a named jar file and
 	 * copy it to the destination directory
-	 * 
+	 *
 	 * @param destdir the destination directory
 	 * @param extractFileName the required file name to be extracted
 	 * @param jarFileName the name of the jar to search
@@ -383,23 +389,20 @@ public class CmdUpdateSUT {
 	 * Not all badges refer to a test suite with TcParams: some
 	 * badges are only containers, thus take only badges with TcParams.json
 	 * files.
-	 * 
+	 *
 	 * @param testsuites the set of test suites
 	 * @param badge the current badge name being processed
 	 */
 	void buildTestsuiteSet(Set<String> testsuites, final String badge) {
 		BadgeDescription bd = badges.badgeMap.get(badge);
 		if (bd != null) {
-			if (bd.tsLibTimeFolder != null) {
-				testsuites.add(badge);
-			}
 			for (int i = 0; i < bd.dependency.length; i++) {
 				buildTestsuiteSet(testsuites, bd.dependency[i]);
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public String execute() throws Exception {
 		// Do not use a null ID
 		if (this.sutDescription.ID == null) {
@@ -416,15 +419,19 @@ public class CmdUpdateSUT {
 			}
 		}
 
-		Set<String> testsuites = new HashSet<String>();
+        Set<String> badges_list = new HashSet<>();
 		// Check if no badges
 		if (!this.sutDescription.badges.isEmpty()) {
-			
+
 			// For each badge, check if there is a testsuite with TcParams
 			for (String entry : this.sutDescription.badges) {
-				buildTestsuiteSet(testsuites, entry);
+				buildTestsuiteSet(badges_list, entry);
 			}
-			
+
+
+	        Set<String> testsuites = new HashSet<>();
+            testsuites =  testsuite.getTsForBadge (badges_list);
+
 
 			// For each test suite copy or modify the TcParam.json file
 			for (String testsuite : testsuites) {
@@ -448,7 +455,7 @@ public class CmdUpdateSUT {
 		boolean dataChanged = false;
 		String csJsonFileName = new String(sutDir + "/" + "CS.json");
 		dataChanged = compareCSdata(csJsonFileName, this.sutDescription);
-		
+
 		if (dataChanged == false) {
 			return this.sutDescription.ID;
 		}
@@ -474,15 +481,15 @@ public class CmdUpdateSUT {
         } else {
         	obj.put(CmdListSuT.VENDOR, this.sutDescription.vendor);
         }
-        
+
         // check for defaults
-        if (sutDescription.settingsDesignator == null) {
-            sutDescription.settingsDesignator = Factory.SETTINGS_DESIGNATOR_DEFLT;
+        if (this.sutDescription.settingsDesignator == null) {
+            this.sutDescription.settingsDesignator = Factory.SETTINGS_DESIGNATOR_DEFLT;
         }
         obj.put(CmdListSuT.SETTINGS_DESIGNATOR, this.sutDescription.settingsDesignator);
-        
-        if (sutDescription.federation == null) {
-            sutDescription.federation = Factory.FEDERATION_NAME_DEFLT;
+
+        if (this.sutDescription.federation == null) {
+            this.sutDescription.federation = Factory.FEDERATION_NAME_DEFLT;
         }
         obj.put(CmdListSuT.FEDERATION_NAME, this.sutDescription.federation);
 

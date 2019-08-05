@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Set;
 
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import org.json.simple.JSONArray;
@@ -175,6 +176,11 @@ public class CmdListTestSuites implements Command {
                 }
             }
         }
+        return null;
+    }
+
+    public Set<String> getTsForBadge(Set<String> badges_list) {
+        // TODO Auto-generated method stub
         return null;
     }
 
