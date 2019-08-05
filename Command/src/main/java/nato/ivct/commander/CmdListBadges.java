@@ -29,25 +29,39 @@ import org.json.simple.parser.ParseException;
 
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 
+/**
+ * The CmdListBadges implements the loading of the badge description files. The Command.execute will
+ * load the json files located inside the IVCT_BADGE_HOME_ID folder, and will fill a hashmap
+ * with a badge id as a key, and BadgeDescription as value. A simple badge file will look like the
+ * following example:
+ *
+ * {
+    "id"            :   "HelloWorld-2017",
+    "version"       :   "2.0.0",
+    "name"          :   "HelloWorld Tutorial Badge",
+    "description"   :   "This is a simple example for capability badge to test the compliance of an federate to the hello world federation.",
+    "graphics"      :   "HelloWorld-2017.png",
+    "dependency"    :   [],
+    "requirements"  :   [
+        {
+            "id"            :   "IR-HW-0001",
+            "description"   :   "Test population growing rate",
+        },
+        {
+            "id"            :   "IP-HW-0002",
+            "description"   :   "Test inter-country communication",
+        }
+    ]
+ * }
+ * @author hzg
+ *
+ */
 public class CmdListBadges implements Command {
-	public HashMap<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
+	public HashMap<String, BadgeDescription> badgeMap = new HashMap<>();
 
-	/**
-	 * The structure of a badge description looks like:
-	 * 
-	 * { "id" : "HelloWorld", "version" : "0.4.0", "name" : "HelloWorld Tutorial
-	 * Badge", "description" : "This is a simple example for ...", "graphics" :
-	 * "/some/icon.png", "tsRunTimeFolder" :
-	 * "TS_HelloWorld-0.4.0/TS_HelloWorld/bin", "tsLibTimeFolder" :
-	 * "TS_HelloWorld-0.4.0/TS_HelloWorld/lib", "dependency" : ["HLA-BASE-2016"],
-	 * "requirements" : [ { "id" : "IR-HW-0001", "description" : "Test population
-	 * growing rate", "TC" : "de.fraunhofer.iosb.tc_helloworld.TC0001" }, { "id" :
-	 * "IP-HW-0002", "description" : "Test inter-country communication", "TC" :
-	 * "de.fraunhofer.iosb.tc_helloworld.TC0002" } ] }
-	 */
 	@Override
 	public void execute() {
-		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
+		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID = " + Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
 		String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
@@ -60,6 +74,7 @@ public class CmdListBadges implements Command {
             JSONParser parser = new JSONParser();
 			File[] filesList = dir.listFiles();
 			for (File file : filesList) {
+                Factory.LOGGER.trace("reading badge description: " + file.getAbsolutePath());
 				Object obj;
 				if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
 					FileReader fr = null;
@@ -75,14 +90,15 @@ public class CmdListBadges implements Command {
 						badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
 						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 						badge.cbVisual = (String) jsonObj.get("graphics");
-						// if the badge defines an icon then try to get it from the icon folder 
+						// if the badge defines an icon then try to get it from the icon folder
 						// (respectively from its default folder)
 						if (badge.cbVisual != null) {
 							Path iconFile = Paths.get(iconsFolder, badge.cbVisual);
-							if (iconFile.toFile().exists())
-								badge.cbVisual = iconFile.toString();
-							else
-							    badge.cbVisual = null;
+							if (iconFile.toFile().exists()) {
+                                badge.cbVisual = iconFile.toString();
+                            } else {
+                                badge.cbVisual = null;
+                            }
 						}
 						JSONArray depend = (JSONArray) jsonObj.get("dependency");
 						if (depend != null) {
@@ -107,7 +123,7 @@ public class CmdListBadges implements Command {
 							badge.requirements = null;
 						}
 
-						badgeMap.put(badge.ID, badge);
+						this.badgeMap.put(badge.ID, badge);
 						fr.close();
 						fr = null;
 					} catch (IOException | ParseException e) {

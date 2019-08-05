@@ -5,9 +5,9 @@
     "description": "This test case is equivalent to the FCTT_NG configuration verification step.",
     "tsRunTimeFolder": "TS_CS_Verification-2.0.0/bin",
     "tsLibTimeFolder": "TS_CS_Verification-2.0.0/lib",
-    "testcase": [{
+    "testcases": [{
         "TC": "nato.ivct.etc.fr.tc_cs_verification.TC_001_Files_Check"
         "IR": ["IR-DOC-0001", "IR-SOM-0001", "IR-SOM-0002"],
-        "description": "Test SuT CS/SOM to be valid and consistent",
+        "description": "Test SuT CS/SOM to be valid and consistent"
     }]
 }
