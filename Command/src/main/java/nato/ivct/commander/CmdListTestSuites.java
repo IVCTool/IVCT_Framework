@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
@@ -179,9 +180,14 @@ public class CmdListTestSuites implements Command {
         return null;
     }
 
-    public Set<String> getTsForBadge(Set<String> badges_list) {
-        // TODO Auto-generated method stub
-        return null;
+    public Set<String> getTsForIr(Set<String> ir_list) {
+        Set<String> ts_set = new HashSet<>();
+
+        for (String ir: ir_list) {
+            TestSuiteDescription ts = getTestSuiteforIr(ir);
+            ts_set.add(ts.id);
+        }
+        return ts_set;
     }
 
 }
