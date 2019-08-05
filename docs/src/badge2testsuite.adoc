@@ -57,20 +57,16 @@ On the runtime file system all configuration data for a system under test (SuT) 
 * $(IVCT_SUT_HOME_ID)/SuT_1
 ** *CS.json*: The conformance statement of SuT1
 ** *Reports*: Folder containing all reports files with a verdict summary and references to log files for all executed test cases
-** *HLA-BASE-2019*
-*** *Testsuite-HLA-Verification-2.0.0*: Folder with all configuration data for this specific test suite
-**** *TcParam.json*: The configuration parameters for test cases within this test suite
-**** optional configuration files: For some test suites other files are required the test case configuration
-**** */Logs*
-***** *nato.ivct.etc.fr.tc_cs_verification.TC_001_Files_Check-2019-08-02T073650+0000.log*: Test case execution log file
-***** ...
-*** *TS-HLA-Declaration-2.0.0*
-**** *TcParam.json*
+** *Testsuite-HLA-Verification-2.0.0*: Folder with all configuration data for this specific test suite
+*** *TcParam.json*: The configuration parameters for test cases within this test suite
+*** optional configuration files: For some test suites other files are required the test case configuration
+*** */Logs*
+**** *nato.ivct.etc.fr.tc_cs_verification.TC_001_Files_Check-2019-08-02T073650+0000.log*: Test case execution log file
 **** ...
+** *TS-HLA-Declaration-2.0.0*
+*** *TcParam.json*
 *** ...
-** *RPR-FOM-2.0*
-*** *Testsuite-HLA-EncodingTester-2.0.0*
-**** *TcParam.json* ...
+** ...
 
 === Special Cases
 ==== Test Cases covering several IR's
