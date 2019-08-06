@@ -1,6 +1,3 @@
 {
-  "federationName" : "HelloWorld",
-  "rtiHostName" : "localhost",
-  "rtiPort" : "8989",
   "sutFederateName" : "A"
 }
