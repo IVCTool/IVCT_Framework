@@ -6,13 +6,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestCmdListTestsuites {
 
+    @Before
+    public void setUp() throws Exception {
+        Factory.initialize();
+    }
+
     @Test
     public void test() {
-        Factory.initialize();
         CmdListTestSuites cmd = new CmdListTestSuites();
 
         try {
@@ -43,7 +48,7 @@ public class TestCmdListTestsuites {
         tc = cmd.getTestCaseDescrforIr("IR-SOM-0014");
         assertTrue("TestCase not found", tc != null);
 
-        String[] ir_list = cmd.getIrForTc ("de.fraunhofer.iosb.tc_helloworld.TC0002");
+        String[] ir_list = cmd.getIrForTc("de.fraunhofer.iosb.tc_helloworld.TC0002");
         assertTrue("TC does not test IR", ir_list.length > 0);
 
         Set<String> ir_set = new HashSet<>();
