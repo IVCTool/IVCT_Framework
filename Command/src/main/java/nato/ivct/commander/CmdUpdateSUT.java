@@ -31,13 +31,16 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+
 public class CmdUpdateSUT {
 
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
     private SutDescription sutDescription = null;
 	private static Map<String, URL[]> badgeURLs = new HashMap<>();
     private static CmdListBadges badges;
-    private static CmdListTestSuites testsuite;
+    private static CmdListTestSuites cmdListTestSuites;
 
 	/**
 	 *
@@ -58,9 +61,9 @@ public class CmdUpdateSUT {
 		badges.execute();
 
 		// get testsuite descriptions
-		testsuite = new CmdListTestSuites();
+		cmdListTestSuites = new CmdListTestSuites();
 		try {
-            testsuite.execute();
+			cmdListTestSuites.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,18 +234,18 @@ public class CmdUpdateSUT {
 
 	/**
 	 *
-	 * @param badge the required badge
+	 * @param ts the required testsuite
 	 */
-	private static URL[] getBadgeUrls(final String badge) throws Exception {
-		logger.trace(badge);
-		URL[] myBadgeURLs = badgeURLs.get(badge);
+	private static URL[] getBadgeUrls(final String ts) throws Exception {
+		logger.trace(ts);
+		URL[] myBadgeURLs = badgeURLs.get(ts);
 		if (myBadgeURLs == null) {
-			BadgeDescription bd = badges.badgeMap.get(badge);
-			if (bd != null) {
+			TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(ts);
+			if (tsd != null) {
 				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
 				logger.trace(ts_path);
-				if (bd.tsLibTimeFolder != null) {
-					String lib_path = ts_path + "/" + bd.tsLibTimeFolder;
+				if (tsd.tsLibTimeFolder != null) {
+					String lib_path = ts_path + "/" + tsd.tsLibTimeFolder;
 					logger.trace(lib_path);
 					File dir = new File(lib_path);
 					File[] filesList = dir.listFiles();
@@ -257,11 +260,11 @@ public class CmdUpdateSUT {
 							e.printStackTrace();
 						}
 					}
-					badgeURLs.put(badge, urls);
+					badgeURLs.put(ts, urls);
 					return urls;
 				}
 			} else {
-				throw new Exception("getBadgeUrls unknown badge: " + badge);
+				throw new Exception("getBadgeUrls unknown badge: " + ts);
 			}
 		}
 		return myBadgeURLs;
@@ -271,13 +274,13 @@ public class CmdUpdateSUT {
 	 * This method will extract a resource from a known badge resource location to
 	 * a specified directory
 	 *
-	 * @param badge the name of the badge of the resource required
+	 * @param testsuite the name of the badge of the resource required
 	 * @param dirName the name of the directory where the resource should be copied to
 	 * @param resourceName the name of the resource
 	 * @return false means file already exists or was extracted - NO overwrite
 	 *         true means error
 	 */
-	private static boolean extractResource(String badge, String dirName, String resourceName) throws Exception {
+	private static boolean extractResource(String ts, String dirName, String resourceName) throws Exception {
 
 		// Check if dirName exists and is a directory
 		File d = new File(dirName);
@@ -295,9 +298,9 @@ public class CmdUpdateSUT {
 		}
 
 		// Work through the list of badge jar/text url sources
-		URL[] myBadgeURLs = getBadgeUrls(badge);
+		URL[] myBadgeURLs = getBadgeUrls(ts);
 		if (myBadgeURLs == null) {
-			throw new Exception("Unknown badge: " + badge);
+			throw new Exception("Unknown badge: " + ts);
 		}
 		for (int i = 0; i < myBadgeURLs.length; i++) {
 			try {
@@ -422,19 +425,38 @@ public class CmdUpdateSUT {
         Set<String> badges_list = new HashSet<>();
 		// Check if no badges
 		if (!this.sutDescription.badges.isEmpty()) {
+			
+			CmdListBadges lb = new CmdListBadges();
+	        Set<String> ir_set = new HashSet <String>();
+	        
+	        // Change format to array
+	        String[] cs = (String[]) this.sutDescription.badges.toArray();
+
+	        // Get IRs for badges
+			lb.collectIrForCs(ir_set, cs);
 
 			// For each badge, check if there is a testsuite with TcParams
-			for (String entry : this.sutDescription.badges) {
-				buildTestsuiteSet(badges_list, entry);
+	        Set<TestSuiteDescription> tss = new HashSet <TestSuiteDescription>();
+			for (String ir : ir_set) {
+				TestSuiteDescription ts;
+				ts = this.cmdListTestSuites.getTestSuiteforIr(ir);
+				if (ts != null) {
+					tss.add(ts);
+				}
 			}
 
 
-	        Set<String> testsuites = new HashSet<>();
-            testsuites =  testsuite.getTsForBadge (badges_list);
+	        Set<String> csTs = new HashSet<String>();
+	        for (TestSuiteDescription entry : tss) {
+	        	if (csTs.contains(entry)) {
+	        		continue;
+	        	}
+	        	csTs.add(entry.id);
+	        }
 
 
 			// For each test suite copy or modify the TcParam.json file
-			for (String testsuite : testsuites) {
+			for (String testsuite : csTs) {
 				// Add badge folder
 				String sutBadge = sutDir + "/" + testsuite;
 				f = new File(sutBadge);

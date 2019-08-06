@@ -21,8 +21,10 @@ package de.fraunhofer.iosb.ivct;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
+import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
@@ -46,6 +50,7 @@ public final class RuntimeParameters {
 	private boolean testSuiteNameNew = true;
 	private int countSemaphore = 0;
 	private CmdListBadges cmdListBadges = null;
+	private CmdListTestSuites cmdListTestSuites = null;
 	private CmdListSuT sutList = null;
 	private PrintStream printStream = new PrintStream(System.out);
 	private static Semaphore semaphore = new Semaphore(0);
@@ -98,19 +103,21 @@ public final class RuntimeParameters {
     }
 
 	protected String getFullTestcaseName(final String testsuite, final String testCase) {
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			if (testSuiteNameTmp.equals(testsuite)) {
-				for (int i = 0; i < s.getValue().requirements.length; i++) {
-					String tc = s.getValue().requirements[i].TC.substring(s.getValue().requirements[i].TC.lastIndexOf(".") + 1);
-					if(tc.equals(testCase)) {
-						return s.getValue().requirements[i].TC;
-					}
-				}
-			}
+		List<String> ls = new ArrayList<String>();
+		
+		TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(testsuite);
+		if (tsd == null) {
+			return null;
 		}
 		
+		int len = tsd.testcases.length;
+		for (int i = 0; i < len; i++) {
+			if (testCase.contentEquals(tsd.testcases[i].tc)) {
+				String s = tsd.testcases[i].tc;
+				return s;
+			}
+		}
+
 		return null;
 	}
 
@@ -129,19 +136,21 @@ public final class RuntimeParameters {
 	 * Check if the test case name occurs in the test schedule.
 	 */
 	protected boolean checkTestCaseNameKnown(final String testsuite, final String testCase) {
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			if (testSuiteNameTmp.equals(testsuite)) {
-				for (int i = 0; i < s.getValue().requirements.length; i++) {
-					if(s.getValue().requirements[i].TC.equals(testCase)) {
-						return false;
-					}
-				}
+		List<String> ls = new ArrayList<String>();
+		
+		TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(testsuite);
+		if (tsd == null) {
+			return false;
+		}
+		
+		int len = tsd.testcases.length;
+		for (int i = 0; i < len; i++) {
+			if (testCase.contentEquals(tsd.testcases[i].tc)) {
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 	
 	/*
@@ -179,26 +188,14 @@ public final class RuntimeParameters {
 		testSuiteNameNew = false;
 	}
 	
-	public List<String> getTestcases(final String testsuite) {
-		List<String> ls = new ArrayList<String>();
-
-		getTestSuiteNames();
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			if (testSuiteNameTmp.equals(testsuite)) {
-				for (int i = 0; i < s.getValue().requirements.length; i++) {
-					int ind = ls.indexOf(s.getValue().requirements[i].TC);
-					if (ind < 0) {
-						ls.add(s.getValue().requirements[i].TC);
-					}
-				}
-			}
-		}
-
-		return ls;
-	}
-
 	public List<String> getTestSuiteNames() {
+		cmdListTestSuites = Factory.createCmdListTestSuites();
+		try {
+			cmdListTestSuites.execute();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		cmdListBadges = Factory.createCmdListBadges();
 		cmdListBadges.execute();

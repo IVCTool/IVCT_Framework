@@ -138,11 +138,10 @@ public class Factory {
             versionProperties.load(Command.class.getResourceAsStream("/dev.properties"));
             setVersion(versionProperties.getProperty("version"));
             setBuild(versionProperties.getProperty("build"));
-        } catch (IOException e) {
+            } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
 	}
 
 	/*
@@ -363,6 +362,11 @@ public class Factory {
 	public static CmdListBadges createCmdListBadges() {
 		initialize();
 		return new CmdListBadges();
+	}
+
+	public static CmdListTestSuites createCmdListTestSuites() {
+		initialize();
+		return new CmdListTestSuites();
 	}
 
 	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName) {

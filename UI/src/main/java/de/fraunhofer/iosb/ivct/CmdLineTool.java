@@ -21,12 +21,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
+import java.util.spi.LocaleNameProvider;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
+import nato.ivct.commander.BadgeDescription;
+import nato.ivct.commander.CmdListBadges;
+import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
@@ -34,6 +39,7 @@ import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
+import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 
 class NamePosition {
 	String string;
@@ -50,6 +56,7 @@ public class CmdLineTool {
 	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
+    private static CmdListTestSuites cmdListTestSuites;
 
     // Create the client by creating a writer thread
     // and starting them.
@@ -287,6 +294,42 @@ class Writer extends Thread {
     	namePosition.position = posEnd;
     	return namePosition;
     }
+
+	public List<String> getTestcases(final String badge, final SutDescription sutDescription) {
+		List<String> ls = new ArrayList<String>();
+		
+		CmdListBadges lb = new CmdListBadges();
+		BadgeDescription badgeDescription = lb.badgeMap.get(badge);
+        Set<String> ir_set = new HashSet <String>();
+        
+        // Change format to array
+        String[] cs = (String[]) sutDescription.badges.toArray();
+
+        // Get IRs for badges
+		lb.collectIrForCs(ir_set, cs);
+
+		// For each badge, check if there is a testsuite with TcParams
+        Set<TestSuiteDescription> tss = new HashSet <TestSuiteDescription>();
+		for (String ir : ir_set) {
+			TestSuiteDescription ts;
+			ts = cmdListTestSuites.getTestSuiteforIr(ir);
+			if (ts != null) {
+				tss.add(ts);
+			}
+		}
+
+		for (TestSuiteDescription entry : tss) {
+			int len = entry.testcases.length;
+			for (int i = 0; i < len; i++)
+			TODO
+			if (ls.contains(entry.testcases[i].IR)) {
+				ls.add(tsd.testcases[i].tc);
+			}
+		}
+
+		return ls;
+	}
+
     /*
      * Read user input and execute valid commands.
      */
@@ -734,7 +777,7 @@ class Writer extends Thread {
                 		out.println("Unknown test schedule " + split[1]);
                 		break;
                 	}
-                	List<String> testcases0 = ivctCommander.rtp.getTestcases(split[1]);
+                	List<String> testcases0 = getTestcases(split[1], sutDescription);
             		
                 	// Create a command structure to share between threads
                 	// One thread works through the list
@@ -780,7 +823,7 @@ class Writer extends Thread {
                 	List<String> ls3 = ivctCommander.rtp.getSutBadges(sutID, true);
                 	for (String temp : ls3) {
                 		System.out.println(temp);
-                    	List<String> testcases1 = ivctCommander.rtp.getTestcases(temp);
+                    	List<String> testcases1 = getTestcases(temp, sutDescription);
                     	for (String testcase : testcases1) {
                     			System.out.println('\t' + testcase.substring(testcase.lastIndexOf(".") + 1));
                     	}			
