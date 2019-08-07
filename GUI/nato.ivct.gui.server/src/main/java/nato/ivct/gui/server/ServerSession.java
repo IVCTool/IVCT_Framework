@@ -389,8 +389,6 @@ public class ServerSession extends AbstractServerSession {
 		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute();
 		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
 		new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
-//		heartBeatListener.addMonitor("Use_CmdHeartbeatSend");
-//		heartBeatListener.execute();
 	}
 
 	public IFuture<CmdListSuT> getLoadSuTJob() {
