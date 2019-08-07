@@ -1,8 +1,4 @@
 {
-  "federationName"  : "FEDERATION_TEST",
-  "sutName"         : "TestFederate",
-  "rtiAddress"      : "10.1.4.29",
-  "rtiPort"         : "8989",
   "testDuration"    : "60",
   "resultDirectory" : "$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Verification-2017",
   "fomFiles"        : [

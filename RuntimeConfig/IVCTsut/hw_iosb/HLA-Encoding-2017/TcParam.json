@@ -15,9 +15,5 @@
       "fileName":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Encoding-2017/BasicSimpleTypes.xml"
     }
   ],
-  "rtiHostName":"localhost",
-  "federationName":"HelloWorld",
-  "sleepTestTimeWaitSeconds":"60",
-  "rtiPort":"8989",
-  "sutFederateName":"A"
+  "sleepTestTimeWaitSeconds":"60"
 }

@@ -343,6 +343,7 @@ class Writer extends Thread {
                 	sutDescription.version = sutDescriptionVendorAdd.version;
                 	sutDescription.settingsDesignator = sutDescriptionVendorAdd.settingsDesignator;
                 	sutDescription.federation = sutDescriptionVendorAdd.federation;
+                	sutDescription.badges.clear();
                 	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();

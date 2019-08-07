@@ -196,7 +196,7 @@ public class Factory {
 				} else {
 					// if not, just try to read the properties file with the default name
 					props.load(new FileInputStream(home + "/IVCT.properties"));
-					LOGGER.debug("Properties file loaded");
+					LOGGER.debug("Properties {} file loaded", home + "/IVCT.properties");
 				}
 			} catch (final Exception e) {
 				LOGGER.error("Unable to read IVCT_CONF = {}  creating default values", IVCT_CONF_DEFLT);

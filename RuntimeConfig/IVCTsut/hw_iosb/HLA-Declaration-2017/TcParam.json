@@ -9,10 +9,6 @@
       "fileName":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Declaration-2017/HelloWorld.xml"
     }
   ],
-  "sutName":"A",
   "resultDirectory":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Declaration-2017",
-  "federationName":"HelloWorld",
-  "rtiPort":"8989",
-  "testDuration":"60",
-  "rtiAddress":"localhost"
+  "testDuration":"60"
 }
