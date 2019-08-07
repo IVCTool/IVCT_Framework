@@ -16,11 +16,11 @@ If no RTI_RID_FILE is specified in the settings designator then the default RID 
 
 To set an alternate MaK RID file (which must be volume mounted into the container) and to set the MaK RTI Exec address to host `rtiexec` and port `4000`, use the following string value:
 
-    RTI_RID_FILE /path/to/myRIDfile.mtl # (setqb RTI_tcpPort 4000) (setqb RTI_tcpForwarderAddr \"rtiexec\")
+    RTI_RID_FILE /path/to/myRIDfile.mtl # (setqb RTI_tcpPort 4000) (setqb RTI_tcpForwarderAddr "rtiexec")
 
 To just set the MaK RTI Exec address to `rtiexec` and port `4000`, use the following value:
 
-    (setqb RTI_tcpPort 4000) (setqb RTI_tcpForwarderAddr \"rtiexec\")
+    (setqb RTI_tcpPort 4000) (setqb RTI_tcpForwarderAddr "rtiexec")
 
 Note that if no MaK RTI Exec address is provided in the settings designator, the default address is used. The default address can be set via the MAK LRC environment variables.
 
