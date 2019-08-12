@@ -7,13 +7,11 @@ import org.eclipse.scout.rt.shared.TunnelToServer;
 import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable;
 
 @TunnelToServer
-public interface ICbService extends IService {
+public interface ITsService extends IService {
 
-	CbFormData load(CbFormData formData);
+//	TsFormData load(TsFormData formData);
 
-	CbRequirementsTable loadRequirements(Set<String> badges);
+//	CbRequirementsTable loadRequirements(Set<String> badges);
 
-	Set<String> loadBadges();
-
-	byte[] loadBadgeIcon(String cbId);
+	Set<String> loadTestSuites();
 }

@@ -66,10 +66,10 @@ public class SuTTcService implements ISuTTcService {
 					.filter(requirement -> formData.getRequirementId().equals(requirement.ID)).findFirst();
 			first.ifPresent(requirement -> {
 				formData.getReqDescr().setValue(requirement.description);
-				formData.getTestCaseName().setValue(requirement.TC);
+//				formData.getTestCaseName().setValue(requirement.TC);
 				
 				// get log files for this test case
-				loadLogFiles(formData, bd.ID, requirement.TC);
+//				loadLogFiles(formData, bd.ID, requirement.TC);
 			});
 		}
 
@@ -156,7 +156,7 @@ public class SuTTcService implements ISuTTcService {
 					.filter(requirement -> formData.getRequirementId().equals(requirement.ID)).findFirst();
 			first.ifPresent(requirement -> {
 				formData.getReqDescr().setValue(requirement.description);
-				formData.getTestCaseName().setValue(requirement.TC);
+//				formData.getTestCaseName().setValue(requirement.TC);
 			});
 		}
 

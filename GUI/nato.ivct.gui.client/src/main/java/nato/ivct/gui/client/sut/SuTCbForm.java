@@ -185,7 +185,7 @@ public class SuTCbForm extends AbstractForm {
 			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("GeneralCapabilityInformation");
+					return TEXTS.get("GeneralInformation");
 				}
 				
 				// set all fields of this box to read-only

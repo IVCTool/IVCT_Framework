@@ -64,8 +64,8 @@ public class SuTCbService implements ISuTCbService {
 			SuTCbTableRowData row = pageData.addRow();
 			row.setRequirementId(badge.requirements[j].ID);
 			row.setRequirementDesc(badge.requirements[j].description);
-			row.setAbstractTC(badge.requirements[j].TC);
-			row.setTCstatus("no result");
+//			row.setAbstractTC(badge.requirements[j].TC);
+//			row.setTCstatus("no result");
 		}
 		
 		cap_hm.put(badge.ID, pageData);
@@ -236,7 +236,7 @@ public class SuTCbService implements ISuTCbService {
 			CbRequirementsTableRowData row = fd.getCbRequirementsTable().addRow();
 			row.setRequirementId(requirement.ID);
 			row.setRequirementDesc(requirement.description);
-			row.setAbstractTC(requirement.TC);
+//			row.setAbstractTC(requirement.TC);
 		}
 		
 		return fd;
