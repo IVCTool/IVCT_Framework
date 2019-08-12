@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.spi.LocaleNameProvider;
@@ -31,6 +32,7 @@ import java.util.spi.LocaleNameProvider;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
+import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
@@ -39,6 +41,7 @@ import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
+import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 
 class NamePosition {
@@ -56,7 +59,9 @@ public class CmdLineTool {
 	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
-    private static CmdListTestSuites cmdListTestSuites;
+    private static CmdListTestSuites cmdListTestSuites = new CmdListTestSuites();
+	private CmdListBadges cmdListBadges;
+	private CmdListSuT sutList = null;
 
     // Create the client by creating a writer thread
     // and starting them.
@@ -295,42 +300,99 @@ class Writer extends Thread {
     	return namePosition;
     }
 
-	public List<String> getTestcases(final String badge, final SutDescription sutDescription) {
+	public List<String> getTestcasesForBadge(final String badge) {
 		List<String> ls = new ArrayList<String>();
-		
-		CmdListBadges lb = new CmdListBadges();
-		BadgeDescription badgeDescription = lb.badgeMap.get(badge);
+
+        // Change badge to array of one
+        Set <String> oneBadge = new HashSet<String>();
+        oneBadge.add(badge);
+
+        // Get IRs for badge
         Set<String> ir_set = new HashSet <String>();
-        
-        // Change format to array
-        String[] cs = (String[]) sutDescription.badges.toArray();
+        cmdListBadges.collectIrForCs(ir_set, oneBadge);
 
-        // Get IRs for badges
-		lb.collectIrForCs(ir_set, cs);
-
-		// For each badge, check if there is a testsuite with TcParams
-        Set<TestSuiteDescription> tss = new HashSet <TestSuiteDescription>();
+		// For each IR, get TestCaseDesc
 		for (String ir : ir_set) {
-			TestSuiteDescription ts;
-			ts = cmdListTestSuites.getTestSuiteforIr(ir);
-			if (ts != null) {
-				tss.add(ts);
-			}
-		}
-
-		for (TestSuiteDescription entry : tss) {
-			int len = entry.testcases.length;
-			for (int i = 0; i < len; i++)
-			TODO
-			if (ls.contains(entry.testcases[i].IR)) {
-				ls.add(tsd.testcases[i].tc);
+			TestCaseDesc testCaseDesc;
+			testCaseDesc = cmdListTestSuites.getTestCaseDescrforIr(ir);
+			if (testCaseDesc != null) {
+				if (ls.contains(testCaseDesc.tc) == false)
+				ls.add(testCaseDesc.tc);
 			}
 		}
 
 		return ls;
 	}
 
-    /*
+	public List<String> getTestSuiteNames() {
+		cmdListTestSuites = Factory.createCmdListTestSuites();
+		try {
+			cmdListTestSuites.execute();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		List<String> ls = new ArrayList<String>();
+
+		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
+			String testSuiteNameTmp = s.getKey();
+			ls.add(testSuiteNameTmp);
+		}
+
+		return ls;
+	}
+    
+	private boolean getRecursiveBadges(List<String> badges, final String currentBadge) {
+		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
+			BadgeDescription bd = s.getValue();
+			if (bd.ID.equals(currentBadge)) {
+				for (String entry : s.getValue().dependency) {
+					int indd = badges.indexOf(entry);
+					if (indd < 0) {
+						badges.add(entry);
+						getRecursiveBadges(badges, entry);
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	protected SutDescription getSutDescription(final String sutName) {
+		listSUTs();
+		return sutList.sutMap.get(sutName);
+	}
+
+	private void listSUTs() {
+		sutList = Factory.createCmdListSut();
+		sutList.execute();
+	}
+
+	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
+		List<String> badges = new ArrayList<String>();
+		listSUTs();
+		for (String it: sutList.sutMap.keySet()) {
+			if (it.equals(theSutName)) {
+				getTestSuiteNames();
+				for (String entry : sutList.sutMap.get(it).badges) {
+					int ind = badges.indexOf(entry);
+					if (ind < 0) {
+						badges.add(entry);
+					}
+					if (recursive) {
+						if (getRecursiveBadges(badges, entry)) {
+							return badges;
+						}
+					}
+				}
+				return badges;
+			}
+		}
+		return badges;
+	}
+	
+   /*
      * Read user input and execute valid commands.
      */
     public void run() {
@@ -341,6 +403,15 @@ class Writer extends Thread {
     	String sutNotSelected = new String("SUT not selected yet: use setSUT command first");
     	String sutID = null;
     	SutDescription sutDescription = new SutDescription();
+    	try {
+			cmdListTestSuites.execute();
+		} catch (Exception e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+		cmdListBadges = Factory.createCmdListBadges();
+		cmdListBadges.execute();
+		listSUTs();
 
     	try {
             String line;
@@ -512,12 +583,20 @@ class Writer extends Thread {
                 		out.println(sutNotSelected);
                 		break;
             	    }
-                	// Need an input parameter
+                   	// Check any critical tasks are running
+                    if (ivctCommander.rtp.checkCtTcTsRunning("setSettingsDesignator")) {
+                		break;
+                	}
+                 	// Need an input parameter
                 	if (split.length < 2) {
-                        out.println("modifySUTname: need SUT name");
+                        out.println("modifySUTsettingsDesignator: need SettingsDesignator");
                         break;
                 	}
-                	NamePosition settingsDesignatorStr = getQuotedString(out, line, 0, "SUT settings designator");
+                	// Warn about extra parameter
+                	if (split.length > 2) {
+                        out.println("modifySUTsettingsDesignator: Warning extra parameter: " + split[3]);
+                	}
+                	NamePosition settingsDesignatorStr = getQuotedString(out, line, 0, "modifySUTsettingsDesignator");
                 	if (settingsDesignatorStr == null) {
                 		break;
                 	}
@@ -565,7 +644,7 @@ class Writer extends Thread {
                         out.println("listBadges: Warning extra parameter: " + split[1]);
                 	}
             		List<String> badges = null;
-            		badges = ivctCommander.rtp.getTestSuiteNames();
+            		badges = getTestSuiteNames();
             		for (String entry  : badges) {
                         out.println(entry);
             		}
@@ -581,8 +660,8 @@ class Writer extends Thread {
                         out.println("addBadge: need badge name");
                         break;
                 	}
-                	List<String> allBadges = ivctCommander.rtp.getTestSuiteNames();
-                	List<String> sutBadges = ivctCommander.rtp.getSutBadges(sutID, false);
+                	List<String> allBadges = getTestSuiteNames();
+                	List<String> sutBadges = getSutBadges(sutID, false);
                 	boolean errorOccurred = false;
                 	String newBadge = null;
                 	for (int i = 0; i < split.length - 1; i++) {
@@ -608,7 +687,7 @@ class Writer extends Thread {
                 	if (errorOccurred) {
                 		break;
                 	}
-                	sutDescription = ivctCommander.rtp.getSutDescription(sutID);
+                	sutDescription = getSutDescription(sutID);
                 	for (String entry : badgesAbg) {
 						sutDescription.badges.add(entry);
 					}
@@ -631,7 +710,7 @@ class Writer extends Thread {
                 		out.println("deleteBadge: need badge name(s)");
                 		break;
                 	}
-                	List<String> sutBadgesDbg = ivctCommander.rtp.getSutBadges(sutID, false);
+                	List<String> sutBadgesDbg = getSutBadges(sutID, false);
                 	String newBadgeDbg = null;
                 	for (int i = 0; i < split.length - 1; i++) {
                 		newBadgeDbg = split[i + 1];
@@ -645,35 +724,8 @@ class Writer extends Thread {
                 	for (String Entry : sutBadgesDbg) {
                         badgesDbg.add(new String (Entry));
                 	}
-                	sutDescription = ivctCommander.rtp.getSutDescription(sutID);
+                	sutDescription = getSutDescription(sutID);
                 	sutDescription.badges = badgesDbg;
-					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
-                	try {
-                		cmdUpdateSUT.execute();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-                	command = null;
-                	break;
-                case "ssd":
-                case "setSettingsDesignator":
-            	    if (sutID == null) {
-                		out.println(sutNotSelected);
-                		break;
-            	    }
-                	// Check any critical tasks are running
-                    if (ivctCommander.rtp.checkCtTcTsRunning("setSettingsDesignator")) {
-                		break;
-                	}
-                	// Warn about missing parameter
-                	if (split.length < 2) {
-                        out.println("setSettingsDesignator: Warning missing SettingsDesignator");
-                	}
-                	// Warn about extra parameter
-                	if (split.length > 2) {
-                        out.println("setSettingsDesignator: Warning extra parameter: " + split[3]);
-                	}
-                	sutDescription.settingsDesignator = split[1];
 					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
@@ -730,7 +782,7 @@ class Writer extends Thread {
                 	}
                     sutID = split[1];
                 	ivctCommander.rtp.resetSut();
-                	sutDescription = ivctCommander.rtp.getSutDescription(sutID);
+                	sutDescription = getSutDescription(sutID);
                     ivctCommander.resetSUT();
                 	break;
                 case "listTestSchedules":
@@ -743,7 +795,7 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls2 = ivctCommander.rtp.getSutBadges(sutID, true);
+                	List<String> ls2 = getSutBadges(sutID, true);
                 	for (String temp : ls2) {
                 		System.out.println(temp);
                 	}
@@ -763,7 +815,7 @@ class Writer extends Thread {
                         out.println("startTestSchedule: Warning missing test schedule name");
                         break;
                 	}
-                	List<String> ls1 = ivctCommander.rtp.getSutBadges(sutID, true);
+                	List<String> ls1 = getSutBadges(sutID, true);
                 	boolean gotTestSchedule = false;
         			for (String entry : ls1) {
                 		if (split[1].equals(entry)) {
@@ -777,7 +829,7 @@ class Writer extends Thread {
                 		out.println("Unknown test schedule " + split[1]);
                 		break;
                 	}
-                	List<String> testcases0 = getTestcases(split[1], sutDescription);
+                	List<String> testcases0 = getTestcasesForBadge(split[1]);
             		
                 	// Create a command structure to share between threads
                 	// One thread works through the list
@@ -820,10 +872,10 @@ class Writer extends Thread {
                 	if (split.length > 1) {
                 		out.println("listTestCases: Warning extra parameter: " + split[1]);
                 	}
-                	List<String> ls3 = ivctCommander.rtp.getSutBadges(sutID, true);
+                	List<String> ls3 = getSutBadges(sutID, true);
                 	for (String temp : ls3) {
                 		System.out.println(temp);
-                    	List<String> testcases1 = getTestcases(temp, sutDescription);
+                    	List<String> testcases1 = getTestcasesForBadge(temp);
                     	for (String testcase : testcases1) {
                     			System.out.println('\t' + testcase.substring(testcase.lastIndexOf(".") + 1));
                     	}			
@@ -909,7 +961,7 @@ class Writer extends Thread {
                 	if (sutID == null) {
                 		out.println("SUT:");
                 	} else {
-                		sutDescription = ivctCommander.rtp.getSutDescription(sutID);
+                		sutDescription = getSutDescription(sutID);
                 		out.println("SUT ID: " + sutDescription.ID);
                 		out.println("SUT name: " + sutDescription.name);
                 		out.println("SUT version: " + sutDescription.version);
@@ -964,7 +1016,6 @@ class Writer extends Thread {
                     out.println("lbg (listBadges) - list all available badges");
                     out.println("abg (addBadge) badge ... badge - add one or more badges to SUT");
                     out.println("dbg (deleteBadge) badge ... badge - delete one or more badges from SUT");
-                    out.println("ssd (setSettingsDesignator) settingsDesignator - set settings designator");
                     out.println("lsut (listSUT) - list SUT folders");
                     out.println("ssut (setSUT) sut - set active SUT");
                     out.println("lts (listTestSchedules) - list the available test schedules for the test suite");

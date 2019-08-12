@@ -57,7 +57,7 @@ public class CmdUpdateSUT {
 		this.sutDescription.badges = sutDescription.badges == null || sutDescription.badges.isEmpty() ? new HashSet<>() : sutDescription.badges;
 
 		// get the badge descriptions
-		badges = new CmdListBadges();
+		badges = Factory.createCmdListBadges();
 		badges.execute();
 
 		// get testsuite descriptions
@@ -425,12 +425,11 @@ public class CmdUpdateSUT {
         Set<String> badges_list = new HashSet<>();
 		// Check if no badges
 		if (!this.sutDescription.badges.isEmpty()) {
-			
-			CmdListBadges lb = new CmdListBadges();
+
 	        Set<String> ir_set = new HashSet <String>();
 
 	        // Get IRs for badges
-			lb.collectIrForCs(ir_set, this.sutDescription.badges);
+	        badges.collectIrForCs(ir_set, this.sutDescription.badges);
 
 			// For each badge, check if there is a testsuite with TcParams
 	        Set<TestSuiteDescription> tss = new HashSet <TestSuiteDescription>();
