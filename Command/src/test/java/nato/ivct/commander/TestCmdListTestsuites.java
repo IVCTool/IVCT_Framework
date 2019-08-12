@@ -48,8 +48,8 @@ public class TestCmdListTestsuites {
         tc = cmd.getTestCaseDescrforIr("IR-SOM-0014");
         assertTrue("TestCase not found", tc != null);
 
-        String[] ir_list = cmd.getIrForTc("de.fraunhofer.iosb.tc_helloworld.TC0002");
-        assertTrue("TC does not test IR", ir_list.length > 0);
+        Set<String> ir_list = cmd.getIrForTc("de.fraunhofer.iosb.tc_helloworld.TC0002");
+        assertFalse("TC does not test IR", ir_list.isEmpty());
 
         Set<String> ir_set = new HashSet<>();
         ir_set.add("IR-SOM-0017");

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ import org.json.simple.parser.ParseException;
  */
 public class CmdListBadges implements Command {
 
-    public HashMap<String, BadgeDescription> badgeMap = new HashMap<>();
+    public Map<String, BadgeDescription> badgeMap = new HashMap<>();
 
     @Override
     public void execute() {
@@ -89,9 +90,9 @@ public class CmdListBadges implements Command {
                         }
                         JSONArray depend = (JSONArray) jsonObj.get("dependency");
                         if (depend != null) {
-                            badge.dependency = new String[depend.size()];
+                            badge.dependency = new HashSet<String>();
                             for (int i = 0; i < depend.size(); i++) {
-                                badge.dependency[i] = depend.get(i).toString();
+                                badge.dependency.add(depend.get(i).toString());
                             }
                         } else {
                             badge.dependency = null;
@@ -125,7 +126,7 @@ public class CmdListBadges implements Command {
         }
     }
 
-    public void collectIrForCs(Set<String> ir_set, String[] cs) {
+    public void collectIrForCs(Set<String> ir_set, Set<String> cs) {
         if (this.badgeMap == null) {
             return;
         }

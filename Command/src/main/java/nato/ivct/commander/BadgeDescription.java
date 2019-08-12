@@ -14,6 +14,8 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.util.Set;
+
 public class BadgeDescription {
 
 	public class InteroperabilityRequirement {
@@ -26,6 +28,6 @@ public class BadgeDescription {
 	public String name;
 	public String description;
 	public String cbVisual;
-	public String[] dependency;
+	public Set <String> dependency;
 	public InteroperabilityRequirement[] requirements;
 }
