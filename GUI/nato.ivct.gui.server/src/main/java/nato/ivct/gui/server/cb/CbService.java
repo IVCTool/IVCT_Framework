@@ -3,7 +3,7 @@ package nato.ivct.gui.server.cb;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,7 +28,7 @@ public class CbService implements ICbService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 
-	HashMap<String, BadgeDescription> cb_hm = null;
+	Map<String, BadgeDescription> cb_hm = null;
 
 	@Override
 	public Set<String> loadBadges() {

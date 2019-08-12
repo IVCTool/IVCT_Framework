@@ -93,7 +93,7 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(CbImageField.class);
 	}
 
-	public CbDependenciesTreeBox getCbDependenciesTreeField() {
+	public CbDependenciesTreeBox getCbDependenciesTreeBox() {
 		return getFieldByClass(CbDependenciesTreeBox.class);
 	}
 
@@ -370,7 +370,7 @@ public class CbForm extends AbstractForm {
 						@Override
 						protected void execChangedMasterValue(Object newMasterValue) {
 							// get dependencies badges from the dependencies badge tree
-							Set<String> badges = getCbDependenciesTreeField().getCheckedKeys();
+							Set<String> badges = getCbDependenciesTreeBox().getCheckedKeys();
 							// add the selected badge
 							badges.add(getCbId());
 							

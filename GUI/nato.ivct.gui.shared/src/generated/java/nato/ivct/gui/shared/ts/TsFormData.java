@@ -24,10 +24,6 @@ public class TsFormData extends AbstractFormData {
 		return getFieldByClass(CbDescription.class);
 	}
 
-	public CbRequirementsTable getCbRequirementsTable() {
-		return getFieldByClass(CbRequirementsTable.class);
-	}
-
 	public TcListBox getTcListBox() {
 		return getFieldByClass(TcListBox.class);
 	}
@@ -54,6 +50,10 @@ public class TsFormData extends AbstractFormData {
 		return getFieldByClass(TsName.class);
 	}
 
+	public TsRequirementsTable getTsRequirementsTable() {
+		return getFieldByClass(TsRequirementsTable.class);
+	}
+
 	public TsVersion getTsVersion() {
 		return getFieldByClass(TsVersion.class);
 	}
@@ -61,50 +61,6 @@ public class TsFormData extends AbstractFormData {
 	public static class CbDescription extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
-	}
-
-	public static class CbRequirementsTable extends AbstractTableFieldBeanData {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public CbRequirementsTableRowData addRow() {
-			return (CbRequirementsTableRowData) super.addRow();
-		}
-
-		@Override
-		public CbRequirementsTableRowData addRow(int rowState) {
-			return (CbRequirementsTableRowData) super.addRow(rowState);
-		}
-
-		@Override
-		public CbRequirementsTableRowData createRow() {
-			return new CbRequirementsTableRowData();
-		}
-
-		@Override
-		public Class<? extends AbstractTableRowData> getRowType() {
-			return CbRequirementsTableRowData.class;
-		}
-
-		@Override
-		public CbRequirementsTableRowData[] getRows() {
-			return (CbRequirementsTableRowData[]) super.getRows();
-		}
-
-		@Override
-		public CbRequirementsTableRowData rowAt(int index) {
-			return (CbRequirementsTableRowData) super.rowAt(index);
-		}
-
-		public void setRows(CbRequirementsTableRowData[] rows) {
-			super.setRows(rows);
-		}
-
-		public static class CbRequirementsTableRowData extends AbstractTableRowData {
-
-			private static final long serialVersionUID = 1L;
-		}
 	}
 
 	public static class TcListBox extends AbstractValueFieldData<Set<String>> {
@@ -120,6 +76,70 @@ public class TsFormData extends AbstractFormData {
 	public static class TsName extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
+	}
+
+	public static class TsRequirementsTable extends AbstractTableFieldBeanData {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public TsRequirementsTableRowData addRow() {
+			return (TsRequirementsTableRowData) super.addRow();
+		}
+
+		@Override
+		public TsRequirementsTableRowData addRow(int rowState) {
+			return (TsRequirementsTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public TsRequirementsTableRowData createRow() {
+			return new TsRequirementsTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return TsRequirementsTableRowData.class;
+		}
+
+		@Override
+		public TsRequirementsTableRowData[] getRows() {
+			return (TsRequirementsTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public TsRequirementsTableRowData rowAt(int index) {
+			return (TsRequirementsTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(TsRequirementsTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class TsRequirementsTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String requirementId = "requirementId";
+			public static final String requirementDesc = "requirementDesc";
+			private String m_requirementId;
+			private String m_requirementDesc;
+
+			public String getRequirementId() {
+				return m_requirementId;
+			}
+
+			public void setRequirementId(String newRequirementId) {
+				m_requirementId = newRequirementId;
+			}
+
+			public String getRequirementDesc() {
+				return m_requirementDesc;
+			}
+
+			public void setRequirementDesc(String newRequirementDesc) {
+				m_requirementDesc = newRequirementDesc;
+			}
+		}
 	}
 
 	public static class TsVersion extends AbstractValueFieldData<String> {

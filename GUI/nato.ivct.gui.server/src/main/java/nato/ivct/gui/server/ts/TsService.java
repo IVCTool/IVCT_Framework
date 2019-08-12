@@ -8,10 +8,14 @@ import org.eclipse.scout.rt.platform.job.IFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.cb.ITsService;
+import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable;
+import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable.CbRequirementsTableRowData;
 
 public class TsService implements ITsService {
 
@@ -55,20 +59,22 @@ public class TsService implements ITsService {
 //		// dependencies tree is built in CbDependenciesLookupService class
 //		return formData;
 //	}
-//	
-//
-//	@Override
-//	public CbRequirementsTable loadRequirements(final Set<String> badges) {
-//		CbRequirementsTable requirementTableRows = new CbRequirementsTable();
-//		for (String badge:badges) {
-//			BadgeDescription bd = getBadgeDescription(badge);
-//			for (InteroperabilityRequirement requirement:bd.requirements) {
-//				CbRequirementsTableRowData row = requirementTableRows.addRow();
-//				row.setRequirementId(requirement.ID);
-//				row.setRequirementDesc(requirement.description);
-//			}
-//		}
-//
-//		return requirementTableRows;
-//	}
+	
+
+
+	@Override
+	public CbRequirementsTable loadRequirementsForTc(final Set<String> testcases) {
+		CbRequirementsTable requirementTableRows = new CbRequirementsTable();
+		for (String tc:testcases) {
+			Set<String> irList = getIrForTc(tc);
+			for (String irId:irList) {
+				
+				CbRequirementsTableRowData row = requirementTableRows.addRow();
+				row.setRequirementId(requirement.ID);
+				row.setRequirementDesc(requirement.description);
+			}
+		}
+
+		return requirementTableRows;
+	}
 }

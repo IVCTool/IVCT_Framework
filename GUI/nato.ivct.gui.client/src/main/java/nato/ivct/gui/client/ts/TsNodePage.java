@@ -39,7 +39,7 @@ public class TsNodePage extends AbstractPageWithNodes {
 	protected void execPageActivated() throws ProcessingException {
 	  if (getDetailForm() == null) {
 	    TsForm form = new TsForm();
-//	    form.setTsId(getTsId());
+	    form.setTsId(getTsId());
 	    setDetailForm(form);
 	    form.startView();
 	  }

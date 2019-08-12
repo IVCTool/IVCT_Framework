@@ -2,6 +2,8 @@ package nato.ivct.gui.server.ts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -10,11 +12,9 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
 
-import nato.ivct.commander.BadgeDescription;
+import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
+
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
-import nato.ivct.gui.server.cb.CbService;
-import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
-import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.ts.ITsTestcaseLookupService;
 import nato.ivct.gui.shared.ts.TsTestcaseLookupCall;
@@ -65,31 +65,11 @@ public class TsTestcaseLookupService extends AbstractLookupService<String> imple
 		TsService tsService = (TsService) BEANS.get(ITsService.class);
 		TestSuiteDescription ts = tsService.getTsDescription(tsId);
 		
-		
-		
-		for (String tc:ts.testcases) {
-			LookupRow<String> lookupRow = new LookupRow<String>(dep, cbService.getBadgeDescription(dep).name);
-			if (parentBadgeId != null)
-				lookupRow = (LookupRow<String>) lookupRow.withParentKey(parentBadgeId);
-			treeList.add(lookupRow);
-			
-			addBadgeToTreeList (dep, treeList);
-		}
+		ts.testcases.forEach(tc ->{
+			LookupRow<String> lookupRow = new LookupRow<String>(tc.tc, Stream.of(tc.tc.split(Pattern.quote("."))).reduce((a,b) -> b).get()+": "+tc.description);
+			tcList.add(lookupRow);
+		});		
 		
 		return tcList;
-	}
-	
-	private void addBadgeToTreeList (final String parentBadgeId, final ArrayList<LookupRow<String>> treeList) {
-		CbService cbService = (CbService) BEANS.get(ICbService.class);
-		BadgeDescription bd = cbService.getBadgeDescription(parentBadgeId);
-		
-		for (String dep:bd.dependency) {
-			LookupRow<String> lookupRow = new LookupRow<String>(dep, cbService.getBadgeDescription(dep).name);
-			if (parentBadgeId != null)
-				lookupRow = (LookupRow<String>) lookupRow.withParentKey(parentBadgeId);
-			treeList.add(lookupRow);
-			
-			addBadgeToTreeList (dep, treeList);
-		}
 	}
 }

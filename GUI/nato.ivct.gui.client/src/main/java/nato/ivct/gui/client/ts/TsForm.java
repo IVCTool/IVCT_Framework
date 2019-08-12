@@ -1,23 +1,40 @@
 package nato.ivct.gui.client.ts;
 
+import java.util.Set;
+
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
-import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
+import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
+import nato.ivct.gui.client.cb.CbForm;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbDependenciesTreeBox;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField.CbRequirementsTable;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField.CbRequirementsTable.RequirementDescColumn;
+import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField.CbRequirementsTable.RequirementIdColumn;
+import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TcListBox;
+import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TsRequirementsTableField;
+import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TsRequirementsTableField.TsRequirementsTable;
+import nato.ivct.gui.shared.cb.ICbService;
+import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.ts.TsFormData;
 import nato.ivct.gui.shared.ts.TsTestcaseLookupCall;
 
@@ -35,6 +52,18 @@ public class TsForm extends AbstractForm {
 	@FormData
 	public void setTsId(String TsId) {
 		this.TsId = TsId;
+	}
+
+	public TcListBox getTcListBox() {
+		return getFieldByClass(TcListBox.class);
+	}
+
+//	public TsRequirementsTableField getTsRequirementsTableField() {
+//		return getFieldByClass(TsRequirementsTableField.class);
+//	}
+//
+	public OkButton getOkButton() {
+		return getFieldByClass(OkButton.class);
 	}
 
 	@Override
@@ -207,7 +236,7 @@ public class TsForm extends AbstractForm {
 					}
 
 					@Order(2000)
-					public class CbRequirementsTableField extends AbstractTableField<CbRequirementsTableField.CbRequirementsTable> {
+					public class TsRequirementsTableField extends AbstractTableField<TsRequirementsTableField.TsRequirementsTable> {
 
                         @Override
                         protected String getConfiguredLabel() {
@@ -224,7 +253,87 @@ public class TsForm extends AbstractForm {
 							return 3;
 						}
 						
-						public class CbRequirementsTable extends AbstractTable {
+						public class TsRequirementsTable extends AbstractTable {
+
+							@Order(1000)
+							public class RequirementIdColumn extends AbstractStringColumn {
+
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("RequirementId");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 100;
+								}
+							}
+
+							@Order(2000)
+							public class RequirementDescColumn extends AbstractStringColumn {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("RequirementDescription");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 400;
+								}
+							}
+							
+							public RequirementIdColumn getRequirementIdColumn() {
+								return getColumnSet().getColumnByClass(RequirementIdColumn.class);
+							}
+
+							public RequirementDescColumn getRequirementDescColumn() {
+								return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+							}
+						}
+						
+						@Override
+						protected Class<? extends IValueField<Set<String>>> getConfiguredMasterField() {
+							return TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TcListBox.class;
+						}
+				
+						@Override
+						protected void execChangedMasterValue(Object newMasterValue) {
+							// get the selected testcases
+							Set<String> testcases = getTcListBox().getCheckedKeys();
+							
+							// get the requirements for the selected badges
+							ITsService TsService = BEANS.get(ITsService.class);
+							AbstractTableFieldBeanData requirementTableRows = TsService.loadRequirementsForTc(testcases);
+							
+							TsRequirementsTable requirementsTable = getTable();
+							
+							// cleanup table
+							requirementsTable.deleteAllRows();
+							
+							// add requirements to table
+							requirementsTable.importFromTableBeanData(requirementTableRows);
+							// sort the table
+							boolean tableSortEnable = requirementsTable.isSortEnabled();
+							requirementsTable.setSortEnabled(true);
+							requirementsTable.getColumnSet().addSortColumn(requirementsTable.getRequirementIdColumn(), true);
+							requirementsTable.sort();
+							requirementsTable.setSortEnabled(tableSortEnable);
+							
+							super.execChangedMasterValue(newMasterValue);
+						}
+						
+						@Override
+						protected void execInitField() {
+							Set<String> requirements = CollectionUtility.hashSet(getTsId());
+							
+							// get the requirements for the selected badges
+							ITsService TsService = BEANS.get(ITsService.class);
+							AbstractTableFieldBeanData requirementTableRows = TsService.loadRequirements(requirements);
+							
+							TsRequirementsTable requirementsTable = getTable();
+							
+							// add requirements to table
+							requirementsTable.importFromTableBeanData(requirementTableRows);
 						}
 					}
 				}
