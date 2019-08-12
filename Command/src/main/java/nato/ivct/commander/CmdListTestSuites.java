@@ -52,7 +52,7 @@ public class CmdListTestSuites implements Command {
 
         public String tc; // fully qualified class name for test case
         public String description; // explanation about the test case
-        public String[] IR; // list of interoperability requirements tested
+        public Set<String> IR; // set of interoperability requirements tested
     };
 
     public class TestSuiteDescription {
@@ -63,7 +63,7 @@ public class CmdListTestSuites implements Command {
         public String description;
         public String tsRunTimeFolder;
         public String tsLibTimeFolder;
-        public TestCaseDesc[] testcases;
+        public Set<TestCaseDesc> testcases;
     };
 
     // public HashMap<String, TestCaseDesc> testcases = new HashMap<>();
@@ -100,18 +100,19 @@ public class CmdListTestSuites implements Command {
 
                         JSONArray testcases = (JSONArray) jsonObj.get("testcases");
                         if (testcases != null) {
-                            testSuite.testcases = new TestCaseDesc[testcases.size()];
+                            testSuite.testcases = new HashSet <TestCaseDesc>();
                             for (int i = 0; i < testcases.size(); i++) {
                                 JSONObject req = (JSONObject) testcases.get(i);
-                                testSuite.testcases[i] = new TestCaseDesc();
-                                testSuite.testcases[i].tc = (String) req.get("TC");
-                                testSuite.testcases[i].description = (String) req.get("description");
+                                TestCaseDesc testCaseDesc = new TestCaseDesc();
+                                testCaseDesc.tc = (String) req.get("TC");
+                                testCaseDesc.description = (String) req.get("description");
 
                                 JSONArray ir = (JSONArray) req.get("IR");
-                                testSuite.testcases[i].IR = new String[ir.size()];
+                                testCaseDesc.IR = new HashSet <String>();
                                 for (int j = 0; j < ir.size(); j++) {
-                                    testSuite.testcases[i].IR[j] = (String) ir.get(j);
+                                	testCaseDesc.IR.add((String) ir.get(j));
                                 }
+                                testSuite.testcases.add(testCaseDesc);
                             }
                         } else {
                             testSuite.testcases = null;
@@ -169,7 +170,7 @@ public class CmdListTestSuites implements Command {
         return null;
     }
 
-    public String[] getIrForTc(String tc_id) {
+    public Set<String>  getIrForTc(String tc_id) {
         for (TestSuiteDescription value : this.testsuites.values()) {
             for (TestCaseDesc tc : value.testcases) {
                 if (tc.tc.equalsIgnoreCase(tc_id)) {

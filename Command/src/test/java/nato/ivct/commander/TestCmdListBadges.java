@@ -28,8 +28,10 @@ public class TestCmdListBadges {
     @Test
     public void testCollectIrForCs() {
 
-        Set<String> ir_set = new HashSet <>();
-        String[] cs = {"HelloWorld-2017", "HLA-BASE-2017"};
+        Set<String> ir_set = new HashSet<String>();
+        Set<String> cs = new HashSet<String>();
+        cs.add("HelloWorld-2017");
+        cs.add("HLA-BASE-2017");
         this.lb.collectIrForCs(ir_set, cs);
         assertTrue("interoperability set should not be empty", ir_set.size() > 0);
     }

@@ -399,8 +399,8 @@ public class CmdUpdateSUT {
 	void buildTestsuiteSet(Set<String> testsuites, final String badge) {
 		BadgeDescription bd = badges.badgeMap.get(badge);
 		if (bd != null) {
-			for (int i = 0; i < bd.dependency.length; i++) {
-				buildTestsuiteSet(testsuites, bd.dependency[i]);
+			for (String entry : bd.dependency) {
+				buildTestsuiteSet(testsuites, entry);
 			}
 		}
 	}
@@ -428,12 +428,9 @@ public class CmdUpdateSUT {
 			
 			CmdListBadges lb = new CmdListBadges();
 	        Set<String> ir_set = new HashSet <String>();
-	        
-	        // Change format to array
-	        String[] cs = (String[]) this.sutDescription.badges.toArray();
 
 	        // Get IRs for badges
-			lb.collectIrForCs(ir_set, cs);
+			lb.collectIrForCs(ir_set, this.sutDescription.badges);
 
 			// For each badge, check if there is a testsuite with TcParams
 	        Set<TestSuiteDescription> tss = new HashSet <TestSuiteDescription>();
