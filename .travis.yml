@@ -8,8 +8,7 @@ branches:
   - development
 
 install:
-  - gradle install
-#  - gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install
+  - gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install
 
 script:
   - export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
