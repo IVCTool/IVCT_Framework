@@ -100,12 +100,12 @@ public class FactoryTest {
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
-		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-2017"));
+		assertTrue("Get Badge name", stc.getSuiteName().contentEquals("HelloWorld-2017"));
 		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut() != null);
-		assertTrue("Get Badge name", stc.getBadge() != null);
+		assertTrue("Get Badge name", stc.getSuiteName() != null);
 	}
 
 	@Test

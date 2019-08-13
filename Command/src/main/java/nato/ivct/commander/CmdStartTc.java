@@ -34,17 +34,17 @@ public class CmdStartTc implements Command {
             
 	// private MessageProducer producer;
 	private String sut;
-	private String badge;
+	private String testSuiteName;
     private String tc;
     private String settingsDesignator;
     private String federationName;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	public CmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName) {
+	public CmdStartTc(String _sut, String _testSuiteName, String _tc, String _settingsDesignator, String _federationName) {
 		sut = _sut;
 		tc = _tc;
-		badge = _badge;
+		testSuiteName = _testSuiteName;
 		settingsDesignator = _settingsDesignator;
 		federationName = _federationName;
 	}
@@ -79,12 +79,12 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			String paramFileName = sutHome + '/' + sut + '/' + badge + "/TcParam.json";
+			String paramFileName = sutHome + '/' + sut + '/' + testSuiteName + "/TcParam.json";
 			startCmd.put(COMMAND_ID, COMMAND);
 			startCmd.put(SEQ, Integer.toString(Factory.newCmdCount()));
 			startCmd.put(SUT_NAME, sut);
 			startCmd.put(SUT_DIR, sutHome + '/' + sut);
-			startCmd.put(BADGE, badge);
+			startCmd.put(BADGE, testSuiteName);
             startCmd.put(TC_ID, tc);
             startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
             startCmd.put(FEDERATION, federationName);
@@ -103,7 +103,7 @@ public class CmdStartTc implements Command {
 			Factory.sendToJms(startCmd.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error("error in starting test case <" + badge + '/' + tc + ">");
+			LOGGER.error("error in starting test case <" + testSuiteName + '/' + tc + ">");
 			e.printStackTrace();
 		}
 
@@ -125,12 +125,12 @@ public class CmdStartTc implements Command {
 		this.tc = tc;
 	}
 
-	public String getBadge() {
-		return badge;
+	public String getSuiteName() {
+		return testSuiteName;
 	}
 
-	public void setBadge(String _badge) {
-		this.badge = _badge;
+	public void setSuiteName(String _testSuiteName) {
+		this.testSuiteName = _testSuiteName;
 	}
 
     public String getSettingsDesignator() {
