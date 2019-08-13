@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
 
-import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
+import nato.ivct.commander.BadgeDescription;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -92,22 +92,23 @@ public class CmdListBadges implements Command {
                         if (depend != null) {
                             badge.dependency = new HashSet<String>();
                             for (int i = 0; i < depend.size(); i++) {
-                                badge.dependency.add(depend.get(i).toString());
+                            	if (badge.dependency.contains(depend.get(i).toString()) == false) {
+                            		badge.dependency.add(depend.get(i).toString());
+                            	}
                             }
                         } else {
                             badge.dependency = null;
                         }
                         JSONArray requirements = (JSONArray) jsonObj.get("requirements");
+                        badge.requirements = new HashMap <String, InteroperabilityRequirement>();
                         if (requirements != null) {
-                            badge.requirements = new InteroperabilityRequirement[requirements.size()];
                             for (int i = 0; i < requirements.size(); i++) {
                                 JSONObject req = (JSONObject) requirements.get(i);
-                                badge.requirements[i] = badge.new InteroperabilityRequirement();
-                                badge.requirements[i].ID = (String) req.get("id");
-                                badge.requirements[i].description = (String) req.get("description");
+                                InteroperabilityRequirement ir = new InteroperabilityRequirement();
+                                ir.ID = (String) req.get("id");
+                                ir.description = (String) req.get("description");
+                                badge.requirements.put(ir.ID, ir);
                             }
-                        } else {
-                            badge.requirements = null;
                         }
 
                         this.badgeMap.put(badge.ID, badge);
@@ -134,8 +135,8 @@ public class CmdListBadges implements Command {
         for (String badge_id : cs) {
             BadgeDescription b = this.badgeMap.get(badge_id);
             // collect badge requirements
-            for (InteroperabilityRequirement ir : b.requirements) {
-                ir_set.add(ir.ID);
+            for (Map.Entry<String, InteroperabilityRequirement> entry : b.requirements.entrySet()) {
+                ir_set.add(entry.getKey());
             }
             // collect recursively from dependend badges
             collectIrForCs(ir_set, b.dependency);

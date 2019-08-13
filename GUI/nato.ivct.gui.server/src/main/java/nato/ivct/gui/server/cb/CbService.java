@@ -88,11 +88,11 @@ public class CbService implements ICbService {
 		CbRequirementsTable requirementTableRows = new CbRequirementsTable();
 		for (String badge:badges) {
 			BadgeDescription bd = getBadgeDescription(badge);
-			for (InteroperabilityRequirement requirement:bd.requirements) {
+			bd.requirements.forEach(requirement-> {
 				CbRequirementsTableRowData row = requirementTableRows.addRow();
 				row.setRequirementId(requirement.ID);
 				row.setRequirementDesc(requirement.description);
-			}
+			});
 		}
 
 		return requirementTableRows;

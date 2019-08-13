@@ -14,14 +14,16 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import java.util.Map;
 import java.util.Set;
+
+class InteroperabilityRequirement {
+	public String ID;
+	public String description;
+}
 
 public class BadgeDescription {
 
-	public class InteroperabilityRequirement {
-		public String ID;
-		public String description;
-	}
 
 	public String ID;
 	public String version;
@@ -29,5 +31,5 @@ public class BadgeDescription {
 	public String description;
 	public String cbVisual;
 	public Set <String> dependency;
-	public InteroperabilityRequirement[] requirements;
+	public Map <String, InteroperabilityRequirement> requirements;
 }

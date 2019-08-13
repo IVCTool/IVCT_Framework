@@ -34,6 +34,7 @@ import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
@@ -49,9 +50,7 @@ public final class RuntimeParameters {
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
 	private int countSemaphore = 0;
-	private CmdListBadges cmdListBadges = null;
 	private CmdListTestSuites cmdListTestSuites = null;
-	private CmdListSuT sutList = null;
 	private PrintStream printStream = new PrintStream(System.out);
 	private static Semaphore semaphore = new Semaphore(0);
 	private static String testCaseName = null;
@@ -109,11 +108,10 @@ public final class RuntimeParameters {
 		if (tsd == null) {
 			return null;
 		}
-		
-		int len = tsd.testcases.length;
-		for (int i = 0; i < len; i++) {
-			if (testCase.contentEquals(tsd.testcases[i].tc)) {
-				String s = tsd.testcases[i].tc;
+
+		for (TestCaseDesc entry : tsd.testcases) {
+			if (testCase.contentEquals(entry.tc)) {
+				String s = entry.tc;
 				return s;
 			}
 		}
@@ -142,10 +140,9 @@ public final class RuntimeParameters {
 		if (tsd == null) {
 			return false;
 		}
-		
-		int len = tsd.testcases.length;
-		for (int i = 0; i < len; i++) {
-			if (testCase.contentEquals(tsd.testcases[i].tc)) {
+
+		for (TestCaseDesc entry : tsd.testcases) {
+			if (testCase.contentEquals(entry.tc)) {
 				return true;
 			}
 		}
@@ -188,81 +185,11 @@ public final class RuntimeParameters {
 		testSuiteNameNew = false;
 	}
 	
-	public List<String> getTestSuiteNames() {
-		cmdListTestSuites = Factory.createCmdListTestSuites();
-		try {
-			cmdListTestSuites.execute();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		cmdListBadges = Factory.createCmdListBadges();
-		cmdListBadges.execute();
-		List<String> ls = new ArrayList<String>();
-
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			String testSuiteNameTmp = s.getKey();
-			ls.add(testSuiteNameTmp);
-		}
-
-		return ls;
-	}
-    
-	protected List<String> getSutBadges(final String theSutName, final boolean recursive) {
-		List<String> badges = new ArrayList<String>();
-		listSUTs();
-		for (String it: sutList.sutMap.keySet()) {
-			if (it.equals(theSutName)) {
-				getTestSuiteNames();
-				for (String entry : sutList.sutMap.get(it).badges) {
-					int ind = badges.indexOf(entry);
-					if (ind < 0) {
-						badges.add(entry);
-					}
-					if (recursive) {
-						if (getRecursiveBadges(badges, entry)) {
-							return badges;
-						}
-					}
-				}
-				return badges;
-			}
-		}
-		return badges;
-	}
-	
-	private boolean getRecursiveBadges(List<String> badges, final String currentBadge) {
-		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
-			BadgeDescription bd = s.getValue();
-			if (bd.ID.equals(currentBadge)) {
-				for (int j = 0; j < s.getValue().dependency.length; j++) {
-					int indd = badges.indexOf(s.getValue().dependency[j]);
-					if (indd < 0) {
-						badges.add(s.getValue().dependency[j]);
-						getRecursiveBadges(badges, s.getValue().dependency[j]);
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
-	private void listSUTs() {
-		sutList = Factory.createCmdListSut();
-		sutList.execute();
-	}
-
 	protected void resetSut() {
 		// Reset values.
 		testCaseName = null;
 		testScheduleName = null;
 		testSuiteName = null;
-	}
-
-	protected SutDescription getSutDescription(final String sutName) {
-		listSUTs();
-		return sutList.sutMap.get(sutName);
 	}
 
 	protected static String getTestCaseName() {
