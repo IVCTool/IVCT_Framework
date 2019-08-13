@@ -27,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.spi.LocaleNameProvider;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
+import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
@@ -41,8 +42,6 @@ import nato.ivct.commander.CmdUpdateSUT;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
-import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
-import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 
 class NamePosition {
 	String string;
@@ -324,16 +323,16 @@ class Writer extends Thread {
 		return ls;
 	}
 
-	public List<String> getTestSuiteNames() {
+	private List<String> getTestSuiteNames() {
+		List<String> ls = new ArrayList<String>();
+
 		cmdListTestSuites = Factory.createCmdListTestSuites();
 		try {
 			cmdListTestSuites.execute();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return ls;
 		}
-
-		List<String> ls = new ArrayList<String>();
 
 		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
 			String testSuiteNameTmp = s.getKey();
@@ -342,7 +341,34 @@ class Writer extends Thread {
 
 		return ls;
 	}
-    
+
+	/*
+	 * Check if the test case name occurs in the badge.
+	 */
+	private boolean checkTestCaseNameKnown(final String badgeName, final String testCase) {
+		
+		List<String> ls = getTestcasesForBadge(badgeName);
+
+		if (ls.contains(testCase)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private String getFullTestcaseName(final String badgeName, final String testCase) {
+
+		List<String> ls = getTestcasesForBadge(badgeName);
+
+		for (String tc: ls) {
+			if (testCase.contentEquals(tc.substring(tc.lastIndexOf(".") + 1))) {
+				return tc;
+			}
+		}
+
+		return null;
+	}
+
 	private boolean getRecursiveBadges(List<String> badges, final String currentBadge) {
 		for (Map.Entry<String, BadgeDescription> s : cmdListBadges.badgeMap.entrySet()) {
 			BadgeDescription bd = s.getValue();
@@ -900,12 +926,13 @@ class Writer extends Thread {
                 		}
                 		break;
                 	}
-                	String fullTestcaseName = ivctCommander.rtp.getFullTestcaseName(split[1], split[2]);
-                	if (ivctCommander.rtp.checkTestCaseNameKnown(split[1], fullTestcaseName)) {
+                	String fullTestcaseName = getFullTestcaseName(split[1], split[2]);
+                	if (checkTestCaseNameKnown(split[1], fullTestcaseName) == false) {
                         out.println("startTestCase: unknown testSchedule testCase: " + split[1] + " " + split[2]);
                         break;
                 	}
-                	ivctCommander.rtp.startTestCase(sutID, sutDescription, split[1], fullTestcaseName);
+                	TestSuiteDescription tsd = cmdListTestSuites.getTestSuiteForTc(fullTestcaseName);
+                	ivctCommander.rtp.startTestCase(sutID, sutDescription, tsd.id, fullTestcaseName);
                 	RuntimeParameters.setTestCaseName(split[2]);
                     break;
                 case "abortTestCase":
