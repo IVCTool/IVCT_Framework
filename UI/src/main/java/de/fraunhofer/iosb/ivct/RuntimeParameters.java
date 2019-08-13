@@ -20,22 +20,11 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.CmdListBadges;
-import nato.ivct.commander.CmdListSuT;
-import nato.ivct.commander.CmdListTestSuites;
-import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
-import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
@@ -50,7 +39,6 @@ public final class RuntimeParameters {
 	private boolean testScheduleRunningBool = false;
 	private boolean testSuiteNameNew = true;
 	private int countSemaphore = 0;
-	private CmdListTestSuites cmdListTestSuites = null;
 	private PrintStream printStream = new PrintStream(System.out);
 	private static Semaphore semaphore = new Semaphore(0);
 	private static String testCaseName = null;
@@ -101,24 +89,6 @@ public final class RuntimeParameters {
         return false;
     }
 
-	protected String getFullTestcaseName(final String testsuite, final String testCase) {
-		List<String> ls = new ArrayList<String>();
-		
-		TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(testsuite);
-		if (tsd == null) {
-			return null;
-		}
-
-		for (TestCaseDesc entry : tsd.testcases) {
-			if (testCase.contentEquals(entry.tc)) {
-				String s = entry.tc;
-				return s;
-			}
-		}
-
-		return null;
-	}
-
 	/*
 	 * 
 	 */
@@ -130,26 +100,6 @@ public final class RuntimeParameters {
 		return false;
 	}
 
-	/*
-	 * Check if the test case name occurs in the test schedule.
-	 */
-	protected boolean checkTestCaseNameKnown(final String testsuite, final String testCase) {
-		List<String> ls = new ArrayList<String>();
-		
-		TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(testsuite);
-		if (tsd == null) {
-			return false;
-		}
-
-		for (TestCaseDesc entry : tsd.testcases) {
-			if (testCase.contentEquals(entry.tc)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
 	/*
 	 * Check if the test suite name changed since last check.
 	 */
