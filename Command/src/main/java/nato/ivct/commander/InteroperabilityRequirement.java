@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2019, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import java.util.Map;
-import java.util.Set;
-
-public class BadgeDescription {
+public class InteroperabilityRequirement {
 
 	public String ID;
-	public String version;
-	public String name;
-	public String description;
-	public String cbVisual;
-	public Set <String> dependency;
-	public Map <String, InteroperabilityRequirement> requirements;
+		public String description;
 }

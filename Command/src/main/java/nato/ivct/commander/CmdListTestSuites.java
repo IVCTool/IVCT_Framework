@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -60,11 +61,11 @@ public class CmdListTestSuites implements Command {
         public String description;
         public String tsRunTimeFolder;
         public String tsLibTimeFolder;
-        public Set<TestCaseDesc> testcases;
+        public Map<String, TestCaseDesc> testcases;
     };
 
-    // public HashMap<String, TestCaseDesc> testcases = new HashMap<>();
-    public HashMap<String, TestSuiteDescription> testsuites = new HashMap<>();
+    // public Map<String, TestCaseDesc> testcases = new HashMap<>();
+    public Map<String, TestSuiteDescription> testsuites = new HashMap<>();
 
     @Override
     public void execute() throws Exception {
@@ -97,7 +98,7 @@ public class CmdListTestSuites implements Command {
 
                         JSONArray testcases = (JSONArray) jsonObj.get("testcases");
                         if (testcases != null) {
-                            testSuite.testcases = new HashSet <TestCaseDesc>();
+                            testSuite.testcases = new HashMap<String, TestCaseDesc>();
                             for (int i = 0; i < testcases.size(); i++) {
                                 JSONObject req = (JSONObject) testcases.get(i);
                                 TestCaseDesc testCaseDesc = new TestCaseDesc();
@@ -109,7 +110,7 @@ public class CmdListTestSuites implements Command {
                                 for (int j = 0; j < ir.size(); j++) {
                                 	testCaseDesc.IR.add((String) ir.get(j));
                                 }
-                                testSuite.testcases.add(testCaseDesc);
+                                testSuite.testcases.put(testCaseDesc.tc, testCaseDesc);
                             }
                         } else {
                             testSuite.testcases = null;
@@ -132,8 +133,8 @@ public class CmdListTestSuites implements Command {
 
     public TestSuiteDescription getTestSuiteForTc(String tc_id) {
         for (TestSuiteDescription value : this.testsuites.values()) {
-            for (TestCaseDesc tc : value.testcases) {
-                if (tc.tc.equalsIgnoreCase(tc_id)) {
+            for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
+                if (tc.getValue().tc.equalsIgnoreCase(tc_id)) {
                     return value;
                 }
             }
@@ -143,8 +144,9 @@ public class CmdListTestSuites implements Command {
 
     public TestSuiteDescription getTestSuiteforIr(String ir_id) {
         for (TestSuiteDescription value : this.testsuites.values()) {
-            for (TestCaseDesc tc : value.testcases) {
-                for (String ir : tc.IR) {
+            //for (TestCaseDesc tc : value.testcases)
+            for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
+                for (String ir : tc.getValue().IR) {
                     if (ir.equalsIgnoreCase(ir_id)) {
                         return value;
                     }
@@ -156,10 +158,10 @@ public class CmdListTestSuites implements Command {
 
     public TestCaseDesc getTestCaseDescrforIr(String ir_id) {
         for (TestSuiteDescription value : this.testsuites.values()) {
-            for (TestCaseDesc tc : value.testcases) {
-                for (String ir : tc.IR) {
+            for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
+                for (String ir : tc.getValue().IR) {
                     if (ir.equalsIgnoreCase(ir_id)) {
-                        return tc;
+                        return tc.getValue();
                     }
                 }
             }
@@ -169,9 +171,9 @@ public class CmdListTestSuites implements Command {
 
     public Set<String>  getIrForTc(String tc_id) {
         for (TestSuiteDescription value : this.testsuites.values()) {
-            for (TestCaseDesc tc : value.testcases) {
-                if (tc.tc.equalsIgnoreCase(tc_id)) {
-                    return tc.IR;
+            for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
+                if (tc.getValue().tc.equalsIgnoreCase(tc_id)) {
+                    return tc.getValue().IR;
                 }
             }
         }

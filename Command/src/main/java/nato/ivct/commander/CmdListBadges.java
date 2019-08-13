@@ -20,11 +20,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import nato.ivct.commander.BadgeDescription;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -47,7 +46,8 @@ import org.json.simple.parser.ParseException;
  */
 public class CmdListBadges implements Command {
 
-    public Map<String, BadgeDescription> badgeMap = new HashMap<>();
+    public Map<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
+    private Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
 
     @Override
     public void execute() {
@@ -59,6 +59,7 @@ public class CmdListBadges implements Command {
             Factory.LOGGER.error("badge: {} does not exist", dirName);
             return;
         }
+        irMap.clear();
         if (dir.isDirectory()) {
             Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
@@ -108,6 +109,7 @@ public class CmdListBadges implements Command {
                                 ir.ID = (String) req.get("id");
                                 ir.description = (String) req.get("description");
                                 badge.requirements.put(ir.ID, ir);
+                                irMap.put(ir.ID, ir);
                             }
                         }
 
@@ -141,5 +143,14 @@ public class CmdListBadges implements Command {
             // collect recursively from dependend badges
             collectIrForCs(ir_set, b.dependency);
         }
+    }
+    
+    /**
+     * 
+     * @param irName the id of the interoperability requirement
+     * @return the InteroperabilityRequirement value
+     */
+    public InteroperabilityRequirement getIR (String irName) {
+    	return irMap.get(irName);
     }
 }
