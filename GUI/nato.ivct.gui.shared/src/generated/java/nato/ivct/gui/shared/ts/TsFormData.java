@@ -20,12 +20,12 @@ public class TsFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
-	public CbDescription getCbDescription() {
-		return getFieldByClass(CbDescription.class);
-	}
-
 	public TcListBox getTcListBox() {
 		return getFieldByClass(TcListBox.class);
+	}
+
+	public TsDescription getTsDescription() {
+		return getFieldByClass(TsDescription.class);
 	}
 
 	/**
@@ -58,12 +58,12 @@ public class TsFormData extends AbstractFormData {
 		return getFieldByClass(TsVersion.class);
 	}
 
-	public static class CbDescription extends AbstractValueFieldData<String> {
+	public static class TcListBox extends AbstractValueFieldData<Set<String>> {
 
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class TcListBox extends AbstractValueFieldData<Set<String>> {
+	public static class TsDescription extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}

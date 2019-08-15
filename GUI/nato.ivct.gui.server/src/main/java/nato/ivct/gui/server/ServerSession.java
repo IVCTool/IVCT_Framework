@@ -330,7 +330,7 @@ public class ServerSession extends AbstractServerSession {
 		LOG.info("load test results for all SuTs");
 		loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
 
-		LOG.info("load Badge Descriptions");
+		LOG.info("load Badge and Interoperatbility Requirements Descriptions");
 		loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
 
 		LOG.info("load Testsuite Descriptions");

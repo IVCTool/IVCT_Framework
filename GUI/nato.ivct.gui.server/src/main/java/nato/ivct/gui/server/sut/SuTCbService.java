@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
@@ -60,13 +59,14 @@ public class SuTCbService implements ISuTCbService {
 		LOG.info("getCapabilityTableData");
 		CbService cbService = BEANS.get(CbService.class);
 		BadgeDescription badge = cbService.getBadgeDescription(searchText[0]);
-		for (int j = 0; j < badge.requirements.length; j++) {
+		
+		for (nato.ivct.commander.InteroperabilityRequirement requirement : badge.requirements.values()) {
 			SuTCbTableRowData row = pageData.addRow();
-			row.setRequirementId(badge.requirements[j].ID);
-			row.setRequirementDesc(badge.requirements[j].description);
+			row.setRequirementId(requirement.ID);
+			row.setRequirementDesc(requirement.description);
 //			row.setAbstractTC(badge.requirements[j].TC);
 //			row.setTCstatus("no result");
-		}
+		};
 		
 		cap_hm.put(badge.ID, pageData);
 		return pageData;
@@ -232,12 +232,12 @@ public class SuTCbService implements ISuTCbService {
 	}
 
 	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {
-		for (InteroperabilityRequirement requirement:bd.requirements) {
+		bd.requirements.forEach((key, requirement) -> {
 			CbRequirementsTableRowData row = fd.getCbRequirementsTable().addRow();
 			row.setRequirementId(requirement.ID);
 			row.setRequirementDesc(requirement.description);
 //			row.setAbstractTC(requirement.TC);
-		}
+		});
 		
 		return fd;
 	}

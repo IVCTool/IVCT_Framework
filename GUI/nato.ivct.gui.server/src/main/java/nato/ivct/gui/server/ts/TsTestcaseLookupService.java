@@ -12,8 +12,6 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 import org.eclipse.scout.rt.shared.services.lookup.LookupRow;
 
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
-
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.ts.ITsTestcaseLookupService;
@@ -65,7 +63,7 @@ public class TsTestcaseLookupService extends AbstractLookupService<String> imple
 		TsService tsService = (TsService) BEANS.get(ITsService.class);
 		TestSuiteDescription ts = tsService.getTsDescription(tsId);
 		
-		ts.testcases.forEach(tc ->{
+		ts.testcases.forEach((tcId,tc) ->{
 			LookupRow<String> lookupRow = new LookupRow<String>(tc.tc, Stream.of(tc.tc.split(Pattern.quote("."))).reduce((a,b) -> b).get()+": "+tc.description);
 			tcList.add(lookupRow);
 		});		

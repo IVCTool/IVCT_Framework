@@ -3,7 +3,6 @@ package nato.ivct.gui.server.cb;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.CmdListBadges;
+import nato.ivct.commander.InteroperabilityRequirement;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable;
@@ -28,28 +27,33 @@ public class CbService implements ICbService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 
-	Map<String, BadgeDescription> cb_hm = null;
+	CmdListBadges badgeCmd = null;
 
 	@Override
 	public Set<String> loadBadges() {
-		if (cb_hm == null)
+		if (badgeCmd == null)
 			// load badge descriptions
-			waitForBadgeLoading(); 
+			waitForBadgeIrLoading(); 
 
-		return new TreeSet<>(cb_hm.keySet());
+		return new TreeSet<>(badgeCmd.badgeMap.keySet());
 	}
 
 	public BadgeDescription getBadgeDescription(String cb) {
-		if (cb_hm == null)
-			waitForBadgeLoading();
-		return cb_hm.get(cb);
+		if (badgeCmd == null)
+			waitForBadgeIrLoading();
+		return badgeCmd.badgeMap.get(cb);
+	}
+	
+	public InteroperabilityRequirement getIrDescription(String ir) {
+		if (badgeCmd == null)
+			waitForBadgeIrLoading();
+		return badgeCmd.irMap.get(ir);
 	}
 
-	void waitForBadgeLoading () {
+	void waitForBadgeIrLoading () {
 		// wait until load badges job is finished
 		IFuture<CmdListBadges> future = ServerSession.get().getLoadBadgesJob();
-		CmdListBadges badgeCmd = (CmdListBadges) future.awaitDoneAndGet();
-		cb_hm = badgeCmd.badgeMap;		
+		badgeCmd = future.awaitDoneAndGet();
 	}
 
 	@Override
@@ -58,7 +62,7 @@ public class CbService implements ICbService {
 		if (!ACCESS.check(new ReadCbPermission())) {
 			throw new VetoException(TEXTS.get("AuthorizationFailed"));
 		}
-		BadgeDescription cb = cb_hm.get(formData.getCbId());
+		BadgeDescription cb = badgeCmd.badgeMap.get(formData.getCbId());
 		formData.getCbName().setValue(cb.name);
 		
 		formData.getCbDescription().setValue(cb.description);
@@ -68,7 +72,7 @@ public class CbService implements ICbService {
 	}
 	
 	public byte[] loadBadgeIcon(String badgeId) {
-		BadgeDescription cb = cb_hm.get(badgeId);
+		BadgeDescription cb = badgeCmd.badgeMap.get(badgeId);
 		
 		if (cb.cbVisual == null) {
 			LOG.error("No icon file for badge ID " + cb.ID);
@@ -85,16 +89,16 @@ public class CbService implements ICbService {
 
 	@Override
 	public CbRequirementsTable loadRequirements(final Set<String> badges) {
-		CbRequirementsTable requirementTableRows = new CbRequirementsTable();
+		CbRequirementsTable cbRequirementTableRows = new CbRequirementsTable();
 		for (String badge:badges) {
 			BadgeDescription bd = getBadgeDescription(badge);
-			bd.requirements.forEach(requirement-> {
-				CbRequirementsTableRowData row = requirementTableRows.addRow();
+			bd.requirements.forEach((irId, requirement)-> {
+				CbRequirementsTableRowData row = cbRequirementTableRows.addRow();
 				row.setRequirementId(requirement.ID);
 				row.setRequirementDesc(requirement.description);
 			});
 		}
 
-		return requirementTableRows;
+		return cbRequirementTableRows;
 	}
 }

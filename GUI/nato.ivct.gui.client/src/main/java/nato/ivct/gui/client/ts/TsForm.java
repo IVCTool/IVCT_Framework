@@ -17,24 +17,14 @@ import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
-import nato.ivct.gui.client.cb.CbForm;
-import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbDependenciesTreeBox;
-import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField;
-import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField.CbRequirementsTable;
-import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField.CbRequirementsTable.RequirementDescColumn;
-import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField.CbRequirementsTable.RequirementIdColumn;
 import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TcListBox;
-import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TsRequirementsTableField;
-import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TsRequirementsTableField.TsRequirementsTable;
-import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
+import nato.ivct.gui.shared.cb.UpdateCbPermission;
 import nato.ivct.gui.shared.ts.TsFormData;
 import nato.ivct.gui.shared.ts.TsTestcaseLookupCall;
 
@@ -56,14 +46,6 @@ public class TsForm extends AbstractForm {
 
 	public TcListBox getTcListBox() {
 		return getFieldByClass(TcListBox.class);
-	}
-
-//	public TsRequirementsTableField getTsRequirementsTableField() {
-//		return getFieldByClass(TsRequirementsTableField.class);
-//	}
-//
-	public OkButton getOkButton() {
-		return getFieldByClass(OkButton.class);
 	}
 
 	@Override
@@ -162,7 +144,7 @@ public class TsForm extends AbstractForm {
 				}
 
 				@Order(1300)
-				public class CbDescriptionField extends AbstractStringField {
+				public class TsDescriptionField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
 						return TEXTS.get("Description");
@@ -236,7 +218,7 @@ public class TsForm extends AbstractForm {
 					}
 
 					@Order(2000)
-					public class TsRequirementsTableField extends AbstractTableField<TsRequirementsTableField.TsRequirementsTable> {
+					public class TsRequirementsTableField extends AbstractTableField<TsRequirementsTableField.CbRequirementsTable> {
 
                         @Override
                         protected String getConfiguredLabel() {
@@ -253,7 +235,7 @@ public class TsForm extends AbstractForm {
 							return 3;
 						}
 						
-						public class TsRequirementsTable extends AbstractTable {
+						public class CbRequirementsTable extends AbstractTable {
 
 							@Order(1000)
 							public class RequirementIdColumn extends AbstractStringColumn {
@@ -265,7 +247,7 @@ public class TsForm extends AbstractForm {
 
 								@Override
 								protected int getConfiguredWidth() {
-									return 100;
+									return 200;
 								}
 							}
 
@@ -278,7 +260,7 @@ public class TsForm extends AbstractForm {
 
 								@Override
 								protected int getConfiguredWidth() {
-									return 400;
+									return 800;
 								}
 							}
 							
@@ -305,7 +287,7 @@ public class TsForm extends AbstractForm {
 							ITsService TsService = BEANS.get(ITsService.class);
 							AbstractTableFieldBeanData requirementTableRows = TsService.loadRequirementsForTc(testcases);
 							
-							TsRequirementsTable requirementsTable = getTable();
+							CbRequirementsTable requirementsTable = getTable();
 							
 							// cleanup table
 							requirementsTable.deleteAllRows();
@@ -321,20 +303,6 @@ public class TsForm extends AbstractForm {
 							
 							super.execChangedMasterValue(newMasterValue);
 						}
-						
-						@Override
-						protected void execInitField() {
-							Set<String> requirements = CollectionUtility.hashSet(getTsId());
-							
-							// get the requirements for the selected badges
-							ITsService TsService = BEANS.get(ITsService.class);
-							AbstractTableFieldBeanData requirementTableRows = TsService.loadRequirements(requirements);
-							
-							TsRequirementsTable requirementsTable = getTable();
-							
-							// add requirements to table
-							requirementsTable.importFromTableBeanData(requirementTableRows);
-						}
 					}
 				}
 			}
@@ -345,6 +313,12 @@ public class TsForm extends AbstractForm {
 
 		@Override
 		protected void execLoad() {
+			ITsService tsSservice = BEANS.get(ITsService.class);
+			TsFormData formData = new TsFormData();
+			exportFormData(formData);
+			formData = tsSservice.load(formData);
+			importFormData(formData);
+			setEnabledPermission(new UpdateCbPermission());
 		}
 	}
 }

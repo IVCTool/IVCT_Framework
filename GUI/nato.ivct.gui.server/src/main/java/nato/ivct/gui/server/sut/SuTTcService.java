@@ -6,9 +6,9 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.InteroperabilityRequirement;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.ServerSession.SutTcResultDescription;
 import nato.ivct.gui.server.cb.CbService;
@@ -62,10 +62,10 @@ public class SuTTcService implements ISuTTcService {
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
 		if (bd != null) {
 			// get the requirements for this badge
-			Optional<InteroperabilityRequirement> first = Arrays.stream(bd.requirements)
-					.filter(requirement -> formData.getRequirementId().equals(requirement.ID)).findFirst();
+			Optional<Entry<String, InteroperabilityRequirement>> first =bd.requirements.entrySet().stream()
+					.filter(requirement -> formData.getRequirementId().equals(requirement.getValue().ID)).findFirst();
 			first.ifPresent(requirement -> {
-				formData.getReqDescr().setValue(requirement.description);
+				formData.getReqDescr().setValue(requirement.getValue().description);
 //				formData.getTestCaseName().setValue(requirement.TC);
 				
 				// get log files for this test case
@@ -152,10 +152,10 @@ public class SuTTcService implements ISuTTcService {
 		// get requirement description and test case
 		BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
 		if (bd != null) {
-			Optional<InteroperabilityRequirement> first = Arrays.stream(bd.requirements)
-					.filter(requirement -> formData.getRequirementId().equals(requirement.ID)).findFirst();
+			Optional<Entry<String, InteroperabilityRequirement>> first =bd.requirements.entrySet().stream()
+					.filter(requirement -> formData.getRequirementId().equals(requirement.getValue().ID)).findFirst();
 			first.ifPresent(requirement -> {
-				formData.getReqDescr().setValue(requirement.description);
+				formData.getReqDescr().setValue(requirement.getValue().description);
 //				formData.getTestCaseName().setValue(requirement.TC);
 			});
 		}

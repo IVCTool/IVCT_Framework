@@ -75,6 +75,10 @@ public class CmdListTestSuites implements Command {
             Factory.LOGGER.error("test suite folder: {} does not exist", Factory.props.getProperty(Factory.IVCT_TS_HOME_ID));
             return;
         }
+        
+        // allow re-execution of the command
+        testsuites.clear();
+        
         if (dir.isDirectory()) {
             Factory.LOGGER.trace("Read Testsuite descriptions from " + dir.getAbsolutePath());
             JSONParser parser = new JSONParser();

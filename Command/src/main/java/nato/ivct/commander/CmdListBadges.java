@@ -47,7 +47,7 @@ import org.json.simple.parser.ParseException;
 public class CmdListBadges implements Command {
 
     public Map<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
-    private Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
+    public Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
 
     @Override
     public void execute() {
@@ -59,7 +59,11 @@ public class CmdListBadges implements Command {
             Factory.LOGGER.error("badge: {} does not exist", dirName);
             return;
         }
+        
+        // clear maps to allow re-execution of the command
+        badgeMap.clear();
         irMap.clear();
+        
         if (dir.isDirectory()) {
             Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
