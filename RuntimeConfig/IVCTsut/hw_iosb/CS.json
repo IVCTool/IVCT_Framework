@@ -1,5 +1,5 @@
 {
-    "badge": ["HLA-Encoding-2017", "HLA-Services-2017", "HLA-Declaration-2017", "HLA-Object-2017", "HLA-Verification-2017", "HelloWorld-2017"],
+    "badge": ["HLA-Base-2019", "HelloWorld-2017"],
     "settingsDesignator": "crcAddress=localhost:8989",
     "vendor": "Fraunhofer IOSB",
     "name": "hw_iosb",
