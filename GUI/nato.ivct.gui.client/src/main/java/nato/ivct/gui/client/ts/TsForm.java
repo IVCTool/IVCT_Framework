@@ -1,16 +1,17 @@
 package nato.ivct.gui.client.ts;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
-import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
@@ -19,14 +20,13 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
-import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TcListBox;
+import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.TcRequirementHorizontalSplitterBox.TsRequirementsTableField;
+import nato.ivct.gui.client.ts.TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.TcRequirementHorizontalSplitterBox.TsRequirementsTableField.CbRequirementsTable;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.cb.UpdateCbPermission;
 import nato.ivct.gui.shared.ts.TsFormData;
-import nato.ivct.gui.shared.ts.TsTestcaseLookupCall;
 
 @FormData(value = TsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TsForm extends AbstractForm {
@@ -42,10 +42,6 @@ public class TsForm extends AbstractForm {
 	@FormData
 	public void setTsId(String TsId) {
 		this.TsId = TsId;
-	}
-
-	public TcListBox getTcListBox() {
-		return getFieldByClass(TcListBox.class);
 	}
 
 	@Override
@@ -76,6 +72,10 @@ public class TsForm extends AbstractForm {
 		return getFieldByClass(MainBox.class);
 	}
 
+	public TsRequirementsTableField getTsRequirementsTableField() {
+		return getFieldByClass(TsRequirementsTableField.class);
+	}
+	
 	@Order(1000)
 	public class MainBox extends AbstractGroupBox {
 
@@ -175,7 +175,7 @@ public class TsForm extends AbstractForm {
 			@Order(2000)
 			public class TsDetailedBox extends AbstractGroupBox {
 				@Order(1000)
-				public class DependenciesHorizontalSplitterBox extends AbstractSplitBox {
+				public class TcRequirementHorizontalSplitterBox extends AbstractSplitBox {
 					@Override
 					protected boolean getConfiguredSplitHorizontal() {
 						// split horizontal
@@ -188,33 +188,108 @@ public class TsForm extends AbstractForm {
 					}
 
 					@Order(1000)
-					public class TcListBox extends AbstractListBox<String> {
-						@Override
-						protected int getConfiguredGridH() {
-							return 3;
-						}
-						
-						@Override
+					public class TcTableField extends AbstractTableField<TcTableField.TcTable> {
+                       @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("TestCases");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 1;
+                        }
+
+                        @Override
 						protected int getConfiguredGridW() {
 							return 3;
 						}
-						
-						@Override 
-						protected String getConfiguredLabel() { 
-							return TEXTS.get("TestCases"); 
-						}
 
-				        @Override
-				        protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-				        	return TsTestcaseLookupCall.class;
-				        }
-				        @Override
-				        protected void execPrepareLookup(ILookupCall<String> call) {
-							TsFormData formData = new TsFormData();
-							exportFormData(formData);
-							TsTestcaseLookupCall c = (TsTestcaseLookupCall) call;
-							c.setTsId(formData.getTsId());
-				        }
+                        public class TcTable extends AbstractTable {
+                        	
+							@Order(999)
+							public class TcIdColumn extends AbstractStringColumn {
+
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("TcId");
+								}
+								@Override
+								protected boolean getConfiguredDisplayable() {
+									// column shall not be displayed
+									return false;
+								}
+							}
+							
+							@Order(1000)
+							public class TcNameColumn extends AbstractStringColumn {
+
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("TcName");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 200;
+								}
+							}
+
+							@Order(2000)
+							public class TcDescColumn extends AbstractStringColumn {
+								@Override
+								protected String getConfiguredHeaderText() {
+									return TEXTS.get("Description");
+								}
+
+								@Override
+								protected int getConfiguredWidth() {
+									return 800;
+								}
+							}
+							
+							public TcIdColumn getTcIdColumn() {
+								return getColumnSet().getColumnByClass(TcIdColumn.class);
+							}
+							
+							public TcNameColumn getTcNameColumn() {
+								return getColumnSet().getColumnByClass(TcNameColumn.class);
+							}
+
+							public TcDescColumn getTcDescColumn() {
+								return getColumnSet().getColumnByClass(TcDescColumn.class);
+							}
+							
+							@Override
+							protected boolean getConfiguredSortEnabled() {
+								// TODO Auto-generated method stub
+								return false;
+							}
+							
+							@Override
+							public void sort() {
+								// TODO Auto-generated method stub
+								super.sort();
+							}
+							
+							@Override
+							protected void execRowsSelected(List<? extends ITableRow> rows) {
+								// first, clear the requirement table
+								CbRequirementsTable requirementsTable = getTsRequirementsTableField().getTable();
+								requirementsTable.deleteAllRows();
+								
+								if (getSelectedRowCount() > 0) {
+									// load the associated requirements into the requirement table
+									ITsService TsService = BEANS.get(ITsService.class);
+									Set<String> selTc = new HashSet<>();
+									rows.forEach(row -> {
+										selTc.add(row.getCell(getTcIdColumn()).getValue().toString());
+									});
+									AbstractTableFieldBeanData requirementTableRows = TsService.loadRequirementsForTc(selTc);
+									// add requirements to table
+									requirementsTable.importFromTableBeanData(requirementTableRows);
+								}
+							}
+                        }
 					}
 
 					@Order(2000)
@@ -249,6 +324,17 @@ public class TsForm extends AbstractForm {
 								protected int getConfiguredWidth() {
 									return 200;
 								}
+								
+//								@Override
+//								protected int getConfiguredSortIndex() {
+//									// sort table by this column
+//									return 0;
+//								}
+//
+//								@Override
+//								protected boolean  getConfiguredSortAscending() {
+//									return true;
+//								}
 							}
 
 							@Order(2000)
@@ -271,37 +357,12 @@ public class TsForm extends AbstractForm {
 							public RequirementDescColumn getRequirementDescColumn() {
 								return getColumnSet().getColumnByClass(RequirementDescColumn.class);
 							}
-						}
-						
-						@Override
-						protected Class<? extends IValueField<Set<String>>> getConfiguredMasterField() {
-							return TsForm.MainBox.TsHorizontalSplitBox.TsDetailedBox.DependenciesHorizontalSplitterBox.TcListBox.class;
-						}
-				
-						@Override
-						protected void execChangedMasterValue(Object newMasterValue) {
-							// get the selected testcases
-							Set<String> testcases = getTcListBox().getCheckedKeys();
 							
-							// get the requirements for the selected badges
-							ITsService TsService = BEANS.get(ITsService.class);
-							AbstractTableFieldBeanData requirementTableRows = TsService.loadRequirementsForTc(testcases);
-							
-							CbRequirementsTable requirementsTable = getTable();
-							
-							// cleanup table
-							requirementsTable.deleteAllRows();
-							
-							// add requirements to table
-							requirementsTable.importFromTableBeanData(requirementTableRows);
-							// sort the table
-							boolean tableSortEnable = requirementsTable.isSortEnabled();
-							requirementsTable.setSortEnabled(true);
-							requirementsTable.getColumnSet().addSortColumn(requirementsTable.getRequirementIdColumn(), true);
-							requirementsTable.sort();
-							requirementsTable.setSortEnabled(tableSortEnable);
-							
-							super.execChangedMasterValue(newMasterValue);
+							@Override
+							protected boolean getConfiguredSortEnabled() {
+								// TODO Auto-generated method stub
+								return false;
+							}
 						}
 					}
 				}

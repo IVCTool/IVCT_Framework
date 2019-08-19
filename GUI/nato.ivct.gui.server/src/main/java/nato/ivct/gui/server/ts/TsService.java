@@ -1,8 +1,11 @@
 package nato.ivct.gui.server.ts;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.job.IFuture;
@@ -15,8 +18,9 @@ import nato.ivct.commander.InteroperabilityRequirement;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.ITsService;
-import nato.ivct.gui.shared.sut.SuTCbFormData.CbRequirementsTable;
 import nato.ivct.gui.shared.ts.TsFormData;
+import nato.ivct.gui.shared.ts.TsFormData.TcTable;
+import nato.ivct.gui.shared.ts.TsFormData.TcTable.TcTableRowData;
 import nato.ivct.gui.shared.ts.TsFormData.TsRequirementsTable;
 import nato.ivct.gui.shared.ts.TsFormData.TsRequirementsTable.TsRequirementsTableRowData;
 
@@ -58,7 +62,15 @@ public class TsService implements ITsService {
 		formData.getTsVersion().setValue(ts.version);
 		formData.getTsDescription().setValue(ts.description);
 
-		// test case list is built in TsTestcaseLookupService class
+		// load test case list of this testsuite
+		TcTable tcTable = formData.getTcTable();
+		ts.testcases.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEachOrdered(tc -> {
+			TcTableRowData row = tcTable.addRow();
+			row.setTcId(tc.getValue().tc);
+			row.setTcName(Stream.of(tc.getValue().tc.split(Pattern.quote("."))).reduce((a,b) -> b).get());
+			row.setTcDesc(tc.getValue().description);
+		});
+
 		return formData;
 	}
 	
@@ -72,12 +84,14 @@ public class TsService implements ITsService {
 		testcases.forEach(tc->irIdList.addAll(tsCmd.getIrForTc(tc)));
 			
 		CbService cbService = BEANS.get(CbService.class);
-		for (String irId:irIdList) {
+		
+		// put the requirements into the table sorted by its ID
+		irIdList.stream().sorted().forEachOrdered(irId -> {
 			InteroperabilityRequirement ir = cbService.getIrDescription(irId);
 			TsRequirementsTableRowData row = tsRequirementTableRows.addRow();
 			row.setRequirementId(ir.ID);
 			row.setRequirementDesc(ir.description);
-		}
+		});
 
 		return tsRequirementTableRows;
 	}

@@ -1,7 +1,5 @@
 package nato.ivct.gui.shared.ts;
 
-import java.util.Set;
-
 import javax.annotation.Generated;
 
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
@@ -20,8 +18,8 @@ public class TsFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
-	public TcListBox getTcListBox() {
-		return getFieldByClass(TcListBox.class);
+	public TcTable getTcTable() {
+		return getFieldByClass(TcTable.class);
 	}
 
 	public TsDescription getTsDescription() {
@@ -58,9 +56,78 @@ public class TsFormData extends AbstractFormData {
 		return getFieldByClass(TsVersion.class);
 	}
 
-	public static class TcListBox extends AbstractValueFieldData<Set<String>> {
+	public static class TcTable extends AbstractTableFieldBeanData {
 
 		private static final long serialVersionUID = 1L;
+
+		@Override
+		public TcTableRowData addRow() {
+			return (TcTableRowData) super.addRow();
+		}
+
+		@Override
+		public TcTableRowData addRow(int rowState) {
+			return (TcTableRowData) super.addRow(rowState);
+		}
+
+		@Override
+		public TcTableRowData createRow() {
+			return new TcTableRowData();
+		}
+
+		@Override
+		public Class<? extends AbstractTableRowData> getRowType() {
+			return TcTableRowData.class;
+		}
+
+		@Override
+		public TcTableRowData[] getRows() {
+			return (TcTableRowData[]) super.getRows();
+		}
+
+		@Override
+		public TcTableRowData rowAt(int index) {
+			return (TcTableRowData) super.rowAt(index);
+		}
+
+		public void setRows(TcTableRowData[] rows) {
+			super.setRows(rows);
+		}
+
+		public static class TcTableRowData extends AbstractTableRowData {
+
+			private static final long serialVersionUID = 1L;
+			public static final String tcId = "tcId";
+			public static final String tcName = "tcName";
+			public static final String tcDesc = "tcDesc";
+			private String m_tcId;
+			private String m_tcName;
+			private String m_tcDesc;
+
+			public String getTcId() {
+				return m_tcId;
+			}
+
+			public void setTcId(String newTcId) {
+				m_tcId = newTcId;
+			}
+
+			public String getTcName() {
+				return m_tcName;
+			}
+
+			public void setTcName(String newTcName) {
+				m_tcName = newTcName;
+			}
+
+			public String getTcDesc() {
+				return m_tcDesc;
+			}
+
+			public void setTcDesc(String newTcDesc) {
+				m_tcDesc = newTcDesc;
+			}
+		}
 	}
 
 	public static class TsDescription extends AbstractValueFieldData<String> {
