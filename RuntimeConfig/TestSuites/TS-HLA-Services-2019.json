@@ -2,7 +2,7 @@
 	"id" 			: 	"Testsuite-HLA-Services-2019",
 	"version"		:	"2.0.0",
 	"name" 			: 	"HLA Services Test Suite 2019",
-	"description"	:	"This badge verifies that the federate uses only the services specified in its SOM.",
+	"description"	:	"This test suite verifies that the federate uses only the services specified in its SOM.",
 	"tsRunTimeFolder":	"TS_HLA_Services-2.0.0/bin",
 	"tsLibTimeFolder":	"TS_HLA_Services-2.0.0/lib",
 	"testcases"	:	[
