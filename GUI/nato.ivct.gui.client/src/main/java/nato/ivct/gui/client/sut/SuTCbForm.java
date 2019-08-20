@@ -194,7 +194,7 @@ public class SuTCbForm extends AbstractForm {
 				public class CbNameField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CbName");
+						return TEXTS.get("Name");
 					}
 
 					@Override
@@ -207,7 +207,7 @@ public class SuTCbForm extends AbstractForm {
 				public class CbDescriptionField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CbDescription");
+						return TEXTS.get("Description");
 					}
 
 					@Override
@@ -235,7 +235,7 @@ public class SuTCbForm extends AbstractForm {
 				public class CbImageField extends AbstractImageField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CbImage");
+						return TEXTS.get("Image");
 					}
 
 					@Override

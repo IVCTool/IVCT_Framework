@@ -118,7 +118,7 @@ public class SuTForm extends AbstractForm {
 			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("GeneralSuTInformation");
+					return TEXTS.get("GeneralInformation");
 				}
 				
 				// set all fields of this box to read-only
@@ -131,7 +131,7 @@ public class SuTForm extends AbstractForm {
 				public class NameField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("SuTName");
+						return TEXTS.get("Name");
 					}
 	
 					@Override
@@ -170,7 +170,7 @@ public class SuTForm extends AbstractForm {
 				public class DescrField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("SuTDescription");
+						return TEXTS.get("Description");
 					}
 	
 					@Override
