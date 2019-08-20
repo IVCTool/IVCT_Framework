@@ -47,7 +47,7 @@ import org.json.simple.parser.ParseException;
 public class CmdListBadges implements Command {
 
     public Map<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
-    public Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
+    private Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
 
     @Override
     public void execute() {

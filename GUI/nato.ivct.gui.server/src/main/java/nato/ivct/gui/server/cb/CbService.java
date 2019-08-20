@@ -47,7 +47,7 @@ public class CbService implements ICbService {
 	public InteroperabilityRequirement getIrDescription(String ir) {
 		if (badgeCmd == null)
 			waitForBadgeIrLoading();
-		return badgeCmd.irMap.get(ir);
+		return badgeCmd.getIR(ir);
 	}
 
 	void waitForBadgeIrLoading () {
