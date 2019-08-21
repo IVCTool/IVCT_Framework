@@ -19,12 +19,10 @@ package de.fraunhofer.iosb.ivct;
 import java.util.List;
 
 public class CommandCache {
-	private String testschedule;
 	private List<String> testcases;
 	private int i;
 
-	CommandCache(final String testschedule, final List<String> testcases) {
-		this.testschedule = testschedule;
+	CommandCache(final List<String> testcases) {
 		this.testcases = testcases;
 		i = 0;
 	}
@@ -40,9 +38,5 @@ public class CommandCache {
 	
 	public int getNumberOfTestCases() {
 		return testcases.size();
-	}
-	
-	public String getTestschedule() {
-		return this.testschedule;
 	}
 }

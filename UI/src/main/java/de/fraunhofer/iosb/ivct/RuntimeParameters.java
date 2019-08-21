@@ -37,13 +37,11 @@ public final class RuntimeParameters {
 	private static boolean abortTestScheduleBool = false;
 	private boolean testCaseRunningBool = false;
 	private boolean testScheduleRunningBool = false;
-	private boolean testSuiteNameNew = true;
 	private int countSemaphore = 0;
 	private PrintStream printStream = new PrintStream(System.out);
 	private static Semaphore semaphore = new Semaphore(0);
-	private static String testCaseName = null;
-	private static String testScheduleName = null;
-	private String testSuiteName = null;
+	private String testCaseName = null;
+	private String testScheduleName = null;
 
     public RuntimeParameters () {
     }
@@ -100,13 +98,6 @@ public final class RuntimeParameters {
 		return false;
 	}
 
-	/*
-	 * Check if the test suite name changed since last check.
-	 */
-	protected boolean checkTestSuiteNameNew() {
-		return testSuiteNameNew;
-	}
-
 	public static boolean getAbortTestScheduleBool() {
 		return abortTestScheduleBool;
 	}
@@ -130,49 +121,31 @@ public final class RuntimeParameters {
 	public void setTestScheduleRunningBool(boolean b) {
 		testScheduleRunningBool = b;
 	}
-	
-	public void setTestSuiteNameUsed() {
-		testSuiteNameNew = false;
-	}
-	
+
 	protected void resetSut() {
 		// Reset values.
 		testCaseName = null;
 		testScheduleName = null;
-		testSuiteName = null;
 	}
 
-	protected static String getTestCaseName() {
+	protected String getTestCaseName() {
 		return testCaseName;
 	}
 
-	protected static void setTestCaseName(String theTestCaseName) {
+	protected void setTestCaseName(String theTestCaseName) {
 		testScheduleName = null;
 		testCaseName = theTestCaseName;
 	}
 
-	protected static String getTestScheduleName() {
+	protected String getTestScheduleName() {
 		return testScheduleName;
 	}
 
-	protected static void setTestScheduleName(String theTestScheduleName) {
+	protected void setTestScheduleName(String theTestScheduleName) {
 		testCaseName = null;
 		testScheduleName = theTestScheduleName;
 	}
 
-	protected String getTestSuiteName() {
-		return testSuiteName;
-	}
-
-	protected void setTestSuiteName(String testSuiteName) {
-		if (this.testSuiteName != null) {
-			if (this.testSuiteName.equals(testSuiteName) == false) {
-				this.testSuiteNameNew = true;
-			}
-		}
-		this.testSuiteName = testSuiteName;
-	}
-	
 	protected CmdSetLogLevel createCmdSetLogLevel(final String level) {
 		String levelUpper = level.toUpperCase();
 		LogLevel logLevel = LogLevel.valueOf(levelUpper);

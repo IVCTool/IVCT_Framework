@@ -15,8 +15,8 @@ import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
-import nato.ivct.commander.BadgeDescription;
-import nato.ivct.commander.CmdListBadges;
+import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -41,7 +41,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
     public String logLevelId = Level.INFO.toString();
     public String testCaseId = "no test case is running";
 
-    private CmdListBadges badges;
+    private CmdListTestSuites testSuites;
     private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
     /**
@@ -76,9 +76,14 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
         (new CmdStartTcListener(this)).execute();
         (new CmdQuitListener(this)).execute();
 
-        // get the badge descriptions
-        badges = new CmdListBadges();
-        badges.execute();
+        // get the test suite descriptions
+        testSuites = new CmdListTestSuites();
+        try {
+			testSuites.execute();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     private class TestScheduleRunner implements Runnable {
@@ -117,50 +122,45 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
             return result;
         }
 
-        private void extendThreadClassLoader(final String badge) {
-            URLClassLoader classLoader = classLoaders.get(badge);
-            if (classLoader == null) {
-                BadgeDescription bd = badges.badgeMap.get(badge);
-                if (bd != null) {
-                    String ts_path = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
-                    String lib_path = ts_path + "/" + bd.tsLibTimeFolder;
-                    File dir = new File(lib_path);
-                    File[] filesList = dir.listFiles();
-                    if (filesList == null) {
-                        logger.info("No files found in folder {}", dir.getPath());
-                        return;
-                    }
+        private void extendThreadClassLoader(final TestSuiteDescription testSuiteDescription) {
+        	URLClassLoader classLoader = classLoaders.get(testSuiteDescription.id);
+        	if (classLoader == null) {
+        		String ts_path = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
+        		String lib_path = ts_path + "/" + testSuiteDescription.tsLibTimeFolder;
+        		File dir = new File(lib_path);
+        		File[] filesList = dir.listFiles();
+        		if (filesList == null) {
+        			logger.info("No files found in folder {}", dir.getPath());
+        			return;
+        		}
 
-                    URL[] urls = new URL[filesList.length];
-                    for (int i = 0; i < filesList.length; i++) {
-                        try {
-                            urls[i] = filesList[i].toURI().toURL();
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    classLoader = new URLClassLoader(urls, TestRunner.class.getClassLoader());
-                    classLoaders.put(badge, classLoader);
-                } else {
-                    logger.error("unknown badge " + badge);
-                }
-            }
-            Thread.currentThread().setContextClassLoader(classLoader);
+        		URL[] urls = new URL[filesList.length];
+        		for (int i = 0; i < filesList.length; i++) {
+        			try {
+        				urls[i] = filesList[i].toURI().toURL();
+        			} catch (MalformedURLException e) {
+        				e.printStackTrace();
+        			}
+        		}
+        		classLoader = new URLClassLoader(urls, TestRunner.class.getClassLoader());
+        		classLoaders.put(testSuiteDescription.id, classLoader);
+        	}
+        	Thread.currentThread().setContextClassLoader(classLoader);
         }
 
         public void run() {
             logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
             MDC.put("sutName", info.sutName);
             MDC.put("sutDir", info.sutDir);
-            MDC.put("badge", info.badge);
+            MDC.put("badge", info.testSuiteId);
             MDC.put("testcase", info.testCaseId);
 
-            BadgeDescription b = badges.badgeMap.get(info.badge);
-            if (b == null) {
-                logger.error("TestEngine:onMessageConsumer:run: unknown badge " + info.badge);
+        	TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
+            if (tsd == null) {
+                logger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
                 return;
             }
-            String runFolder = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + b.tsRunTimeFolder;
+            String runFolder = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + tsd.tsRunTimeFolder;
 
             logger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
             if (setCurrentDirectory(runFolder)) {
@@ -175,7 +175,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
             String[] testcases = info.testCaseId.split("\\s");
             IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
-            extendThreadClassLoader(info.badge);
+            extendThreadClassLoader(tsd);
 
 //			this.testRunner.executeTests(logger, info.sutName, testcases, info.testCaseParam.toString(), verdicts);
 
@@ -209,7 +209,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
             logger.info("Test Case Ended");
 
             for (i = 0; i < testcases.length; i++) {
-                new CmdSendTcVerdict(info.sutName, info.sutDir, info.badge, testcases[i], verdicts[i].verdict.name(),
+                new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i], verdicts[i].verdict.name(),
                         verdicts[i].text).execute();
             }
             MDC.put("tcStatus", "inactive");
