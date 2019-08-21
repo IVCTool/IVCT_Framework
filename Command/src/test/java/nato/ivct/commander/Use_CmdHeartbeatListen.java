@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
     
     // You can choose a special  Class to be monitored
     //private static String desiredHeartBeatSenderClass="Use_CmdHeartbeatSend";
-    private static String desiredHeartBeatSenderClass="TestRunner";
+    //private static String desiredHeartBeatSenderClass="TestRunner";
+    private static String desiredHeartBeatSenderClass="LogSink";
         
     public static void main(String[] args) throws Exception {     
         

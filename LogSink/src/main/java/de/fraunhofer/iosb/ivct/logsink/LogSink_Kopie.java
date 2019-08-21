@@ -16,7 +16,6 @@ import nato.ivct.commander.Factory;
 
 import nato.ivct.commander.CmdHeartbeatSend;
 
-
 /**
  * Log sink for logging events collected via JMS or AMQP. For JMS use the
  * already existing JMSTopicSink from logback as first attempt.
@@ -29,32 +28,33 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     //private JMSTopicSink  jmsTopicSink;
     private static JMSLogSink  jmsLogSink;
     private static ReportEngine reportEngine = new ReportEngine();
-        
+
     // for CmdHeartbeatSend
     private boolean health;
     private String myClassName = "LogSink";
-
+    
 
     /**
      * Main Method of the class.
      *
      * @param args command line arguments
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) {        
         MDC.put("testcase", "LogSink");
 		Factory.initialize();
-        final LogSink instance = new LogSink();
+        final LogSink instance = new LogSink(); 
         instance.init();
         
-     // for CmdHeartbeatSend
+       // for CmdHeartbeatSend
         try {
              instance.sendHeartbeat(LOGGER);
              } catch (Exception ex) {
                  LOGGER.error("could not start  sendHeartbeat " + ex);
-             }        
-        
-        instance.execute();
-        System.exit(0);;
+             } 
+
+        instance.execute();         
+        System.exit(0);;       
+
     }
 
 
@@ -66,7 +66,7 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
 		(new CmdStartTestResultListener(jmsLogSink)).execute();
         (new CmdQuitListener(jmsLogSink)).execute();
         (new CmdStartTcListener(jmsLogSink)).execute();
-        (new CmdLogMsgListener(jmsLogSink)).execute();
+        (new CmdLogMsgListener(jmsLogSink)).execute();       
     }
 
 	public String getTestCaseResults() {
@@ -109,6 +109,7 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
             catch (final IOException ex) {
                 LOGGER.error("Error in input.", ex);
             }
+            
         }
     }
 
@@ -127,5 +128,7 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
   public boolean getMyHealth() {
     return health;
   }
-
+    
+    
+    
 }

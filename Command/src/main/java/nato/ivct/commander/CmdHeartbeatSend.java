@@ -113,7 +113,7 @@ public class CmdHeartbeatSend  implements Command {
                     heartbeatjson.put(HB_SENDERHEALTHSTATE, health);                    
                     sendMessage(heartbeatjson.toString());
                     
-                    logger.info("### CmdHeartbeatSend.execute is sending: "+heartbeatjson.toString()); // Debug                    
+                    //logger.info("### CmdHeartbeatSend.execute is sending: "+heartbeatjson.toString()); // Debug                    
                     
                 } catch (Exception ex) {
                     logger.error("could not send command: " + ex);
