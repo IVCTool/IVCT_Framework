@@ -1,6 +1,5 @@
 package nato.ivct.gui.client.cb;
 
-import java.io.InputStream;
 import java.util.Set;
 
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -21,7 +20,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
@@ -29,7 +27,6 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
-import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.GeneralBox.CbImageField;
@@ -39,7 +36,6 @@ import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCb
 import nato.ivct.gui.client.cb.CbForm.MainBox.BadgeHorizontalSplitBox.IncludedCbBox.DependenciesHorizontalSplitterBox.CbRequirementsTableField;
 import nato.ivct.gui.shared.cb.CbDependenciesLookupCall;
 import nato.ivct.gui.shared.cb.CbFormData;
-import nato.ivct.gui.shared.cb.CreateCbPermission;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.UpdateCbPermission;
 
@@ -72,18 +68,6 @@ public class CbForm extends AbstractForm {
 	public void startView() throws ProcessingException {
 		 startInternal(new ViewHandler());
 	}
-	
-	public void startModify() {
-		startInternalExclusive(new ModifyHandler());
-	}
-
-	public void startNew() {
-		startInternal(new NewHandler());
-	}
-
-//	public CancelButton getCancelButton() {
-//		return getFieldByClass(CancelButton.class);
-//	}
 
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
@@ -109,7 +93,7 @@ public class CbForm extends AbstractForm {
 		return getFieldByClass(CbImageField.class);
 	}
 
-	public CbDependenciesTreeBox getCbDependenciesTreeField() {
+	public CbDependenciesTreeBox getCbDependenciesTreeBox() {
 		return getFieldByClass(CbDependenciesTreeBox.class);
 	}
 
@@ -162,7 +146,7 @@ public class CbForm extends AbstractForm {
 			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("GeneralCapabilityInformation");
+					return TEXTS.get("GeneralInformation");
 				}
 				
 				// set all fields of this box to read-only
@@ -175,7 +159,7 @@ public class CbForm extends AbstractForm {
 				public class CbNameField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CbName");
+						return TEXTS.get("Name");
 					}
 
 					@Override
@@ -188,7 +172,7 @@ public class CbForm extends AbstractForm {
 				public class CbDescriptionField extends AbstractStringField {
 					@Override
 					protected String getConfiguredLabel() {
-						return TEXTS.get("CbDescription");
+						return TEXTS.get("Description");
 					}
 
 					@Override
@@ -265,11 +249,6 @@ public class CbForm extends AbstractForm {
 				protected String getConfiguredLabel() {
 					return TEXTS.get("InclRequirements");
 				}
-
-//				@Override
-//				protected int getConfiguredGridColumnCount() {
-//					return 5;
-//				}
 				
 				@Order(1000)
 				public class DependenciesHorizontalSplitterBox extends AbstractSplitBox {
@@ -373,19 +352,6 @@ public class CbForm extends AbstractForm {
 									return 400;
 								}
 							}
-
-							@Order(3000)
-							public class AbstractTCColumn extends AbstractStringColumn {
-								@Override
-								protected String getConfiguredHeaderText() {
-									return TEXTS.get("TC");
-								}
-
-								@Override
-								protected int getConfiguredWidth() {
-									return 200;
-								}
-							}
 							
 							public RequirementIdColumn getRequirementIdColumn() {
 								return getColumnSet().getColumnByClass(RequirementIdColumn.class);
@@ -393,10 +359,6 @@ public class CbForm extends AbstractForm {
 
 							public RequirementDescColumn getRequirementDescColumn() {
 								return getColumnSet().getColumnByClass(RequirementDescColumn.class);
-							}
-
-							public AbstractTCColumn getAbstractTCColumn() {
-								return getColumnSet().getColumnByClass(AbstractTCColumn.class);
 							}
 						}
 						
@@ -408,7 +370,7 @@ public class CbForm extends AbstractForm {
 						@Override
 						protected void execChangedMasterValue(Object newMasterValue) {
 							// get dependencies badges from the dependencies badge tree
-							Set<String> badges = getCbDependenciesTreeField().getCheckedKeys();
+							Set<String> badges = getCbDependenciesTreeBox().getCheckedKeys();
 							// add the selected badge
 							badges.add(getCbId());
 							
@@ -450,34 +412,10 @@ public class CbForm extends AbstractForm {
 				}
 			}
 		}
-
-
-//		@Order(100000)
-//		public class CloseButton extends AbstractButton {
-//			
-//			  @Override
-//			  protected int getConfiguredSystemType() {
-//			    return SYSTEM_TYPE_CLOSE;
-//			  }
-//
-//			  @Override
-//			  protected String getConfiguredLabel() {
-//			    return TEXTS.get("CloseButton");
-//			  }
-//
-//			  @Override
-//			  protected String getConfiguredKeyStroke() {
-//			    return IKeyStroke.ESCAPE;
-//			  }
-//		}
-
-//		@Order(101000)
-//		public class CancelButton extends AbstractCancelButton {
-//
-//		}
 	}
 
-	protected abstract class AbstractCbFormHandler extends AbstractFormHandler {
+	public class ViewHandler extends AbstractFormHandler {
+
 		@Override
 		protected void execLoad() {
 			ICbService service = BEANS.get(ICbService.class);
@@ -495,53 +433,6 @@ public class CbForm extends AbstractForm {
 				logger.warn("Could not load image file for badge ID " + formData.getCbId());
 			}
 			setEnabledPermission(new UpdateCbPermission());
-		}
-	}
-	
-	public class ViewHandler extends AbstractCbFormHandler {
-
-		@Override
-		protected void execLoad() {
-			super.execLoad();
-//			getForm().getFieldByClass(MainBox.CloseButton.class).setVisible(false);
-		}
-	}
-
-	public class ModifyHandler extends AbstractCbFormHandler {
-
-		@Override
-		protected void execLoad() {
-			super.execLoad();
-		}
-
-		@Override
-		protected void execStore() {
-			ICbService service = BEANS.get(ICbService.class);
-			CbFormData formData = new CbFormData();
-			exportFormData(formData);
-			service.store(formData);
-		}
-	}
-
-	public class NewHandler extends AbstractCbFormHandler {
-
-		@Override
-		protected void execLoad() {
-			ICbService service = BEANS.get(ICbService.class);
-			CbFormData formData = new CbFormData();
-			exportFormData(formData);
-			formData = service.prepareCreate(formData);
-			importFormData(formData);
-
-			setEnabledPermission(new CreateCbPermission());
-		}
-
-		@Override
-		protected void execStore() {
-			ICbService service = BEANS.get(ICbService.class);
-			CbFormData formData = new CbFormData();
-			exportFormData(formData);
-			service.create(formData);
 		}
 	}
 }

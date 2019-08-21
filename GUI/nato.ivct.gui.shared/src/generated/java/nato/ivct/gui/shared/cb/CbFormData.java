@@ -117,10 +117,8 @@ public class CbFormData extends AbstractFormData {
 			private static final long serialVersionUID = 1L;
 			public static final String requirementId = "requirementId";
 			public static final String requirementDesc = "requirementDesc";
-			public static final String abstractTC = "abstractTC";
 			private String m_requirementId;
 			private String m_requirementDesc;
-			private String m_abstractTC;
 
 			public String getRequirementId() {
 				return m_requirementId;
@@ -136,14 +134,6 @@ public class CbFormData extends AbstractFormData {
 
 			public void setRequirementDesc(String newRequirementDesc) {
 				m_requirementDesc = newRequirementDesc;
-			}
-
-			public String getAbstractTC() {
-				return m_abstractTC;
-			}
-
-			public void setAbstractTC(String newAbstractTC) {
-				m_abstractTC = newAbstractTC;
 			}
 		}
 	}

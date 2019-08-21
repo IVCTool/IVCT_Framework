@@ -69,7 +69,7 @@ public class SuTBadgeService implements ISuTBadgeService {
 		if (parentBadge != null) {
 			badgeCollection.add(parentBadge);
 			
-			Arrays.stream(parentBadge.dependency).map(cbService::getBadgeDescription).forEach(depBadge -> {
+			parentBadge.dependency.stream().map(cbService::getBadgeDescription).forEach(depBadge -> {
 				badgeCollection.add(depBadge);
 				addBadgeToCollection (depBadge, badgeCollection);
 			});

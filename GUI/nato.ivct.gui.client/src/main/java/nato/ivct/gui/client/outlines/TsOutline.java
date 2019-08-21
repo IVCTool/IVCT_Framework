@@ -9,31 +9,31 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
-import nato.ivct.gui.client.cb.CbNodePage;
+import nato.ivct.gui.client.ts.TsNodePage;
 import nato.ivct.gui.shared.Icons;
-import nato.ivct.gui.shared.cb.ICbService;
+import nato.ivct.gui.shared.cb.ITsService;
 
 /**
- * <h3>{@link BadgeOutline}</h3>
+ * <h3>{@link TsOutline}</h3>
  *
  * @author hzg
  */
 @Order(1000)
-public class BadgeOutline extends AbstractOutline {
+public class TsOutline extends AbstractOutline {
 
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-		Set<String> badges = BEANS.get(ICbService.class).loadBadges();
-		badges.forEach(s -> {CbNodePage np = new CbNodePage(s); np.setOverviewIconId(getConfiguredIconId());pageList.add(np);});
+		Set<String> testsuites = BEANS.get(ITsService.class).loadTestSuites();
+		testsuites.forEach(s -> {TsNodePage np = new TsNodePage(s); pageList.add(np);});
 	}
 
 	@Override
 	protected String getConfiguredTitle() {
-		return TEXTS.get("Badges");
+		return TEXTS.get("Testsuites");
 	}
 
 	@Override
 	protected String getConfiguredIconId() {
-		return Icons.FolderBold;
+		return Icons.CategoryBold;
 	}
 }

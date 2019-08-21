@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import nato.ivct.gui.client.Desktop.AlterSuTMenu.EditSutMenu;
 import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.client.outlines.SuTOutline;
+import nato.ivct.gui.client.outlines.TsOutline;
 import nato.ivct.gui.client.sut.SuTEditForm;
 import nato.ivct.gui.client.sut.SuTForm;
 import nato.ivct.gui.shared.Icons;
@@ -41,7 +42,7 @@ public class Desktop extends AbstractDesktop {
 
 	@Override
 	protected List<Class<? extends IOutline>> getConfiguredOutlines() {
-		return CollectionUtility.<Class<? extends IOutline>>arrayList(BadgeOutline.class, SuTOutline.class);
+		return CollectionUtility.<Class<? extends IOutline>>arrayList(BadgeOutline.class, TsOutline.class, SuTOutline.class);
 	}
 
 	@Override
@@ -193,6 +194,11 @@ public class Desktop extends AbstractDesktop {
 		protected BadgeOutlineViewButton(Class<? extends BadgeOutline> outlineClass) {
 			super(Desktop.this, outlineClass);
 		}
+        
+        @Override
+        protected DisplayStyle getConfiguredDisplayStyle() {
+            return DisplayStyle.TAB;
+        }
 
 		@Override
 		protected String getConfiguredKeyStroke() {
@@ -200,8 +206,30 @@ public class Desktop extends AbstractDesktop {
 			return "ctrl-shift-b";
 		}
 	}
+
+	@Order(2000)
+	public class TsOutlineViewButton extends AbstractOutlineViewButton {
+
+		public TsOutlineViewButton() {
+			this(TsOutline.class);
+		}
+
+		protected TsOutlineViewButton(Class<? extends TsOutline> outlineClass) {
+			super(Desktop.this, outlineClass);
+		}
+        
+        @Override
+        protected DisplayStyle getConfiguredDisplayStyle() {
+            return DisplayStyle.TAB;
+        }
+
+		@Override
+		protected String getConfiguredKeyStroke() {
+			return "ctrl-shift-t";
+		}
+	}
 	
-    @Order(2000)
+    @Order(3000)
     public class SuTOutlineViewButton extends AbstractOutlineViewButton {
     
         public SuTOutlineViewButton() {
@@ -218,9 +246,8 @@ public class Desktop extends AbstractDesktop {
           return "ctrl-shift-s";
         }
     }
-	
 
-
+    
     @Override
     protected void execPageDetailFormChanged(IForm oldForm, IForm newForm) {
     	 if (newForm instanceof SuTForm)

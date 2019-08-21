@@ -1,5 +1,5 @@
 {
-    "id": "TS_HelloWorld-2019",
+    "id": "TS-HelloWorld-2019",
     "version": "2.0.0",
     "name": "HelloWorld Tutorial Badge",
     "description": "This is a simple example for a testsuite to test the compliance of an federate to the hello world federation.",

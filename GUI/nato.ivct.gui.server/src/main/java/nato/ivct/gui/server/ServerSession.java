@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
+import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdSetLogLevel;
@@ -50,6 +51,7 @@ public class ServerSession extends AbstractServerSession {
 	private IFuture<CmdListSuT> loadSuTJob = null;
 	private IFuture<SutTcResultDescription> loadTcResultsJob = null;
 	private IFuture<CmdListBadges> loadBadgesJob = null;
+	private IFuture<CmdListTestSuites> loadTestSuitesJob = null;
 	private IFuture<CmdStartTc> startTcJobs = null;
 	private IFuture<CmdStartTestResultListener> testResultListener = null;
 	private ResultListener sessionResultListener;
@@ -90,6 +92,20 @@ public class ServerSession extends AbstractServerSession {
 			badges = Factory.createCmdListBadges();
 			badges.execute();
 			return badges;
+		}
+	}
+
+	/*
+	 * Load Testsuite descriptions job
+	 */
+	public class LoadTestSuiteDescriptions implements Callable<CmdListTestSuites> {
+
+		@Override
+		public CmdListTestSuites call() throws Exception {
+			CmdListTestSuites testsuites;
+			testsuites = Factory.createCmdListTestSuites();
+			testsuites.execute();
+			return testsuites;
 		}
 
 	}
@@ -314,8 +330,11 @@ public class ServerSession extends AbstractServerSession {
 		LOG.info("load test results for all SuTs");
 		loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
 
-		LOG.info("load Badge Descriptions");
+		LOG.info("load Badge and Interoperatbility Requirements Descriptions");
 		loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
+
+		LOG.info("load Testsuite Descriptions");
+		loadTestSuitesJob = Jobs.schedule(new LoadTestSuiteDescriptions(), Jobs.newInput());
 
 		LOG.info("start test case Result Listener");
 		sessionResultListener = new ResultListener();
@@ -337,6 +356,10 @@ public class ServerSession extends AbstractServerSession {
 
 	public IFuture<CmdListBadges> getLoadBadgesJob() {
 		return loadBadgesJob;
+	}
+
+	public IFuture<CmdListTestSuites> getLoadTestSuitesJob() {
+		return loadTestSuitesJob;
 	}
 	
 	public IFuture<SutTcResultDescription> getLoadTcResultsJob() {

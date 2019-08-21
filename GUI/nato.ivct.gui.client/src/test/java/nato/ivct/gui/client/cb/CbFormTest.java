@@ -25,10 +25,7 @@ public class CbFormTest {
 	@Before
 	public void setup() {
 		CbFormData answer = new CbFormData();
-		Mockito.when(m_mockSvc.prepareCreate(Matchers.any(CbFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.create(Matchers.any(CbFormData.class))).thenReturn(answer);
 		Mockito.when(m_mockSvc.load(Matchers.any(CbFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.store(Matchers.any(CbFormData.class))).thenReturn(answer);
 	}
 
 	// TODO [hzg] add test cases

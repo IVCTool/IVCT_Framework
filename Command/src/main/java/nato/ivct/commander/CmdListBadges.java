@@ -59,7 +59,11 @@ public class CmdListBadges implements Command {
             Factory.LOGGER.error("badge: {} does not exist", dirName);
             return;
         }
+        
+        // clear maps to allow re-execution of the command
+        badgeMap.clear();
         irMap.clear();
+        
         if (dir.isDirectory()) {
             Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
