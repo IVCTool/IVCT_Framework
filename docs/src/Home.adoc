@@ -20,6 +20,7 @@ following sections.
 If you plan do build the software by yourself, the following sections will give
 you an overview on tools and the development environment.
 
+* <<build-overview.adoc#,The IVCTool Software Build Environment>> 
 * <<prerequisites.adoc#,Prerequisites for participating in IVCT_Framework development>>
 * <<Branching-and-Merging.adoc#,Guidelines for branching and merging>>
 * <<gradleDoc.adoc#,Building the IVCT_Framework with gradle>>

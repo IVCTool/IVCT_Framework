@@ -199,7 +199,7 @@ public class Factory {
 					LOGGER.debug("Properties {} file loaded", home + "/IVCT.properties");
 				}
 			} catch (final Exception e) {
-				LOGGER.error("Unable to read IVCT_CONF = {}  creating default values", IVCT_CONF_DEFLT);
+				LOGGER.error("Unable to read IVCT_CONF = {}  creating default values", home);
 				try {
 					fallback.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
 					LOGGER.warn(

@@ -19,6 +19,8 @@ include::badge2testsuite.adoc[]
 
 // Building the software
 
+include::build-overview.adoc[]
+
 include::gradleDoc.adoc[]
 
 include::3rdpartyRti.adoc[]

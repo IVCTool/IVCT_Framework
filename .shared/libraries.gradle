@@ -2,7 +2,7 @@
 // Allows centralized definition of the version of artifacts to use.
 ext {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-        gradleVersion = '4.9'
+        gradleVersion = '5.1.1'
         gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
