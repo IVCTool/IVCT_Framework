@@ -115,6 +115,7 @@ public abstract class AbstractTestCase {
 			ivct_BaseModel.setFederationName(federationName);
 			ivct_BaseModel.setSettingsDesignator(settingsDesignator);
 		} catch (TcInconclusive e) {
+			logger.info("Exception: " + e);
 			String s = "getIVCT_BaseModel unsuccessful";
         	logger.info("TC INCONCLUSIVE " + s);
         	ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
