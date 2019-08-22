@@ -27,7 +27,7 @@ you an overview on tools and the development environment.
 * <<2-5-travis.adoc#,Automatic testing, building, docker image building and deployment using Travis-CI>>
 * <<2-6-3rdpartyRti.adoc#,Using the framework with a 3rd-party RTI Implementation>>
 * <<2-7-TClogging.adoc#,Test case logging>>
-* <<2-8-IVCT_Configuration.adoc#,Configuration of the IVCT>>
+* <<2-8-IVCT_Configuration.adoc#,Configuration of the IVCTool>>
 
 == Docker Images
 The primary deployment typ for the IVCTool is the containerization with docker images.
