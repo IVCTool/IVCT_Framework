@@ -5,29 +5,23 @@ plugins {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing
-{
-    sign configurations.archives
+    archives javadocJar
+    archives sourcesJar
 }
 
 group = 'io.github.msg134'
 archivesBaseName = "IEEE1516e"
 version = ivctVersion
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            pom.project {
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'IEEE1516e'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
                 name = "IEEE1516e"
                 description = "IEEE1516 API Library to be used as placeholder RTI"
                 url = "https://github.com/MSG134/IVCT_Framework/tree/master/IEEE1516e"
@@ -52,7 +46,24 @@ uploadArchives {
             }
         }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
 }
+
+signing
+{
+    sign publishing.publications.mavenJava
+}
+
 
 gradle.taskGraph.whenReady { taskGraph ->
     // Do not sign archives by default (a local build without gpg keyring should succeed)
