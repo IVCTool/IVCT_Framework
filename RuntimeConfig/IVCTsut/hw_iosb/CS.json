@@ -1,10 +1,10 @@
 {
-    "badge": ["HLA-Encoding-2017", "HLA-Services-2017", "HLA-Declaration-2017", "HLA-Object-2017", "HLA-Verification-2017", "HelloWorld-2017"],
-    "settingsDesignator": "crcAddress=localhost:8989",
-    "vendor": "Fraunhofer IOSB",
-    "name": "hw_iosb",
-    "description": "HelloWorld system under federate for IVCT demonstration",
     "id": "hw_iosb",
-    "federationName": "HelloWorld",
-    "version": "2.0.0"
+    "name": "hw_iosb",
+    "vendor": "Fraunhofer IOSB",
+    "badge": ["HLA-BASE-2017", "TS_HLA_EncodingRulesTester-2017"],
+    "settingsDesignator": "",
+    "description": "HelloWorld system under test federate for IVCT demonstration",
+    "federationName": "",
+    "version": ""
 }
