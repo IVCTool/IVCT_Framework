@@ -18,9 +18,9 @@ The gradle build tool is a generic framework for many different software build r
 
 * ``gradlew build``: This task compiles the project with containing sub-projects, and executes included JUnit tests. For the test task
 * ``gradlew install``: This task compiles and installs components in the local maven repository. It also creates distribtion packages to execute the Java applications.
-* `` gradlew run``:  Runs a project as a JVM application. This only works for projects with a defined Main class.
-* `` gradlew dockerBuildImage``: This task builds the docker images in the local docker engine.
-* `` gradlew dockerPushImage``: This task builds the docker images in the local docker engine and pushes the images to the public dockerhub repository.
+* ``gradlew run``:  Runs a project as a JVM application. This only works for projects with a defined Main class.
+* ``gradlew dockerBuildImage``: This task builds the docker images in the local docker engine.
+* ``gradlew dockerPushImage``: This task builds the docker images in the local docker engine and pushes the images to the public dockerhub repository.
 * ``gradlew asciidoctor``: Creates pdf and html files for the documentation chapters.
 
 === Travis Continuous Integration
@@ -42,6 +42,12 @@ The snapshot repositories are located in
 * link:https://oss.sonatype.org/content/repositories/snapshots/io/github/msg134/IEEE1516e/[]
 * link:https://oss.sonatype.org/content/repositories/snapshots/io/github/msg134/TC.lib/[]
 
+Both libraries are build, signed and published by the gradle Maven Publish plugin.
+
+WARNING: In the current travis build there is no signatory configured. Maven publish need bo be done manually!
+
 === The Dockerhub Repository
+
+All docker images need for IVCTool deployments are created during the automatic build and are pushed to dockerhub, which is the default repository for docker images. Pushing the images requires credentials, which are included in the travis build process. Pulling the images is free and does not require user credentials.
 
 * link:https://hub.docker.com/u/ivct[]

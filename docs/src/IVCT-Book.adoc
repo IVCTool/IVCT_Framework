@@ -7,39 +7,44 @@ This will be the place for all framework and test cases developers to get inform
 
 // Preparations
 
-include::IVCT-Module-Overview.adoc[]
+include::1-1-IVCT-Module-Overview.adoc[]
 
 include::prerequisites.adoc[]
 
-include::Branching-and-Merging.adoc[]
 
-include::model.adoc[]
+include::1-2-model.adoc[]
 
-include::badge2testsuite.adoc[]
+include::1-3-badge2testsuite.adoc[]
 
 // Building the software
 
-include::build-overview.adoc[]
+include::2-1-build-overview.adoc[]
 
-include::gradleDoc.adoc[]
+include::2-2-prerequisites.adoc[]
 
-include::3rdpartyRti.adoc[]
+include::2-3-Branching-and-Merging.adoc[]
 
-include::TClogging.adoc[]
+include::2-4-gradleDoc.adoc[]
 
-include::IVCT_Configuration.adoc[]
+include::2-5-travis.adoc[]
+
+include::2-6-3rdpartyRti.adoc[]
+
+include::2-7-TClogging.adoc[]
+
+include::2-8-IVCT_Configuration.adoc[]
 
 // Docker Images
 
-include::IVCT-Container-Design.adoc[]
+include::3-1-IVCT-Container-Design.adoc[]
 
-include::IVCT-TC-Runner-Application-image.adoc[]
+include::3-2-IVCT-TC-Runner-Application-image.adoc[]
 
-include::IVCT-GUI-image.adoc[]
+include::3-3-IVCT-GUI-image.adoc[]
 
-include::IVCT-LogSink-Application-image.adoc[]
+include::3-4-IVCT-LogSink-Application-image.adoc[]
 
-include::Building-Docker-images.adoc[]
+include::3-5-Building-Docker-images.adoc[]
 
 
 // Continuous Integration and Automatic Deployment
@@ -48,22 +53,24 @@ include::travis.adoc[]
 
 // Running the tools
 
-include::Setup-the-JMS-broker.adoc[]
+include::4-1-Setup-the-JMS-broker.adoc[]
 
-include::Graphical-User-Interface.adoc[]
+include::4-2-Graphical-User-Interface.adoc[]
 
-include::commandlinetool.adoc[]
+include::4-3-commandlinetool.adoc[]
 
-include::Reading-and-understanding-Test-Case-logfiles.adoc[]
+include::4-4-Reading-and-understanding-Test-Case-logfiles.adoc[]
 
-include::testsuite-overview.adoc[]
+include::4-5-testsuite-overview.adoc[]
+
+include::4-6-Local-Settings-Designator.adoc[]
 
 // Extending the framework
 
-include::TcDevelGuide.adoc[]
+include::5-1-TcDevelGuide.adoc[]
 
-include::Executable-Test-Case-Development-Rules.adoc[]
+include::5-2-Executable-Test-Case-Development-Rules.adoc[]
 
-include::futureenhancements.adoc[]
+include::5-3-Add-new-test-suites.adoc[]
 
-include::Add-new-test-suites.adoc[]
+include::5-4-futureenhancements.adoc[]
