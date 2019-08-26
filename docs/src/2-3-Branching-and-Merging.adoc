@@ -1,6 +1,6 @@
 == Guidelines for branching and merging and tagging
 
-NOTE: For general information on using the github service, please have a look at the bootcamp pages from github ( https://help.github.com/categories/bootcamp/ ).
+NOTE: For general information on using the github service, please have a look at the bootcamp pages from github (https://help.github.com/categories/bootcamp/ ).
 
 GitHub offers easy-to-use branching and merging of the code. Therefore, a common understanding on how to handle those branches is needed.
 
