@@ -2,7 +2,7 @@
     "id": "hw_iosb",
     "name": "hw_iosb",
     "vendor": "Fraunhofer IOSB",
-    "badge": ["HLA-BASE-2017", "TS_HLA_EncodingRulesTester-2017"],
+    "badge": ["HLA-BASE-2017", "HelloWorld-2017"],
     "settingsDesignator": "",
     "description": "HelloWorld system under test federate for IVCT demonstration",
     "federationName": "HelloWorld",
