@@ -58,8 +58,6 @@ import com.cedarsoftware.util.io.JsonWriter;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SuTTcParameterTableField.SuTTcParameterTable.SaveMenu;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
-import nato.ivct.gui.client.tile.AbstractCustomTile;
-import nato.ivct.gui.client.tile.ICustomTile;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField.Accordion;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField.Accordion.TileGroup;
@@ -919,6 +917,9 @@ public class SuTCbForm extends AbstractForm {
 	    int maxTiles = SecurityUtility.createSecureRandom().nextInt(10)+1;
 	    for (int i = 0; i < maxTiles; i++) {
 	      CustomTile tile = new CustomTile();
+	      
+	      
+	      
 //	      tile.setLabel("Tile " + i);
 	      tile.setContent("Testcase " + i);
 	      GridData gridDataHints = tile.getGridDataHints();
