@@ -366,9 +366,9 @@ public class Factory {
 		return new CmdListBadges();
 	}
 
-	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName) {
+	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName, String _sutFederateName) {
 		initialize();
-		return new CmdStartTc(_sut, _badge, _tc, _settingsDesignator, _federationName);
+		return new CmdStartTc(_sut, _badge, _tc, _settingsDesignator, _federationName, _sutFederateName);
 	}
 
 	public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {
