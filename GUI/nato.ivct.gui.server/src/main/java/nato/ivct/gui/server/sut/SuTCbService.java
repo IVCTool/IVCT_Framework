@@ -34,7 +34,6 @@ import nato.ivct.gui.shared.cb.ReadCbPermission;
 import nato.ivct.gui.shared.cb.UpdateCbPermission;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
-import nato.ivct.gui.shared.sut.SuTCbFormData.CbRequirementsTable.CbRequirementsTableRowData;
 import nato.ivct.gui.shared.sut.SuTCbFormData.SutTcExtraParameterTable.SutTcExtraParameterTableRowData;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
@@ -43,34 +42,34 @@ public class SuTCbService implements ISuTCbService {
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 	private static HashMap<String, SuTCbTablePageData> cap_hm = new HashMap<String, SuTCbTablePageData>();
 
-	/*
-	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
-	 * 
-	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
-	 */
-	@Override
-	public SuTCbTablePageData getSuTCbTableData(SearchFilter filter) {
-		String[] searchText = filter.getDisplayTexts();
-		SuTCbTablePageData pageData = cap_hm.get (searchText);
-		if (pageData == null) {
-			pageData = new SuTCbTablePageData();
-		}
-
-		LOG.info("getCapabilityTableData");
-		CbService cbService = BEANS.get(CbService.class);
-		BadgeDescription badge = cbService.getBadgeDescription(searchText[0]);
-		
-		for (nato.ivct.commander.InteroperabilityRequirement requirement : badge.requirements.values()) {
-			SuTCbTableRowData row = pageData.addRow();
-			row.setRequirementId(requirement.ID);
-			row.setRequirementDesc(requirement.description);
-//			row.setAbstractTC(badge.requirements[j].TC);
-//			row.setTCstatus("no result");
-		};
-		
-		cap_hm.put(badge.ID, pageData);
-		return pageData;
-	}
+//	/*
+//	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
+//	 * 
+//	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
+//	 */
+//	@Override
+//	public SuTCbTablePageData getSuTCbTableData(SearchFilter filter) {
+//		String[] searchText = filter.getDisplayTexts();
+//		SuTCbTablePageData pageData = cap_hm.get (searchText);
+//		if (pageData == null) {
+//			pageData = new SuTCbTablePageData();
+//		}
+//
+//		LOG.info("getCapabilityTableData");
+//		CbService cbService = BEANS.get(CbService.class);
+//		BadgeDescription badge = cbService.getBadgeDescription(searchText[0]);
+//		
+//		for (nato.ivct.commander.InteroperabilityRequirement requirement : badge.requirements.values()) {
+//			SuTCbTableRowData row = pageData.addRow();
+//			row.setRequirementId(requirement.ID);
+//			row.setRequirementDesc(requirement.description);
+////			row.setAbstractTC(badge.requirements[j].TC);
+////			row.setTCstatus("no result");
+//		};
+//		
+//		cap_hm.put(badge.ID, pageData);
+//		return pageData;
+//	}
 
 	public void executeTestCase(String sutId, String tc, String badgeId) {
 		// execute the CmdStartTc commands
@@ -99,11 +98,6 @@ public class SuTCbService implements ISuTCbService {
 
 		CbService cbService = BEANS.get(CbService.class);
 		BadgeDescription badgeDescription = cbService.getBadgeDescription(formData.getCbId());
-		formData.getCbName().setValue(badgeDescription.name);
-		formData.getCbDescription().setValue(badgeDescription.description);
-		
-		// fill requirement table of this form
-		importRequirements(formData, badgeDescription);
 		
 		// load extra TC parameter files
 		loadTcExtraParameterFiles(formData);
@@ -229,17 +223,6 @@ public class SuTCbService implements ISuTCbService {
 	        return Paths.get(tcParamFiles.get(0));
 	    else
 	        return null;
-	}
-
-	private SuTCbFormData importRequirements(final SuTCbFormData fd, final BadgeDescription bd) {
-		bd.requirements.forEach((key, requirement) -> {
-			CbRequirementsTableRowData row = fd.getCbRequirementsTable().addRow();
-			row.setRequirementId(requirement.ID);
-			row.setRequirementDesc(requirement.description);
-//			row.setAbstractTC(requirement.TC);
-		});
-		
-		return fd;
 	}
 
 	@Override

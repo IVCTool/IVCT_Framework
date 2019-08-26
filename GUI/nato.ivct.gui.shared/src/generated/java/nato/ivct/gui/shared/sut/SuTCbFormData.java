@@ -4,7 +4,6 @@ import javax.annotation.Generated;
 
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
-import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
@@ -17,10 +16,6 @@ import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 public class SuTCbFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
-
-	public CbDescription getCbDescription() {
-		return getFieldByClass(CbDescription.class);
-	}
 
 	/**
 	 * access method for property CbId.
@@ -38,14 +33,6 @@ public class SuTCbFormData extends AbstractFormData {
 
 	public CbIdProperty getCbIdProperty() {
 		return getPropertyByClass(CbIdProperty.class);
-	}
-
-	public CbName getCbName() {
-		return getFieldByClass(CbName.class);
-	}
-
-	public CbRequirementsTable getCbRequirementsTable() {
-		return getFieldByClass(CbRequirementsTable.class);
 	}
 
 	public SuTTcParameterTable getSuTTcParameterTable() {
@@ -74,93 +61,9 @@ public class SuTCbFormData extends AbstractFormData {
 		return getFieldByClass(SutTcExtraParameterTable.class);
 	}
 
-	public static class CbDescription extends AbstractValueFieldData<String> {
-
-		private static final long serialVersionUID = 1L;
-	}
-
 	public static class CbIdProperty extends AbstractPropertyData<String> {
 
 		private static final long serialVersionUID = 1L;
-	}
-
-	public static class CbName extends AbstractValueFieldData<String> {
-
-		private static final long serialVersionUID = 1L;
-	}
-
-	public static class CbRequirementsTable extends AbstractTableFieldBeanData {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public CbRequirementsTableRowData addRow() {
-			return (CbRequirementsTableRowData) super.addRow();
-		}
-
-		@Override
-		public CbRequirementsTableRowData addRow(int rowState) {
-			return (CbRequirementsTableRowData) super.addRow(rowState);
-		}
-
-		@Override
-		public CbRequirementsTableRowData createRow() {
-			return new CbRequirementsTableRowData();
-		}
-
-		@Override
-		public Class<? extends AbstractTableRowData> getRowType() {
-			return CbRequirementsTableRowData.class;
-		}
-
-		@Override
-		public CbRequirementsTableRowData[] getRows() {
-			return (CbRequirementsTableRowData[]) super.getRows();
-		}
-
-		@Override
-		public CbRequirementsTableRowData rowAt(int index) {
-			return (CbRequirementsTableRowData) super.rowAt(index);
-		}
-
-		public void setRows(CbRequirementsTableRowData[] rows) {
-			super.setRows(rows);
-		}
-
-		public static class CbRequirementsTableRowData extends AbstractTableRowData {
-
-			private static final long serialVersionUID = 1L;
-			public static final String requirementId = "requirementId";
-			public static final String requirementDesc = "requirementDesc";
-			public static final String abstractTC = "abstractTC";
-			private String m_requirementId;
-			private String m_requirementDesc;
-			private String m_abstractTC;
-
-			public String getRequirementId() {
-				return m_requirementId;
-			}
-
-			public void setRequirementId(String newRequirementId) {
-				m_requirementId = newRequirementId;
-			}
-
-			public String getRequirementDesc() {
-				return m_requirementDesc;
-			}
-
-			public void setRequirementDesc(String newRequirementDesc) {
-				m_requirementDesc = newRequirementDesc;
-			}
-
-			public String getAbstractTC() {
-				return m_abstractTC;
-			}
-
-			public void setAbstractTC(String newAbstractTC) {
-				m_abstractTC = newAbstractTC;
-			}
-		}
 	}
 
 	public static class SuTTcParameterTable extends AbstractTableFieldBeanData {
