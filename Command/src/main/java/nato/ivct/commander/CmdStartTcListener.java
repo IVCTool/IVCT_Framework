@@ -35,6 +35,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 		public String testCaseParam;
 		public String settingsDesignator;
 		public String federationName;
+		public String sutFederateName;
 	}
 
 	public interface OnStartTestCaseListener {
@@ -73,6 +74,7 @@ public class CmdStartTcListener implements MessageListener, Command {
                         info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
                         info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
                         info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
+                        info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
 						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
 
 						// check for missing values
@@ -82,6 +84,7 @@ public class CmdStartTcListener implements MessageListener, Command {
                         if (info.testCaseId == null) Factory.LOGGER.error("testCaseId is missing");
                         if (info.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is missing");
                         if (info.federationName == null) Factory.LOGGER.error("federationName is missing");
+                        if (info.sutFederateName == null) Factory.LOGGER.error("sutFederateName is missing");
                         if (info.testCaseParam == null) Factory.LOGGER.error("testCaseParam is missing");
 						
 						listener.onStartTestCase(info);

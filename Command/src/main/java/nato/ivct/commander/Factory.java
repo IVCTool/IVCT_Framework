@@ -89,6 +89,7 @@ public class Factory {
     public static final String SETTINGS_DESIGNATOR_DEFLT = "crcAddress=localhost:8989";
     public static final String FEDERATION_NAME = "FEDERATION_NAME";
     public static final String FEDERATION_NAME_DEFLT = "TheWorld";
+    public static final String FEDERATE_NAME_DEFLT = "sut";
 
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;

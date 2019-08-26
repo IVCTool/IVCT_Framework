@@ -34,6 +34,7 @@ public class CmdListSuT implements Command {
     public static final String BADGE = "badge";
     public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
     public static final String FEDERATION_NAME = "federationName";
+    public static final String FEDERATE_NAME = "sutFederateName";
 
     public HashMap<String, SutDescription> sutMap = new HashMap<>();
 
@@ -81,6 +82,7 @@ public class CmdListSuT implements Command {
                     sut.vendor = (String) jsonObj.get(VENDOR);
                     sut.settingsDesignator = (String) jsonObj.get(SETTINGS_DESIGNATOR);
                     sut.federation = (String) jsonObj.get(FEDERATION_NAME);
+                    sut.sutFederateName = (String) jsonObj.get(FEDERATE_NAME);
                     JSONArray cs = (JSONArray) jsonObj.get(BADGE);
 
                     if (sut.ID == null) {
@@ -105,6 +107,10 @@ public class CmdListSuT implements Command {
                     if (sut.federation == null) {
                         Factory.LOGGER.error("federation is undefined, using default: " + Factory.FEDERATION_NAME_DEFLT);
                         sut.federation = Factory.FEDERATION_NAME_DEFLT;
+                    }
+                    if (sut.sutFederateName == null) {
+                        Factory.LOGGER.error("federate name is undefined, using default: " + Factory.FEDERATE_NAME_DEFLT);
+                        sut.sutFederateName = Factory.FEDERATE_NAME_DEFLT;
                     }
 
                     for (int i = 0; i < cs.size(); i++) {
@@ -160,6 +166,7 @@ public class CmdListSuT implements Command {
             sut.vendor = (String) jsonObj.get(VENDOR);
             sut.settingsDesignator = (String) jsonObj.get(SETTINGS_DESIGNATOR);
             sut.federation = (String) jsonObj.get(FEDERATION_NAME);
+            sut.sutFederateName = (String) jsonObj.get(FEDERATE_NAME);
             JSONArray cs = (JSONArray) jsonObj.get(BADGE);
 
             if (sut.ID == null) {
@@ -184,6 +191,10 @@ public class CmdListSuT implements Command {
             if (sut.federation == null) {
                 Factory.LOGGER.error("federation is undefined, using default: " + Factory.FEDERATION_NAME_DEFLT);
                 sut.federation = Factory.FEDERATION_NAME_DEFLT;
+            }
+            if (sut.sutFederateName == null) {
+                Factory.LOGGER.error("federate name is undefined, using default: " + Factory.FEDERATE_NAME_DEFLT);
+                sut.sutFederateName = Factory.FEDERATE_NAME_DEFLT;
             }
 
             for (int i = 0; i < cs.size(); i++) {

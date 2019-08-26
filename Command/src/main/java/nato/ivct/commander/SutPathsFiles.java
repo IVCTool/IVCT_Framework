@@ -119,7 +119,6 @@ public class SutPathsFiles {
 	 * @param sutId the desired SUT ID
 	 * @return path where TcParam file(s) are located
 	 * @param badgeName name of the badge
-	 * @return the TcParamPath
 	 */
 	public String getTcParamPath(final String sutId, final String badgeName) {
 		String sutsHomePath = getSutsHomePath();

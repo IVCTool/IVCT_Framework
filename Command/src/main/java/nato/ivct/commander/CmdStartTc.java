@@ -31,6 +31,7 @@ public class CmdStartTc implements Command {
     public static final String TC_PARAM            = "tcParam";
     public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
     public static final String FEDERATION          = "federationName";
+    public static final String FEDERATE            = "sutFederateName";
             
 	// private MessageProducer producer;
 	private String sut;
