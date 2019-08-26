@@ -849,9 +849,7 @@ class Writer extends Thread {
                 			break;
                 		}
                 	}
-                	if (gotTestSchedule) {
-                		ivctCommander.rtp.setTestSuiteName(split[1]);
-                	} else {
+                	if (gotTestSchedule == false) {
                 		out.println("Unknown test schedule " + split[1]);
                 		break;
                 	}
@@ -861,12 +859,12 @@ class Writer extends Thread {
                 	// One thread works through the list
                 	// Other thread receives test case verdicts and releases semaphore in first thread
                 	// to start next test case
-                	CommandCache commandCache = new CommandCache(split[1], testcases0);
+                	CommandCache commandCache = new CommandCache(testcases0);
                 	
                 	// This will create one thread, other thread listens to JMS bus anyway
-                	command = new StartTestSchedule(sutID, sutDescription, commandCache, ivctCommander);
+                	command = new StartTestSchedule(sutID, sutDescription, cmdListTestSuites, commandCache, ivctCommander);
                 	gotNewCommand = true;
-                	RuntimeParameters.setTestScheduleName(split[1]);
+                	ivctCommander.rtp.setTestScheduleName(split[1]);
                     break;
                 case "abortTestSchedule":
                 case "ats":
@@ -933,7 +931,7 @@ class Writer extends Thread {
                 	}
                 	TestSuiteDescription tsd = cmdListTestSuites.getTestSuiteForTc(fullTestcaseName);
                 	ivctCommander.rtp.startTestCase(sutID, sutDescription, tsd.id, fullTestcaseName);
-                	RuntimeParameters.setTestCaseName(split[2]);
+                	ivctCommander.rtp.setTestCaseName(split[2]);
                     break;
                 case "abortTestCase":
                 case "atc":
@@ -997,7 +995,7 @@ class Writer extends Thread {
                 		out.println("SUT settingsDesignator: " + sutDescription.settingsDesignator);
                 		out.println("SUT federation: " + sutDescription.federation);
                 	}
-                	String testScheduleName = RuntimeParameters.getTestScheduleName();
+                	String testScheduleName = ivctCommander.rtp.getTestScheduleName();
                 	if (testScheduleName != null) {
                 		if (ivctCommander.rtp.getTestScheduleRunningBool()) {
                 			out.println("TestScheduleName: " + testScheduleName + " running");
@@ -1005,7 +1003,7 @@ class Writer extends Thread {
                 			out.println("TestScheduleName: " + testScheduleName + " finished");
                 		}
                 	}
-                	String testCaseName = RuntimeParameters.getTestCaseName();
+                	String testCaseName = ivctCommander.rtp.getTestCaseName();
                 	if (testCaseName != null) {
                 		if (ivctCommander.rtp.getTestCaseRunningBool()) {
                 			out.println("TestCaseName: " + testCaseName + " running");

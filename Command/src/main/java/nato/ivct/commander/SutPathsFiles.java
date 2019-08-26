@@ -118,17 +118,17 @@ public class SutPathsFiles {
 	 * Get the path where the TcParam file(s) are located
 	 * @param sutId the desired SUT ID
 	 * @return path where TcParam file(s) are located
-	 * @param badgeName name of the badge
+	 * @param testsuiteName name of the testsuite
 	 * @return the TcParamPath
 	 */
-	public String getTcParamPath(final String sutId, final String badgeName) {
+	public String getTcParamPath(final String sutId, final String testsuiteName) {
 		String sutsHomePath = getSutsHomePath();
 		// Do not have any access to any SUTs
 		if (sutsHomePath == null) {
 			return null;
 		}
 
-		return sutsHomePath + "/" + sutId + "/" + badgeName;
+		return sutsHomePath + "/" + sutId + "/" + testsuiteName;
 	}
 
 	/**
@@ -136,11 +136,11 @@ public class SutPathsFiles {
 	 * Currently only one, may change in the future.
 	 *
 	 * @param sutId the desired SUT ID
-	 * @param badgeName the name of the badge under consideration
+	 * @param testsuiteName the name of the testsuite under consideration
 	 * @return set of TcParam file names
 	 */
-	public List<String> getTcParamFileNames(final String sutId, final String badgeName) {
-		return getTcParamFileNames(sutId, badgeName, false);
+	public List<String> getTcParamFileNames(final String sutId, final String testsuiteName) {
+		return getTcParamFileNames(sutId, testsuiteName, false);
 	}
 
 	/**
@@ -149,14 +149,14 @@ public class SutPathsFiles {
 	 * Currently only one, may change in the future
 	 *
 	 * @param sutId the desired SUT ID
-	 * @param badgeId the name of the badge under consideration
+	 * @param testsuiteName the name of the testsuite under consideration
 	 * @param withPath true if path shall be included
 	 * @return set of TcParam file names
 	 */
-	public List<String> getTcParamFileNames(final String sutId, final String badgeId, final boolean withPath) {
+	public List<String> getTcParamFileNames(final String sutId, final String testsuiteName, final boolean withPath) {
 		List<String> tcParamFileNames = new ArrayList<>();
 
-		String folderName = getTcParamPath(sutId, badgeId);
+		String folderName = getTcParamPath(sutId, testsuiteName);
 		if (folderName == null) {
 			return tcParamFileNames;
 		}
@@ -185,24 +185,24 @@ public class SutPathsFiles {
 	 * Get the names of log files without path prefix
 	 *
 	 * @param sutId the ID of the SUT
-	 * @param badgeId the name of the badge under consideration
+	 * @param testsuiteName the name of the testsuite under consideration
 	 * @return a set of log file names
 	 */
-	public List<String> getSutLogFileNames(final String sutId, final String badgeId) {
-		return getSutLogFileNames(sutId, badgeId, false);
+	public List<String> getSutLogFileNames(final String sutId, final String testsuiteName) {
+		return getSutLogFileNames(sutId, testsuiteName, false);
 	}
 
 	/**
 	 * Get the names of log files with/without path prefix depending on withPath parameter
 	 *
 	 * @param sutId the ID of the SUT
-	 * @param badgeId the name of the badge under consideration
+	 * @param testsuiteName the name of the testsuite under consideration
 	 * @param withPath whether the path name is prefixed to log file name
 	 * @return a set of log file names
 	 */
-	public List<String> getSutLogFileNames(final String sutId, final String badgeId, final boolean withPath) {
+	public List<String> getSutLogFileNames(final String sutId, final String testsuiteName, final boolean withPath) {
 		List<String> logFileNames = new ArrayList<>();
-		String path = getSutLogPathName(sutId, badgeId);
+		String path = getSutLogPathName(sutId, testsuiteName);
 		final File folder = new File(path);
 		if (folder.exists() == false || folder.isDirectory() == false) {
 			return logFileNames;
@@ -215,15 +215,15 @@ public class SutPathsFiles {
 	 * Get the path where the log files are located
 	 *
 	 * @param sutId the ID of the SUT
-	 * @param badgeId the name of the badge under consideration
+	 * @param testsuiteName the name of the testsuite under consideration
 	 * @return path where logfiles are located or null
 	 */
-	public String getSutLogPathName(final String sutId, final String badgeId) {
+	public String getSutLogPathName(final String sutId, final String testsuiteName) {
 		String sutsHome = getSutsHomePath();
 		if (sutsHome == null) {
 			return null;
 		}
-		return sutsHome + "/" + sutId + "/" + badgeId + "/Logs";
+		return sutsHome + "/" + sutId + "/" + testsuiteName + "/Logs";
 	}
 
 	/**

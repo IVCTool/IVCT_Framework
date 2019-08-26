@@ -140,6 +140,9 @@ public class CmdListBadges implements Command {
 
         for (String badge_id : cs) {
             BadgeDescription b = this.badgeMap.get(badge_id);
+            if (b == null) {
+            	continue;
+            }
             // collect badge requirements
             for (Map.Entry<String, InteroperabilityRequirement> entry : b.requirements.entrySet()) {
                 ir_set.add(entry.getKey());

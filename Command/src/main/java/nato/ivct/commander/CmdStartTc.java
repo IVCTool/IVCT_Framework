@@ -26,7 +26,7 @@ public class CmdStartTc implements Command {
     public static final String SEQ                 = "sequence";
     public static final String SUT_NAME            = "sutName";
     public static final String SUT_DIR             = "sutDir";
-    public static final String BADGE               = "badge";
+    public static final String TS_ID               = "testSuiteId";
     public static final String TC_ID               = "testCaseId";
     public static final String TC_PARAM            = "tcParam";
     public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
@@ -61,7 +61,7 @@ public class CmdStartTc implements Command {
 	 *   "testScheduleName":"HelloWorld",
 	 *   "sutName":"hw_iosb",
 	 *   "sutDir":"C:/projects/IVCT_Runtime/IVCTsut/hw_iosb",
-	 *   "badge":"C:/projects/IVCT_Runtime/Badges/HelloWorld-1.0.0",
+	 *   "testSuiteId":"TS_HelloWorld-2019",
 	 *   "testCaseId":"TC0002",
 	 *   "settingsDesignator":"crcAddress=localhost:8989",
 	 *   "federationName":"TheWorld",
@@ -84,7 +84,7 @@ public class CmdStartTc implements Command {
 			startCmd.put(SEQ, Integer.toString(Factory.newCmdCount()));
 			startCmd.put(SUT_NAME, sut);
 			startCmd.put(SUT_DIR, sutHome + '/' + sut);
-			startCmd.put(BADGE, testSuiteName);
+			startCmd.put(TS_ID, testSuiteName);
             startCmd.put(TC_ID, tc);
             startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
             startCmd.put(FEDERATION, federationName);

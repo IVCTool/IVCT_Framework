@@ -30,7 +30,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 	public class TcInfo {
 		public String sutName;
 		public String sutDir;
-		public String badge;
+		public String testSuiteId;
 		public String testCaseId;
 		public String testCaseParam;
 		public String settingsDesignator;
@@ -69,7 +69,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 
 						info.sutName = (String) jsonObject.get(CmdStartTc.SUT_NAME);
 						info.sutDir = (String) jsonObject.get(CmdStartTc.SUT_DIR);
-						info.badge = (String) jsonObject.get(CmdStartTc.BADGE);
+						info.testSuiteId = (String) jsonObject.get(CmdStartTc.TS_ID);
                         info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
                         info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
                         info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
@@ -78,7 +78,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 						// check for missing values
                         if (info.sutName == null) Factory.LOGGER.error("sutName is missing");
                         if (info.sutDir == null) Factory.LOGGER.error("sutDir is missing");
-                        if (info.badge == null) Factory.LOGGER.error("badge is missing");
+                        if (info.testSuiteId == null) Factory.LOGGER.error("testSuiteId is missing");
                         if (info.testCaseId == null) Factory.LOGGER.error("testCaseId is missing");
                         if (info.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is missing");
                         if (info.federationName == null) Factory.LOGGER.error("federationName is missing");

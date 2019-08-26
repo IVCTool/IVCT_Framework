@@ -40,32 +40,6 @@ public class UiTest {
 	}
 
 	@Test
-	public void testCommandCache() {
-		System.out.println("testCommandCache enter");
-
-		String first = "first";
-		String testschedule = "testschedule";
-		List<String> testcases = new LinkedList<String>();
-		testcases.add(first);
-		CommandCache cc = new CommandCache(testschedule, testcases);
-		assertTrue("CmdLineTool is a null pointer", cc != null);
-
-		String ts = cc.getTestschedule();
-		assertEquals(testschedule, ts);
-
-		int num = cc.getNumberOfTestCases();
-		assertEquals(1, num);
-
-		String ntc = cc.getNextTestCase();
-		assertEquals(first, ntc);
-
-		ntc = cc.getNextTestCase();
-		assertEquals(null, ntc);
-
-		System.out.println("testCommandCache leave");
-	}
-
-	@Test
 	public void testCheckCtTcTsRunning() {
 		System.out.println("testCheckCtTcTsRunning enter");
 
@@ -101,12 +75,10 @@ public class UiTest {
 		// Reset SUT should reset verdict list
     	ivctCommander.rtp.resetSut();
     	ivctCommander.resetSUT();
-		String tc = RuntimeParameters.getTestCaseName();
+		String tc = ivctCommander.rtp.getTestCaseName();
 		assertTrue("Testcase name is not a null pointer", tc == null);
-		String ts = RuntimeParameters.getTestScheduleName();
+		String ts = ivctCommander.rtp.getTestScheduleName();
 		assertTrue("Testschedule name is not a null pointer", ts == null);
-		String tsn = ivctCommander.rtp.getTestSuiteName();
-		assertTrue("Testschedule name is not a null pointer", tsn == null);
 
 		System.out.println("testResetSUTvariables leave");
 	}

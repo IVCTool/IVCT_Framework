@@ -35,6 +35,7 @@ public class IVCTcommander implements OnResultListener {
 
 	private static Vector<String> listOfVerdicts = new Vector<String>();
     public RuntimeParameters rtp = new RuntimeParameters();
+    private boolean firstTime = true;
 
     /**
      * public constructor.
@@ -66,7 +67,7 @@ public class IVCTcommander implements OnResultListener {
       }
 
     public void onResult(TcResult result) {
-		String testSchedule = RuntimeParameters.getTestScheduleName();
+		String testSchedule = rtp.getTestScheduleName();
 		String testcase =  result.testcase;
 		String verdict =  result.verdict;
 		String verdictText =  result.verdictText;
@@ -80,11 +81,11 @@ public class IVCTcommander implements OnResultListener {
 		} else {
 			verdictStr = new String(testSchedule + "." + testcase.substring(testcase.lastIndexOf(".") + 1) + '\t' + verdict + '\t' + verdictText);
 		}
-		if (rtp.checkTestSuiteNameNew()) {
+		if (firstTime) {
 			String testSuiteStr = new String("Verdicts are:");
 			listOfVerdicts.addElement(testSuiteStr);
 			addTestSessionSeparator();
-			rtp.setTestSuiteNameUsed();
+			firstTime = false;
 		}
 		listOfVerdicts.addElement(verdictStr);
 		rtp.setTestCaseRunningBool(false);
