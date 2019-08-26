@@ -1,6 +1,5 @@
 package nato.ivct.gui.client.sut;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -47,14 +45,12 @@ import org.slf4j.LoggerFactory;
 import com.cedarsoftware.util.io.JsonWriter;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
-import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbImageField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTCbDetailsBox.DetailsHorizontalSplitterBox.SutParameterBox.ParameterHorizontalSplitterBox.SuTTcParameterTableField.SuTTcParameterTable.SaveMenu;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTCbDetailsBox.DetailsHorizontalSplitterBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
-import nato.ivct.gui.shared.cb.CbFormData;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTCbService;
