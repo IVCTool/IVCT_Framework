@@ -2,14 +2,11 @@
 
 The IVCTool is using many different concepts, which are briefly exlained below:
 
-.(Interoperability) Badge
-NOTE: The Interoperability Badge is a named list of interoperability requirements. It therefor represents defined and referable interoperability pattern. In the IVCTool context, the term _Interoperability_ is considered optional.
+* _(Interoperability) Badge_: The Interoperability Badge is a named list of interoperability requirements. It therefor represents defined and referable interoperability pattern. In the IVCTool context, the term _Interoperability_ is considered optional.
 
-.System under Test (SuT)
-NOTE: The system under test is a simulation system that is being tested. It is defined by an identifier, a version, a human readable name, a vendor marking, a conformance statement, a description to explain the system purpose, and connection information to the representing federate.
+* _System under Test (SuT)_: The system under test is a simulation system that is being tested. It is defined by an identifier, a version, a human readable name, a vendor marking, a conformance statement, a description to explain the system purpose, and connection information to the representing federate.
 
 
-.Interoperability Requirmement
-NOTE: A interoperability requirement is a named requirement, representing a basic behavior definition a federate has to fullfill in order to be considered interoperable.
+* _Interoperability Requirmement_: A interoperability requirement is a named requirement, representing a basic behavior definition a federate has to fullfill in order to be considered interoperable.
 
 to be completed...
