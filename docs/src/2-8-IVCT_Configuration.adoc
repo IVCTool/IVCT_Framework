@@ -6,7 +6,17 @@ The IVCTool is a higly configurable tool, that needs to be adjusted to your spec
 
 === The Configuration Elements
 
-The IVCTool configuration is controlled by variables. These variables are defined with build-in default values. In the start-up phase a java-style properties file will be loaded, that may contain values to overwrite the build-in default values. Afterwards the process will try to read the Configuration Elements from the process environment. If a value is found, again that one will be used to overwrite earlier settings.
+The IVCTool configuration is controlled by variables. There are several places, where these variables may be configured. As a general rule, the following resolve sequence is used:
+
+. The IVCTool initialization process has a *build-in default values* for each variable. This default value will be used, if none of the following steps are overwriting this default setting.
+. As one of the first steps during the startup, the IVCTool will read a *properties file* to overwrite the default values. The location of the tool is defined by the ``$(IVCT_CONF)`` environment variable.
+. In the final configuration step, the IVCTool will check if any of the configuration elements are defined in the *environment settings*. These environment values will overwrite the earlier settings.
+. *Run-time* settings will always overwrite initialization settings. It a variable is defined in the *conformance statement* itself, or in any test suite specific parameter file, that definition will be used. Settings from the earlier initialization steps will never overwrite any conformance statement specfic setting. Only if a certain seeting was not found in a conformance statement, like a missing ``SETTINGS_DESIGNATOR``, the setting from the earlier steps will be used.
+
+
+
+
+These variables are defined with build-in default values. In the start-up phase a java-style properties file will be loaded, that may contain values to overwrite the build-in default values. Afterwards the process will try to read the Configuration Elements from the process environment. If a value is found, again that one will be used to overwrite earlier settings.
 
 .IVCTool Configuration Elements
 
