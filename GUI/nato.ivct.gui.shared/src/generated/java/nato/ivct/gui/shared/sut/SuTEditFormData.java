@@ -22,6 +22,10 @@ public class SuTEditFormData extends AbstractFormData {
 		return getFieldByClass(Descr.class);
 	}
 
+	public FederateName getFederateName() {
+		return getFieldByClass(FederateName.class);
+	}
+
 	public FederationName getFederationName() {
 		return getFieldByClass(FederationName.class);
 	}
@@ -65,6 +69,11 @@ public class SuTEditFormData extends AbstractFormData {
 	}
 
 	public static class Descr extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class FederateName extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}
