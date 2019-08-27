@@ -1,5 +1,5 @@
 {
-    "badge": ["HLA-Base-2019", "HelloWorld-2017"],
+    "badge": ["HLA-BASE-2019", "HelloWorld-2019"],
     "settingsDesignator": "crcAddress=localhost:8989",
     "vendor": "Fraunhofer IOSB",
     "name": "hw_iosb",
