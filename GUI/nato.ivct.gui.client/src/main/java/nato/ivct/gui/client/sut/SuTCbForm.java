@@ -33,19 +33,16 @@ import org.eclipse.scout.rt.client.ui.group.AbstractGroup;
 import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
-import org.eclipse.scout.rt.client.ui.tile.IHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
 import org.eclipse.scout.rt.client.ui.tile.TileGridLayoutConfig;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.platform.annotations.ConfigProperty;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.security.SecurityUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
-import org.eclipse.scout.rt.shared.data.tile.ITileColorScheme;
 import org.eclipse.scout.rt.shared.data.tile.TileColorScheme;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -895,20 +892,15 @@ public class SuTCbForm extends AbstractForm {
 	
 	public class CustomTile extends AbstractHtmlTile {
 
-		@Override
-		protected String getConfiguredCssClass() {
-			// TODO Auto-generated method stub
-			return super.getConfiguredCssClass();
-		}
 //		  String PROP_LABEL = "label";
-//
-//		  public String getLabel() {
-//		    return propertySupport.getPropertyString(PROP_LABEL);
-//		  }
-//
-//		  public void setLabel(String label) {
-//		    propertySupport.setProperty(PROP_LABEL, label);
-//		  }
+
+		  public String getLabel() {
+		    return getContent();
+		  }
+
+		  public void setLabel(String label) {
+		    setContent(label);
+		  }
 	}
 	
 	protected void addGroupWithTiles(String grId) {
@@ -920,13 +912,26 @@ public class SuTCbForm extends AbstractForm {
 	      
 	      
 	      
-//	      tile.setLabel("Tile " + i);
-	      tile.setContent("Testcase " + i);
+	      tile.setLabel("Testcase " + i);
 	      GridData gridDataHints = tile.getGridDataHints();
 	      gridDataHints.weightX = 0;
 	      tile.setGridDataHints(gridDataHints);
 	      tile.setColorScheme(TileColorScheme.DEFAULT);
-//	      tile.setColorScheme(TileColorScheme.RAINBOW);
+	      
+	      switch (grId) {
+		      case "A":
+		    	  tile.setCssClass("passed-tile");
+		    	  break;
+		      case "B":
+		    	  tile.setCssClass("inconclusive-tile");
+		    	  break;
+		      case "C":
+		    	  tile.setCssClass("failed-tile");
+		    	  break;
+		      default:
+		    		tile.setCssClass("default-tile");  
+	      }
+	      
 	      tiles.add(tile);
 	    }
 	    TileGroup group = accordion.new TileGroup();
@@ -941,6 +946,7 @@ public class SuTCbForm extends AbstractForm {
 		addGroupWithTiles("A");
 		addGroupWithTiles("B");
 		addGroupWithTiles("C");
+		addGroupWithTiles("D");
 
 	}
 }

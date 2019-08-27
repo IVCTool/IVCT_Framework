@@ -1,0 +1,64 @@
+/* -------------------------------------------*/
+/* Custom specific background color for tiles */
+/* -------------------------------------------*/
+
+/* The default class is added if displayStyle is set to DEFAULT. If it is set to PLAIN no class will be added. */
+.default-tile {
+  background-color: @palette-gray-1;
+  border: 1px solid @border-color;
+  padding: @tile-padding-y @tile-padding-x;
+
+  &.selectable:active:not(.selected) {
+    background-color: @palette-gray-3;
+  }
+
+  &.selected {
+    background-color: @item-selection-background-color;
+    border-color: @item-selection-border-color;
+  }
+}
+
+.passed-tile {
+  background-color: @palette-green-2;
+  border: 1px solid @border-color;
+  padding: @tile-padding-y @tile-padding-x;
+
+  &.selectable:active:not(.selected) {
+    background-color: @palette-gray-3;
+  }
+
+  &.selected {
+    background-color:  @palette-green-3;
+    border-color: @item-selection-border-color;
+  }
+}
+
+.inconclusive-tile {
+  background-color: @palette-orange-2;
+  border: 1px solid @border-color;
+  padding: @tile-padding-y @tile-padding-x;
+
+  &.selectable:active:not(.selected) {
+    background-color: @palette-gray-3;
+  }
+
+  &.selected {
+    background-color:  @palette-orange-3;
+    border-color: @item-selection-border-color;
+  }
+}
+
+.failed-tile {
+  background-color: @palette-red-2;
+  border: 1px solid @border-color;
+  padding: @tile-padding-y @tile-padding-x;
+
+  &.selectable:active:not(.selected) {
+    background-color: @palette-gray-3;
+  }
+
+  &.selected {
+    background-color:  @palette-red-3;
+    border-color: @item-selection-border-color;
+  }
+}
