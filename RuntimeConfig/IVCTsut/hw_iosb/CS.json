@@ -4,7 +4,7 @@
     "description": "HelloWorld system under test federate for IVCT demonstration",
     "vendor": "Fraunhofer IOSB",
     "version": "2.0.0"
-    "badge": ["HLA-BASE-2017", "HelloWorld-2017"],
+    "badge": ["HLA-BASE-2019", "HelloWorld-2019"],
     "settingsDesignator": "",
     "federationName": "HelloWorld",
     "sutFederateName": "A",
