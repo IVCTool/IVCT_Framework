@@ -233,6 +233,19 @@ public class SuTForm extends AbstractForm {
 							return 1;
 						}
 					}
+					
+					@Order(4300)
+					public class FederateName extends AbstractStringField {
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("FederateName");
+						}
+
+						@Override
+						protected int getConfiguredGridW() {
+							return 1;
+						}
+					}
 				}
 			}
 

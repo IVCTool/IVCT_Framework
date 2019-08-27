@@ -145,7 +145,7 @@ public class SuTTcRequirementForm extends AbstractForm {
 		return getFieldByClass(GeneralBox.class);
 	}
 
-	public ReqDescrField getDescrField() {
+	public ReqDescrField getReqDescrField() {
 		return getFieldByClass(ReqDescrField.class);
 	}
 

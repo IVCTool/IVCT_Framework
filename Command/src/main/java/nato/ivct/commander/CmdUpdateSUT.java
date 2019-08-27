@@ -181,6 +181,16 @@ public class CmdUpdateSUT {
 					return true;
 				}
 
+                // get a String from the JSON object
+                String oldFederateName = (String) jsonObject.get(CmdListSuT.FEDERATE_NAME);
+				if (oldFederateName != null) {
+					if (oldFederateName.equals(tmpSutDescription.sutFederateName) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+
 				// get badge files list from the JSON object
 				JSONArray badgeArray = (JSONArray) jsonObject.get(CmdListSuT.BADGE);
 				if (tmpSutDescription.badges != null) {
@@ -510,6 +520,11 @@ public class CmdUpdateSUT {
             this.sutDescription.federation = Factory.FEDERATION_NAME_DEFLT;
         }
         obj.put(CmdListSuT.FEDERATION_NAME, this.sutDescription.federation);
+
+        if (sutDescription.sutFederateName == null) {
+            sutDescription.sutFederateName = Factory.FEDERATE_NAME_DEFLT;
+        }
+        obj.put(CmdListSuT.FEDERATE_NAME, this.sutDescription.sutFederateName);
 
         JSONArray list = new JSONArray();
         if (this.sutDescription.badges.size() != 0) {

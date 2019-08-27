@@ -2,8 +2,6 @@ package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
-import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -21,8 +19,6 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import nato.ivct.gui.client.outlines.SuTOutline;
@@ -249,6 +245,19 @@ public class SuTEditForm extends AbstractForm {
 						@Override
 						protected String getConfiguredLabel() {
 							return TEXTS.get("FederationName");
+						}
+
+						@Override
+						protected int getConfiguredGridW() {
+							return 1;
+						}
+					}
+					
+					@Order(1430)
+					public class FederateName extends AbstractStringField {
+						@Override
+						protected String getConfiguredLabel() {
+							return TEXTS.get("FederateName");
 						}
 
 						@Override

@@ -75,7 +75,7 @@ public class SuTCbService implements ISuTCbService {
 	public void executeTestCase(String sutId, String tc, String badgeId) {
 		// execute the CmdStartTc commands
 		SutDescription sut =BEANS.get(SuTService.class).getSutDescription(sutId);
-		ServerSession.get().execStartTc(sutId, tc, badgeId, sut.settingsDesignator, sut.federation);
+		ServerSession.get().execStartTc(sutId, tc, badgeId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
 		// mark test cases as being started
 		SuTCbTablePageData capPage = cap_hm.get(badgeId);
 		if (capPage == null) {
