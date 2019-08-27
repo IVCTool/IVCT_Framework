@@ -4,6 +4,6 @@ Test case logging is a very important function of the IVCT. It is used during de
 
 In order to get full logging of all HLA services without the test case writer having to remember calling the logger for every service call, wrappers were written for the RTIambassador and the FedAmbassador which log the call and parameters of the call. The logging level was chosen as INFO for most services, but may be tuned for a less verbose level for some services when experience with conformance tests shows a problem.
 
-The [Simple Logging Facade for Java](http://www.slf4j.org/) (slf4j) was the implementation chosen for logging. The slf4j is a widely used logging tool since it provides a single interface to a number of common loggers. The loggers can be swapped by simply exchanging the dll's to be used.
+The link:http://www.slf4j.org/[Simple Logging Facade for Java] (slf4j) was the implementation chosen for logging. The slf4j is a widely used logging tool since it provides a single interface to a number of common loggers. The loggers can be swapped by simply exchanging the dll's to be used.
 
-By using [Logback](http://logback.qos.ch/) as the logging implementation it is possible to do all logging via a Java Message Service (JMS) bus and collect the logs via a dedicated logging process. This logging process can be configured to display or store the log data in a number of ways.
+By using link:http://logback.qos.ch/[Logback] as the logging implementation it is possible to do all logging via a Java Message Service (JMS) bus and collect the logs via a dedicated logging process. This logging process can be configured to display or store the log data in a number of ways.

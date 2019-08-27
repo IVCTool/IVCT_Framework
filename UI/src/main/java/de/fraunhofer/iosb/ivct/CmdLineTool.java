@@ -179,6 +179,7 @@ class SutDescriptionVendor {
 	String vendorName;
 	String version;
 	String settingsDesignator;
+	String sutFederateName;
 	String federation;
 }
 
@@ -249,7 +250,13 @@ class Writer extends Thread {
     	}
 
     	// Get federate
-    	NamePosition federationStr = getQuotedString(out, line, settingsDesignatorStr.position, "SUT federate");
+    	NamePosition sutFederateNameStr = getQuotedString(out, line, settingsDesignatorStr.position, "SUT federateName");
+    	if (sutFederateNameStr == null) {
+    		return null;
+    	}
+
+    	// Get federate
+    	NamePosition federationStr = getQuotedString(out, line, sutFederateNameStr.position, "SUT federation");
     	if (federationStr == null) {
     		return null;
     	}
@@ -262,6 +269,7 @@ class Writer extends Thread {
     	sutDescriptionVendor.vendorName = vendorStr.string;
     	sutDescriptionVendor.version = versionStr.string;
     	sutDescriptionVendor.settingsDesignator = settingsDesignatorStr.string;
+    	sutDescriptionVendor.sutFederateName = sutFederateNameStr.string;
     	sutDescriptionVendor.federation = federationStr.string;
     	return sutDescriptionVendor;
     }
@@ -342,6 +350,7 @@ class Writer extends Thread {
                 	sutDescription.vendor = sutDescriptionVendorAdd.vendorName;
                 	sutDescription.version = sutDescriptionVendorAdd.version;
                 	sutDescription.settingsDesignator = sutDescriptionVendorAdd.settingsDesignator;
+                	sutDescription.sutFederateName = sutDescriptionVendorAdd.sutFederateName;
                 	sutDescription.federation = sutDescriptionVendorAdd.federation;
                 	sutDescription.badges.clear();
                 	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
@@ -479,6 +488,32 @@ class Writer extends Thread {
                 		break;
                 	}
                 	sutDescription.settingsDesignator = settingsDesignatorStr.string;
+                	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+	                	command = null;
+	                	break;
+					}
+                	command = null;
+                	break;
+                case "modifySUTfederate":
+                case "msfederate":
+            	    if (sutID == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("modifySUTfederate: need federate name");
+                        break;
+                	}
+                	NamePosition federateStr = getQuotedString(out, line, 0, "SUT federate");
+                	if (federateStr == null) {
+                		break;
+                	}
+                	sutDescription.sutFederateName = federateStr.string;
                 	cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
@@ -873,6 +908,7 @@ class Writer extends Thread {
                 		out.println("SUT description: " + sutDescription.description);
                 		out.println("SUT vendor: " + sutDescription.vendor);
                 		out.println("SUT settingsDesignator: " + sutDescription.settingsDesignator);
+                		out.println("SUT sutFederateName: " + sutDescription.sutFederateName);
                 		out.println("SUT federation: " + sutDescription.federation);
                 	}
                 	String testScheduleName = RuntimeParameters.getTestScheduleName();
@@ -911,12 +947,13 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
-                    out.println("asut (addSUT) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"federation text quoted\" - add an SUT");
+                    out.println("asut (addSUT) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"sut federate name quoted\" \"federation text quoted\" - add an SUT");
                     out.println("msnam (modifySUTname) sut \"name text quoted\" - modify the SUT name");
                     out.println("msver (modifySUTversion) sut \"name text quoted\" - modify the SUT version");
                     out.println("msdes (modifySUTdescription ) sut \"name text quoted\" - modify the SUT description");
                     out.println("msven (modifySUTvendor ) sut \"name text quoted\" - modify the SUT vendor");
                     out.println("mssde (modifySUTsettingsDesignator ) sut \"name text quoted\" - modify the SUT settingsDesignator");
+                    out.println("msfederate (modifySUTfederate ) sut \"name text quoted\" - modify the SUT federate name");
                     out.println("msfed (modifySUTfederation ) sut \"name text quoted\" - modify the SUT federation");
                     out.println("lbg (listBadges) - list all available badges");
                     out.println("abg (addBadge) badge ... badge - add one or more badges to SUT");

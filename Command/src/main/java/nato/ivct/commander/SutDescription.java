@@ -25,5 +25,6 @@ public class SutDescription {
         public String vendor = new String();
         public String settingsDesignator = new String();
         public String federation = new String();
+        public String sutFederateName = new String();
 		public Set<String> badges = new HashSet<String>();
 }

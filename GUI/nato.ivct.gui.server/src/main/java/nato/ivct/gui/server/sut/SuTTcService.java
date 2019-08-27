@@ -69,7 +69,9 @@ public class SuTTcService implements ISuTTcService {
 				formData.getTestCaseName().setValue(requirement.TC);
 				
 				// get log files for this test case
-				loadLogFiles(formData, bd.ID, requirement.TC);
+				if (bd.ID != null && requirement.TC != null)
+					// work-around if the requirement has no test case associated
+					loadLogFiles(formData, bd.ID, requirement.TC);
 			});
 		}
 

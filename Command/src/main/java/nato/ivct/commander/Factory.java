@@ -89,6 +89,7 @@ public class Factory {
     public static final String SETTINGS_DESIGNATOR_DEFLT = "crcAddress=localhost:8989";
     public static final String FEDERATION_NAME = "FEDERATION_NAME";
     public static final String FEDERATION_NAME_DEFLT = "TheWorld";
+    public static final String FEDERATE_NAME_DEFLT = "sut";
 
 	private static MessageProducer producer = null;
 	private static int cmdCounter = 0;
@@ -365,9 +366,9 @@ public class Factory {
 		return new CmdListBadges();
 	}
 
-	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName) {
+	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName, String _sutFederateName) {
 		initialize();
-		return new CmdStartTc(_sut, _badge, _tc, _settingsDesignator, _federationName);
+		return new CmdStartTc(_sut, _badge, _tc, _settingsDesignator, _federationName, _sutFederateName);
 	}
 
 	public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {

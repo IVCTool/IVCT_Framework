@@ -236,18 +236,20 @@ public class ServerSession extends AbstractServerSession {
 		private String badge;
 		private String settingsDesignator;
 		private String federationName;
+		private String federateName;
 
-		public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName) {
+		public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
 			sut = _sut;
 			tc = _tc;
 			badge = _badge;
 			settingsDesignator = _settingsDesignator;
 			federationName = _federationName;
+			federateName = _federateName;
 		}
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName);
+			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName, federateName);
 			tcCmd.execute();
 			return null;
 		}
@@ -343,9 +345,9 @@ public class ServerSession extends AbstractServerSession {
 		return loadTcResultsJob;
 	}
 
-	public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName) {
+	public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
 		LOG.info("starting test case");
-		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName), Jobs.newInput());
+		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
 	}
 
 	public void setLogLevel(String level) {
