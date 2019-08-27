@@ -84,6 +84,8 @@ public class CmdStartTc implements Command {
 			startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
 			startCmd.put(FEDERATION, federationName);
 			startCmd.put(FEDERATE, sutFederateName);
+			
+			LOGGER.info("StartTc Command: " + startCmd.toString());
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {

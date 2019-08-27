@@ -77,6 +77,8 @@ public class CmdStartTcListener implements MessageListener, Command {
                         info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
 						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
 
+						Factory.LOGGER.info("StartTcListener Command received: " + jsonObject.toString());
+
 						// check for missing values
                         if (info.sutName == null) Factory.LOGGER.error("sutName is missing");
                         if (info.sutDir == null) Factory.LOGGER.error("sutDir is missing");
