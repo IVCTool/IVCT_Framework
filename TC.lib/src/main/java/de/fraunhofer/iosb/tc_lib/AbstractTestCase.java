@@ -47,6 +47,7 @@ public abstract class AbstractTestCase {
 	private String sutName = null;
     private String settingsDesignator;
     private String federationName;  
+    private String sutFederateName;  
 
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
@@ -115,6 +116,7 @@ public abstract class AbstractTestCase {
 			ivct_BaseModel.setFederationName(federationName);
 			ivct_BaseModel.setSettingsDesignator(settingsDesignator);
 		} catch (TcInconclusive e) {
+			logger.info("Exception: " + e);
 			String s = "getIVCT_BaseModel unsuccessful";
         	logger.info("TC INCONCLUSIVE " + s);
         	ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
@@ -205,6 +207,11 @@ public abstract class AbstractTestCase {
     }
 
 
+    /**
+     * Returns the name of the fully qualified class name of the test case
+     * 
+     * @return Test Case Name
+     */
 	public String getTcName() {
 		return tcName;
 	}
@@ -215,15 +222,30 @@ public abstract class AbstractTestCase {
 	}
 
 
+	/**
+	 * Returns the name of the System under Test. This may be different from the federate name.
+	 * 
+	 * @return SutName
+	 */
 	public String getSutName() {
 		return sutName;
 	}
 
 
+	/** 
+	 * Set the name of the System under Test. 
+	 * 
+	 * @param sutName Name of the system under test
+	 */
 	public void setSutName(String sutName) {
 		this.sutName = sutName;
 	}
 
+	/**
+	 * Set the connection string to be used to connect to the RTI
+	 * 
+	 * @param settingsDesignator Connection String
+	 */
     public void setSettingsDesignator(String settingsDesignator) {
         this.settingsDesignator = settingsDesignator;
     }
@@ -233,4 +255,24 @@ public abstract class AbstractTestCase {
         this.federationName = federationName;
     }
 
+
+    /**
+     * Set the name for the SuT federate which is being used in the HLA federation. This value will be set by test case engine
+     * and may be used by the test case logic to identify the federate to be tested. 
+     * 
+     * @param sutFederateName Federate name of the sut
+     */
+	public void setSutFederateName(String sutFederateName) {
+		this.sutFederateName = sutFederateName;
+	}
+
+	
+	/**
+	 * Returns the federate name of the SuT
+	 * 
+	 * @return Federate Name of the SuT
+	 */
+	public String getSutFederateName () {
+		return this.sutFederateName;
+	}
 }

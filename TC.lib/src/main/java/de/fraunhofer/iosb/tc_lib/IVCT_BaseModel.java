@@ -56,6 +56,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     private IVCT_TcParam ivct_TcParam;
     private String settingsDesignator;
     private String federationName;  
+    private String sutFederateName;  
 
 
     /**
@@ -170,4 +171,14 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
     public void setFederationName(String federationName) {
         this.federationName = federationName;
     }
+
+
+	public String getSutFederateName() {
+		return sutFederateName;
+	}
+
+
+	public void setSutFederateName(String sutFederateName) {
+		this.sutFederateName = sutFederateName;
+	}
 }

@@ -1,0 +1,53 @@
+== The IVCTool Software Build Environment
+
+The IVCTool components are being maintained and build in several steps and by using several repositories to make them available. The source code for all components is version controlled with several git repositories, and the archives are hosted by the github service. All git repositories are within the link:https://github.com/IVCTool[IVCTool] Github organisation.
+
+The IVCTool components are being build by using the link:https://gradle.org/[Gradle Build Tool]. All build tasks are defined within gradle scripts and are used for compiling, testing and building libraries, documentation, console applications, web-applications and docker images.
+
+The build process can be used within you local development environment, but there is also a automated build process installed. The link:https://travis-ci.org/[Travis CI] service is configured to build and publish IVCTool libraries and docker images, whenever changes in the master or development branches are being comitted. The link:https://travis-ci.org/[Travis CI] service will publish the test case libraries into the link:https://mvnrepository.com/artifact/io.github.msg134[Maven Repository], and it will push docker images into the link:https://hub.docker.com/[dockerhub] repository.
+
+.The IVCT Public Repositories
+image:images/public-repositories.png[IVCT Public Repositories]
+
+
+The test case libraries are the link:https://github.com/IVCTool/IVCT_Framework/tree/master/IEEE1516e[IEEE1516e] library for the HLA interface definition, and the link:https://github.com/IVCTool/IVCT_Framework/tree/master/TC.lib[TC.lib] library for the test case implementation. Both libraries are available in two different states, the stable releases and the snaphot releases. Stable releases are labled with three-digit version numbers, like ``2.1.0``, and snapshot releases are labled with the term ``snapshot``. The difference is, that a library with a version number will never be changed, and a snapshot library may be updated during the development process without changing the lable. The release process for stable version is managed by the link:https://oss.sonatype.org[nexus repository manager].
+
+=== The Gradle tasks
+
+The gradle build tool is a generic framework for many different software build releated jobs. In the scope of the IVCTool only a subset of these tasks are being used.
+
+* ``gradlew build``: This task compiles the project with containing sub-projects, and executes included JUnit tests. For the test task
+* ``gradlew install``: This task compiles and installs components in the local maven repository. It also creates distribtion packages to execute the Java applications.
+* ``gradlew run``:  Runs a project as a JVM application. This only works for projects with a defined Main class.
+* ``gradlew dockerBuildImage``: This task builds the docker images in the local docker engine.
+* ``gradlew dockerPushImage``: This task builds the docker images in the local docker engine and pushes the images to the public dockerhub repository.
+* ``gradlew asciidoctor``: Creates pdf and html files for the documentation chapters.
+
+=== Travis Continuous Integration
+
+In software engineering, link:https://en.wikipedia.org/wiki/Continuous_integration[continuous integration] is a practice to continuously merge the developers work into a shared integrated version.  For the IVCTools this means, whenever a developer commits a change in the development or in the master branch, the github service will trigger a travis build process to compile and to publish the updated branch.
+
+The travis build service requires some credentials in order to pull docker images from private repositories, or to write images into a public repository. These credentials are configured as encrypted environment variables inside the travis account.
+
+WARNING: In the current version the travis account is bound to personal developer account. This will be replaced by an integration user.
+
+=== The Maven Repository
+
+The IVCTool currently supports two libraries, the TC.lib containing the test case interfaces, and the IEEE1516e containing the HLA API interfaces. They can be found on maven using this
+
+* link:https://search.maven.org/search?q=g:io.github.msg134[]
+
+The snapshot repositories are located in
+
+* link:https://oss.sonatype.org/content/repositories/snapshots/io/github/msg134/IEEE1516e/[]
+* link:https://oss.sonatype.org/content/repositories/snapshots/io/github/msg134/TC.lib/[]
+
+Both libraries are build, signed and published by the gradle Maven Publish plugin.
+
+WARNING: In the current travis build there is no signatory configured. Maven publish need bo be done manually!
+
+=== The Dockerhub Repository
+
+All docker images need for IVCTool deployments are created during the automatic build and are pushed to dockerhub, which is the default repository for docker images. Pushing the images requires credentials, which are included in the travis build process. Pulling the images is free and does not require user credentials.
+
+* link:https://hub.docker.com/u/ivct[]

@@ -5,29 +5,23 @@ plugins {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing
-{
-    sign configurations.archives
+    archives javadocJar
+    archives sourcesJar
 }
 
 group = 'io.github.msg134'
 archivesBaseName = "TC.lib"
 version = ivctVersion
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            pom.project {
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'TC.lib'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
                 name = "IVCT Test Case Library"
                 description = "Library to be used by IVCT test case developers"
                 url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
@@ -52,7 +46,24 @@ uploadArchives {
             }
         }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
 }
+
+signing
+{
+    sign publishing.publications.mavenJava
+}
+
 
 gradle.taskGraph.whenReady { taskGraph ->
     // Do not sign archives by default (a local build without gpg keyring should succeed)
@@ -62,19 +73,6 @@ gradle.taskGraph.whenReady { taskGraph ->
         }
     }
 }
-
-// publishing {
-//     publications {
-//         mavenJava(MavenPublication) {
-//             groupId = 'io.github.msg134'
-//             artifactId = 'TC.lib'
-//             archivesBaseName = "TC.lib"
-//             version = ivctVersion
-//
-//             from components.java
-//         }
-//     }
-// }
 
 
 dependencies {

@@ -1,0 +1,70 @@
+== Configuration of the IVCTool
+
+=== Introduction
+
+The IVCTool is a higly configurable tool, that needs to be adjusted to your specific setup. That includes path configuration to file systems containing the runtime information about badges, test suite, and system under test configurations. Also the communication between internal and external tool components need to be configure.
+
+=== The Configuration Elements
+
+The IVCTool configuration is controlled by variables. There are several places, where these variables may be configured. As a general rule, the following resolve sequence is used:
+
+. The IVCTool initialization process has a *build-in default values* for each variable. This default value will be used, if none of the following steps are overwriting this default setting.
+. As one of the first steps during the startup, the IVCTool will read a *properties file* to overwrite the default values. The location of the tool is defined by the ``$(IVCT_CONF)`` environment variable.
+. In the final configuration step, the IVCTool will check if any of the configuration elements are defined in the *environment settings*. These environment values will overwrite the earlier settings.
+. *Conformance statement* settings will always overwrite initialization settings. It a variable is defined in the conformance statement itself, or in any test suite specific parameter file, that definition will be used. Settings from the earlier initialization steps will never overwrite any conformance statement specfic setting. Only if a certain setting was not found in a conformance statement, like a missing ``SETTINGS_DESIGNATOR``, the setting from the earlier steps will be used.
+
+WARNING: Currently there is no option to revert to default settings, for any assignments inside the conformance statement. It is planed extend the GUI to enable this. 
+
+
+.IVCTool Configuration Elements
+
+|===
+| Element id         | Purpose | Default
+
+| IVCT_CONF          | Path name to the root configuration file. This file will be read at startup time and it may contain  | ``/root/conf/IVCT.properties``
+| IVCT_TS_HOME_ID    | Folder name containing the test suites to be used by the IVCTool | ``/root/conf/TestSuites``
+| IVCT_SUT_HOME_ID   | Folder name containing the SuT configurations | ``/root/conf/IVCTsut``
+| IVCT_BADGE_HOME_ID | Folder name containing the interoperability badge definition files | ``/root/conf/Badges``
+| IVCT_BADGE_ICONS   | Folder name containing the icons for the interoperbility badges | ``/root/conf/Badges``
+| ivctcommander.queue | JMS event channel name for internal message queue | ``commands``
+| ACTIVEMQ_USER      | user name for ActiveMQ | ``admin``
+| ACTIVEMQ_PASSWORD  | password for ActiveMQ  | ``password``
+| ACTIVEMQ_HOST      | host name where the ActiveMQ service is running | ``localhost``
+| ACTIVEMQ_PORT      | port name for the ActiveMQ service | ``61616``
+| SETTINGS_DESIGNATOR | Value for the connection string to be used as default if value is not provided in SuT conformance statement | ``crcAddress=localhost:8989``
+| FEDERATION_NAME     | Value for the federation name to be used as default if value is not provided in SuT conformance statement  | ``TheWorld``
+|===
+
+These variables are defined with build-in default values. In the start-up phase a java-style properties file will be loaded, that may contain values to overwrite the build-in default values. Afterwards the process will try to read the Configuration Elements from the process environment. If a value is found, again that one will be used to overwrite earlier settings.
+
+
+==== Environment Variables
+
+The user may provide initialisation information via environment variables. This will typically happen within a compose file or via operating system settings.
+
+==== Properties file
+
+The IVCT_CONF property file is a standard Java Properties file, containing a list of key=value settings, as shown in the example below:
+
+.Example Properties File
+----
+#IVCT Properties File
+#Mon May 08 14:06:01 CEST 2017
+IVCT_TS_HOME_ID=C\:/MSG134/DemoFolders/IVCTtestSuites
+IVCT_SUT_HOME_ID=C\:/MSG134/DemoFolders/IVCTsut
+IVCT_BADGE_HOME_ID=C\:/MSG134/DemoFolders/Badges
+java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory
+logsink.user=
+logsink.password=
+messaging.user=admin
+messaging.password=password
+messaging.host=localhost
+RTI_ID=pRTI
+logsink.tcf.bindingname=ConnectionFactory
+logsink.topic.bindingname=dynamicTopics/LogTopic.jms
+java.naming.provider.url=tcp\://localhost\:61616
+messaging.port=61616
+jmstestrunner.queue=commands
+----
+
+NOTE: Please note, if you want to use the Windows style file separator '\\', you need to use the escape char (e.g. C:\\\\IVCT_Runtime\\\\Badges).

@@ -1,0 +1,37 @@
+== Guidelines for branching and merging and tagging
+
+NOTE: For general information on using the github service, please have a look at the bootcamp pages from github (https://help.github.com/categories/bootcamp/ ).
+
+GitHub offers easy-to-use branching and merging of the code. Therefore, a common understanding on how to handle those branches is needed.
+
+=== Branches used for IVCT_Framework
+
+Our recommendation is to use personal branches along with the two special branches "master" and "development". The "master" branch should only contain stable versions. To achieve this, only a limited number of team members should be allowed to approve pull requests to this branch.
+
+The purpose of the "development" branch is to act as the common root of all the developer's branches. When a developer has finished work on a special task inside his personal branch he should merge his work to the "development" branch to achieve an early integration with the tasks/code of other developers.
+
+The actual development should be done inside the personal branch(es) of each developer. A new feature should ideally start as a feature Request in the list of issues. If a developer decides to work on this feature, he would do this by creating a personal feature branch.
+
+As soon as the code reaches a state where it makes sense to share it with other developers, the code should be merged to the "development" branch via a pull request. The developer should take care that he has the latest version of the code from the development branch and perform the required tests before merging to the development branch. This ensures that the development branch always has compilable and runnable code. By using the gitHub pull feature, the other developers will be automatically informed that a merge is ready and should consider using it as soon as possible. Thus each developer would be using one of the latest development versions to build and test his code.
+
+After the code has finally matured inside the "development" branch it can be merged to the "master" branch for upcoming releases. This merge should be approved by selected team members.
+
+=== Who should approve pull-requests to the "development" branch?
+Since merging is the critical part of collaboration where things can get broken, it is wise to have those people at hand knowing the code the best. So it is naturally that the developer who produced the code should also do the merge.
+
+=== Version tags
+Each software components shall have a version tag, that clearly identifies software version. Our version tags are following the recommentations for semantic versioning, having a tag make up with 3 digits MAJOR.MINOR.PATH:
+
+. MAJOR version when you make incompatible API changes,
+. MINOR version when you add functionality in a backwards compatible manner, and
+. PATCH version when you make backwards compatible bug fixes.
+
+A stable release in the master branch, or in the development branch will always have such a version tag, e.g. "0.4.0". That makes it easier to refer to a certain release. It is strongly recommended that the git tag is also used for the software version name. This is being assigned within the gradle build scripts (.shared/libraries.gradle).
+
+During the development of software, programmers will update code fragments, compile and test them, integrate and revert changes. For such iterations it not usefull to produce new version tags. A good practice is to have _SNAPSHOT_ version between two stable version. After releasing a certain version, like _2.1.3_, the developer start workin on the next release, which could be _2.2.0_. As long as this next release is not considered stable, it shall be called _2.2.0-SNPASHOT_ to indicate that this is only a snapshot created during the development process. It is not considered stable, as it might be changed with new features or modified behviors.
+
+While the term _SNAPSHOT_ is common practice for Java code, the docker community is using the term _latest_ to name the newest and latest build. Users of the docker images are often only interested in using the latest version. They would do this by using the _latest_ tagged images, and they can easilly pull the newest images, whithout wondering about version.
+
+As the IVCTool is based on two main branches, the _latest_ tag will be combined with the branch names. So the docker tags will be either _development-latest_ or _master-latest_.
+
+A software developer will normally use compositions with the _latest_ tag, and IVCTool users for compliance testing should use stable version with non-decorated version tags. 

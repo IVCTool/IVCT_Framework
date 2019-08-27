@@ -1,6 +1,9 @@
 {
-	"id" 			: 	"vrf",
-	"description"	:	"VR-Forces is MAK's Computer Generated Forces platform",
-	"vendor"		:	"VT MAK",
-	"badge"			:	["RPR-Encoding-2.0"]
+	"id" 			    : "vrf",
+	"description"	    : "VR-Forces is MAK's Computer Generated Forces platform",
+	"vendor"	        : "VT MAK",
+    "settingsDesignator": "",
+    "federationName"    : "TheWorld",
+    "sutFederateName"   : "VRF/UG",
+	"badge"			    : ["RPR-Encoding-2.0"]
 }

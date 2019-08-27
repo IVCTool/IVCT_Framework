@@ -20,6 +20,7 @@ asciidoctor {
       'IVCT-Module-Overview.adoc',
       'prerequisites.adoc',
       'testsuite-overview.adoc',
+      'build-overview.adoc',
       'Graphical-User-Interface.adoc',
       'Branching-and-Merging.adoc',
       'model.adoc',
