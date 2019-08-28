@@ -103,10 +103,6 @@ public class SuTCbForm extends AbstractForm {
 		return getFieldByClass(SutTcExtraParameterTableField.class);
 	}
 
-//	public CancelButton getCancelButton() {
-//		return getFieldByClass(CancelButton.class);
-//	}
-
 	public MainBox getMainBox() {
 		return getFieldByClass(MainBox.class);
 	}
@@ -882,9 +878,10 @@ public class SuTCbForm extends AbstractForm {
 		}
 		
 		private void loadTestSuites() {
-//			addGroupWithTiles("A");
-//			addGroupWithTiles("B");
-//			addGroupWithTiles("C");
+			addGroupWithTiles("A");
+			addGroupWithTiles("B");
+			addGroupWithTiles("C");
+			addGroupWithTiles("D");
 		}
 	
 	}
@@ -939,14 +936,4 @@ public class SuTCbForm extends AbstractForm {
 	    group.getBody().setTiles(tiles);
 	    accordion.addGroup(group);
 	 }
-	
-	@Override
-	protected void execInitForm() {
-		super.execInitForm();
-		addGroupWithTiles("A");
-		addGroupWithTiles("B");
-		addGroupWithTiles("C");
-		addGroupWithTiles("D");
-
-	}
 }
