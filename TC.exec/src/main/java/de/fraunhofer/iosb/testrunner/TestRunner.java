@@ -34,7 +34,7 @@ import nato.ivct.commander.CmdHeartbeatSend;
 public class TestRunner implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     
     
-    private boolean health;
+    protected boolean health;
     private String myClassName = "TestRunner";
     
 
