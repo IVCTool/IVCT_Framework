@@ -17,9 +17,13 @@ import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
 import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.server.session.ServerSessionProvider;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.CmdHeartbeatListen;
+import nato.ivct.commander.CmdHeartbeatListen.OnCmdHeartbeatListen;
+import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdLogMsgListener.LogMsg;
@@ -33,6 +37,9 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
+import nato.ivct.gui.shared.HeartBeatNotification;
+import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;
@@ -55,6 +62,7 @@ public class ServerSession extends AbstractServerSession {
 	private ResultListener sessionResultListener;
 	private StatusListener statusListener;
 	private LogMsgListener logMsgListener;
+	private CmdHeartbeatListen heartBeatListener;
 
 	public class SutTcResultDescription {
 		
@@ -206,6 +214,54 @@ public class ServerSession extends AbstractServerSession {
 		}
 		
 	}
+	
+	public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
+
+		@Override
+		public void hearHeartbeat(JSONObject heartBeat) {
+			HeartBeatNotification hbn = new HeartBeatNotification();
+			LOG.info("heartbeet received: {}", heartBeat.toJSONString());
+			
+			try {
+				HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+				switch (hbMsgState) {
+				case INTIME:
+					hbn.notifyState = HbNotificationState.OK;
+					break;
+				case TIMEOUT:
+				case WAITING:
+				case ALERT:
+					hbn.notifyState = HbNotificationState.WARNING;
+					break;
+				case FAIL:
+					hbn.notifyState = HbNotificationState.CRITICAL;
+					break;
+				case DEAD:
+					hbn.notifyState = HbNotificationState.DEAD;
+					break;
+				case UNKNOWN:
+				default:
+					hbn.notifyState = HbNotificationState.UNKNOWN;
+				}
+				
+				hbn.lastSendingPeriod = (long) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
+				hbn.alertTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_ALLERTTIME, "");
+				hbn.heartBeatSender = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
+				hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
+				hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
+				hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
+			}
+			catch (Exception exc) {
+				exc.printStackTrace();
+			}
+			finally {
+				// forward the heartbeat info to all registered notification handlers
+				BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
+			}
+
+		}
+
+	}
 
 	/*
 	 * Wait for test case results job
@@ -331,6 +387,10 @@ public class ServerSession extends AbstractServerSession {
 		logMsgListener = new LogMsgListener();
 		(Factory.createCmdLogMsgListener(logMsgListener)).execute();
 
+		LOG.info("start heartbeat Listener");
+		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute();
+		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+		new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
 	}
 
 	public IFuture<CmdListSuT> getLoadSuTJob() {

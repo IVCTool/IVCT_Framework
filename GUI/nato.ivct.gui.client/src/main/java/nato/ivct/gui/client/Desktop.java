@@ -49,6 +49,62 @@ public class Desktop extends AbstractDesktop {
 		setOutline(SuTOutline.class);
 	}
 	
+	@Order(91)
+	public class TcRunnerStatus extends AbstractFormMenu<HeartBeatInfoForm> {
+		@Override
+		protected String getConfiguredText() {
+			return TEXTS.get("TcRunnerStatus");
+		}
+		
+		@Override
+		protected String getConfiguredIconId() {
+			return Icons.WhiteBullet_32x32;//AbstractIcons.CircleSolid;
+		}
+		
+	    @Override
+	    protected Class<HeartBeatInfoForm> getConfiguredForm() {
+	      return HeartBeatInfoForm.class;
+	    }
+	    
+	    @Override
+	    protected void execInitAction() {
+	    	setProperty("hbSender", "TestRunner");
+	    }
+	    
+		@Override
+		protected void execInitForm(IForm form) {
+			form.setTitle(getProperty("hbSender").toString());
+		}
+	}
+	
+	@Order(92)
+	public class LogSinkStatus extends AbstractFormMenu<HeartBeatInfoForm> {
+		@Override
+		protected String getConfiguredText() {
+			return TEXTS.get("LogSinkStatus");
+		}
+		
+		@Override
+		protected String getConfiguredIconId() {
+			return Icons.WhiteBullet_32x32;//AbstractIcons.CircleSolid;
+		}
+		
+	    @Override
+	    protected Class<HeartBeatInfoForm> getConfiguredForm() {
+	      return HeartBeatInfoForm.class;
+	    }
+	    
+	    @Override
+	    protected void execInitAction() {
+	    	setProperty("hbSender", "LogSink");
+	    }
+	    
+		@Override
+		protected void execInitForm(IForm form) {
+			form.setTitle(getProperty("hbSender").toString());
+		}
+	}
+	
     @Order(100)
     public class AlterSuTMenu extends AbstractMenu {
         @Override
@@ -151,11 +207,10 @@ public class Desktop extends AbstractDesktop {
 	      return OptionsForm.class;
 	    }
 	    
-		@Override
-		protected void execInitForm(IForm form) {
-			// TODO Auto-generated method stub
-			super.execInitForm(form);
-		}
+//		@Override
+//		protected void execInitForm(IForm form) {
+//			super.execInitForm(form);
+//		}
 	}
 
 	@Order(2000)
@@ -218,9 +273,7 @@ public class Desktop extends AbstractDesktop {
           return "ctrl-shift-s";
         }
     }
-	
-
-
+    
     @Override
     protected void execPageDetailFormChanged(IForm oldForm, IForm newForm) {
     	 if (newForm instanceof SuTForm)
