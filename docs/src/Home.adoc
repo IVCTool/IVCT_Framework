@@ -29,14 +29,10 @@ you an overview on tools and the development environment.
 * <<2-6-3rdpartyRti.adoc#,Using the framework with a 3rd-party RTI Implementation>>
 * <<2-8-IVCT_Configuration.adoc#,Configuration of the IVCTool>>
 
-== Docker Images
+== Building Docker Images
 The primary deployment typ for the IVCTool is the containerization with docker images.
 The underlying concept and configurations are explained below.
 
-* <<3-1-IVCT-Container-Design.adoc#,IVCT Container design>>
-* <<3-2-IVCT-TC-Runner-Application-image.adoc#,IVCT TC Runner Application-image>>
-* <<3-3-IVCT-GUI-image.adoc#,IVCT GUI image>>
-* <<3-4-IVCT-LogSink-Application-image.adoc#,IVCT LogSink Application image>>
 * <<3-5-Building-Docker-images.adoc#,Building Docker images for IVCT Framework Components>>
 
 
@@ -46,11 +42,8 @@ commandline-based UI. These are described below, as well as some background on
 reading log files and the available test suite.
 
 * <<4-1-Setup-the-JMS-broker.adoc#,Setup the JMS broker>>
-* <<4-2-Graphical-User-Interface.adoc#,The graphical user interface>>
 * <<4-3-commandlinetool#,The command line interface>>
 * <<4-4-Reading-and-understanding-Test-Case-logfiles.adoc#,Reading and understanding Test Case logfiles>>
-* <<4-5-testsuite-overview.adoc#,Testsuite Overview>>
-* <<4-6-Local-Settings-Designator.adoc#,Local SettingsDesignator>>
 
 == Extending the framework
 Finally there are some guidelines on writing test cases and considerations for
