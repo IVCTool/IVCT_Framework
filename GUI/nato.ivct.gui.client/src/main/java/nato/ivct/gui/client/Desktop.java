@@ -82,7 +82,7 @@ public class Desktop extends AbstractDesktop {
 	public class TcRunnerStatus extends AbstractFormMenu<HeartBeatInfoForm> {
 		@Override
 		protected String getConfiguredText() {
-			return TEXTS.get("TcRunnerStatus");
+			return TEXTS.get("TestEngineStatus");
 		}
 		
 		@Override
