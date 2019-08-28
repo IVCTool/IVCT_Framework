@@ -4,9 +4,14 @@ The IVCTool is using many different concepts, which are briefly exlained below:
 
 * _(Interoperability) Badge_: The Interoperability Badge is a named list of interoperability requirements. It therefor represents defined and referable interoperability pattern. In the IVCTool context, the term _Interoperability_ is considered optional.
 
+* _Interoperability Requirmement_: A interoperability requirement is a named requirement, representing a basic behavior definition a federate has to fullfill in order to be considered interoperable.
+
 * _System under Test (SuT)_: The system under test is a simulation system that is being tested. It is defined by an identifier, a version, a human readable name, a vendor marking, a conformance statement, a description to explain the system purpose, and connection information to the representing federate.
 
+* _Test Case_: A test case is the algorithm to verify a interoperablity requirment. In most cases the term _test case_ referes to an _executable test case_, which is Java class with an execute method to be run within the _test case engine_. There is also the concept of an _abstract test case_, which referes to a specification of the test case algorithm. An abstract test case can be used as complementary information for an interoperability requirement. In the context of the IVCTool only executable test cases are used.
 
-* _Interoperability Requirmement_: A interoperability requirement is a named requirement, representing a basic behavior definition a federate has to fullfill in order to be considered interoperable.
+* _Test Suite_: A test suite is a container for test cases which are sharing the same configuration parameters. It used mainly a convenience feature to bundle test code into one build repository and to simplify the test case configuration.
+
+* _Test Engine_: The test engine is the IVCTool component that executes a test case. The engine needs to be compiled and configured for a certain HLA run-time infrastructure. Changing the run-time infrastructure (RTI) is currently not possible by replacing the test engine. 
 
 to be completed...
