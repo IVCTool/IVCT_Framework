@@ -388,7 +388,7 @@ public class ServerSession extends AbstractServerSession {
 		(Factory.createCmdLogMsgListener(logMsgListener)).execute();
 
 		LOG.info("start heartbeat Listener");
-		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute();
+//		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
 		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
 		new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
 	}
