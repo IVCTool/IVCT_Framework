@@ -6,7 +6,7 @@ ext {
         gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-        ivctVersion = '2.1.0-SNAPSHOT'
+        ivctVersion = '2.1.1'
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
         junitVersion = '4.+'
