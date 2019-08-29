@@ -75,7 +75,6 @@ public class HeartBeatInfoForm extends AbstractForm {
 					timeUnit = "year(s)";
 				}
 			} catch (ParseException exc) {
-				exc.printStackTrace();
 				timeElapsed = "???";
 				timeUnit = "";
 			}
