@@ -35,7 +35,11 @@ public class TestRunner implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     
     
     protected boolean health;
-    private String myClassName = "TestRunner";
+    protected String myClassName;
+    
+    public TestRunner() {
+    	myClassName = this.getClass().getSimpleName();
+    }
     
 
 	/**

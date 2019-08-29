@@ -97,7 +97,7 @@ public class Desktop extends AbstractDesktop {
 	    
 	    @Override
 	    protected void execInitAction() {
-	    	setProperty("hbSender", "TestRunner");
+	    	setProperty("hbSender", "TestEngine");
 	    }
 	    
 		@Override
