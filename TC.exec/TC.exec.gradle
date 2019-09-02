@@ -29,31 +29,45 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 
 task dockerBuildPitchImage(type: DockerBuildImage) {
-	dependsOn subprojects.install
+    dependsOn 'install'
 	group = 'Docker'
-	description = 'Builds the tc-runner docker image'
+	description = 'Builds the tc-runner docker image for Pitch'
+    dockerFile = project.file('Dockerfile-pi')
     buildArgs.put('version', "${ivctVersion}")
 	inputDir = file('.')
 	tags.add ("ivct/tc-runner:pi-${ivctVersion}")
 }
 
 task dockerBuildPorticoImage(type: DockerBuildImage) {
-	dependsOn subprojects.install
+    dependsOn 'install'
 	group = 'Docker'
-	description = 'Builds the tc-runner docker image'
+	description = 'Builds the tc-runner docker image for Portico'
+    dockerFile = project.file('Dockerfile-po')
     buildArgs.put('version', "${ivctVersion}")
 	inputDir = file('.')
 	tags.add ("ivct/tc-runner:po-${ivctVersion}")
 }
 
+task dockerBuildMakImage(type: DockerBuildImage) {
+    dependsOn 'install'
+	group = 'Docker'
+	description = 'Builds the tc-runner docker image for MaK'
+    dockerFile = project.file('Dockerfile-ma')
+    buildArgs.put('version', "${ivctVersion}")
+	inputDir = file('.')
+	tags.add ("ivct/tc-runner:ma-${ivctVersion}")
+}
 
-tasks.register ("buildImages") {
+tasks.register ("buildRtiImages") {
     group = 'Docker'
     description = 'Creates docker images for RTIs'
+    dependsOn 'dockerBuildPitchImage'
+    dependsOn 'dockerBuildPorticoImage'
+    dependsOn 'dockerBuildMakImage'
     doLast {
-        println 'doing it now'
-        dockerBuildImage
-        // runDockerBuild ('Dockerfile-pi')
+        dockerBuildPitchImage
+        dockerBuildPorticoImage
+        dockerBuildMakImage
     }
 }
 
@@ -80,7 +94,6 @@ dependencies {
 			logger.warn (':TC:MAK RTI is not configure. HelloWorld will not be runnable')
 		case "IEEE1516e":
 		default:
-			logger.warn (':TC:No RTI is used. Test Engine will not be able to run test cases')
 			compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
 	}
 }
