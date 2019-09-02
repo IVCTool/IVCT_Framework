@@ -3,6 +3,7 @@ package nato.ivct.commander;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
@@ -56,6 +57,15 @@ public class TestCmdListTestsuites {
         ir_set.add("IR-SOM-0018");
         Set<String> ts_set = cmd.getTsForIr(ir_set);
         assertTrue("Testsuite Set should be not empty", ts_set.size() == 1);
+        
+        ir_set.add("IR-SOM-0001");
+        ir_set.add("IR-SOM-0002");
+        ir_set.add("IR-SOM-0003");
+        ir_set.add("IR-SOM-0015");
+
+    	Map<String, TestSuiteDescription> fts = cmd.filterForIr (ir_set);
+    	assertTrue("filtered Testsuite list shall not be empty", fts.size() > 0);
+
     }
 
 }
