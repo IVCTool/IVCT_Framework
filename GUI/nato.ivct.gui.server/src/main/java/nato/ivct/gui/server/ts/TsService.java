@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.ts;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,18 +35,18 @@ public class TsService implements ITsService {
 	public Set<String> loadTestSuites() {
 		if (tsCmd == null)
 			// load badge descriptions
-			waitFortestSuiteLoading(); 
+			waitForTestSuiteLoading(); 
 
 		return new TreeSet<>(tsCmd.testsuites.keySet());
 	}
 
 	public TestSuiteDescription getTsDescription(String tsId) {
 		if (tsCmd == null)
-			waitFortestSuiteLoading();
+			waitForTestSuiteLoading();
 		return tsCmd.testsuites.get(tsId);
 	}
 
-	void waitFortestSuiteLoading () {
+	void waitForTestSuiteLoading () {
 		// wait until load badges job is finished
 		IFuture<CmdListTestSuites> future = ServerSession.get().getLoadTestSuitesJob();
 		tsCmd = future.awaitDoneAndGet();
@@ -73,8 +74,6 @@ public class TsService implements ITsService {
 
 		return formData;
 	}
-	
-
 
 	@Override
 	public TsRequirementsTable loadRequirementsForTc(final Set<String> testcases) {
@@ -94,5 +93,16 @@ public class TsService implements ITsService {
 		});
 
 		return tsRequirementTableRows;
+	}
+
+	@Override
+	public HashSet<String> getTsForIr(Set<String> irSet) {
+		return new HashSet<String>(tsCmd.getTsForIr(irSet));
+	}
+
+	@Override
+	public HashMap<String, Set<String>> getTcListForBadge(String cbId) {
+		// TODO
+		return new HashMap<String, Set<String>>();
 	}
 }

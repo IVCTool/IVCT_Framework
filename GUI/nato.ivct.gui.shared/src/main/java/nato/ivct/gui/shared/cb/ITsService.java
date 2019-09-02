@@ -1,5 +1,6 @@
 package nato.ivct.gui.shared.cb;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import org.eclipse.scout.rt.platform.service.IService;
@@ -16,4 +17,8 @@ public interface ITsService extends IService {
 	Set<String> loadTestSuites();
 
 	AbstractTableFieldBeanData loadRequirementsForTc(Set<String> testcases);
+
+	Set<String> getTsForIr(Set<String> irSet);
+
+	HashMap<String, Set<String>> getTcListForBadge(String cbId);
 }

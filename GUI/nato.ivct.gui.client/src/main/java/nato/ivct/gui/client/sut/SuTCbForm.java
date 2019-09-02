@@ -1,6 +1,7 @@
 package nato.ivct.gui.client.sut;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
-import org.eclipse.scout.rt.platform.security.SecurityUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
@@ -58,6 +58,8 @@ import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutP
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField.Accordion;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField.Accordion.TileGroup;
+import nato.ivct.gui.shared.cb.ICbService;
+import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
 
@@ -214,7 +216,6 @@ public class SuTCbForm extends AbstractForm {
 							}
 						}
 					}
-					
 				}
 			
 			}
@@ -853,6 +854,19 @@ public class SuTCbForm extends AbstractForm {
 			}
 		}
 	}
+    
+	public class CustomTile extends AbstractHtmlTile {
+
+//		  String PROP_LABEL = "label";
+
+		  public String getLabel() {
+		    return getContent();
+		  }
+
+		  public void setLabel(String label) {
+		    setContent(label);
+		  }
+	}
 
 	public class ViewHandler extends AbstractFormHandler {
 
@@ -878,44 +892,39 @@ public class SuTCbForm extends AbstractForm {
 		}
 		
 		private void loadTestSuites() {
-			addGroupWithTiles("A");
-			addGroupWithTiles("B");
-			addGroupWithTiles("C");
-			addGroupWithTiles("D");
+//			addGroupWithTcTiles("A");
+//			addGroupWithTcTiles("B");
+//			addGroupWithTcTiles("C");
+//			addGroupWithTcTiles("D");
+			
+			Set<String> irList = BEANS.get(ICbService.class).getIrForCb(cbId);
+			Set<String> tsList = BEANS.get(ITsService.class).getTsForIr(irList);
+			
+			tsList.forEach(ts->addTsGroupWithTcTiles(ts));
 		}
 	
 	}
 
 	
-	public class CustomTile extends AbstractHtmlTile {
+	protected void addTsGroupWithTcTiles(String tsId) {
+		
+		Accordion accordion = getAccordionField().getAccordion();
+	    TileGroup group = accordion.new TileGroup();
 
-//		  String PROP_LABEL = "label";
-
-		  public String getLabel() {
-		    return getContent();
-		  }
-
-		  public void setLabel(String label) {
-		    setContent(label);
-		  }
-	}
-	
-	protected void addGroupWithTiles(String grId) {
-	    Accordion accordion = getAccordionField().getAccordion();
+		Map<String, Set<String>> tcMap = BEANS.get(ITsService.class).getTcListForBadge(cbId);
 	    List<ITile> tiles = new ArrayList<>();
-	    int maxTiles = SecurityUtility.createSecureRandom().nextInt(10)+1;
-	    for (int i = 0; i < maxTiles; i++) {
-	      CustomTile tile = new CustomTile();
+	    
+	    tcMap.getOrDefault(tsId, Collections.emptySet())
+		.forEach(tc -> {
+	      CustomTile tile =new CustomTile();
 	      
-	      
-	      
-	      tile.setLabel("Testcase " + i);
+	      tile.setLabel(tc);
 	      GridData gridDataHints = tile.getGridDataHints();
 	      gridDataHints.weightX = 0;
 	      tile.setGridDataHints(gridDataHints);
 	      tile.setColorScheme(TileColorScheme.DEFAULT);
 	      
-	      switch (grId) {
+	      switch (tsId) {
 		      case "A":
 		    	  tile.setCssClass("passed-tile");
 		    	  break;
@@ -930,10 +939,11 @@ public class SuTCbForm extends AbstractForm {
 	      }
 	      
 	      tiles.add(tile);
-	    }
-	    TileGroup group = accordion.new TileGroup();
-	    group.setTitle("Testsuite " + grId);
+	    });
+	    
+	    group.setTitle(tsId);
 	    group.getBody().setTiles(tiles);
+ 	    group.setCollapsed(true);
 	    accordion.addGroup(group);
-	 }
+	}
 }
