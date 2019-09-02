@@ -22,7 +22,7 @@ ext {
 		geronimoJmsVersion = '1.1.1'
 		jsonIoVersion = '4.10.1'
 
-		gradleDockerPluginVersion = '3.2.4'
+		gradleDockerPluginVersion = '4.9.0'
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
 		//rti = "prti1516e"
