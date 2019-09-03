@@ -101,8 +101,13 @@ public class TsService implements ITsService {
 	}
 
 	@Override
-	public HashMap<String, Set<String>> getTcListForBadge(String cbId) {
-		// TODO
-		return new HashMap<String, Set<String>>();
+	public HashMap<String,HashSet<String>> getTcListForBadge(String cbId) {
+		HashMap<String, HashSet<String>> tcList = new HashMap<String, HashSet<String>>();
+		
+		Set<String> irList = BEANS.get(CbService.class).getIrForCb(cbId);
+		Map<String,TestSuiteDescription> tsDescMap = tsCmd.filterForIr(irList);
+		tsDescMap.forEach((tsId, tsDesc) -> tcList.put(tsId, new HashSet<String>(tsDesc.testcases.keySet())));
+
+		return tcList;
 	}
 }

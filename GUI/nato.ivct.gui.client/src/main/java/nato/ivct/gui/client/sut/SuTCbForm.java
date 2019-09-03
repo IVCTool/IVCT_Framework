@@ -1,8 +1,10 @@
 package nato.ivct.gui.client.sut;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +42,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
+import org.eclipse.scout.rt.platform.security.SecurityUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
@@ -879,24 +882,9 @@ public class SuTCbForm extends AbstractForm {
 			importFormData(formData);
 			
 			loadTestSuites();
-//			// load badge image
-//			byte[] badgeIcon = BEANS.get(ICbService.class).loadBadgeIcon(formData.getCbId());
-//			if (badgeIcon != null) {
-//				getCbImageField().setImage(badgeIcon);
-//				getForm().setSubTitle(formData.getCbName().getValue());
-//			}
-//			else {
-//				logger.warn("Could not load image file for badge ID " + formData.getCbId());
-//			}
-//			setEnabledPermission(new UpdateCbPermission());
 		}
 		
 		private void loadTestSuites() {
-//			addGroupWithTcTiles("A");
-//			addGroupWithTcTiles("B");
-//			addGroupWithTcTiles("C");
-//			addGroupWithTcTiles("D");
-			
 			Set<String> irList = BEANS.get(ICbService.class).getIrForCb(cbId);
 			Set<String> tsList = BEANS.get(ITsService.class).getTsForIr(irList);
 			
@@ -911,14 +899,13 @@ public class SuTCbForm extends AbstractForm {
 		Accordion accordion = getAccordionField().getAccordion();
 	    TileGroup group = accordion.new TileGroup();
 
-		Map<String, Set<String>> tcMap = BEANS.get(ITsService.class).getTcListForBadge(cbId);
+		Map<String, HashSet<String>> tcMap = BEANS.get(ITsService.class).getTcListForBadge(cbId);
 	    List<ITile> tiles = new ArrayList<>();
 	    
-	    tcMap.getOrDefault(tsId, Collections.emptySet())
+	    tcMap.getOrDefault(tsId, new HashSet<String>())
 		.forEach(tc -> {
 	      CustomTile tile =new CustomTile();
-	      
-	      tile.setLabel(tc);
+	      tile.setLabel(tc.substring(tc.lastIndexOf('.') + 1));
 	      GridData gridDataHints = tile.getGridDataHints();
 	      gridDataHints.weightX = 0;
 	      tile.setGridDataHints(gridDataHints);
