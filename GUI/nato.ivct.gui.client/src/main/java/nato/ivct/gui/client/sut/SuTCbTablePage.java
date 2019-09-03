@@ -35,7 +35,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 //		filter.setDisplayTexts(searchText);
 //		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
 //	}
-	
+//	
 //	@Override
 //	protected IPage<?> execCreateChildPage(ITableRow row) {
 //		SuTTcNodePage childPage = new SuTTcNodePage();
