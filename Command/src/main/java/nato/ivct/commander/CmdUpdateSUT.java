@@ -13,17 +13,24 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 package nato.ivct.commander;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,14 +38,13 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 
 public class CmdUpdateSUT {
 
     private static Logger logger = LoggerFactory.getLogger(CmdUpdateSUT.class);
     private SutDescription sutDescription = null;
-	private static Map<String, URL[]> badgeURLs = new HashMap<>();
+	private static Map<String, URL[]> testsuiteURLs = new HashMap<>();
     private static CmdListBadges badges;
     private static CmdListTestSuites cmdListTestSuites;
 
@@ -246,10 +252,10 @@ public class CmdUpdateSUT {
 	 *
 	 * @param ts the required testsuite
 	 */
-	private static URL[] getBadgeUrls(final String ts) throws Exception {
+	private static URL[] getTestsuiteUrls(final String ts) throws Exception {
 		logger.trace(ts);
-		URL[] myBadgeURLs = badgeURLs.get(ts);
-		if (myBadgeURLs == null) {
+		URL[] myTestsuiteURLs = testsuiteURLs.get(ts);
+		if (myTestsuiteURLs == null) {
 			TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(ts);
 			if (tsd != null) {
 				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
@@ -260,7 +266,7 @@ public class CmdUpdateSUT {
 					File dir = new File(lib_path);
 					File[] filesList = dir.listFiles();
 					if (filesList == null) {
-						throw new Exception("getBadgeUrls no badges found in: " + lib_path);
+						throw new Exception("getTestsuiteUrls: no testsuites found in: " + lib_path);
 					}
 					URL[] urls = new URL[filesList.length];
 					for (int i = 0; i < filesList.length; i++) {
@@ -270,27 +276,43 @@ public class CmdUpdateSUT {
 							e.printStackTrace();
 						}
 					}
-					badgeURLs.put(ts, urls);
+					testsuiteURLs.put(ts, urls);
 					return urls;
 				}
 			} else {
-				throw new Exception("getBadgeUrls unknown badge: " + ts);
+				throw new Exception("getTestsuiteUrls: unknown testsuite: " + ts);
 			}
 		}
-		return myBadgeURLs;
+		return myTestsuiteURLs;
 	}
 
 	/**
-	 * This method will extract a resource from a known badge resource location to
+	 * @throws Exception
+	 *
+	 */
+	private static boolean checkFileExists(String testFileName) throws Exception {
+		// If the desired file exists, do not overwrite
+		File f = new File(testFileName);
+		if (f.exists()) {
+			if (f.isDirectory()) {
+				throw new Exception("Target resource is a directory: " + testFileName);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * This method will extract a resource from a known testsuite resource location to
 	 * a specified directory
 	 *
-	 * @param testsuite the name of the badge of the resource required
+	 * @param ts the name of the testsuite of the resource required
 	 * @param dirName the name of the directory where the resource should be copied to
 	 * @param resourceName the name of the resource
 	 * @return false means file already exists or was extracted - NO overwrite
 	 *         true means error
 	 */
-	private static boolean extractResource(String ts, String dirName, String resourceName) throws Exception {
+	private static boolean extractResource(String ts, String dirName, String resourceName, String extraParamTemplates) throws Exception {
 
 		// Check if dirName exists and is a directory
 		File d = new File(dirName);
@@ -298,25 +320,20 @@ public class CmdUpdateSUT {
 			throw new Exception("Target directory does not exist or is not a directory: " + dirName);
 		}
 
-		// If the desired file exists, do not overwrite
-		File f = new File(dirName + "/" + resourceName);
-		if (f.exists()) {
-			if (f.isDirectory()) {
-				throw new Exception("Target resource is a directory: " + dirName + "/" + resourceName);
-			}
-			return false;
-		}
+		String testFileName = new String(dirName + "/" + resourceName);
+		if (checkFileExists(testFileName))
+			return true;
 
 		// Work through the list of badge jar/text url sources
-		URL[] myBadgeURLs = getBadgeUrls(ts);
-		if (myBadgeURLs == null) {
+		URL[] myTestsuiteURLs = getTestsuiteUrls(ts);
+		if (myTestsuiteURLs == null) {
 			throw new Exception("Unknown badge: " + ts);
 		}
-		for (int i = 0; i < myBadgeURLs.length; i++) {
+		for (int i = 0; i < myTestsuiteURLs.length; i++) {
 			try {
-				int pos = myBadgeURLs[i].getFile().lastIndexOf('/');
-				if (resourceName.equals(myBadgeURLs[i].getFile().substring(pos + 1))) {
-					java.io.InputStream is = new java.io.FileInputStream(myBadgeURLs[i].getFile());
+				int pos = myTestsuiteURLs[i].getFile().lastIndexOf('/');
+				if (resourceName.equals(myTestsuiteURLs[i].getFile().substring(pos + 1))) {
+					java.io.InputStream is = new java.io.FileInputStream(myTestsuiteURLs[i].getFile());
 					String outputFileString = new String(dirName + "/" + resourceName);
 					java.io.FileOutputStream fo = new java.io.FileOutputStream(outputFileString);
 					byte[] buffer = new byte[1024];
@@ -328,9 +345,9 @@ public class CmdUpdateSUT {
 					is.close();
 					break;
 				} else {
-					pos = myBadgeURLs[i].getFile().lastIndexOf('.');
-					if (".jar".equals(myBadgeURLs[i].getFile().substring(pos))) {
-						if (extractFromJar(dirName, resourceName, myBadgeURLs[i].getFile())) {
+					pos = myTestsuiteURLs[i].getFile().lastIndexOf('.');
+					if (".jar".equals(myTestsuiteURLs[i].getFile().substring(pos))) {
+						if (extractFromJar(dirName, resourceName, myTestsuiteURLs[i].getFile(), extraParamTemplates)) {
 							break;
 						}
 					}
@@ -351,51 +368,73 @@ public class CmdUpdateSUT {
 	 * @param destdir the destination directory
 	 * @param extractFileName the required file name to be extracted
 	 * @param jarFileName the name of the jar to search
+	 * @param extraParamTemplates
 	 * @return true if file found, false if file found
 	 * @throws java.io.IOException if problem with the file.
 	 */
-	private static boolean extractFromJar(final String destdir, final String extractFileName, final String jarFileName) throws java.io.IOException {
+	private static boolean extractFromJar(final String destdir, final String extractFileName, final String jarFileName, String extraParamTemplates) throws java.io.IOException {
 		boolean found = false;
-		java.util.jar.JarFile jarfile = new java.util.jar.JarFile(new java.io.File(jarFileName)); //jar file path(here sqljdbc4.jar)
-		java.util.Enumeration<java.util.jar.JarEntry> enu= jarfile.entries();
-		while(enu.hasMoreElements())
+		FileInputStream fis = new FileInputStream(jarFileName);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        ZipInputStream stream = new ZipInputStream(bis);
+		ZipEntry entry;
+		while((entry = stream.getNextEntry()) != null)
 		{
-			java.util.jar.JarEntry je = enu.nextElement();
-
-			logger.trace(je.getName());
-			if (je.getName().equals(extractFileName) == false) {
+			if (!entry.isDirectory())
+			{
+				if (entry.getName().startsWith(extraParamTemplates)) {
+					String s = entry.getName();
+					int pos = s.lastIndexOf('/');
+					if (pos > 0) {
+						s = entry.getName().substring(pos + 1);
+					}
+					getFileContents(destdir, stream, s);
+					continue;
+				}
+			}
+			
+			if (entry.getName().equals(extractFileName) == false) {
 				continue;
 			}
-			logger.trace("GOT THE FILE");
 			found = true;
 
-			java.io.File fl = new java.io.File(destdir, je.getName());
+			java.io.File fl = new java.io.File(destdir, entry.getName());
 			if(fl.exists()) {
 				break;
 			}
-			if(!fl.exists())
+			if (!fl.exists())
 			{
 				fl.getParentFile().mkdirs();
-				fl = new java.io.File(destdir, je.getName());
+				fl = new java.io.File(destdir, entry.getName());
 			}
-			if(je.isDirectory())
+			if (entry.isDirectory())
 			{
 				continue;
 			}
-			java.io.InputStream is = jarfile.getInputStream(je);
-			java.io.FileOutputStream fo = new java.io.FileOutputStream(fl);
-			byte[] buffer = new byte[1024];
-			int length;
-			while ((length = is.read(buffer)) > 0) {
-				fo.write(buffer, 0, length);
-			}
-			fo.close();
-			is.close();
-			break;
+			getFileContents(destdir, stream, entry.getName());
 		}
-		jarfile.close();
+		bis.close();
+		fis.close();
 		return found;
 
+	}
+	
+	private static void getFileContents(String destdir, ZipInputStream stream, String entry) throws IOException {
+		File tempFile = new File(destdir + "/" + entry);
+		if (tempFile.exists()) {
+			return;
+		}
+		Path outDir = Paths.get(destdir);
+		Path filePath = outDir.resolve(entry);
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(filePath.toFile());
+		byte[] buffer = new byte[1024];
+		BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
+		int length;
+		while ((length = stream.read(buffer)) > 0) {
+			bos.write(buffer, 0, length);
+		}
+		bos.close();
+		fos.close();
 	}
 
 	/**
@@ -473,9 +512,7 @@ public class CmdUpdateSUT {
 				}
 
 				// This is the file to copy
-				if (extractResource(testsuite, sutBadge, "TcParam.json")) {
-					throw new Exception("extractResource: Error occured!");
-				}
+				extractResource(testsuite, sutBadge, "TcParam.json", "ExtraParamTemplates");
 			}
 		}
 
