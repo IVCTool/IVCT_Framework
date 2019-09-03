@@ -124,3 +124,11 @@ It may be interesting to have a loop in the TC to do the same sequences in the t
 === Testing Test Cases
 
 Even TCs have to be tested and the best way to test them is to have a reference implementation from the group that wrote the protocol to be tested. If not available, a customer implementation may be used with the thought that errors may exist in both the TCs as well as the implementation. All TCs should be run at least once and the TC log files should be examined by a protocol expert to determine whether the TCs are executing correctly. In cases of FAILED and INCONCLUSIVE the protocol expert must carefully the protocol activity and data, and determine what the problem is and how to fix it. Once the test suite is considered to be running in a stable manner, it may be presented to the Accreditation Authority for approval.
+
+== Test Case Parameter
+
+The execution of a test case requires some parameterization. The following figure gives an overview how these parameters are being put togehter. The main part of the test cases parameters is contained in the TC.param section in the graphical user interface (GUI). These parameters are defined by the TcParam.json file. Each test suite may have its own parameters. The connection information to the SuT federate is configured with the conformance statements and will be the same for all test cases. 
+
+image:images/tc-parameters.png[Test Case Parameters]
+
+In addition to the standard parameters IVCTool allows the configuration of extended parameters.
