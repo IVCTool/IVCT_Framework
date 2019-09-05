@@ -251,6 +251,9 @@ public class SuTCbForm extends AbstractForm {
                                 getSutTcParameterTableField().loadTcParamTable(groupTitle);
                                 getSutExtraParameterTableField().loadTcExtraParamTable(groupTitle);
                             }
+
+                            // hide the save menu for the tc param table
+                            getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
                         }
                         super.handleGroupCollapsedChange(group);
                     }
@@ -979,7 +982,7 @@ public class SuTCbForm extends AbstractForm {
 
                         protected void loadTcExtraParamTable(String tsId) {
                             clearTcExtraParamTable();
-                            getTable().addRows(loadAllExtraParamRows());
+                            loadExtraParams();
                             getTable().expandAll(null);
                         }
 
@@ -989,9 +992,9 @@ public class SuTCbForm extends AbstractForm {
                         }
 
 
-                        private List<ITableRow> loadAllExtraParamRows() {
+                        private void loadExtraParams() {
                             final ISuTCbService service = BEANS.get(ISuTCbService.class);
-                            service.loadTcExtraParameterFiles(getSutId(), getActiveTsId()).forEach(fileName -> getTable().addRow().setFileName(fileName));
+                            service.loadTcExtraParameterFiles(getSutId(), getActiveTsId()).forEach(fileName -> getTable().addRow().getCellForUpdate(getTable().getFileNameColumn()).setValue(fileName));
                         }
                     }
                 }
