@@ -1,3 +1,5 @@
+apply plugin: 'application'
+
 // -----------------------------------------------------------------------------
 // Docker
 // -----------------------------------------------------------------------------
@@ -10,7 +12,6 @@ buildscript {
 	classpath libraries.docker
   }
 }
-apply plugin: 'application'
 
 // def runDockerBuild(String target) {
 //     exec {
@@ -58,19 +59,13 @@ task dockerBuildMakImage(type: DockerBuildImage) {
 	tags.add ("ivct/tc-runner:ma-${ivctVersion}")
 }
 
-tasks.register ("buildRtiImages") {
+tasks.register ("dockerBuildImage") {
     group = 'Docker'
     description = 'Creates docker images for RTIs'
     dependsOn 'dockerBuildPitchImage'
     dependsOn 'dockerBuildPorticoImage'
     dependsOn 'dockerBuildMakImage'
-    doLast {
-        dockerBuildPitchImage
-        dockerBuildPorticoImage
-        dockerBuildMakImage
-    }
 }
-
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
 
