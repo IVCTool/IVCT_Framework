@@ -1,5 +1,5 @@
 {
-    "id": "Testsuite-HLA-Verification-2019",
+    "id": "TS-HLA-Verification-2019",
     "version": "2.0.0",
     "name": "HLA Verification Test 2017",
     "description": "This test case is equivalent to the FCTT_NG configuration verification step.",
