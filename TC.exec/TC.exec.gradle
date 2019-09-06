@@ -10,19 +10,9 @@ buildscript {
 	classpath libraries.docker
   }
 }
-apply plugin: 'com.bmuschko.docker-java-application'
 apply plugin: 'application'
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
-
-docker {
-    javaApplication {
-        baseImage = 'app-docker136.hex.tno.nl/pitch/lrc:5.4.0.0-alpine-noslf4j'
-        maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
-        tag = "ivct/tc-runner:pi-${ivctVersion}"
-    }
-}
-
 
 dependencies {
     compile     project(':Command')

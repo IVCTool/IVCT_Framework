@@ -42,7 +42,13 @@ The snapshot repositories are located in
 * link:https://oss.sonatype.org/content/repositories/snapshots/io/github/msg134/IEEE1516e/[]
 * link:https://oss.sonatype.org/content/repositories/snapshots/io/github/msg134/TC.lib/[]
 
-Both libraries are build, signed and published by the gradle Maven Publish plugin.
+Both libraries are build, signed and published by the gradle Maven Publish plugin. This can be done with the gradle publish task:
+
+  gradlew publish
+
+Included in the ``publish`` task is the ``signing`` task, to digitally sign the library artifacts. That task requires a private key in the build environment, and registered public key.
+
+The publish task will uploaded the libraries into the link:https://oss.sonatype.org/#stagingRepositories[nexus repository manager system]. With this manager the content need to be released. See link:https://central.sonatype.org/pages/releasing-the-deployment.html[Releasing the Deployment] for more details. The release process includes several automated tests, like checking Javadoc content, POM and Signature validation, insecure path test and others. If all tests are passed, the libarary can be releases. That again will be done with the _release_ feature in nexus repository manager.  
 
 WARNING: In the current travis build there is no signatory configured. Maven publish need bo be done manually!
 

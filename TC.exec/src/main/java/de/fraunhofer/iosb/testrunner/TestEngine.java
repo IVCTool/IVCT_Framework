@@ -44,6 +44,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
     private CmdListTestSuites testSuites;
     private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
+
     /**
      * Main entry point from the command line.
      *
@@ -64,6 +65,9 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
      * @throws IOException problems with loading properties
      */
     public TestEngine() throws IOException {
+		
+		// set heartbeat identificer
+    	myClassName = this.getClass().getSimpleName();
 
         // initialize the IVCT Commander Factory
         Factory.initialize();

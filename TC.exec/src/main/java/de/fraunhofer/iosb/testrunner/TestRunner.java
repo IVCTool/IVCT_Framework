@@ -17,8 +17,13 @@ package de.fraunhofer.iosb.testrunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.util.SystemInfo;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+
+import nato.ivct.commander.CmdHeartbeatSend;
+
+
 
 /**
  * Simple test environment. The TestRunner takes the classnames of the tests as
@@ -26,7 +31,16 @@ import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
  *
  * @author sen (Fraunhofer IOSB)
  */
-public class TestRunner {
+public class TestRunner implements CmdHeartbeatSend.OnCmdHeartbeatSend {
+    
+    
+    protected boolean health;
+    protected String myClassName;
+    
+    public TestRunner() {
+    	myClassName = this.getClass().getSimpleName();
+    }
+    
 
 	/**
 	 * Command line entry point for the TestRunner.
@@ -34,12 +48,19 @@ public class TestRunner {
 	 * @param args
 	 *            command line parameters
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args)    {
 		final Logger LOGGER = LoggerFactory.getLogger(TestRunner.class);
 		String paramJson = null;
 		IVCT_Verdict verdicts[] = new IVCT_Verdict[1];
-		new TestRunner().executeTests(LOGGER, "SuT", args, paramJson, verdicts);
-
+		//new TestRunner().executeTests(LOGGER, "SuT", args, paramJson, verdicts);
+		TestRunner testrunner = new TestRunner();
+		testrunner.executeTests(LOGGER, "SuT", args, paramJson, verdicts);
+		
+		try {
+		  testrunner.sendHeartbeat(LOGGER);
+	    } catch (Exception ex) {
+	        LOGGER.error("could not start  sendHeartbeat " + ex);
+        }		
 	}
 
 	/**
@@ -81,5 +102,57 @@ public class TestRunner {
 			verdicts[i++] = testCase.execute(paramJson, logger);
 		}
 	}
+	
+	
+	/*  implement a heartbeat ,  brf 05.07.2019 (Fraunhofer IOSB)
+	 *  we instanciate CmdHeartbeatSend and deliver a instance of this class
+     *  When we call its execute method,
+     *  CmdHeartbeatSend will fetch all 5 Seconds the health state from  'here'
+     *  and send all 5 Seconds a message to ActiveMQ
+     *  So if the value for health is changed here, this will change the tenor 
+     *  of the message  CmdHeartbeatSend  sends to ActiveMQ
+     *  if this thread is stopped, CmdHeardbeatListen will give out an Alert-Status
+     */
+    
+	public void sendHeartbeat(Logger _logger) throws Exception{ 
+        
+        this.health=true; 
 
+        System.out.println("Start_CmdHeartbeatListener_main create his instance: " +this);    // Debug
+        CmdHeartbeatSend heartbeatSend = new  CmdHeartbeatSend(this);
+        
+        heartbeatSend.execute();
+        
+       
+    // --------------- for testing ------------------
+//       int count = 0;
+//       while (count < 10) {
+//           Thread.sleep(3000);
+//           //_logger.info("###  TestRunner CmdHeartbeatSend.health should be true ");  // Debug
+//           count++;
+//       }        
+//       _logger.info("### For Testing - we change the CmdHeartbeatSend.health to false ");
+//       this.health=false;
+//              
+//       count = 0;
+//       while (count < 10) {
+//           Thread.sleep(3000);
+//           count++;
+//       }       
+//      System.exit(0) ;
+      //-------------------------------------------------------
+
+    }
+    
+
+    
+	public String getMyClassName() {
+        return myClassName;
+    }
+    
+
+    public boolean getMyHealth() {
+        return health;
+    }
+    
 }
