@@ -408,12 +408,14 @@ public class SuTCbForm extends AbstractForm {
                             clearTcParamTable();
                             getTable().addRows(loadAllParamRows());
                             getTable().expandAll(null);
+                            getSutTcParameterTableField().execMarkSaved();
                         }
 
 
                         protected void clearTcParamTable() {
                             mRows.clear();
                             getTable().deleteAllRows();
+                            getSutTcParameterTableField().execMarkSaved();
                         }
 
 
