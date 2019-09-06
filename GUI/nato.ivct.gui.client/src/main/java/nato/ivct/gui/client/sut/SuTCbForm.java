@@ -272,6 +272,13 @@ public class SuTCbForm extends AbstractForm {
                             }
 
 
+                            // only 1 tile/TC at a time is selectable
+                            @Override
+                            protected boolean getConfiguredMultiSelect() {
+                                return false;
+                            }
+
+
                             @Override
                             protected int getConfiguredGridColumnCount() {
                                 return 6;
@@ -1072,7 +1079,24 @@ public class SuTCbForm extends AbstractForm {
             final Set<String> irList = BEANS.get(ICbService.class).getIrForCb(cbId);
             final Set<String> tsList = BEANS.get(ITsService.class).getTsForIr(irList);
 
+            final Accordion accordion = getAccordionField().getAccordion();
+            // for an unknown reason, the accordion already has (a) group(s) but must be empty
+            accordion.deleteAllGroups();
+
+            // add all groups/testsuites with their test cases to the accordion
             tsList.stream().sorted().forEach(ts -> addTsGroupWithTcTiles(ts));
+
+            // if only a single group then open it or collapse them all otherwise
+            if (accordion.getGroupCount() == 1) {
+                // load TC parameters
+                final String tsId = accordion.getGroups().get(0).getTitle();
+                setActiveTsId(tsId);
+                getSutTcParameterTableField().loadTcParamTable(tsId);
+                getSutExtraParameterTableField().loadTcExtraParamTable(tsId);
+            }
+            else {
+                accordion.getGroups().forEach(group -> group.setCollapsed(true));
+            }
         }
 
     }
@@ -1103,7 +1127,6 @@ public class SuTCbForm extends AbstractForm {
 
         group.setTitle(tsId);
         group.getBody().setTiles(tiles);
-        group.setCollapsed(true);
         accordion.addGroup(group);
     }
 }
