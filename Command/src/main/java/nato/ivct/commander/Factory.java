@@ -288,7 +288,7 @@ public class Factory {
 		int len;
 
 		env.setLength(512);
-		out.setLength(512);
+		out.setLength(4096);
 		out.setLength(0);
 		len = inString.length();
 
@@ -308,6 +308,7 @@ public class Factory {
 							env.setLength(k);
 							if (env.length() > 0) {
 								b = Factory.props.getProperty(env.toString());
+								env.setLength(512);
 							} else {
 								LOGGER.error("LineUtil:replaceMacro: Missing environment variable ");
 							}
