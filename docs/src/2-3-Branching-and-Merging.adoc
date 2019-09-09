@@ -16,8 +16,8 @@ As soon as the code reaches a state where it makes sense to share it with other 
 
 After the code has finally matured inside the "development" branch it can be merged to the "master" branch for upcoming releases. This merge should be approved by selected team members.
 
-=== Who should approve pull-requests to the "development" branch?
-Since merging is the critical part of collaboration where things can get broken, it is wise to have those people at hand knowing the code the best. So it is naturally that the developer who produced the code should also do the merge.
+.Who should approve pull-requests to the "development" branch?
+NOTE: Since merging is the critical part of collaboration where things can get broken, it is wise to have those people at hand knowing the code the best. So it is naturally that the developer who produced the code should also do the merge.
 
 === Version tags
 Each software components shall have a version tag, that clearly identifies software version. Our version tags are following the recommentations for semantic versioning, having a tag make up with 3 digits MAJOR.MINOR.PATH:
@@ -28,10 +28,13 @@ Each software components shall have a version tag, that clearly identifies softw
 
 A stable release in the master branch, or in the development branch will always have such a version tag, e.g. "0.4.0". That makes it easier to refer to a certain release. It is strongly recommended that the git tag is also used for the software version name. This is being assigned within the gradle build scripts (.shared/libraries.gradle).
 
+==== Development Snapshots
+
 During the development of software, programmers will update code fragments, compile and test them, integrate and revert changes. For such iterations it not usefull to produce new version tags. A good practice is to have _SNAPSHOT_ version between two stable version. After releasing a certain version, like _2.1.3_, the developer start workin on the next release, which could be _2.2.0_. As long as this next release is not considered stable, it shall be called _2.2.0-SNPASHOT_ to indicate that this is only a snapshot created during the development process. It is not considered stable, as it might be changed with new features or modified behviors.
 
+==== Latest Docker Image
 While the term _SNAPSHOT_ is common practice for Java code, the docker community is using the term _latest_ to name the newest and latest build. Users of the docker images are often only interested in using the latest version. They would do this by using the _latest_ tagged images, and they can easilly pull the newest images, whithout wondering about version.
 
 As the IVCTool is based on two main branches, the _latest_ tag will be combined with the branch names. So the docker tags will be either _development-latest_ or _master-latest_.
 
-A software developer will normally use compositions with the _latest_ tag, and IVCTool users for compliance testing should use stable version with non-decorated version tags. 
+A software developer will normally use compositions with the _latest_ tag, and IVCTool users for compliance testing should use stable version with non-decorated version tags.

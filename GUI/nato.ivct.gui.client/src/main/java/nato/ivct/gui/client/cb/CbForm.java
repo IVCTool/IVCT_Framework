@@ -376,7 +376,7 @@ public class CbForm extends AbstractForm {
 							
 							// get the requirements for the selected badges
 							ICbService CbService = BEANS.get(ICbService.class);
-							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirements(badges);
+							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirementTable(badges);
 							
 							CbRequirementsTable requirementsTable = getTable();
 							
@@ -401,7 +401,7 @@ public class CbForm extends AbstractForm {
 							
 							// get the requirements for the selected badges
 							ICbService CbService = BEANS.get(ICbService.class);
-							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirements(badges);
+							AbstractTableFieldBeanData requirementTableRows = CbService.loadRequirementTable(badges);
 							
 							CbRequirementsTable requirementsTable = getTable();
 							

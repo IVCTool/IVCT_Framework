@@ -33,15 +33,7 @@ include::2-6-3rdpartyRti.adoc[]
 include::2-8-IVCT_Configuration.adoc[]
 
 
-// Docker Images
-
-include::3-1-IVCT-Container-Design.adoc[]
-
-include::3-2-IVCT-TC-Runner-Application-image.adoc[]
-
-include::3-3-IVCT-GUI-image.adoc[]
-
-include::3-4-IVCT-LogSink-Application-image.adoc[]
+// Building Docker Images
 
 include::3-5-Building-Docker-images.adoc[]
 
@@ -50,15 +42,9 @@ include::3-5-Building-Docker-images.adoc[]
 
 include::4-1-Setup-the-JMS-broker.adoc[]
 
-include::4-2-Graphical-User-Interface.adoc[]
-
 include::4-3-commandlinetool.adoc[]
 
 include::4-4-Reading-and-understanding-Test-Case-logfiles.adoc[]
-
-include::4-5-testsuite-overview.adoc[]
-
-include::4-6-Local-Settings-Designator.adoc[]
 
 // Extending the framework
 

@@ -3,6 +3,7 @@ package nato.ivct.gui.server.cb;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,16 +39,16 @@ public class CbService implements ICbService {
 		return new TreeSet<>(badgeCmd.badgeMap.keySet());
 	}
 
-	public BadgeDescription getBadgeDescription(String cb) {
+	public BadgeDescription getBadgeDescription(final String cbId) {
 		if (badgeCmd == null)
 			waitForBadgeIrLoading();
-		return badgeCmd.badgeMap.get(cb);
+		return badgeCmd.badgeMap.get(cbId);
 	}
 	
-	public InteroperabilityRequirement getIrDescription(String ir) {
+	public InteroperabilityRequirement getIrDescription(final String irId) {
 		if (badgeCmd == null)
 			waitForBadgeIrLoading();
-		return badgeCmd.getIR(ir);
+		return badgeCmd.getIR(irId);
 	}
 
 	void waitForBadgeIrLoading () {
@@ -71,7 +72,7 @@ public class CbService implements ICbService {
 		return formData;
 	}
 	
-	public byte[] loadBadgeIcon(String badgeId) {
+	public byte[] loadBadgeIcon(final String badgeId) {
 		BadgeDescription cb = badgeCmd.badgeMap.get(badgeId);
 		
 		if (cb.cbVisual == null) {
@@ -81,14 +82,14 @@ public class CbService implements ICbService {
 		
 		try {
 			return Files.readAllBytes((Paths.get(cb.cbVisual)));
-		} catch (IOException exe) {
+		} catch (IOException exc) {
 			LOG.error("Could not open icon file " + cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
 			return null;
 		}
 	}
 
 	@Override
-	public CbRequirementsTable loadRequirements(final Set<String> badges) {
+	public CbRequirementsTable loadRequirementTable(final Set<String> badges) {
 		CbRequirementsTable cbRequirementTableRows = new CbRequirementsTable();
 		for (String badge:badges) {
 			BadgeDescription bd = getBadgeDescription(badge);
@@ -100,5 +101,10 @@ public class CbService implements ICbService {
 		}
 
 		return cbRequirementTableRows;
+	}
+
+	@Override
+	public HashSet<String> getIrForCb(final String cbId) {
+		return new HashSet<String>(getBadgeDescription(cbId).requirements.keySet());
 	}
 }
