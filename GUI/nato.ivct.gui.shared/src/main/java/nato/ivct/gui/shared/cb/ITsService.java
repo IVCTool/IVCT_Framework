@@ -2,7 +2,6 @@ package nato.ivct.gui.shared.cb;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.scout.rt.platform.service.IService;
@@ -11,16 +10,24 @@ import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFiel
 
 import nato.ivct.gui.shared.ts.TsFormData;
 
+
 @TunnelToServer
 public interface ITsService extends IService {
 
-	TsFormData load(TsFormData formData);
+    TsFormData load(TsFormData formData);
 
-	Set<String> loadTestSuites();
 
-	AbstractTableFieldBeanData loadRequirementsForTc(Set<String> testcases);
+    Set<String> loadTestSuites();
 
-	Set<String> getTsForIr(Set<String> irSet);
 
-	HashMap<String, HashSet<String>> getTcListForBadge(String cbId);
+    AbstractTableFieldBeanData loadRequirementsForTc(Set<String> testcases);
+
+
+    Set<String> getTsForIr(Set<String> irSet);
+
+
+    HashMap<String, HashSet<String>> getTcListForBadge(String cbId);
+
+
+    HashMap<String, String> getIrForTc(String tcId);
 }

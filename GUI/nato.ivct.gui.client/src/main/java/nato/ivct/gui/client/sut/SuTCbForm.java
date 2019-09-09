@@ -55,12 +55,14 @@ import org.slf4j.LoggerFactory;
 import com.cedarsoftware.util.io.JsonWriter;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField.Accordion;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.AccordionField.Accordion.TileGroup;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcParameterTableField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcParameterTableField.SuTTcParameterTable.SaveMenu;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField.Accordion;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField.Accordion.TileGroup;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.SutTcRequirementTableField;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.SutTcRequirementTableField.SutTcRequirementTable;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
@@ -123,6 +125,11 @@ public class SuTCbForm extends AbstractForm {
 
     public AccordionField getAccordionField() {
         return getFieldByClass(AccordionField.class);
+    }
+
+
+    public SutTcRequirementTableField getSutTcRequirementTableField() {
+        return getFieldByClass(SutTcRequirementTableField.class);
     }
 
 
@@ -207,98 +214,194 @@ public class SuTCbForm extends AbstractForm {
 
             @Override
             protected double getConfiguredSplitterPosition() {
-                return 0.25;
+                return 0.35;
             }
 
+            // Box for testsuites and their fulfilled requirements
             @Order(1000)
-            public class AccordionField extends AbstractAccordionField<AccordionField.Accordion> {
-
+            public class TestsuiteBox extends AbstractGroupBox {
                 @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Testsuites");
+                protected boolean getConfiguredBorderVisible() {
+                    // no border
+                    return false;
                 }
 
-
-                @Override
-                protected int getConfiguredGridW() {
-                    return FULL_WIDTH;
-                }
-
-                public class Accordion extends AbstractTileAccordion<ITile> {
+                @Order(1000)
+                public class AccordionField extends AbstractAccordionField<AccordionField.Accordion> {
 
                     @Override
-                    protected boolean getConfiguredExclusiveExpand() {
-                        return true;
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Testsuites");
                     }
 
 
                     @Override
-                    protected void handleGroupCollapsedChange(IGroup group) {
-                        final String groupTitle = group.getTitle();
-
-                        if (isInitDone()) {
-                            if (group.isCollapsed()) {
-                                if (groupTitle.equals(getActiveTsId())) {
-                                    // clear parameter tables
-                                    getSutTcParameterTableField().clearTcParamTable();
-                                    getSutExtraParameterTableField().clearTcExtraParamTable();
-                                    setActiveTsId(null);
-                                }
-                            }
-                            else {
-                                // load TC parameters
-                                setActiveTsId(groupTitle);
-                                getSutTcParameterTableField().loadTcParamTable(groupTitle);
-                                getSutExtraParameterTableField().loadTcExtraParamTable(groupTitle);
-                            }
-
-                            // hide the save menu for the tc param table
-                            getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
-                        }
-                        super.handleGroupCollapsedChange(group);
+                    protected int getConfiguredGridW() {
+                        return FULL_WIDTH;
                     }
 
-                    public class TileGroup extends AbstractGroup {
+                    public class Accordion extends AbstractTileAccordion<ITile> {
 
                         @Override
-                        public TileGrid getBody() {
-                            return (TileGrid) super.getBody();
+                        protected boolean getConfiguredExclusiveExpand() {
+                            return true;
                         }
 
-                        public class TileGrid extends AbstractTileGrid<ITile> {
-                            @Override
-                            protected boolean getConfiguredSelectable() {
-                                return true;
+
+                        @Override
+                        protected void handleGroupCollapsedChange(IGroup group) {
+                            final String groupTitle = group.getTitle();
+
+                            if (isInitDone()) {
+                                if (group.isCollapsed()) {
+                                    if (groupTitle.equals(getActiveTsId())) {
+                                        // clear parameter tables
+                                        getSutTcParameterTableField().clearTcParamTable();
+                                        getSutExtraParameterTableField().clearTcExtraParamTable();
+                                        setActiveTsId(null);
+                                    }
+                                }
+                                else {
+                                    // load TC parameters
+                                    setActiveTsId(groupTitle);
+                                    getSutTcParameterTableField().loadTcParamTable(groupTitle);
+                                    getSutExtraParameterTableField().loadTcExtraParamTable(groupTitle);
+                                }
+
+                                // hide the save menu for the tc param table
+                                getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
+                            }
+                            super.handleGroupCollapsedChange(group);
+                        }
+
+
+                        // fill requirement table for the selected TC
+                        @Override
+                        protected void execTilesSelected(List<ITile> tiles) {
+                            if (tiles.isEmpty()) {
+                                // clear the requirement table
+                                final SutTcRequirementTable tbl = getSutTcRequirementTableField().getTable();
+                                if (tbl.getRowCount() > 0)
+                                    tbl.deleteAllRows();
+                                return;
                             }
 
+                            final CustomTile selTc = (CustomTile) tiles.get(0);
+                            final String tcId = selTc.getTcId();
+                            final HashMap<String, String> irDescList = BEANS.get(ITsService.class).getIrForTc(tcId);
 
-                            // only 1 tile/TC at a time is selectable
+                            final SutTcRequirementTable reqTable = getSutTcRequirementTableField().getTable();
+                            reqTable.deleteAllRows();
+                            irDescList.forEach((id, desc) -> {
+                                final ITableRow row = reqTable.addRow();
+                                // set requirement ID and description
+                                reqTable.getRequirementIdColumn().setValue(row, id);
+                                reqTable.getRequirementDescColumn().setValue(row, desc);
+                            });
+                        }
+
+                        public class TileGroup extends AbstractGroup {
+
                             @Override
-                            protected boolean getConfiguredMultiSelect() {
-                                return false;
+                            public TileGrid getBody() {
+                                return (TileGrid) super.getBody();
                             }
 
-
-                            @Override
-                            protected int getConfiguredGridColumnCount() {
-                                return 6;
-                            }
-
-
-                            @Override
-                            protected TileGridLayoutConfig getConfiguredLayoutConfig() {
-                                return super.getConfiguredLayoutConfig().withColumnWidth(100).withRowHeight(100);
-                            }
+                            public class TileGrid extends AbstractTileGrid<ITile> {
+                                @Override
+                                protected boolean getConfiguredSelectable() {
+                                    return true;
+                                }
 
 
-                            @Override
-                            protected boolean getConfiguredScrollable() {
-                                return false;
+                                // only 1 tile/TC at a time is selectable
+                                @Override
+                                protected boolean getConfiguredMultiSelect() {
+                                    return false;
+                                }
+
+
+                                @Override
+                                protected int getConfiguredGridColumnCount() {
+                                    return 6;
+                                }
+
+
+                                @Override
+                                protected TileGridLayoutConfig getConfiguredLayoutConfig() {
+                                    return super.getConfiguredLayoutConfig().withColumnWidth(100).withRowHeight(100);
+                                }
+
+
+                                @Override
+                                protected boolean getConfiguredScrollable() {
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
 
+                @Order(1500)
+                public class SutTcRequirementTableField extends AbstractTableField<SutTcRequirementTableField.SutTcRequirementTable> {
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 6;
+                    }
+
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Requirements");
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 2;
+                    }
+
+                    public class SutTcRequirementTable extends AbstractTable {
+
+                        public RequirementIdColumn getRequirementIdColumn() {
+                            return getColumnSet().getColumnByClass(RequirementIdColumn.class);
+                        }
+
+
+                        public RequirementDescColumn getRequirementDescColumn() {
+                            return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+                        }
+
+                        @Order(1000)
+                        public class RequirementIdColumn extends AbstractStringColumn {
+
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("RequirementId");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 250;
+                            }
+                        }
+
+                        @Order(2000)
+                        public class RequirementDescColumn extends AbstractStringColumn {
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("RequirementDescription");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 650;
+                            }
+                        }
+                    }
+                }
             }
 
             @Order(2000)
@@ -584,7 +687,7 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 200;
+                                    return 300;
                                 }
                             }
 
@@ -598,7 +701,7 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 200;
+                                    return 600;
                                 }
                             }
 
@@ -1035,6 +1138,13 @@ public class SuTCbForm extends AbstractForm {
 
         public String getTcName() {
             return "";
+        }
+
+
+        public String getTcId() {
+            final String tcId = TILE_TITLE_CONTENT_PART.matcher(getContent()).replaceFirst("$2").replace("\"", "");
+
+            return tcId;
         }
 
 

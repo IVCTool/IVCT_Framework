@@ -91,6 +91,11 @@ public class SuTCbFormData extends AbstractFormData {
         return getFieldByClass(SutTcParameterTable.class);
     }
 
+
+    public SutTcRequirementTable getSutTcRequirementTable() {
+        return getFieldByClass(SutTcRequirementTable.class);
+    }
+
     public static class ActiveTsIdProperty extends AbstractPropertyData<String> {
 
         private static final long serialVersionUID = 1L;
@@ -264,6 +269,81 @@ public class SuTCbFormData extends AbstractFormData {
 
             public void setParameterValue(String newParameterValue) {
                 m_parameterValue = newParameterValue;
+            }
+        }
+    }
+
+    public static class SutTcRequirementTable extends AbstractTableFieldBeanData {
+
+        private static final long serialVersionUID = 1L;
+
+
+        @Override
+        public SutTcRequirementTableRowData addRow() {
+            return (SutTcRequirementTableRowData) super.addRow();
+        }
+
+
+        @Override
+        public SutTcRequirementTableRowData addRow(int rowState) {
+            return (SutTcRequirementTableRowData) super.addRow(rowState);
+        }
+
+
+        @Override
+        public SutTcRequirementTableRowData createRow() {
+            return new SutTcRequirementTableRowData();
+        }
+
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return SutTcRequirementTableRowData.class;
+        }
+
+
+        @Override
+        public SutTcRequirementTableRowData[] getRows() {
+            return (SutTcRequirementTableRowData[]) super.getRows();
+        }
+
+
+        @Override
+        public SutTcRequirementTableRowData rowAt(int index) {
+            return (SutTcRequirementTableRowData) super.rowAt(index);
+        }
+
+
+        public void setRows(SutTcRequirementTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class SutTcRequirementTableRowData extends AbstractTableRowData {
+
+            private static final long  serialVersionUID = 1L;
+            public static final String requirementId    = "requirementId";
+            public static final String requirementDesc  = "requirementDesc";
+            private String             m_requirementId;
+            private String             m_requirementDesc;
+
+
+            public String getRequirementId() {
+                return m_requirementId;
+            }
+
+
+            public void setRequirementId(String newRequirementId) {
+                m_requirementId = newRequirementId;
+            }
+
+
+            public String getRequirementDesc() {
+                return m_requirementDesc;
+            }
+
+
+            public void setRequirementDesc(String newRequirementDesc) {
+                m_requirementDesc = newRequirementDesc;
             }
         }
     }
