@@ -16,6 +16,8 @@ limitations under the License.
 
 package de.fraunhofer.iosb.tc_lib;
 
+import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
+
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -103,11 +105,32 @@ public abstract class AbstractTestCase {
 
 		MDC.put("tcStatus", "running");
 
+		StringBuilder tcGlobalVariables  = new StringBuilder();
+		tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- BEGIN");
+		if (this.sutName != null) {
+			tcGlobalVariables.append("\nSUT Name: ");
+			tcGlobalVariables.append(sutName);
+		}
+		if (this.sutFederateName != null) {
+			tcGlobalVariables.append("\nSUT Federate Name: ");
+			tcGlobalVariables.append(this.sutFederateName);
+		}
+		if (this.federationName != null) {
+			tcGlobalVariables.append("\nSUT Federation Name: ");
+			tcGlobalVariables.append(this.federationName);
+		}
+		if (this.settingsDesignator != null) {
+			tcGlobalVariables.append("\nsettingsDesignator: ");
+			tcGlobalVariables.append(this.settingsDesignator);
+		}
+		tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- END");
+        logger.info(tcGlobalVariables.toString());
+
         String tcParam = new String();
         tcParam = "\n"
         +   "TEST CASE PARAMETERS -------------------------------------- BEGIN\n"
         +   tcParamJson
-        +   "\nTEST CASE PARAMETERS -------------------------------------- END\n";
+        +   "\nTEST CASE PARAMETERS -------------------------------------- END";
 
         logger.info(tcParam);
     	
