@@ -1,14 +1,14 @@
 {
   "somFiles":[
     {
-      "fileName":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Services-2017/HelloWorldSOM.xml"
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorldSOM.xml"
     }
   ],
   "fomFiles":[
     {
-      "fileName":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Services-2017/HelloWorld.xml"
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorld.xml"
     }
   ],
-  "resultDirectory":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Services-2017",
+  "resultDirectory":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)",
   "testDuration":"60"
 }
