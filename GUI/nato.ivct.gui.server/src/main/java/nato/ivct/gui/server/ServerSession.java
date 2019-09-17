@@ -6,7 +6,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,397 +44,414 @@ import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
+
 /**
  * <h3>{@link ServerSession}</h3>
  *
  * @author hzg
  */
 public class ServerSession extends AbstractServerSession {
-	
-	private static final Pattern RESULT_EXP = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)\\)?\\s*$");   // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
-	private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
-	private IFuture<CmdListSuT> loadSuTJob = null;
-	private IFuture<SutTcResultDescription> loadTcResultsJob = null;
-	private IFuture<CmdListBadges> loadBadgesJob = null;
-	private IFuture<CmdListTestSuites> loadTestSuitesJob = null;
-	private IFuture<CmdStartTc> startTcJobs = null;
-	private IFuture<CmdStartTestResultListener> testResultListener = null;
-	private ResultListener sessionResultListener;
-	private StatusListener statusListener;
-	private LogMsgListener logMsgListener;
-	private CmdHeartbeatListen heartBeatListener;
+    private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$"); // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
+    private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
-	public class SutTcResultDescription {
-		
-		/*
-		 * Result map of the form (sutId, (badgeId, (logFile, verdict))). All elements are from type String
-		 */
-		public HashMap<String, HashMap<String, HashMap<String, String>>> sutResultMap = new HashMap<String, HashMap<String, HashMap<String, String>>>();
-	}
-	
-	
-	/*
-	 * Load SuT descriptions job
-	 */
-	public class LoadSuTdescriptions implements Callable<CmdListSuT> {
+    private IFuture<CmdListSuT>                 loadSuTJob         = null;
+    private IFuture<SutTcResultDescription>     loadTcResultsJob   = null;
+    private IFuture<CmdListBadges>              loadBadgesJob      = null;
+    private IFuture<CmdListTestSuites>          loadTestSuitesJob  = null;
+    private IFuture<CmdStartTc>                 startTcJobs        = null;
+    private IFuture<CmdStartTestResultListener> testResultListener = null;
+    private ResultListener                      sessionResultListener;
+    private StatusListener                      statusListener;
+    private LogMsgListener                      logMsgListener;
+    private CmdHeartbeatListen                  heartBeatListener;
 
-		@Override
-		public CmdListSuT call() throws Exception {
-			CmdListSuT sut;
-			sut = Factory.createCmdListSut();
-			sut.execute();
-			return sut;
-		}
-	}
+    public class SutTcResultDescription {
 
-	/*
-	 * Load Badge descriptions job
-	 */
-	public class LoadBadgeDescriptions implements Callable<CmdListBadges> {
+        /*
+         * Result map of the form (sutId, (tsId, (logFile, verdict))). All elements are
+         * from type String
+         */
+        public HashMap<String, HashMap<String, HashMap<String, String>>> sutResultMap = new HashMap<>();
+    }
 
-		@Override
-		public CmdListBadges call() throws Exception {
-			CmdListBadges badges;
-			badges = Factory.createCmdListBadges();
-			badges.execute();
-			return badges;
-		}
-	}
+    /*
+     * Load SuT descriptions job
+     */
+    public class LoadSuTdescriptions implements Callable<CmdListSuT> {
 
-	/*
-	 * Load Testsuite descriptions job
-	 */
-	public class LoadTestSuiteDescriptions implements Callable<CmdListTestSuites> {
+        @Override
+        public CmdListSuT call() throws Exception {
+            CmdListSuT sut;
+            sut = Factory.createCmdListSut();
+            sut.execute();
+            return sut;
+        }
+    }
 
-		@Override
-		public CmdListTestSuites call() throws Exception {
-			CmdListTestSuites testsuites;
-			testsuites = Factory.createCmdListTestSuites();
-			testsuites.execute();
-			return testsuites;
-		}
+    /*
+     * Load Badge descriptions job
+     */
+    public class LoadBadgeDescriptions implements Callable<CmdListBadges> {
 
-	}
-	
-	/*
-	 * Load TC execution results
-	 */
-	public class LoadTcResults implements Callable<SutTcResultDescription> {
-		
-		@Override
-		public SutTcResultDescription call() throws Exception {
-			SutTcResultDescription sutTcResults = new SutTcResultDescription();
-			
-			// get SuT list
-			final List<String> sutList = Factory.getSutPathsFiles().getSuts();
-			// iterate over all SuTs to get its report files
-			sutList.forEach(sutId -> {
-				final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
-				//parse each report file to get the verdict and the corresponding log file name
-				reportFiles.forEach(reportFile -> {
-					LOG.info("parse report file: {}\n", reportFile);
-					try {
-						Files.lines(Paths.get(reportFile))
-						.filter(line -> VERDICT_LINE.matcher(line).matches())
-						.forEach(verdictLine -> {
-							LOG.info("\tparse verdict line: {}\n", verdictLine);
-							// extract the required elements from the verdict line
-							final String[] result = parseVerdictLine(verdictLine);
-							if (result.length > 0) {
-								final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
-								// get the matching log file from the list
-								final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
-								if (matchingFileName.isPresent()) {
-									// add the match to the result map
-									sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
-								}
-							}
-						});
-					} catch (NoSuchFileException exc) {
-			            LOG.info("report file not found: {}", reportFile);
-					} catch (IOException exc) {
-						exc.printStackTrace();
-					}
-				});
-			});
-			
-			return sutTcResults;
-		}
-		
-		/*
-		 * Parse the verdict string of a report file
-		 * @param line the line to parse
-		 * @return a String array with 4 element with:
-		 *         [0]: extended test case name
-		 *         [1]: verdict
-		 *         [2]: badge id
-		 *         [3]: log file name
-		 */
-		private  String[] parseVerdictLine(final String line) {
-			Matcher matcher = RESULT_EXP.matcher(line);
-			
-			return matcher.matches() ? matcher.replaceAll("$1 $2 $3").replace('/', ' ').split(" ") : new String[0];
-		}
-	}
-	
-	public void updateSutResultMap(final String sutId, final String badgeId, final String tcFullName) {
-		LOG.info("reload test results for all SuTs");
-		loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
-	}
+        @Override
+        public CmdListBadges call() throws Exception {
+            CmdListBadges badges;
+            badges = Factory.createCmdListBadges();
+            badges.execute();
+            return badges;
+        }
+    }
 
-	public class ResultListener implements OnResultListener {
+    /*
+     * Load Testsuite descriptions job
+     */
+    public class LoadTestSuiteDescriptions implements Callable<CmdListTestSuites> {
 
-		@Override
-		public void onResult(TcResult result) {
-			TcVerdictNotification notification = new TcVerdictNotification();
-			notification.setSutId(result.sutName);
-			notification.setTcId(result.testcase);
-			notification.setVerdict(result.verdict);
-			notification.setText(result.verdictText);
+        @Override
+        public CmdListTestSuites call() throws Exception {
+            CmdListTestSuites testsuites;
+            testsuites = Factory.createCmdListTestSuites();
+            testsuites.execute();
+            return testsuites;
+        }
 
-			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
-		}
+    }
 
-	}
+    /*
+     * Load TC execution results
+     */
+    public class LoadTcResults implements Callable<SutTcResultDescription> {
 
-	public class StatusListener implements OnTcStatusListener {
+        @Override
+        public SutTcResultDescription call() throws Exception {
+            final SutTcResultDescription sutTcResults = new SutTcResultDescription();
 
-		@Override
-		public void onTcStatus(TcStatus status) {
-			TcStatusNotification notification = new TcStatusNotification();
-			notification.setSutId(status.sutName);
-			notification.setTcId(status.tcName);
-			notification.setPercent(status.percentFinshed);
-			notification.setStatus(status.status);
+            // get SuT list
+            final List<String> sutList = Factory.getSutPathsFiles().getSuts();
+            // iterate over all SuTs to get its report files
+            sutList.forEach(sutId -> {
+                final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
+                //parse each report file to get the verdict and the corresponding log file name
+                reportFiles.forEach(reportFile -> {
+                    LOG.info("parse report file: {}\n", reportFile);
+                    try {
+                        Files.lines(Paths.get(reportFile)).filter(line -> VERDICT_LINE.matcher(line).matches()).forEach(verdictLine -> {
+                            LOG.info("\tparse verdict line: {}\n", verdictLine);
+                            // extract the required elements from the verdict line
+                            final String[] result = parseVerdictLine(verdictLine);
+                            if (result.length == 4) {
+                                //                                final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
+                                //                                //TODO: Get list for pairs (logfile,verdict) for each SUT
+                                //                                // get the matching log file from the list
+                                //                                final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
+                                //                                if (matchingFileName.isPresent()) {
+                                //                                    // add the match to the result map
+                                //                                    sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
+                                //                                }
+                                sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
+                            }
+                        });
+                    }
+                    catch (final NoSuchFileException exc) {
+                        LOG.info("report file not found: {}", reportFile);
+                    }
+                    catch (final IOException exc) {
+                        exc.printStackTrace();
+                    }
+                });
+            });
 
-			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
-		}
+            return sutTcResults;
+        }
 
-	}
-	
-	public class LogMsgListener implements OnLogMsgListener {
 
-		@Override
-		public void onLogMsg(LogMsg logMsg) {
-			TcLogMsgNotification notification = new TcLogMsgNotification();
-			notification.setSutId(logMsg.sut);
-			notification.setTcId(logMsg.tc);
-			notification.setBadgeId(logMsg.badge);
-			notification.setLogMsg(logMsg.txt);
-			notification.setLogLevel(logMsg.level);
-			notification.setTimeStamp(logMsg.time);
-			
-			BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
-		}
-		
-	}
-	
-	public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
+        /*
+         * Parse the verdict string of a report file
+         * @param line the line to parse
+         * @return a String array with 4 element with: [0]: extended test case name [1]:
+         * verdict [2]: testsuite (or badge) id [3]: log file name
+         */
+        private String[] parseVerdictLine(final String line) {
+            final Matcher matcher = RESULT_EXP.matcher(line);
 
-		@Override
-		public void hearHeartbeat(JSONObject heartBeat) {
-			HeartBeatNotification hbn = new HeartBeatNotification();
-			LOG.info("heartbeet received: {}", heartBeat.toJSONString());
-			
-			try {
-				HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
-				switch (hbMsgState) {
-				case INTIME:
-					hbn.notifyState = HbNotificationState.OK;
-					break;
-				case TIMEOUT:
-				case WAITING:
-				case ALERT:
-					hbn.notifyState = HbNotificationState.WARNING;
-					break;
-				case FAIL:
-					hbn.notifyState = HbNotificationState.CRITICAL;
-					break;
-				case DEAD:
-					hbn.notifyState = HbNotificationState.DEAD;
-					break;
-				case UNKNOWN:
-				default:
-					hbn.notifyState = HbNotificationState.UNKNOWN;
-				}
-				
-				hbn.lastSendingPeriod = (long) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
-				hbn.alertTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_ALLERTTIME, "");
-				hbn.heartBeatSender = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
-				hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
-				hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
-				hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
-			}
-			catch (Exception exc) {
-				exc.printStackTrace();
-			}
-			finally {
-				// forward the heartbeat info to all registered notification handlers
-				BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
-			}
+            return matcher.matches() ? matcher.replaceAll("$1 $2 $3").replace('/', ' ').split(" ") : new String[0];
+        }
+    }
 
-		}
 
-	}
+    public void updateSutResultMap(final String sutId, final String badgeId, final String tcFullName) {
+        LOG.info("reload test results for all SuTs");
+        loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
+    }
 
-	/*
-	 * Wait for test case results job
-	 */
-	public class TestResultListener implements Callable<CmdStartTestResultListener> {
+    public class ResultListener implements OnResultListener {
 
-		private CmdStartTestResultListener resultCmd;
-		private ResultListener resultListener;
+        @Override
+        public void onResult(TcResult result) {
+            final TcVerdictNotification notification = new TcVerdictNotification();
+            notification.setSutId(result.sutName);
+            notification.setTcId(result.testcase);
+            notification.setVerdict(result.verdict);
+            notification.setText(result.verdictText);
 
-		public TestResultListener(ResultListener listener) {
-			resultListener = listener;
-		}
+            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+        }
 
-		@Override
-		public CmdStartTestResultListener call() throws Exception {
-			resultCmd = Factory.createCmdStartTestResultListener(resultListener);
-			resultCmd.execute();
-			return resultCmd;
-		}
-	}
+    }
 
-	/*
-	 * Execute test case job
-	 */
-	public class ExecuteTestCase implements Callable<CmdStartTc> {
-		private String sut;
-		private String tc;
-		private String badge;
-		private String settingsDesignator;
-		private String federationName;
-		private String federateName;
+    public class StatusListener implements OnTcStatusListener {
 
-		public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
-			sut = _sut;
-			tc = _tc;
-			badge = _badge;
-			settingsDesignator = _settingsDesignator;
-			federationName = _federationName;
-			federateName = _federateName;
-		}
+        @Override
+        public void onTcStatus(TcStatus status) {
+            final TcStatusNotification notification = new TcStatusNotification();
+            notification.setSutId(status.sutName);
+            notification.setTcId(status.tcName);
+            notification.setPercent(status.percentFinshed);
+            notification.setStatus(status.status);
 
-		@Override
-		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName, federateName);
-			tcCmd.execute();
-			return null;
-		}
+            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+        }
 
-	}
+    }
 
-	public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
+    public class LogMsgListener implements OnLogMsgListener {
 
-		private LogLevel logLevel;
+        @Override
+        public void onLogMsg(LogMsg logMsg) {
+            final TcLogMsgNotification notification = new TcLogMsgNotification();
+            notification.setSutId(logMsg.sut);
+            notification.setTcId(logMsg.tc);
+            notification.setBadgeId(logMsg.badge);
+            notification.setLogMsg(logMsg.txt);
+            notification.setLogLevel(logMsg.level);
+            notification.setTimeStamp(logMsg.time);
 
-		public ExecuteSetLogLevel(String level) {
-			switch (level==null ? "" : level) {
-			case "debug":
-				logLevel = LogLevel.DEBUG;
-				break;
-			case "info":
-				logLevel = LogLevel.INFO;
-				break;
-			case "warn":
-				logLevel = LogLevel.WARNING;
-				break;
-			case "error":
-				logLevel = LogLevel.ERROR;
-				break;
-			case "trace":
-			default:
-				logLevel = LogLevel.TRACE;
-				break;
-			}
-		}
+            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+        }
 
-		@Override
-		public CmdSetLogLevel call() throws Exception {
-			CmdSetLogLevel setCmd = Factory.createCmdSetLogLevel(logLevel);
-			setCmd.execute();
-			return null;
-		}
+    }
 
-	}
+    public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
 
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
+        @Override
+        public void hearHeartbeat(JSONObject heartBeat) {
+            final HeartBeatNotification hbn = new HeartBeatNotification();
+            LOG.info("heartbeet received: {}", heartBeat.toJSONString());
 
-	public ServerSession() {
-		super(true);
-	}
+            try {
+                final HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+                switch (hbMsgState) {
+                    case INTIME:
+                        hbn.notifyState = HbNotificationState.OK;
+                        break;
+                    case TIMEOUT:
+                    case WAITING:
+                    case ALERT:
+                        hbn.notifyState = HbNotificationState.WARNING;
+                        break;
+                    case FAIL:
+                        hbn.notifyState = HbNotificationState.CRITICAL;
+                        break;
+                    case DEAD:
+                        hbn.notifyState = HbNotificationState.DEAD;
+                        break;
+                    case UNKNOWN:
+                    default:
+                        hbn.notifyState = HbNotificationState.UNKNOWN;
+                }
 
-	/**
-	 * @return The {@link ServerSession} which is associated with the current
-	 *         thread, or {@code null} if not found.
-	 */
-	public static ServerSession get() {
-		return ServerSessionProvider.currentSession(ServerSession.class);
-	}
+                hbn.lastSendingPeriod = (long) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
+                hbn.alertTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_ALLERTTIME, "");
+                hbn.heartBeatSender = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
+                hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
+                hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
+                hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
+            }
+            catch (final Exception exc) {
+                exc.printStackTrace();
+            }
+            finally {
+                // forward the heartbeat info to all registered notification handlers
+                BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
+            }
 
-	@Override
-	protected void execLoadSession() {
-		LOG.info("created a new session for {}", getUserId());
-		Factory.initialize();
+        }
 
-		LOG.info("load SuT Information");
-		loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());
-		
-		LOG.info("load test results for all SuTs");
-		loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
+    }
 
-		LOG.info("load Badge and Interoperatbility Requirements Descriptions");
-		loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
+    /*
+     * Wait for test case results job
+     */
+    public class TestResultListener implements Callable<CmdStartTestResultListener> {
 
-		LOG.info("load Testsuite Descriptions");
-		loadTestSuitesJob = Jobs.schedule(new LoadTestSuiteDescriptions(), Jobs.newInput());
+        private CmdStartTestResultListener resultCmd;
+        private final ResultListener       resultListener;
 
-		LOG.info("start test case Result Listener");
-		sessionResultListener = new ResultListener();
-		testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
 
-		LOG.info("start test case Status Listener");
-		statusListener = new StatusListener();
-		(Factory.createCmdTcStatusListener(statusListener)).execute();
-		
-		LOG.info("start Log Message Listener");
-		logMsgListener = new LogMsgListener();
-		(Factory.createCmdLogMsgListener(logMsgListener)).execute();
+        public TestResultListener(ResultListener listener) {
+            resultListener = listener;
+        }
 
-		LOG.info("start heartbeat Listener");
-//		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
-//		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
-		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
-		new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
-	}
 
-	public IFuture<CmdListSuT> getLoadSuTJob() {
-		return loadSuTJob;
-	}
+        @Override
+        public CmdStartTestResultListener call() throws Exception {
+            resultCmd = Factory.createCmdStartTestResultListener(resultListener);
+            resultCmd.execute();
+            return resultCmd;
+        }
+    }
 
-	public IFuture<CmdListBadges> getLoadBadgesJob() {
-		return loadBadgesJob;
-	}
+    /*
+     * Execute test case job
+     */
+    public class ExecuteTestCase implements Callable<CmdStartTc> {
+        private final String sut;
+        private final String tc;
+        private final String badge;
+        private final String settingsDesignator;
+        private final String federationName;
+        private final String federateName;
 
-	public IFuture<CmdListTestSuites> getLoadTestSuitesJob() {
-		return loadTestSuitesJob;
-	}
-	
-	public IFuture<SutTcResultDescription> getLoadTcResultsJob() {
-		return loadTcResultsJob;
-	}
 
-	public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
-		LOG.info("starting test case");
-		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
-	}
+        public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
+            sut = _sut;
+            tc = _tc;
+            badge = _badge;
+            settingsDesignator = _settingsDesignator;
+            federationName = _federationName;
+            federateName = _federateName;
+        }
 
-	public void setLogLevel(String level) {
-		LOG.info("set log level");
-		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
-	}
+
+        @Override
+        public CmdStartTc call() throws Exception {
+            final CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName, federateName);
+            tcCmd.execute();
+            return null;
+        }
+
+    }
+
+    public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
+
+        private LogLevel logLevel;
+
+
+        public ExecuteSetLogLevel(String level) {
+            switch (level == null ? "" : level) {
+                case "debug":
+                    logLevel = LogLevel.DEBUG;
+                    break;
+                case "info":
+                    logLevel = LogLevel.INFO;
+                    break;
+                case "warn":
+                    logLevel = LogLevel.WARNING;
+                    break;
+                case "error":
+                    logLevel = LogLevel.ERROR;
+                    break;
+                case "trace":
+                default:
+                    logLevel = LogLevel.TRACE;
+                    break;
+            }
+        }
+
+
+        @Override
+        public CmdSetLogLevel call() throws Exception {
+            final CmdSetLogLevel setCmd = Factory.createCmdSetLogLevel(logLevel);
+            setCmd.execute();
+            return null;
+        }
+
+    }
+
+    private static final long   serialVersionUID = 1L;
+    private static final Logger LOG              = LoggerFactory.getLogger(ServerSession.class);
+
+
+    public ServerSession() {
+        super(true);
+    }
+
+
+    /**
+     * @return The {@link ServerSession} which is associated with the current
+     *         thread, or {@code null} if not found.
+     */
+    public static ServerSession get() {
+        return ServerSessionProvider.currentSession(ServerSession.class);
+    }
+
+
+    @Override
+    protected void execLoadSession() {
+        LOG.info("created a new session for {}", getUserId());
+        Factory.initialize();
+
+        LOG.info("load SuT Information");
+        loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());
+
+        LOG.info("load test results for all SuTs");
+        loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
+
+        LOG.info("load Badge and Interoperatbility Requirements Descriptions");
+        loadBadgesJob = Jobs.schedule(new LoadBadgeDescriptions(), Jobs.newInput());
+
+        LOG.info("load Testsuite Descriptions");
+        loadTestSuitesJob = Jobs.schedule(new LoadTestSuiteDescriptions(), Jobs.newInput());
+
+        LOG.info("start test case Result Listener");
+        sessionResultListener = new ResultListener();
+        testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
+
+        LOG.info("start test case Status Listener");
+        statusListener = new StatusListener();
+        Factory.createCmdTcStatusListener(statusListener).execute();
+
+        LOG.info("start Log Message Listener");
+        logMsgListener = new LogMsgListener();
+        Factory.createCmdLogMsgListener(logMsgListener).execute();
+
+        LOG.info("start heartbeat Listener");
+        //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
+        //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
+        new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
+    }
+
+
+    public IFuture<CmdListSuT> getLoadSuTJob() {
+        return loadSuTJob;
+    }
+
+
+    public IFuture<CmdListBadges> getLoadBadgesJob() {
+        return loadBadgesJob;
+    }
+
+
+    public IFuture<CmdListTestSuites> getLoadTestSuitesJob() {
+        return loadTestSuitesJob;
+    }
+
+
+    public IFuture<SutTcResultDescription> getLoadTcResultsJob() {
+        return loadTcResultsJob;
+    }
+
+
+    public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
+        LOG.info("starting test case");
+        startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
+    }
+
+
+    public void setLogLevel(String level) {
+        LOG.info("set log level");
+        Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
+    }
 }

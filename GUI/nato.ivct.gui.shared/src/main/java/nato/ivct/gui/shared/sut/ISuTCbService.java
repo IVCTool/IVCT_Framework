@@ -10,9 +10,6 @@ import org.eclipse.scout.rt.shared.TunnelToServer;
 @TunnelToServer
 public interface ISuTCbService extends IService {
 
-    void executeTestCase(String sut, String tc, String badge);
-
-
     String loadTcParams(String sutId, String tsId);
 
 

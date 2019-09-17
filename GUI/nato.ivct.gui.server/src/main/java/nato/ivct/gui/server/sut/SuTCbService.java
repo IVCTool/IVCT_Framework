@@ -16,17 +16,14 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.Factory;
-import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbTablePageData;
-import nato.ivct.gui.shared.sut.SuTCbTablePageData.SuTCbTableRowData;
 
 
 public class SuTCbService implements ISuTCbService {
@@ -62,27 +59,6 @@ public class SuTCbService implements ISuTCbService {
     //		cap_hm.put(badge.ID, pageData);
     //		return pageData;
     //	}
-
-    @Override
-    public void executeTestCase(String sutId, String tc, String badgeId) {
-        // execute the CmdStartTc commands
-        final SutDescription sut = BEANS.get(SuTService.class).getSutDescription(sutId);
-        ServerSession.get().execStartTc(sutId, tc, badgeId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
-        // mark test cases as being started
-        final SuTCbTablePageData capPage = cap_hm.get(badgeId);
-        if (capPage == null) {
-            LOG.error("no capability map found for badge: " + badgeId);
-        }
-        else {
-            for (int i = 0; i < capPage.getRowCount(); i++) {
-                final SuTCbTableRowData row = capPage.rowAt(i);
-                if (row.getAbstractTC().equals(tc)) {
-                    row.setTCstatus("starting");
-                }
-            }
-        }
-    }
-
 
     @Override
     public BinaryResource getFileContent(final String sutId, final String tsId, final String fileName) {
