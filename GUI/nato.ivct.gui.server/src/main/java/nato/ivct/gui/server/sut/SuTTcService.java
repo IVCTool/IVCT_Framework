@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -196,6 +197,9 @@ public class SuTTcService implements ISuTTcService {
                 row.setFileName(logFileName);
                 final String verdict = sutTcResults.sutResultMap.getOrDefault(fd.getSutId(), new HashMap<>()).getOrDefault(fd.getTestsuiteId(), new HashMap<>()).getOrDefault(logFileName, "");
                 row.setTcVerdict(verdict);
+
+                // for testing
+                row.setInterger(new Random().nextInt(100));
             });
         }
         catch (final NoSuchFileException exc) {

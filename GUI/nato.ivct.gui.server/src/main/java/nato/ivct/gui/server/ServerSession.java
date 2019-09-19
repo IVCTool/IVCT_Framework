@@ -272,6 +272,9 @@ public class ServerSession extends AbstractServerSession {
                 exc.printStackTrace();
             }
             finally {
+                // work around because TestEngine seems not to send a heartbeat
+                if ("TestRunner".equals(hbn.heartBeatSender))
+                    hbn.heartBeatSender = "TestEngine";
                 // forward the heartbeat info to all registered notification handlers
                 BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
             }
@@ -418,8 +421,8 @@ public class ServerSession extends AbstractServerSession {
 
         LOG.info("start heartbeat Listener");
         //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
-        //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
-        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
+        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+        //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
         new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
     }
 

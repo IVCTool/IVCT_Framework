@@ -254,10 +254,22 @@ public class SuTTcExecutionFormData extends AbstractFormData {
         public static class TcExecutionHistoryTableRowData extends AbstractTableRowData {
 
             private static final long  serialVersionUID = 1L;
+            public static final String interger         = "interger";
             public static final String fileName         = "fileName";
             public static final String tcVerdict        = "tcVerdict";
+            private Integer            m_interger;
             private String             m_fileName;
             private String             m_tcVerdict;
+
+
+            public Integer getInterger() {
+                return m_interger;
+            }
+
+
+            public void setInterger(Integer newInterger) {
+                m_interger = newInterger;
+            }
 
 
             public String getFileName() {

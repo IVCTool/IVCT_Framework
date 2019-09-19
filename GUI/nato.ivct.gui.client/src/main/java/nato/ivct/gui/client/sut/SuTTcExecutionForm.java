@@ -11,7 +11,9 @@ import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.userfilter.TextColumnUserFilterState;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -36,6 +38,7 @@ import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTileField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
@@ -129,6 +132,20 @@ public class SuTTcExecutionForm extends AbstractForm {
     @FormData
     public void setTestCaseProgress(String testCaseProgress) {
         this.testCaseProgress = testCaseProgress;
+        // adjust the progress bar
+        if (testCaseProgress != null) {
+            try {
+                final int progress = Integer.parseUnsignedInt(testCaseProgress);
+                final int maxProgressBarSize = getTestCaseExecutionStatusTileField().getGridDataHints().widthInPixel;
+                final IHtmlTile tile = getTestCaseExecutionStatusTileField().getTileGrid().getTiles().get(0);
+                final GridData gridData = tile.getGridDataHints();
+                gridData.withWidthInPixel((getTestCaseExecutionStatusTileField().getMaxProgressBarSize() - 310) / 100 * progress);
+                //                tile.setGridDataHints(gridData);
+            }
+            catch (final NumberFormatException exc) {
+                return;
+            }
+        }
     }
 
 
@@ -167,6 +184,11 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     public TcDescrField getDescrField() {
         return getFieldByClass(TcDescrField.class);
+    }
+
+
+    public TcExecutionStatus getTcExecutionStatus() {
+        return getFieldByClass(TcExecutionStatus.class);
     }
 
 
@@ -280,6 +302,19 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
                 @Override
+                protected double getConfiguredGridWeightY() {
+                    // TODO Auto-generated method stub
+                    return 0;
+                }
+
+
+                //                @Override
+                //                protected int getConfiguredWidthInPixel() {
+                //                    // TODO Auto-generated method stub
+                //                    return 550;
+                //                }
+
+                @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("TCStatus");
                 }
@@ -294,6 +329,14 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             @Order(1032)
             public class TestCaseExecutionStatusTileField extends AbstractTileField<TestCaseExecutionStatusTileField.ProgressBar> {
+                private final int maxProgressBarSize = 800;
+
+
+                public int getMaxProgressBarSize() {
+                    return maxProgressBarSize;
+                }
+
+
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Progress");
@@ -326,6 +369,12 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
 
 
+                //                @Override
+                //                protected int getConfiguredWidthInPixel() {
+                //                    // TODO Auto-generated method stub
+                //                    return getMaxProgressBarSize();
+                //                }
+
                 @Override
                 protected String getConfiguredBackgroundColor() {
                     // TODO Auto-generated method stub
@@ -337,7 +386,6 @@ public class SuTTcExecutionForm extends AbstractForm {
                     public class StatusTile extends AbstractHtmlTile {
                         @Override
                         protected GridData getConfiguredGridDataHints() {
-                            // TODO Auto-generated method stub
                             return super.getConfiguredGridDataHints().withWeightX(0).withHeightInPixel(40).withWidthInPixel(50);
                         }
                     }
@@ -397,18 +445,35 @@ public class SuTTcExecutionForm extends AbstractForm {
                         }
 
 
-                        @Override
-                        protected void execRowsSelected(List<? extends ITableRow> rows) {
+                        public FileNameColumn getFileNameColumn() {
+                            return getColumnSet().getColumnByClass(FileNameColumn.class);
+                        }
 
-                            if (!rows.isEmpty()) {
-                                final String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
-                                // load log file content
-                                final ISuTTcService service = BEANS.get(ISuTTcService.class);
-                                getTcLogField().setValue(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));
+
+                        public TcVerdictColumn getTcVerdictColumn() {
+                            return getColumnSet().getColumnByClass(TcVerdictColumn.class);
+                        }
+
+                        @Order(999)
+                        public class IntergerColumn extends AbstractIntegerColumn {
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("Progress");
                             }
-                            else {
-                                getTcLogField().setValue(null);
+
+
+                            @Override
+                            protected String getConfiguredBackgroundEffect() {
+                                // TODO Auto-generated method stub
+                                return BackgroundEffect.BAR_CHART;
                             }
+
+
+                            @Override
+                            protected int getConfiguredMinWidth() {
+                                return 100;
+                            }
+
                         }
 
                         @Order(1000)
@@ -441,14 +506,20 @@ public class SuTTcExecutionForm extends AbstractForm {
                         }
 
 
-                        public FileNameColumn getFileNameColumn() {
-                            return getColumnSet().getColumnByClass(FileNameColumn.class);
+                        @Override
+                        protected void execRowsSelected(List<? extends ITableRow> rows) {
+
+                            if (!rows.isEmpty()) {
+                                final String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
+                                // load log file content
+                                final ISuTTcService service = BEANS.get(ISuTTcService.class);
+                                getTcLogField().setValue(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));
+                            }
+                            else {
+                                getTcLogField().setValue(null);
+                            }
                         }
 
-
-                        public TcVerdictColumn getTcVerdictColumn() {
-                            return getColumnSet().getColumnByClass(TcVerdictColumn.class);
-                        }
                     }
                 }
 
@@ -575,6 +646,20 @@ public class SuTTcExecutionForm extends AbstractForm {
                 //hide select log file table; only show log from current tc execution
                 //                getTcExecutionDetailsBox().setVisible(false);
                 //                getTcExecutionLogField().setVisible(true);
+
+                // clear TC status and progress bar
+                getTcExecutionStatus().setValue("");
+                setTestCaseProgress("100");
+
+                // for testing
+                if (getTcExecutionHistoryTableField().getTable().getUserFilterManager().getFilter(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn().getColumnId()) == null) {
+                    final TextColumnUserFilterState filter = new TextColumnUserFilterState(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());
+                    filter.setFreeText("INCONCLUSIVE");
+                    getTcExecutionHistoryTableField().getTable().getUserFilterManager().addFilter(filter);
+                }
+                else {
+                    getTcExecutionHistoryTableField().getTable().getUserFilterManager().removeFilterByKey(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn().getColumnId());
+                }
 
                 // use ModelJobs to asynchronously start test case execution
                 // sequence
