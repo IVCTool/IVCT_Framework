@@ -96,6 +96,8 @@ public class CmdStartTc implements Command {
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
+				Factory.props.setProperty("IVCT_SUT_ID", sut);
+				Factory.props.setProperty("IVCT_TESTSUITE_ID", testSuiteName);
 				String tmpString = Factory.replaceMacro(paramFileContentString);
 				JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 				startCmd.put(TC_PARAM, jsonParam);

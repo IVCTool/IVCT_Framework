@@ -24,26 +24,6 @@ ext {
 
 		gradleDockerPluginVersion = '3.2.4'
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HLA Run Time
-		//rti = "prti1516e"
-		rti = "IEEE1516e"
-		//rti = "mak"
-
-		switch (rti) {
-			case "prti1516e":
-				rti_jar =   "prti1516e.jar"
-				rti_lib =   "C:/Program Files (x86)/prti1516e/lib"
-				break
-			case "mak":
-				logger.warn ('MAK RTI not configured yet')
-				break
-			case "IEEE1516e":
-			default:
-				logger.warn ('No RTI is used. Compile with empty interface')
-
-		}
-
-
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
         libraries = [
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
