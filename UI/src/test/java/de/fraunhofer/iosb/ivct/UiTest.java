@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.LinkedList;
 
+import org.apache.activemq.broker.BrokerService;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
@@ -14,6 +17,27 @@ import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
 public class UiTest {
+
+	private static BrokerService broker = new BrokerService();
+
+	@BeforeClass
+	public static void startBroker() throws Exception {
+		// configure the broker
+		broker.addConnector("tcp://localhost:61616");
+		broker.setPersistent(false);
+
+		broker.start();
+	}
+
+	@AfterClass
+	public static void stopBroker() throws Exception {
+		try {
+			broker.stop();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testCreateCmdLineTool() {

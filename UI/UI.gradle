@@ -12,11 +12,9 @@ dependencies {
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
 
-	testCompile libraries.junit
-	testCompile libraries.hamcrest_core
-
-	testRuntime libraries.junit
-	testRuntime libraries.hamcrest_core
+	testImplementation	libraries.junit
+	testImplementation	libraries.hamcrest_core
+	testImplementation	libraries.activemqEmbedded
 }
 
 distributions {
