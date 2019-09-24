@@ -19,7 +19,7 @@ task dockerBuildImage(type: DockerBuildImage) {
 	dependsOn subprojects.install
 	group = 'Docker'
 	description = 'Builds the GUI docker image'
-
+    buildArgs.put('version', "${ivctVersion}")
 	inputDir = file('.')
 	tag="ivct/ivct-gui:${ivctVersion}"
 }
