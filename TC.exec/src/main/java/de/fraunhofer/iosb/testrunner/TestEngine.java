@@ -135,7 +135,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		private void extendThreadClassLoader(final TestSuiteDescription testSuiteDescription) {
 			URLClassLoader classLoader = classLoaders.get(testSuiteDescription.id);
 			if (classLoader == null) {
-				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID);
+				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID);
 				String lib_path = ts_path + "/" + testSuiteDescription.tsLibTimeFolder;
 				File dir = new File(lib_path);
 				File[] filesList = dir.listFiles();
@@ -170,7 +170,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				logger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
 				return;
 			}
-			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_HOME_ID) + '/' + tsd.tsRunTimeFolder;
+			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID) + '/' + tsd.tsRunTimeFolder;
 
 			logger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
 			if (setCurrentDirectory(runFolder)) {

@@ -48,8 +48,11 @@ public class Factory {
 	public static final String IVCT_CONF = "IVCT_CONF";
 	public static final String IVCT_CONF_DEFLT = "/root/conf/IVCT.properties";
 
-	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
-	public static final String IVCT_TS_HOME_ID_DEFLT = "/root/conf/TestSuites";
+	public static final String IVCT_TS_DIST_HOME_ID = "IVCT_TS_HOME_ID";
+	public static final String IVCT_TS_DIST_HOME_ID_DEFLT = "/root/conf/TestSuites";
+	public static final String IVCT_TS_DEF_HOME_ID = "IVCT_TS_DEF_HOME_ID";
+	public static final String IVCT_TS_DEF_HOME_ID_DEFLT = "/root/conf/TestSuites";
+	
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
 	public static final String IVCT_SUT_HOME_ID_DEFLT = "/root/conf/IVCTsut";
     public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
@@ -156,7 +159,8 @@ public class Factory {
 
 			Properties fallback = new Properties();
 			fallback.put(IVCT_CONF, IVCT_CONF_DEFLT);
-			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
+			fallback.put(IVCT_TS_DIST_HOME_ID, IVCT_TS_DIST_HOME_ID_DEFLT);
+			fallback.put(IVCT_TS_DEF_HOME_ID, IVCT_TS_DEF_HOME_ID_DEFLT);
 			fallback.put(IVCT_SUT_HOME_ID, IVCT_SUT_HOME_ID_DEFLT);
             fallback.put(IVCT_BADGE_HOME_ID, IVCT_BADGE_HOME_ID_DEFLT);
             fallback.put(IVCT_BADGE_ICONS_ID, IVCT_BADGE_ICONS_ID_DEFLT);
@@ -212,7 +216,7 @@ public class Factory {
 			}
 
 			// overwrite with environment settings
-			overwriteWithEnv(IVCT_TS_HOME_ID);
+			overwriteWithEnv(IVCT_TS_DIST_HOME_ID);
 			overwriteWithEnv(IVCT_SUT_HOME_ID);
             overwriteWithEnv(IVCT_BADGE_HOME_ID);
             overwriteWithEnv(IVCT_BADGE_ICONS_ID);
