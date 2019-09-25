@@ -25,7 +25,8 @@ docker {
 
 dependencies {
   compile     project(':Command')
-	compile     project(':TC.lib')
+  compile     project(':TC.lib')
+  compile     project(':TC.exec')
 
 	compile     libraries.slf4j_api
 	compile     libraries.jsonSimple
