@@ -1,0 +1,9 @@
+0= Future enhancements
+
+Topics that might be adressed in the future to make the framework more comfortable
+
+* Markers for logging (By using slf4j markes there could be a better separation between "protocol logging" and logging for maintenance reasons (error/exception logging)
+* gradle based runtime configurations (it should be possible to create launch configurations for eclipse from within the gradle build)
+* Use AMQP instead of JMS
+* use some plugin mechanism for loading test case classes over special classloader
+* Interoperability Badge based test case selection

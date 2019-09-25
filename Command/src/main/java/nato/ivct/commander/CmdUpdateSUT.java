@@ -103,57 +103,87 @@ public class CmdUpdateSUT {
 			try {
 				jsonObject = (JSONObject) jsonParser.parse(sb.toString());
 				// get a String from the JSON object
-				String oldSUTid = (String) jsonObject.get("id");
-				if (!Objects.equals(oldSUTid, tmpSutDescription.ID))
+				String oldSUTid = (String) jsonObject.get(CmdListSuT.ID);
+				if (oldSUTid != null) {
+					if (oldSUTid.equals(tmpSutDescription.ID) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
-//				if (oldSUTid != null) {
-//					if (oldSUTid.equals(tmpSutDescription.ID) == false) {
-//						return true;
-//					}
-//				}
 				// get a String from the JSON object
-				String oldSUTname = (String) jsonObject.get("name");
-				if (!Objects.equals(oldSUTname, tmpSutDescription.name))
+				String oldSUTname = (String) jsonObject.get(CmdListSuT.NAME);
+				if (oldSUTname != null) {
+					if (oldSUTname.equals(tmpSutDescription.name) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
-//				if (oldSUTname != null) {
-//					if (oldSUTname.equals(tmpSutDescription.name) == false) {
-//						return true;
-//					}
-//				}
 				// get a String from the JSON object
-				String oldSUTversion = (String) jsonObject.get("version");
-				if (!Objects.equals(oldSUTversion, tmpSutDescription.version))
+				String oldSUTversion = (String) jsonObject.get(CmdListSuT.VERSION);
+				if (oldSUTversion != null) {
+					if (oldSUTversion.equals(tmpSutDescription.version) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 				
-//				if (oldSUTversion != null) {
-//					if (oldSUTversion.equals(tmpSutDescription.vendor) == false) {
-//						return true;
-//					}
-//				}
 				// get a String from the JSON object
-				String oldDescription = (String) jsonObject.get("description");
-				if (!Objects.equals(oldDescription, tmpSutDescription.description))
+				String oldDescription = (String) jsonObject.get(CmdListSuT.DESCRIPTION);
+				if (oldDescription != null) {
+					if (oldDescription.equals(tmpSutDescription.description) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
-//				if (oldDescription != null) {
-//					if (oldDescription.equals(tmpSutDescription.description) == false) {
-//						return true;
-//					}
-//				}
-				// get a String from the JSON object
-				String oldVendor = (String) jsonObject.get("vendor");
-				if (!Objects.equals(oldVendor, tmpSutDescription.vendor))
+                // get a String from the JSON object
+                String oldVendor = (String) jsonObject.get(CmdListSuT.VENDOR);
+				if (oldVendor != null) {
+					if (oldVendor.equals(tmpSutDescription.vendor) == false) {
+						return true;
+					}
+				} else {
 					return true;
+				}
 
-//				if (oldVendor != null) {
-//					if (oldVendor.equals(tmpSutDescription.vendor) == false) {
-//						return true;
-//					}
-//				}
+                // get a String from the JSON object
+                String oldSettingsDesignator = (String) jsonObject.get(CmdListSuT.SETTINGS_DESIGNATOR);
+				if (oldSettingsDesignator != null) {
+					if (oldSettingsDesignator.equals(tmpSutDescription.settingsDesignator) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+
+                // get a String from the JSON object
+                String oldFederationName = (String) jsonObject.get(CmdListSuT.FEDERATION_NAME);
+				if (oldFederationName != null) {
+					if (oldFederationName.equals(tmpSutDescription.federation) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+
+                // get a String from the JSON object
+                String oldFederateName = (String) jsonObject.get(CmdListSuT.FEDERATE_NAME);
+				if (oldFederateName != null) {
+					if (oldFederateName.equals(tmpSutDescription.sutFederateName) == false) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+
 				// get badge files list from the JSON object
-				JSONArray badgeArray = (JSONArray) jsonObject.get("badge");
+				JSONArray badgeArray = (JSONArray) jsonObject.get(CmdListSuT.BADGE);
 				if (tmpSutDescription.badges != null) {
 					if (badgeArray != null) {
 						if (tmpSutDescription.badges.size() == badgeArray.size()) {
@@ -220,6 +250,9 @@ public class CmdUpdateSUT {
 					logger.trace(lib_path);
 					File dir = new File(lib_path);
 					File[] filesList = dir.listFiles();
+					if (filesList == null) {
+						throw new Exception("getBadgeUrls no badges found in: " + lib_path);
+					}
 					URL[] urls = new URL[filesList.length];
 					for (int i = 0; i < filesList.length; i++) {
 						try {
@@ -432,11 +465,41 @@ public class CmdUpdateSUT {
 
 		// Update CS.json file
         JSONObject obj = new JSONObject();
-        obj.put("id", this.sutDescription.ID);
-        obj.put("name", this.sutDescription.name);
-        obj.put("version", this.sutDescription.version);
-        obj.put("description", this.sutDescription.description);
-        obj.put("vendor", this.sutDescription.vendor);
+        obj.put(CmdListSuT.ID, this.sutDescription.ID);
+        obj.put(CmdListSuT.NAME, this.sutDescription.name);
+        if (this.sutDescription.version == null) {
+            obj.put(CmdListSuT.VERSION, "");
+        } else {
+        	obj.put(CmdListSuT.VERSION, this.sutDescription.version);
+        }
+
+        if (this.sutDescription.description == null) {
+        	obj.put(CmdListSuT.DESCRIPTION, "");
+        } else {
+        	obj.put(CmdListSuT.DESCRIPTION, this.sutDescription.description);
+        }
+
+        if (this.sutDescription.vendor == null) {
+        	obj.put(CmdListSuT.VENDOR, "");
+        } else {
+        	obj.put(CmdListSuT.VENDOR, this.sutDescription.vendor);
+        }
+        
+        // check for defaults
+        if (sutDescription.settingsDesignator == null) {
+            sutDescription.settingsDesignator = Factory.SETTINGS_DESIGNATOR_DEFLT;
+        }
+        obj.put(CmdListSuT.SETTINGS_DESIGNATOR, this.sutDescription.settingsDesignator);
+        
+        if (sutDescription.federation == null) {
+            sutDescription.federation = Factory.FEDERATION_NAME_DEFLT;
+        }
+        obj.put(CmdListSuT.FEDERATION_NAME, this.sutDescription.federation);
+
+        if (sutDescription.sutFederateName == null) {
+            sutDescription.sutFederateName = Factory.FEDERATE_NAME_DEFLT;
+        }
+        obj.put(CmdListSuT.FEDERATE_NAME, this.sutDescription.sutFederateName);
 
         JSONArray list = new JSONArray();
         if (this.sutDescription.badges.size() != 0) {

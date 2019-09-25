@@ -14,6 +14,8 @@ import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
+import nato.ivct.commander.CmdHeartbeatSend;
+
 
 /**
  * Log sink for logging events collected via JMS or AMQP. For JMS use the
@@ -21,12 +23,16 @@ import nato.ivct.commander.Factory;
  *
  * @author Manfred Schenk (Fraunhofer IOSB)
  */
-public class LogSink {
+public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
 
     private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
     //private JMSTopicSink  jmsTopicSink;
     private static JMSLogSink  jmsLogSink;
     private static ReportEngine reportEngine = new ReportEngine();
+        
+    // for CmdHeartbeatSend
+    private boolean health;
+    private String myClassName = "LogSink";
 
 
     /**
@@ -36,10 +42,17 @@ public class LogSink {
      */
     public static void main(final String[] args) {
         MDC.put("testcase", "LogSink");
-        LOGGER.info("in main");
 		Factory.initialize();
         final LogSink instance = new LogSink();
         instance.init();
+        
+     // for CmdHeartbeatSend
+        try {
+             instance.sendHeartbeat(LOGGER);
+             } catch (Exception ex) {
+                 LOGGER.error("could not start  sendHeartbeat " + ex);
+             }        
+        
         instance.execute();
         System.exit(0);;
     }
@@ -98,4 +111,21 @@ public class LogSink {
             }
         }
     }
+
+    // for CmdHeartbeatSend
+    public void sendHeartbeat(Logger _logger) throws Exception {
+        this.health = true;
+        //_logger.info("LogSink create his instance of CmdHeartbeatSend: " + this); // Debug
+        CmdHeartbeatSend heartbeatSend = new CmdHeartbeatSend(this);
+        heartbeatSend.execute();
+    }
+
+  public String getMyClassName() {
+    return myClassName;
+  }
+
+  public boolean getMyHealth() {
+    return health;
+  }
+
 }

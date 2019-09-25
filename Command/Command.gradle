@@ -1,13 +1,27 @@
+task writeVersion {
+    group = "Build"
+    description = "Creates a properties file with version information"
+
+    doLast {
+        def prop = new Properties()
+        prop.version = ivctVersion
+        prop.build = "git describe --tags".execute().text.trim()
+        mkdir "src/main/resources"
+        File propFile = file('src/main/resources/dev.properties')
+        prop.store(propFile.newWriter(), null)
+    }
+}
+
+processResources.dependsOn writeVersion
+
 dependencies {
-	compile     libraries.slf4j_api
-	compile		libraries.jsonSimple
-	compile     project(':MessagingHelpers')
+	compile	libraries.slf4j_api
+	compile	libraries.jsonSimple
+	compile	project(':MessagingHelpers')
 
-	testCompile libraries.junit
-	testCompile libraries.hamcrest_core
-
-	testRuntime libraries.junit
-	testRuntime libraries.hamcrest_core
+	testImplementation	libraries.junit
+	testImplementation	libraries.hamcrest_core
+	testImplementation	libraries.activemqEmbedded
 }
 
 javadoc {

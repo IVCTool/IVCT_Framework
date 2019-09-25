@@ -17,12 +17,15 @@ import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
 import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.server.session.ServerSessionProvider;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.CmdHeartbeatListen;
+import nato.ivct.commander.CmdHeartbeatListen.OnCmdHeartbeatListen;
+import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
-import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdSetLogLevel;
@@ -34,6 +37,9 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 import nato.ivct.commander.CmdTcStatusListener.TcStatus;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
+import nato.ivct.gui.shared.HeartBeatNotification;
+import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;
@@ -56,6 +62,7 @@ public class ServerSession extends AbstractServerSession {
 	private ResultListener sessionResultListener;
 	private StatusListener statusListener;
 	private LogMsgListener logMsgListener;
+	private CmdHeartbeatListen heartBeatListener;
 
 	public class SutTcResultDescription {
 		
@@ -207,6 +214,54 @@ public class ServerSession extends AbstractServerSession {
 		}
 		
 	}
+	
+	public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
+
+		@Override
+		public void hearHeartbeat(JSONObject heartBeat) {
+			HeartBeatNotification hbn = new HeartBeatNotification();
+			LOG.info("heartbeet received: {}", heartBeat.toJSONString());
+			
+			try {
+				HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+				switch (hbMsgState) {
+				case INTIME:
+					hbn.notifyState = HbNotificationState.OK;
+					break;
+				case TIMEOUT:
+				case WAITING:
+				case ALERT:
+					hbn.notifyState = HbNotificationState.WARNING;
+					break;
+				case FAIL:
+					hbn.notifyState = HbNotificationState.CRITICAL;
+					break;
+				case DEAD:
+					hbn.notifyState = HbNotificationState.DEAD;
+					break;
+				case UNKNOWN:
+				default:
+					hbn.notifyState = HbNotificationState.UNKNOWN;
+				}
+				
+				hbn.lastSendingPeriod = (long) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
+				hbn.alertTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_ALLERTTIME, "");
+				hbn.heartBeatSender = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
+				hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
+				hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
+				hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
+			}
+			catch (Exception exc) {
+				exc.printStackTrace();
+			}
+			finally {
+				// forward the heartbeat info to all registered notification handlers
+				BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
+			}
+
+		}
+
+	}
 
 	/*
 	 * Wait for test case results job
@@ -235,18 +290,22 @@ public class ServerSession extends AbstractServerSession {
 		private String sut;
 		private String tc;
 		private String badge;
-		private String runFolder;
+		private String settingsDesignator;
+		private String federationName;
+		private String federateName;
 
-		public ExecuteTestCase(String _sut, String _tc, String _badge, String _runFolder) {
+		public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
 			sut = _sut;
 			tc = _tc;
 			badge = _badge;
-			runFolder = _runFolder;
+			settingsDesignator = _settingsDesignator;
+			federationName = _federationName;
+			federateName = _federateName;
 		}
 
 		@Override
 		public CmdStartTc call() throws Exception {
-			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, runFolder);
+			CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName, federateName);
 			tcCmd.execute();
 			return null;
 		}
@@ -258,7 +317,7 @@ public class ServerSession extends AbstractServerSession {
 		private LogLevel logLevel;
 
 		public ExecuteSetLogLevel(String level) {
-			switch (level) {
+			switch (level==null ? "" : level) {
 			case "debug":
 				logLevel = LogLevel.DEBUG;
 				break;
@@ -328,6 +387,11 @@ public class ServerSession extends AbstractServerSession {
 		logMsgListener = new LogMsgListener();
 		(Factory.createCmdLogMsgListener(logMsgListener)).execute();
 
+		LOG.info("start heartbeat Listener");
+//		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
+//		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+		new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
+		new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
 	}
 
 	public IFuture<CmdListSuT> getLoadSuTJob() {
@@ -342,16 +406,13 @@ public class ServerSession extends AbstractServerSession {
 		return loadTcResultsJob;
 	}
 
-	public void execStartTc(String sut, String tc, String badge, String runFolder) {
+	public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
 		LOG.info("starting test case");
-		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, runFolder), Jobs.newInput());
-
+		startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
 	}
 
 	public void setLogLevel(String level) {
 		LOG.info("set log level");
 		Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
-
 	}
-
 }

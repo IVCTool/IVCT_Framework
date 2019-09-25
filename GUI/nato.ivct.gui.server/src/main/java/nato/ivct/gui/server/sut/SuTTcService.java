@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
-import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
@@ -27,7 +26,6 @@ import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.server.ServerSession;
-import nato.ivct.gui.server.ServerSession.LoadTcResults;
 import nato.ivct.gui.server.ServerSession.SutTcResultDescription;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.ReadCbPermission;
@@ -71,7 +69,9 @@ public class SuTTcService implements ISuTTcService {
 				formData.getTestCaseName().setValue(requirement.TC);
 				
 				// get log files for this test case
-				loadLogFiles(formData, bd.ID, requirement.TC);
+				if (bd.ID != null && requirement.TC != null)
+					// work-around if the requirement has no test case associated
+					loadLogFiles(formData, bd.ID, requirement.TC);
 			});
 		}
 

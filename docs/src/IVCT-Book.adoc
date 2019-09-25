@@ -1,0 +1,59 @@
+= IVCT Documentation
+
+:toc:
+
+
+This will be the place for all framework and test cases developers to get information about the structure and the status of the IVCT software.
+
+// Preparations
+
+include::1-1-IVCT-Module-Overview.adoc[]
+
+include::2-2-prerequisites.adoc[]
+
+
+include::1-2-model.adoc[]
+
+include::1-3-badge2testsuite.adoc[]
+
+// Building the software
+
+include::2-1-build-overview.adoc[]
+
+include::2-2-prerequisites.adoc[]
+
+include::2-3-Branching-and-Merging.adoc[]
+
+include::2-4-gradleDoc.adoc[]
+
+include::2-5-travis.adoc[]
+
+include::2-6-3rdpartyRti.adoc[]
+
+include::2-8-IVCT_Configuration.adoc[]
+
+
+// Building Docker Images
+
+include::3-5-Building-Docker-images.adoc[]
+
+
+// Running the tools
+
+include::4-1-Setup-the-JMS-broker.adoc[]
+
+include::4-3-commandlinetool.adoc[]
+
+include::4-4-Reading-and-understanding-Test-Case-logfiles.adoc[]
+
+// Extending the framework
+
+include::5-1-TcDevelGuide.adoc[]
+
+include::5-2-Executable-Test-Case-Development-Rules.adoc[]
+
+include::5-3-Add-new-test-suites.adoc[]
+
+include::5-4-TClogging.adoc[]
+
+include::6-1-futureenhancements.adoc[]

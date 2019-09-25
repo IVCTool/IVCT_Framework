@@ -16,11 +16,17 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
+import nato.ivct.commander.SutDescription;
+
 public class StartTestSchedule implements nato.ivct.commander.Command {
+	final String sutName;
+	final SutDescription sutDescription;
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
 
-	StartTestSchedule (final CommandCache commandCache, IVCTcommander ivctCommander) {
+	StartTestSchedule (final String sutName, final SutDescription sutDescription, final CommandCache commandCache, IVCTcommander ivctCommander) {
+		this.sutName = sutName;
+		this.sutDescription = sutDescription;
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		ivctCommander.rtp.setTestScheduleRunningBool(true);
@@ -31,7 +37,7 @@ public class StartTestSchedule implements nato.ivct.commander.Command {
 			if (RuntimeParameters.getAbortTestScheduleBool()) {
 				break;
 			}
-			ivctCommander.rtp.startTestCase(commandCache.getTestschedule(), tc);
+			ivctCommander.rtp.startTestCase(this.sutName, this.sutDescription, commandCache.getTestschedule(), tc);
 
 			this.ivctCommander.rtp.acquireSemaphore();
 		}

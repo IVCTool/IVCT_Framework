@@ -17,6 +17,9 @@ package nato.ivct.commander;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
@@ -45,14 +48,20 @@ public class CmdListBadges implements Command {
 	@Override
 	public void execute() {
 		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
+        String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
+		String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
+		if (dir.exists() == false){
+			Factory.LOGGER.error("badge: {} does not exist", dirName);
+			return;
+		}
 		if (dir.isDirectory()) {
 			Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
+            JSONParser parser = new JSONParser();
 			File[] filesList = dir.listFiles();
 			for (File file : filesList) {
 				Object obj;
-				JSONParser parser = new JSONParser();
-				if (file.isFile()) {
+				if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
 					FileReader fr = null;
 					try {
 						BadgeDescription badge = new BadgeDescription();
@@ -66,6 +75,15 @@ public class CmdListBadges implements Command {
 						badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
 						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
 						badge.cbVisual = (String) jsonObj.get("graphics");
+						// if the badge defines an icon then try to get it from the icon folder 
+						// (respectively from its default folder)
+						if (badge.cbVisual != null) {
+							Path iconFile = Paths.get(iconsFolder, badge.cbVisual);
+							if (iconFile.toFile().exists())
+								badge.cbVisual = iconFile.toString();
+							else
+							    badge.cbVisual = null;
+						}
 						JSONArray depend = (JSONArray) jsonObj.get("dependency");
 						if (depend != null) {
 							badge.dependency = new String[depend.size()];
@@ -100,7 +118,7 @@ public class CmdListBadges implements Command {
 				}
 			}
 		} else {
-			Factory.LOGGER.error(Factory.IVCT_BADGE_HOME_ID + " folder not found");
+			Factory.LOGGER.error("badge: {} value not a folder", dirName);
 			return;
 		}
 	}

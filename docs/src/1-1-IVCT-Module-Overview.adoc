@@ -1,0 +1,44 @@
+== IVCT Module Overview
+
+The IVCT consists of the modules shown in the picture below.
+On the left side there are the IVCT modules communication via an JMS message bus. On the right side is the HLA run time infrastructure with the System under Test (SuT) and optionally the System under Test Environment (SuTE). Both sides are connected by the TestEngine, which is tasked by the IVCT user interface modules, and which is part of a federation with the SuT and the SuTE.
+
+image:images/ivct_modules.jpg[IVCT Module Overview]
+
+The IVCT components can be considered as a micro service architecture. Communications between these components are realized as JMS messages. All messages are implemented inside the ``Command`` library, where each message is following the link:https://en.wikipedia.org/wiki/Command_pattern[Command pattern].
+
+The services realized by the IVCT modules are described below.
+
+=== ivct/gui - The Graphical User Interface
+
+The GUI implements a graphical user interface, which is embeded in a web server container. The current release is using the tomcat web application server. The user interface provides a web front-end, described in the <<Graphical-User-Interface.adoc#, The Grapical User Interface>> documentation.
+
+The web application server can also be used to run simple wrappers for the test case runner and the logging process. This is usefull in setups, where all IVCTool components are deployed inside one single web-application server.
+
+=== ivct/cmd - Command Line Tool
+
+The CmdLineTool is the second user interface and it is a stand-alone java console application. It is a text base command line interpreter, and implements a simple user interface to the IVCT.
+
+=== ivct/logsink - Test Report Generator
+
+The TestReportGenerator is a stand-alone application, listening to messages on the JMS message bus and creating report and protocol files. The logsink service is not controlled by the user. If this service is not running, the user may still start test cases, but not log files will be reated and no summary reports are written.
+
+=== ivct/tc-runner - The Test Case Engine
+
+The tc-runner module is responsible for executing the test cases. It receices start test case commands via the JMS message bus from the user interfaces, and it will send status and protocol information about the test case progress back to the JMS message bus. The test cases need to be able to connect to HLA run time infrastructure.
+
+=== Message Workflow between IVCT components
+
+A typical workflow between the IVCT components would look like the following:
+
+.	The IVCT operator is starting a test case either with the GUI or with the UI. In both cases a “start test case command” is send to the JMS bus.
+..  The tc-runner receives the command and starts the test case
+..  The logsink receives the command and opens a report file at ``$IVCT_SUT_HOME_ID/<sut>/<test suite>/<test case>_<date>.txt``
+
+.   The test case execution in the TC runner process writes logger.info/warn/error messages, which are send to the JMS bus (it may also create local file, depending on the logback configuration)
+..  The GUI receives the test case messages and shows them in the test case tab
+.. The LogSink also receives the test case message and and adds it to the report file.
+
+.   After the test case exection, the tc-runner sends the verdict of the test case to the JMS bus
+..  The GUI shows the result in a UI table
+..  The logsink adds the result in the report file, and updates a summary report file at ``$IVCT_SUT_HOME_ID/<sut>/<report>_<date>.txt``

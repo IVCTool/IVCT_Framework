@@ -20,5 +20,6 @@ public interface ISuTCbService extends IService {
 	String loadTcParams (String sutId, String badgeId);
 	boolean storeTcParams (String sutId, String badgeId, String parameters);
 	boolean copyUploadedTcExtraParameterFile(String sutId, String cbId, BinaryResource file);
+	BinaryResource getFileContent(String sutId, String cbId, String fileName);
 }
 

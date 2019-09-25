@@ -1,0 +1,51 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+      classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.17'
+      classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.6.1'
+  }
+}
+
+apply plugin: "org.asciidoctor.convert"
+
+asciidoctor {
+  backends 'html5', 'pdf'
+  sourceDir = file('src')
+  sources {
+    include 'Home.adoc',
+      'IVCT-Module-Overview.adoc',
+      'prerequisites.adoc',
+      'testsuite-overview.adoc',
+      'build-overview.adoc',
+      'Graphical-User-Interface.adoc',
+      'Branching-and-Merging.adoc',
+      'model.adoc',
+      'gradleDoc.adoc',
+      '3rdpartyRti.adoc',
+      'TClogging.adoc',
+      'IVCT_Configuration.adoc',
+      'IVCT-Container-Design.adoc',
+      'IVCT-TC-Runner-Application-image.adoc',
+      'IVCT-GUI-image.adoc',
+      'IVCT-LogSink-Application-image.adoc',
+      'Building-Docker-images.adoc',
+      'travis.adoc',
+      'Setup-the-JMS-broker.adoc',
+      'commandlinetool.adoc',
+      'Reading-and-understanding-Test-Case-logfiles.adoc',
+      'TcDevelGuide.adoc',
+      'Executable-Test-Case-Development-Rules.adoc',
+      'futureenhancements.adoc',
+      'jmstestrunner.adoc',
+      'Local-Settings-Designator.adoc',
+      'testsuite-overview.adoc',
+      'TcDevelGuide.adoc',
+      'IVCT-Book.adoc',
+      'badge2testsuite.adoc'
+  }
+  outputDir = file('build')
+}

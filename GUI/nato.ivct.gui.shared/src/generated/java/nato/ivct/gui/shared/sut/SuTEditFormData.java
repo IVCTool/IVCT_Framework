@@ -22,18 +22,36 @@ public class SuTEditFormData extends AbstractFormData {
 		return getFieldByClass(Descr.class);
 	}
 
+	public FederateName getFederateName() {
+		return getFieldByClass(FederateName.class);
+	}
+
+	public FederationName getFederationName() {
+		return getFieldByClass(FederationName.class);
+	}
+
 	public Name getName() {
 		return getFieldByClass(Name.class);
+	}
+
+	public RtiSettingDesignator getRtiSettingDesignator() {
+		return getFieldByClass(RtiSettingDesignator.class);
 	}
 
 	public SuTCapabilityBox getSuTCapabilityBox() {
 		return getFieldByClass(SuTCapabilityBox.class);
 	}
 
+	/**
+	 * access method for property SutId.
+	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
 	}
 
+	/**
+	 * access method for property SutId.
+	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
 	}
@@ -55,7 +73,22 @@ public class SuTEditFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
+	public static class FederateName extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class FederationName extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
 	public static class Name extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class RtiSettingDesignator extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}

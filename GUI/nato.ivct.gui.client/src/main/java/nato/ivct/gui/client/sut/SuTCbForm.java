@@ -1,6 +1,5 @@
 package nato.ivct.gui.client.sut;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -22,6 +20,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -34,29 +33,28 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.slf4j.LoggerFactory;
 
+import com.cedarsoftware.util.io.JsonWriter;
+
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
-import nato.ivct.gui.client.ResourceBase;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbDescriptionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbImageField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.CbNameField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTCbDetailsBox.DetailsHorizontalSplitterBox.SutParameterBox.ParameterHorizontalSplitterBox.SuTTcParameterTableField.SuTTcParameterTable.SaveMenu;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SuTCbDetailsBox.DetailsHorizontalSplitterBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
+import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
-
-import com.cedarsoftware.util.io.JsonWriter;
 
 @FormData(value = SuTCbFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTCbForm extends AbstractForm {
@@ -592,8 +590,20 @@ public class SuTCbForm extends AbstractForm {
 						            		
 						            		// enable for use of adding/deleting parameters
 						            		// N.B.: excluded from usage for the moment until functionality is completely implemented
-	//					            		tbl.getMenuByClass(NewMenu.class).setVisible(true);
-	//					            		tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
+						            		if (false) {
+							            		tbl.getMenuByClass(NewMenu.class).setVisible(true);
+							            		tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
+						            		} 
+						            		else {
+						            			tbl.getRows().forEach(row -> {
+						            				if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[")
+						            						|| row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
+						            					row.setEnabled(false);
+						            					tbl.getMenuByClass(AbortMenu.class).setVisible(true);
+						            					row.   getCell(getParameterNameColumn());
+						            				}
+						            			});
+						            		}
 						            		
 						            		tbl.getMenuByClass(AbortMenu.class).setVisible(true);
 							            }
@@ -815,8 +825,25 @@ public class SuTCbForm extends AbstractForm {
 								@Order (2100)
 								public class SutTcExtraParameterTable extends AbstractTable {
 
+									@Override
+									protected boolean getConfiguredMultiSelect() {
+										// only a single row can be selected
+										return false;
+									}
+
 									public FileNameColumn getFileNameColumn() {
 										return getColumnSet().getColumnByClass(FileNameColumn.class);
+									}
+									
+									@Override
+									protected void execRowsSelected(List<? extends ITableRow> rows) {
+										if (rows.size() == 1) {
+											// set downlowad menu visible
+											getMenuByClass(FileDownloadMenu.class).setVisible(true);
+										} else {
+											// hide download menu if no row is selected
+											getMenuByClass(FileDownloadMenu.class).setVisible(false);
+										}
 									}
 
 									@Order(1000)
@@ -863,8 +890,39 @@ public class SuTCbForm extends AbstractForm {
 											getTable().sort();
 										}
 									}
-									
-									
+
+									@Order(3000)
+									public class FileDownloadMenu extends AbstractMenu {
+										@Override
+										protected String getConfiguredText() {
+											return TEXTS.get("FileDownload");
+										}
+
+										@Override
+										protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+											return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+										}
+										
+										@Override
+										protected boolean getConfiguredVisible() {
+											return false;
+										}
+
+										@Override
+										protected void execAction() {
+											// get the selected file name from the table
+											ITableRow row = getTable().getSelectedRow();
+											if (row == null)
+												// no row selected - nothing to do
+												return;
+											// get the content of the selected file
+											BinaryResource downloadFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getCbId(), getTable().getFileNameColumn().getValue(row));
+											if (downloadFileResource.getContentLength() != -1) {
+												getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+											}
+										}
+
+									}
 								}
 							}
 						}
@@ -982,13 +1040,14 @@ public class SuTCbForm extends AbstractForm {
 			formData = service.load(formData);
 			importFormData(formData);
 			// load badge image
-			try (InputStream in = ResourceBase.class.getResourceAsStream("icons/" + formData.getCbId() + ".png")) {
-				getCbImageField().setImage(IOUtility.readBytes(in));
-				getCbImageField().setImageId(formData.getCbId());
-			} catch (Exception e) {
-				logger.warn("Could not load image file: " + formData.getCbId() + ".png");
+			byte[] badgeIcon = BEANS.get(ICbService.class).loadBadgeIcon(formData.getCbId());
+			if (badgeIcon != null) {
+				getCbImageField().setImage(badgeIcon);
+				getForm().setSubTitle(formData.getCbName().getValue());
 			}
-			getForm().setSubTitle(formData.getCbName().getValue());
+			else {
+				logger.warn("Could not load image file for badge ID " + formData.getCbId());
+			}
 //			setEnabledPermission(new UpdateCbPermission());
 		}
 	}

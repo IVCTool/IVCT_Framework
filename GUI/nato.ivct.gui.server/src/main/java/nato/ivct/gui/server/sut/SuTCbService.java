@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.CreateCbPermission;
@@ -73,9 +74,8 @@ public class SuTCbService implements ISuTCbService {
 
 	public void executeTestCase(String sutId, String tc, String badgeId) {
 		// execute the CmdStartTc commands
-		CbService cbService = BEANS.get(CbService.class);
-		BadgeDescription b = cbService.getBadgeDescription(badgeId);
-		ServerSession.get().execStartTc(sutId, tc, badgeId, b.tsRunTimeFolder);
+		SutDescription sut =BEANS.get(SuTService.class).getSutDescription(sutId);
+		ServerSession.get().execStartTc(sutId, tc, badgeId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
 		// mark test cases as being started
 		SuTCbTablePageData capPage = cap_hm.get(badgeId);
 		if (capPage == null) {
@@ -107,9 +107,25 @@ public class SuTCbService implements ISuTCbService {
 		
 		// load extra TC parameter files
 		loadTcExtraParameterFiles(formData);
-		
 
 		return formData;
+	}
+
+
+	@Override
+	public BinaryResource getFileContent(final String sutId, final String cbId, final String fileName) {
+		BinaryResource fileContent = null;
+		
+		try {
+			fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, cbId)).resolve(fileName)));
+		} catch (IOException | InvalidPathException exc) {
+			LOG.error("error to access fileName %", fileName);
+			// TODO Auto-generated catch block
+			exc.printStackTrace();
+			fileContent = new BinaryResource(fileName, null);
+		}  
+		
+		return fileContent;
 	}
 
 	@Override
@@ -190,6 +206,10 @@ public class SuTCbService implements ISuTCbService {
         Path paramFile = null;
         try {
             paramFile = getParamFile(sutId, badgeId);
+			if (paramFile == null) {
+				LOG.info("badge parameter file for SuT" + sutId + " and badge " + badgeId + " does not exist");
+				return false;
+			}
             LOG.debug("store TC parameters to file " + paramFile.toString());
             Files.write(paramFile, parameters.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
             return true;

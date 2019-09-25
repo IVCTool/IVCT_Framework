@@ -1,0 +1,78 @@
+// -----------------------------------------------------------------------------
+// Docker
+// -----------------------------------------------------------------------------
+buildscript {
+    repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+  dependencies {
+	classpath libraries.docker
+  }
+}
+apply plugin: 'com.bmuschko.docker-java-application'
+apply plugin: 'application'
+
+mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
+
+docker {
+    javaApplication {
+        baseImage = 'app-docker136.hex.tno.nl/pitch/lrc:5.4.0.0-alpine-noslf4j'
+        maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
+        tag = "ivct/tc-runner:po-${ivctVersion}"
+    }
+}
+
+dependencies {
+  compile     project(':Command')
+  compile     project(':TC.lib')
+  compile     project(':TC.exec')
+
+	compile     libraries.slf4j_api
+	compile     libraries.jsonSimple
+
+	runtime		libraries.actimemqClient
+	runtime		libraries.logback_classic
+	runtime		libraries.logback_core
+
+    switch (rti) {
+		case "prti1516e":
+			compileOnly files (rti_lib + "/" + rti_jar)
+			runtime fileTree (dir: rti_lib, include: '*.jar')
+			break
+		case "mak":
+			logger.warn (':TC:MAK RTI is not configure. HelloWorld will not be runnable')
+		case "IEEE1516e":
+		default:
+			logger.warn (':TC:No RTI is used. Test Engine will not be able to run test cases')
+			compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
+	}
+}
+
+distributions {
+    main {
+        contents {
+            from('src/conf/TestEngine_logback.xml') {
+                into 'lib'
+            }
+        }
+    }
+}
+
+tasks.withType(CreateStartScripts) {
+    classpath += files('lib')
+doLast {
+		/*
+		* Get the default scripts from the gradle task.
+		*/
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        /*
+        * Want to have the lib folder (for the logback xml file) included in classpath,
+        * but gradle makes lib/lib out of that.
+        * Thus need to edit the script to only have a single lib level.
+        */
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\lib', '%APP_HOME%\\lib;%LRC_CLASSPATH%')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib:$LRC_CLASSPATH')
+    }
+}

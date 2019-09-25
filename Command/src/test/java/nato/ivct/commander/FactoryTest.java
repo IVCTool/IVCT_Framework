@@ -19,15 +19,39 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
+import org.apache.activemq.broker.BrokerService;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 
 public class FactoryTest {
+	private static BrokerService broker = new BrokerService();
+
+	@BeforeClass
+	public static void startBroker() throws Exception {
+		// configure the broker
+		broker.addConnector("tcp://localhost:61616");
+		broker.setPersistent(false);
+
+		broker.start();
+	}
+
+	@AfterClass
+	public static void stopBroker() throws Exception {
+		try {
+			broker.stop();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	@Test
 	public void testCreateCmdListBadgesMethod() {
 		CmdListBadges lb = Factory.createCmdListBadges();
@@ -38,6 +62,11 @@ public class FactoryTest {
 			return;
 		}
 		assertTrue("Some Badges should be found", lb.badgeMap.size() > 0);
+	}
+	
+	@Test
+	public void testReadVersion() {
+	    Factory.readVersion();
 	}
 
 	@Test
@@ -91,12 +120,12 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-1.0.0", "some.test.case", "c:/tmp");
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2017", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
-		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-1.0.0"));
-		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "c:/tmp");
+		assertTrue("Get Badge name", stc.getBadge().contentEquals("HelloWorld-2017"));
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut() != null);
@@ -105,6 +134,7 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTestResultListenerMethod() {
+		Semaphore semaphore = new Semaphore(0);
 		class OnResultListenerTest implements OnResultListener {
 
 			@Override
@@ -115,12 +145,26 @@ public class FactoryTest {
 				assertTrue(result.testcase != null);
 				assertTrue(result.verdict != null);
 				assertTrue(result.verdictText != null);
+				semaphore.release();
 			}
 
 		}
 		OnResultListener testListener = new OnResultListenerTest();
+		CmdStartTestResultListener resultListener = Factory.createCmdStartTestResultListener(testListener);
 		assertTrue("Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener",
-				Factory.createCmdStartTestResultListener(testListener) != null);
+				resultListener != null);
+		resultListener.execute();
+		
+		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2017", "some.test.case", "verdict", "verdictText");
+        assertTrue("Factory Test CmdSendTcVerdict should return some value", stc != null);
+        stc.execute();
+        try {
+        	semaphore.acquire();
+
+        } catch (InterruptedException e) {
+        	// TODO Auto-generated catch block
+        	e.printStackTrace();
+        }
 	}
 
 	@Test

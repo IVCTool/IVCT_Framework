@@ -1,0 +1,14 @@
+{
+  "somFiles":[
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Services-2017/HelloWorldSOM.xml"
+    }
+  ],
+  "fomFiles":[
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Services-2017/HelloWorld.xml"
+    }
+  ],
+  "resultDirectory":"$(IVCT_SUT_HOME_ID)/hw_iosb/HLA-Services-2017",
+  "testDuration":"60"
+}

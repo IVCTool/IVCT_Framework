@@ -1,52 +1,35 @@
 language: java
 jdk:
-- oraclejdk8
+- openjdk8
 
 branches:
   only:
   - master
   - development
 
-env:
-  global:
-  - secure: qUEpoCIbkLLgB8LqQvDB6sxyMh5js+KxknaXURFaLLeerVsgw1XkXLCwLAYr23tJiiblVp+fKaqf9Fp7/j2q5cqPCh2bqZVtw7JrIOV45us3Qadl1ZTxItiX6I3l4oSAzc6yXoVlMj2UDm0otgxF77zwuFK8Dr2nlAOrh3c04gLnK0N2+R0Y/nlpqyHcwT3JkYlIeHf14HY+6/VGpoibTbOMpXEelPmnBKHflKwUmgR4qNs0lWLyOkypUWRiAoUsRvqCC+YtS5USjX+Rzq5tViSW5V8Vd1H9YcFYBtIhdHI5M36AEMWOPR+pBbPHaXiSTvAd15L+1Aw2PM+nnVD4zoQvJt8wxmOSQb4dnIjmkUzULDKYXW7by+q0iojM6Nn8nCBBS8Z3rcnjbokGjDFlIZJ9wUHclPgT8mEG6rF8Rs6c3jBbk7Ve8eEZVU89iODfqHtLkEbj+ohOaOrpPh0//MUwqTMHHiKcz6OeRl2YdYeeAiUDn6LnWYyMREgUdxCuFudJYI8vorHwRKe3eDa7WyhbVAXmE6NOBuJNgnDfJnTaW/Ur4iLnMopAS+3F4L8csri20/hTqmo5gtola8ebSLPYEw6FN1nA7KO4i5bTDkQq6CeBpeJNFvEODS65Qz8jg1bzOA+H1YS8/bTgkr3C+9oafBRZ9K7OoeUfrRRf1v4=
-  - secure: SEjp2QLZe7jJe1RDQvCHXobYtl47ZTQDgyWP9hIgbz9vpSKs7Xjp855wBRkfdB4gPyJTshJDIYjnGcdXZXcyvYHoxe7Ioh8L5QcnvzTbELfbN1K67qaCqstiJnULR57sPToEpzuKT9V/cVNtRESo9mTqLBlEMGowEvtNyIUo7kdw2eWX8TQPNzVQsIZgeluCVQoMZRk8KzCb7/gQW/WUHJK0jCXwRsP96ssUk98vfSRBSgBFcSmSFUJ0whBEXLqjzxdkFSuvJNTqtem7zx9SJAKTaRBPchS379ZcnzEIrqODwQl1nEfCrj1mkn9QQ1N9ili/EOxvHl1o7a3r9cf6R3QZyGYE/2UPSxgC4WEHJBGVV4GaZtfa9qvzJlREa/ekIE7ImWkMN6IP3yO1BsyIFX+ECO0SPggY+jR8G9DFrvs/t/tPPHTbAQ66iBkmpDuDyN7fCfPaBvDqrNJurXa4OQRBCAQ1/cYCnOu3bp3CFa/NC33eX9SKYnvOC4PrjC68uGk/h5Pz8fjaFYZTKW3i6EUWAl1lDrDIE0sCjTL44uD6BV9Cytos5PedEZzyMb20lvQwlN+R7WHRv5q8k2frBhI/O6n2EqZXQsqb8uaYaSsZDHoZwqV9RjpE26b1PZq5bAIsSmNPTLoCVTbz3T0JmSnC0oGNEsDH5d63gKb8okA=
-  - secure: bqrZXBVFvEJ1yZ1Clk9yC9VV16kL8YsseVv1BF8tFwenMZvWRfINqb25KMa19GAQPzMxr75NdQfPvDQhCgVb/cKdB8mEYaWzdvEkwP0imh96Z1XEaKRXjfWkFHXFaxV5BhBueyib88wda0Wp+Iyio2ysZBkeRMJoUBkFLFog3kjWcF7aJLzHcBrP1lADEh7NJQVY3ensd9yLZWyCvwLOlV+t+rWXlGyVFBWnwa7OR6NziDvZcm0rEOMMt22bP23Uiz1F1fO4n36H+fVJkh0AdM9dkX3LO1TFvhjHxn/7/h+oY5uWAqBzeRpK33MDo1GD/OXbZ4CZ1PFAn6r1PMVUBVlcGd+qr6Edgb+BgD2ht1Mgjnp7CV+xrUiTr9YhW2NwW/F67DOjAXtTBubsPUIjpKxlzMDagYZKdO3rsuIAmF5Vl0GwRwQBRCGUWNuGQFJMwkBzud3j04Wac2kX4kgZhFdy+agab5IKOZlDY2oatYxfDXYBx5uKFSc0dRj/77pdvMABtcgVPwCL3QBVrjGgYgI941xSL1kGbfJ/ZS1rvnfnVpM6/pf2yRLbpavJej6K2xx13bgm2Dsr0oksRIUpt/Chu08CQaHesrEEbMq0tn9H+Fx1ODk6In4Vrasmo+fNxkW1d9J/VHvkx16tgx429uBNPKlhEtoL/tKZTEKfQZE=
-  - secure: hZIrOYO5O9P9bYE09A+jyAY3QrpMxM7/X1uVid1TSH2OEpDHuX75JxGtbWVmxByyKr7hhx4Q6oqmZUZ2cim1ipk8QCl861oC8PtMGslTTCZ5uUJdBWgRAnfFI88fRHDHJa3JNYTuc0DJAfvifsNQfYg9H+nohNvJUotPYZlHCyoiJRzL9qTdAlS8Jp6RMd3hdwlvzmBvOuivpjn0bKaalx+OHsvmOwTbD41OGz1b4Etkd+movq9f41FJslH3aPf7Wo29kLxj24vG5u3IRwQNfw4QXT28pkFQoVGy3gsbj0bFoec9x392MBzTWnhLoeACav+mk6xYo7PYvc3uuEkdmeAWPPVQ9yOg6mnxciC6Opi5XWKgyjiUb+rrqZeYPDJ/HsXXCO0lt8STqx2VEUAgXT4pN5cwudkyjC3gQIT6v651spxZmg+C3aUda8Zg2lUZJVFddSjHd2K/KIbZBEtD3/H45GWTT3bPlvT/n0h81AhAhFZEvSzs8QmUgow2NKL/NpR9WFF7di19YF6/E1kY62uObLxoxBqY4yPgyYvqsOYCi8mqJbtaoSR5cB8npDZmF+NATpJQLWYXtB3r+23vXIwv7E6MI2KWK2nNIa451+H8ycO5g4fVxVbthxRLZ7fAGAu+vAXyt9V4uURQg7exPE7kpl+/8SmztZeE8iAAPoc=
+before_install:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
+    - docker pull app-docker136.hex.tno.nl/vtmak/lrc:4.5f-alpine
+    - docker pull app-docker136.hex.tno.nl/pitch/lrc:5.4.0.0-alpine-noslf4j
+    - docker pull app-docker136.hex.tno.nl/portico/lrc:nightly-20160528-alpine
 
-install: gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install
+install:
+  - gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
 
 script:
   - export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
-  # LogSink Build
-  - cd LogSink
-  - docker build --build-arg version=$VERSION -t ivct/logsink:$TRAVIS_BRANCH-latest -t ivct/logsink:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/logsink:$TRAVIS_BRANCH-$VERSION ivct/logsink:$VERSION && docker tag ivct/logsink:$TRAVIS_BRANCH-$VERSION ivct/logsink:latest; fi
+  # tag branch version
+  - docker tag ivct/logsink:$VERSION ivct/logsink:$TRAVIS_BRANCH-latest
+  - docker tag ivct/runtime-config:$VERSION ivct/runtime-config:$TRAVIS_BRANCH-latest
+  - docker tag ivct/ivct-gui:$VERSION ivct/ivct-gui:$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:pi-$VERSION ivct/tc-runner:pi-$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$TRAVIS_BRANCH-latest
+  # push images to docker hub
   - docker push ivct/logsink
-  # TC-Runner Pitch LRC Build
-  - cd ../TC.exec
-  - docker build --build-arg version=$VERSION -f Dockerfile-pi -t ivct/tc-runner:pi-$TRAVIS_BRANCH-latest -t ivct/tc-runner:pi-$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/tc-runner:pi-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:pi-$VERSION && docker tag ivct/tc-runner:pi-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:pi-latest; fi
   - docker push ivct/tc-runner
-  # TC-Runner MAK LRC Build
-  - docker build --build-arg version=$VERSION -f Dockerfile-ma -t ivct/tc-runner:ma-$TRAVIS_BRANCH-latest -t ivct/tc-runner:ma-$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/tc-runner:ma-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:ma-$VERSION && docker tag ivct/tc-runner:ma-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:ma-latest; fi
-  - docker push ivct/tc-runner
-  # TC-Runner Portico LRC Build
-  - docker build --build-arg version=$VERSION -f Dockerfile-po -t ivct/tc-runner:po-$TRAVIS_BRANCH-latest -t ivct/tc-runner:po-$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/tc-runner:po-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:po-$VERSION && docker tag ivct/tc-runner:po-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:po-latest; fi
-  - docker push ivct/tc-runner
-  # GUI Tomcat Build
-  - cd ../GUI
-  - docker build --build-arg version=$VERSION -t ivct/ivct-gui:$TRAVIS_BRANCH-latest -t ivct/ivct-gui:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/ivct-gui:$TRAVIS_BRANCH-$VERSION ivct/ivct-gui:$VERSION && docker tag ivct/ivct-gui:$TRAVIS_BRANCH-$VERSION ivct/ivct-gui:latest; fi
   - docker push ivct/ivct-gui
-  # Runtime Config Build
-  - cd ../RuntimeConfig
-  - docker build --build-arg version=$VERSION -t ivct/runtime-config:$TRAVIS_BRANCH-latest -t ivct/runtime-config:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/runtime-config:$TRAVIS_BRANCH-$VERSION ivct/runtime-config:$VERSION && docker tag ivct/runtime-config:$TRAVIS_BRANCH-$VERSION ivct/runtime-config:latest; fi
   - docker push ivct/runtime-config
 
 before_cache:

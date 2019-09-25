@@ -32,40 +32,11 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 
 				for (IOutline outline : Desktop.CURRENT.get().getAvailableOutlines()) {
 					if (outline instanceof SuTOutline) {
-						// set TC verdict in table
-						SuTTcNodePage tcNP = (SuTTcNodePage) outline.getSelectedNode();
-						SuTCbTablePage sutCbNode = (SuTCbTablePage) tcNP.getParentNode();
-						for (ITableRow tr : sutCbNode.getTable().getRows()) {
-							// find row with test case name
-							if (sutCbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTcId())) {
-
-								// set verdict in node page table
-								sutCbNode.getTable().getTCresultColumn().setValue(tr,notification.getVerdict());
-								
-								// update log table and set verdict in detailed form 
-								SuTTcRequirementForm detailedForm = (SuTTcRequirementForm) tcNP.getDetailForm();
-								if (detailedForm != null
-									&& detailedForm.isFormStarted()
-									&& detailedForm.getTestCaseId().equals(notification.getTcId())) {
-									
-									//update log file table
-									ISuTTcService service = BEANS.get(ISuTTcService.class);
-									SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
-									detailedForm.exportFormData(formData);
-									formData = service.updateLogFileTable(formData);
-									detailedForm.importFormData(formData);
-									
-									// set verdict
-									detailedForm.getTestCaseExecutionStatusTableField().setValue(notification.getVerdict());
-								}
-							}
-						}
-						
 						// set TC verdict in TC execution form
 						Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form->{
-							// set TC execution notification in detail form
 							if (form.getSutId().equalsIgnoreCase(notification.getSutId()) 
 								&& form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
+								// set TC execution notification in detail form
 								ITable tbl = ((SuTTcExecutionForm) form).getTestCaseExecutionStatusTableField().getTable();
 								tbl.discardAllRows();
 
@@ -79,6 +50,35 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 								//record status and progress in the form
 								((SuTTcExecutionForm) form).setTestCaseVerdict(notification.getVerdict());
 								((SuTTcExecutionForm) form).setTestCaseProgress(null);
+
+								// set TC verdict in table
+								SuTTcNodePage tcNP = (SuTTcNodePage) outline.findNode(form.getBadgeId()+"."+form.getRequirementId());
+								SuTCbTablePage sutCbNode = (SuTCbTablePage) tcNP.getParentNode();
+								for (ITableRow tr : sutCbNode.getTable().getRows()) {
+									// find row with test case name
+									if (sutCbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTcId())) {
+		
+										// set verdict in node page table
+										sutCbNode.getTable().getTCresultColumn().setValue(tr,notification.getVerdict());
+										
+										// update log table and set verdict in detailed form 
+										SuTTcRequirementForm detailedForm = (SuTTcRequirementForm) tcNP.getDetailForm();
+										if (detailedForm != null
+											&& detailedForm.isFormStarted()
+											&& detailedForm.getTestCaseId().equals(notification.getTcId())) {
+											
+											//update log file table
+											ISuTTcService service = BEANS.get(ISuTTcService.class);
+											SuTTcRequirementFormData formData = new SuTTcRequirementFormData();
+											detailedForm.exportFormData(formData);
+											formData = service.updateLogFileTable(formData);
+											detailedForm.importFormData(formData);
+											
+											// set verdict
+											detailedForm.getTestCaseExecutionStatusTableField().setValue(notification.getVerdict());
+										}
+									}
+								}
 							}
 						});
 						

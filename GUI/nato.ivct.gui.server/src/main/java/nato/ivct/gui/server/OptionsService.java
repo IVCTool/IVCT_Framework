@@ -4,6 +4,7 @@ import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 
+import nato.ivct.commander.Factory;
 import nato.ivct.gui.shared.CreateOptionsPermission;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.OptionsFormData;
@@ -50,5 +51,13 @@ public class OptionsService implements IOptionsService {
 	
 	public void setLogLevel (String level) {
 		ServerSession.get().setLogLevel(level);
+	}
+	
+	public String getIvctVersion() {
+		return Factory.getVersion();
+	}
+	
+	public String getIvctBuild() {
+		return Factory.getBuild();
 	}
 }

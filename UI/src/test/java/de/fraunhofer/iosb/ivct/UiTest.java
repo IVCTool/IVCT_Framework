@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.LinkedList;
 
+import org.apache.activemq.broker.BrokerService;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
@@ -15,6 +17,27 @@ import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
 public class UiTest {
+
+	private static BrokerService broker = new BrokerService();
+
+	@BeforeClass
+	public static void startBroker() throws Exception {
+		// configure the broker
+		broker.addConnector("tcp://localhost:61616");
+		broker.setPersistent(false);
+
+		broker.start();
+	}
+
+	@AfterClass
+	public static void stopBroker() throws Exception {
+		try {
+			broker.stop();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testCreateCmdLineTool() {
@@ -86,21 +109,6 @@ public class UiTest {
 	}
 
 	@Test
-	public void testCheckSutNotSelected() {
-		System.out.println("testCheckSutNotSelected enter");
-
-		// Simple null pointer test
-		RuntimeParameters rp = new RuntimeParameters();
-		assertTrue("RuntimeParameters is a null pointer", rp != null);
-
-		// No SUT selected, thus should be not selected
-		boolean sutNotSelected = rp.checkSutNotSelected();
-		assertTrue("checkSutNotSelected: should not be selected", true == sutNotSelected);
-
-		System.out.println("testCheckSutNotSelected leave");
-	}
-
-	@Test
 	public void testResetSUTvariables() {
 		System.out.println("testResetSUTvariables enter");
 
@@ -115,9 +123,8 @@ public class UiTest {
 		assertTrue("IVCTcommander is a null pointer", ivctCommander != null);
 
 		// Reset SUT should reset verdict list
-    	ivctCommander.rtp.setSutName("mySUT");
+    	ivctCommander.rtp.resetSut();
     	ivctCommander.resetSUT();
-		ivctCommander.listVerdicts();
 		String tc = RuntimeParameters.getTestCaseName();
 		assertTrue("Testcase name is not a null pointer", tc == null);
 		String ts = RuntimeParameters.getTestScheduleName();

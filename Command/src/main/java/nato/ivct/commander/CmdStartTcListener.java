@@ -33,7 +33,9 @@ public class CmdStartTcListener implements MessageListener, Command {
 		public String badge;
 		public String testCaseId;
 		public String testCaseParam;
-
+		public String settingsDesignator;
+		public String federationName;
+		public String sutFederateName;
 	}
 
 	public interface OnStartTestCaseListener {
@@ -60,17 +62,32 @@ public class CmdStartTcListener implements MessageListener, Command {
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
-					String commandTypeName = (String) jsonObject.get("commandType");
+					String commandTypeName = (String) jsonObject.get(CmdStartTc.COMMAND_ID);
 
-					if (commandTypeName.equals("startTestCase")) {
+					if (commandTypeName.equals(CmdStartTc.COMMAND)) {
 						Factory.LOGGER.trace("JMS Message received: " + content);
 						TcInfo info = new TcInfo();
 
-						info.sutName = (String) jsonObject.get("sutName");
-						info.sutDir = (String) jsonObject.get("sutDir");
-						info.badge = (String) jsonObject.get("badge");
-						info.testCaseId = (String) jsonObject.get("testCaseId");
-						info.testCaseParam = jsonObject.get("tcParam").toString();
+						info.sutName = (String) jsonObject.get(CmdStartTc.SUT_NAME);
+						info.sutDir = (String) jsonObject.get(CmdStartTc.SUT_DIR);
+						info.badge = (String) jsonObject.get(CmdStartTc.BADGE);
+                        info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
+                        info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
+                        info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
+                        info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
+						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
+
+						Factory.LOGGER.info("StartTcListener Command received: " + jsonObject.toString());
+
+						// check for missing values
+                        if (info.sutName == null) Factory.LOGGER.error("sutName is missing");
+                        if (info.sutDir == null) Factory.LOGGER.error("sutDir is missing");
+                        if (info.badge == null) Factory.LOGGER.error("badge is missing");
+                        if (info.testCaseId == null) Factory.LOGGER.error("testCaseId is missing");
+                        if (info.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is missing");
+                        if (info.federationName == null) Factory.LOGGER.error("federationName is missing");
+                        if (info.sutFederateName == null) Factory.LOGGER.error("sutFederateName is missing");
+                        if (info.testCaseParam == null) Factory.LOGGER.error("testCaseParam is missing");
 						
 						listener.onStartTestCase(info);
 					}
