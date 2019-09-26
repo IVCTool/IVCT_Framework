@@ -168,7 +168,7 @@ public class SuTForm extends AbstractForm {
                 public class SutVendorField extends AbstractStringField {
                     @Override
                     protected String getConfiguredLabel() {
-                        return TEXTS.get("SuTVendor");
+                        return TEXTS.get("Vendor");
                     }
 
 
