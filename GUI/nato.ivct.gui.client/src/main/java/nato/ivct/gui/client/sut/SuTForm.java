@@ -289,7 +289,7 @@ public class SuTForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredVisible() {
                         // !!! TODO Hide this box until it has no real content !!!
-                        return false;
+                        return true;
                     }
 
                     @Order(1000)
@@ -315,12 +315,26 @@ public class SuTForm extends AbstractForm {
 
 
                                 @Override
-                                protected int getConfiguredWidth() {
-                                    return 200;
+                                protected boolean getConfiguredVisible() {
+                                    return false;
                                 }
                             }
 
                             @Order(2000)
+                            public class CbBadgeName extends AbstractColumn<String> {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("BadgeName");
+                                }
+
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 300;
+                                }
+                            }
+
+                            @Order(3000)
                             public class CbBadgeStatus extends AbstractColumn<String> {
                                 @Override
                                 protected String getConfiguredHeaderText() {

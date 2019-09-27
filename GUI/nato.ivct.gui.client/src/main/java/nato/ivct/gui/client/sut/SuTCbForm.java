@@ -1208,7 +1208,7 @@ public class SuTCbForm extends AbstractForm {
             accordion.deleteAllGroups();
 
             // add all groups/testsuites with their test cases to the accordion
-            tsList.stream().sorted().forEach(ts -> addTsGroupWithTcTiles(ts));
+            tsList.stream().sorted().forEachOrdered(ts -> addTsGroupWithTcTiles(ts));
 
             // if only a single group then open it or collapse them all otherwise
             if (accordion.getGroupCount() == 1) {

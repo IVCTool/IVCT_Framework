@@ -159,8 +159,10 @@ public class SuTFormData extends AbstractFormData {
 
             private static final long  serialVersionUID = 1L;
             public static final String cbBadgeID        = "cbBadgeID";
+            public static final String cbBadgeName      = "cbBadgeName";
             public static final String cbBadgeStatus    = "cbBadgeStatus";
             private String             m_cbBadgeID;
+            private String             m_cbBadgeName;
             private String             m_cbBadgeStatus;
 
 
@@ -171,6 +173,16 @@ public class SuTFormData extends AbstractFormData {
 
             public void setCbBadgeID(String newCbBadgeID) {
                 m_cbBadgeID = newCbBadgeID;
+            }
+
+
+            public String getCbBadgeName() {
+                return m_cbBadgeName;
+            }
+
+
+            public void setCbBadgeName(String newCbBadgeName) {
+                m_cbBadgeName = newCbBadgeName;
             }
 
 
