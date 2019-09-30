@@ -24,87 +24,98 @@ import nato.ivct.gui.shared.cb.CbFormData.CbRequirementsTable.CbRequirementsTabl
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ReadCbPermission;
 
+
 public class CbService implements ICbService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
 
-	CmdListBadges badgeCmd = null;
+    CmdListBadges badgeCmd = null;
 
-	@Override
-	public Set<String> loadBadges() {
-		if (badgeCmd == null)
-			// load badge descriptions
-			waitForBadgeIrLoading(); 
 
-		return new TreeSet<>(badgeCmd.badgeMap.keySet());
-	}
+    @Override
+    public Set<String> loadBadges() {
+        if (badgeCmd == null)
+            // load badge descriptions
+            waitForBadgeIrLoading();
 
-	public BadgeDescription getBadgeDescription(final String cbId) {
-		if (badgeCmd == null)
-			waitForBadgeIrLoading();
-		return badgeCmd.badgeMap.get(cbId);
-	}
-	
-	public InteroperabilityRequirement getIrDescription(final String irId) {
-		if (badgeCmd == null)
-			waitForBadgeIrLoading();
-		return badgeCmd.getIR(irId);
-	}
+        return new TreeSet<>(badgeCmd.badgeMap.keySet());
+    }
 
-	void waitForBadgeIrLoading () {
-		// wait until load badges job is finished
-		IFuture<CmdListBadges> future = ServerSession.get().getLoadBadgesJob();
-		badgeCmd = future.awaitDoneAndGet();
-	}
 
-	@Override
-	public CbFormData load(CbFormData formData) {
-		LOG.info("load badge description");
-		if (!ACCESS.check(new ReadCbPermission())) {
-			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-		}
-		BadgeDescription cb = badgeCmd.badgeMap.get(formData.getCbId());
-		formData.getCbName().setValue(cb.name);
-		
-		formData.getCbDescription().setValue(cb.description);
+    public BadgeDescription getBadgeDescription(final String cbId) {
+        if (badgeCmd == null)
+            waitForBadgeIrLoading();
+        return badgeCmd.badgeMap.get(cbId);
+    }
 
-		// dependencies tree is built in CbDependenciesLookupService class
-		return formData;
-	}
-	
-	public byte[] loadBadgeIcon(final String badgeId) {
-		BadgeDescription cb = badgeCmd.badgeMap.get(badgeId);
-		
-		if (cb.cbVisual == null) {
-			LOG.error("No icon file for badge ID " + cb.ID);
-			return null;
-		}
-		
-		try {
-			return Files.readAllBytes((Paths.get(cb.cbVisual)));
-		} catch (IOException exc) {
-			LOG.error("Could not open icon file " + cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
-			return null;
-		}
-	}
 
-	@Override
-	public CbRequirementsTable loadRequirementTable(final Set<String> badges) {
-		CbRequirementsTable cbRequirementTableRows = new CbRequirementsTable();
-		for (String badge:badges) {
-			BadgeDescription bd = getBadgeDescription(badge);
-			bd.requirements.forEach((irId, requirement)-> {
-				CbRequirementsTableRowData row = cbRequirementTableRows.addRow();
-				row.setRequirementId(requirement.ID);
-				row.setRequirementDesc(requirement.description);
-			});
-		}
+    public InteroperabilityRequirement getIrDescription(final String irId) {
+        if (badgeCmd == null)
+            waitForBadgeIrLoading();
+        return badgeCmd.getIR(irId);
+    }
 
-		return cbRequirementTableRows;
-	}
 
-	@Override
-	public HashSet<String> getIrForCb(final String cbId) {
-		return new HashSet<String>(getBadgeDescription(cbId).requirements.keySet());
-	}
+    void waitForBadgeIrLoading() {
+        // wait until load badges job is finished
+        final IFuture<CmdListBadges> future = ServerSession.get().getLoadBadgesJob();
+        badgeCmd = future.awaitDoneAndGet();
+    }
+
+
+    @Override
+    public CbFormData load(CbFormData formData) {
+        LOG.info("load badge description");
+        if (!ACCESS.check(new ReadCbPermission())) {
+            throw new VetoException(TEXTS.get("AuthorizationFailed"));
+        }
+        final BadgeDescription cb = badgeCmd.badgeMap.get(formData.getCbId());
+        formData.getCbName().setValue(cb.name);
+        formData.getCbVersion().setValue(cb.version);
+        formData.getCbDescription().setValue(cb.description);
+
+        // dependencies tree is built in CbDependenciesLookupService class
+        return formData;
+    }
+
+
+    @Override
+    public byte[] loadBadgeIcon(final String badgeId) {
+        final BadgeDescription cb = badgeCmd.badgeMap.get(badgeId);
+
+        if (cb.cbVisual == null) {
+            LOG.error("No icon file for badge ID " + cb.ID);
+            return null;
+        }
+
+        try {
+            return Files.readAllBytes(Paths.get(cb.cbVisual));
+        }
+        catch (final IOException exc) {
+            LOG.error("Could not open icon file " + cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
+            return null;
+        }
+    }
+
+
+    @Override
+    public CbRequirementsTable loadRequirementTable(final Set<String> badges) {
+        final CbRequirementsTable cbRequirementTableRows = new CbRequirementsTable();
+        for (final String badge: badges) {
+            final BadgeDescription bd = getBadgeDescription(badge);
+            bd.requirements.forEach((irId, requirement) -> {
+                final CbRequirementsTableRowData row = cbRequirementTableRows.addRow();
+                row.setRequirementId(requirement.ID);
+                row.setRequirementDesc(requirement.description);
+            });
+        }
+
+        return cbRequirementTableRows;
+    }
+
+
+    @Override
+    public HashSet<String> getIrForCb(final String cbId) {
+        return new HashSet<>(getBadgeDescription(cbId).requirements.keySet());
+    }
 }
