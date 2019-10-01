@@ -39,29 +39,13 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
                     if (outline instanceof SuTOutline) {
                         Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form -> {
                             if (form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
-                                //                                // set TC execution status in detail form
-                                //                                final ITable tbl = form.getTestCaseExecutionStatusTableField().getTable();
-                                //                                tbl.discardAllRows();
-                                //                                final ITableRow row = tbl.addRow();
-                                //                                // set verdict
-                                //                                ((Table) tbl).getTcStatusColumn().setValue(row, notification.getStatus());
-                                //
-                                //                                // set execution progress
+                                // set TC execution status attribute in detail form
+                                form.setTestCaseStatus(notification.getStatus());
+                                // set TC execution status field in detail form
+                                form.getTcExecutionStatus().setValue(notification.getStatus());
+
+                                // set execution progress
                                 //                                ((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
-                                //
-                                //                                //record status and progress in the form
-                                //                                form.setTestCaseStatus(notification.getStatus());
-                                //                                form.setTestCaseProgress(Integer.toString(notification.getPercent()));
-                                //
-                                //                                // set TC execution status in table
-                                //                                final SuTTcNodePage tcNP = (SuTTcNodePage) outline.findNode(form.getBadgeId() + "." + form.getTestsuiteId());
-                                //                                final SuTCbTablePage cbNode = (SuTCbTablePage) tcNP.getParentNode();
-                                //                                for (final ITableRow tr: cbNode.getTable().getRows()) {
-                                //                                    // find row with test case name
-                                //                                    if (cbNode.getTable().getAbstractTCColumn().getValue(tr).equals(notification.getTcId())) {
-                                //                                        cbNode.getTable().getTCresultColumn().setValue(tr, notification.getStatus() + ": " + notification.getPercent() + "%");
-                                //                                    }
-                                //                                }
                             }
                         });
                     }
