@@ -26,24 +26,6 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
     }
 
 
-    //	@Override
-    //	protected void execLoadData(SearchFilter filter) {
-    //		String[] searchText = new String[1];
-    //		searchText[0] = getBadgeId();
-    //		filter.setDisplayTexts(searchText);
-    //		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
-    //	}
-    //
-    //	@Override
-    //	protected IPage<?> execCreateChildPage(ITableRow row) {
-    //		SuTTcNodePage childPage = new SuTTcNodePage();
-    //		childPage.setCbTestCase(getTable().getAbstractTCColumn().getValue(row));
-    //		childPage.setRequirementId(getTable().getCapabilityIdColumn().getValue(row));
-    //		childPage.setBadgeId(badgeId);
-    //		childPage.setSutId(sutId);
-    //		return childPage;
-    //	}
-
     @Override
     protected boolean getConfiguredLeaf() {
         // do not show child notes
