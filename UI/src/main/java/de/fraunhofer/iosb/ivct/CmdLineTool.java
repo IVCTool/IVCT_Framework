@@ -473,7 +473,7 @@ class Writer extends Thread {
                 	command = null;
                 	break;
                 case "modifySUTsettingsDesignator":
-                case "mssde":
+                case "mssetdes":
             	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
@@ -525,7 +525,7 @@ class Writer extends Thread {
                 	command = null;
                 	break;
                 case "modifySUTfederation":
-                case "msfed":
+                case "msfederation":
             	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
@@ -950,11 +950,11 @@ class Writer extends Thread {
                     out.println("asut (addSUT) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"sut federate name quoted\" \"federation text quoted\" - add an SUT");
                     out.println("msnam (modifySUTname) sut \"name text quoted\" - modify the SUT name");
                     out.println("msver (modifySUTversion) sut \"name text quoted\" - modify the SUT version");
-                    out.println("msdes (modifySUTdescription ) sut \"name text quoted\" - modify the SUT description");
-                    out.println("msven (modifySUTvendor ) sut \"name text quoted\" - modify the SUT vendor");
-                    out.println("mssde (modifySUTsettingsDesignator ) sut \"name text quoted\" - modify the SUT settingsDesignator");
-                    out.println("msfederate (modifySUTfederate ) sut \"name text quoted\" - modify the SUT federate name");
-                    out.println("msfed (modifySUTfederation ) sut \"name text quoted\" - modify the SUT federation");
+                    out.println("msdes (modifySUTdescription) sut \"name text quoted\" - modify the SUT description");
+                    out.println("msven (modifySUTvendor) sut \"name text quoted\" - modify the SUT vendor");
+                    out.println("mssetdes (modifySUTsettingsDesignator) sut \"name text quoted\" - modify the SUT settingsDesignator");
+                    out.println("msfederate (modifySUTfederate) sut \"name text quoted\" - modify the SUT federate name");
+                    out.println("msfederation (modifySUTfederation) sut \"name text quoted\" - modify the SUT federation");
                     out.println("lbg (listBadges) - list all available badges");
                     out.println("abg (addBadge) badge ... badge - add one or more badges to SUT");
                     out.println("dbg (deleteBadge) badge ... badge - delete one or more badges from SUT");
