@@ -99,7 +99,7 @@ to start the program. Continue by using the commands explained below.
 
 == Commands
 
-=== asut (addSUT) sut "description text quoted" "vendor text quoted"
+=== asut (addSUT) "sut name text quoted" "description text quoted" "vendor text quoted" "version text quoted" "settings designator text quoted" "sut federate name quoted" "federation text quoted"
 Add a SUT to the SUT folder. The description and vendor must always be quoted, since blanks
 allowed in these fields. It will create an initial CS.json file with
 the values SUT name, SUT description and vendor id. Sets the SUT as active
@@ -210,7 +210,7 @@ A command is shown in **shown in bold**, "-->" means the following value was ret
 
 **h**
 
-`-->	asut (addSUT) sut "name text quoted" "description text quoted" "vendor text quoted" "version text quoted" "settings designator text quoted" "sut federate name quoted" "federation text quoted"- add an SUT`
+`-->	asut (addSUT) "sut name text quoted" "description text quoted" "vendor text quoted" "version text quoted" "settings designator text quoted" "sut federate name quoted" "federation text quoted"- add an SUT`
 
 `-->	msnam (modifySUTname) "name text quoted" - modify the SUT name`
 

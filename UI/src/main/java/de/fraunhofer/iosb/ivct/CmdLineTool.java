@@ -924,7 +924,7 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
-                    out.println("asut (addSUT) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"sut federate name quoted\" \"federation text quoted\" - add an SUT");
+                    out.println("asut (addSUT) \"sut name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"sut federate name quoted\" \"federation text quoted\" - add an SUT");
                     out.println("msnam (modifySUTname) \"name text quoted\" - modify the SUT name");
                     out.println("msver (modifySUTversion) \"version text quoted\" - modify the SUT version");
                     out.println("msdes (modifySUTdescription) \"description text quoted\" - modify the SUT description");
