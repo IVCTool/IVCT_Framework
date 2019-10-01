@@ -45,8 +45,6 @@ public class TcLogMsgNotificationHandler implements INotificationHandler<TcLogMs
                                 form.exportFormData(formData);
 
                                 // check if sufficient memory is available
-                                //                                final String tcExecLog = Optional.ofNullable(formData.getTcExecutionLog().getValue()).orElse("");
-                                //                                final int configuredLogMsgLength = form.getFieldByClass(TcExecutionLogField.class).getConfiguredMaxLength();
                                 final String tcExecLog = Optional.ofNullable(formData.getTcLog().getValue()).orElse("");
                                 final int configuredLogMsgLength = form.getFieldByClass(TcLogField.class).getConfiguredMaxLength();
                                 if (configuredLogMsgLength < Integer.MAX_VALUE) {
@@ -59,7 +57,6 @@ public class TcLogMsgNotificationHandler implements INotificationHandler<TcLogMs
                                     }
                                 }
 
-                                //                                formData.getTcExecutionLog().setValue((tcExecLog.length() > 0 ? tcExecLog + "\n" : tcExecLog) + logMsg);
                                 formData.getTcLog().setValue((tcExecLog.length() > 0 ? tcExecLog + "\n" : tcExecLog) + logMsg);
                                 form.importFormData(formData);
                             }
