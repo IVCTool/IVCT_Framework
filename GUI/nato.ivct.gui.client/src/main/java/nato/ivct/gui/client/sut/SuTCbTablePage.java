@@ -33,7 +33,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
     //		filter.setDisplayTexts(searchText);
     //		importPageData(BEANS.get(ISuTCbService.class).getSuTCbTableData(filter));
     //	}
-    //	
+    //
     //	@Override
     //	protected IPage<?> execCreateChildPage(ITableRow row) {
     //		SuTTcNodePage childPage = new SuTTcNodePage();
@@ -73,13 +73,13 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
 
     public class Table extends AbstractTable {
 
-        public AbstractTCColumn getAbstractTCColumn() {
-            return getColumnSet().getColumnByClass(AbstractTCColumn.class);
+        public AbstractTcColumn getAbstractTcColumn() {
+            return getColumnSet().getColumnByClass(AbstractTcColumn.class);
         }
 
 
-        public TCstatusColumn getTCresultColumn() {
-            return getColumnSet().getColumnByClass(TCstatusColumn.class);
+        public TcStatusColumn getTcStatusColumn() {
+            return getColumnSet().getColumnByClass(TcStatusColumn.class);
         }
 
 
@@ -121,7 +121,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
         }
 
         @Order(3000)
-        public class AbstractTCColumn extends AbstractStringColumn {
+        public class AbstractTcColumn extends AbstractStringColumn {
             @Override
             protected String getConfiguredHeaderText() {
                 return TEXTS.get("TC");
@@ -135,7 +135,7 @@ public class SuTCbTablePage extends AbstractPageWithTable<SuTCbTablePage.Table> 
         }
 
         @Order(4000)
-        public class TCstatusColumn extends AbstractStringColumn {
+        public class TcStatusColumn extends AbstractStringColumn {
             @Override
             protected String getConfiguredHeaderText() {
                 return TEXTS.get("TCStatus");
