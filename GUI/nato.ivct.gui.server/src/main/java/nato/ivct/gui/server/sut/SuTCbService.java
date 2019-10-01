@@ -23,12 +23,12 @@ import org.slf4j.LoggerFactory;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.ISuTCbService;
-import nato.ivct.gui.shared.sut.SuTCbTablePageData;
+import nato.ivct.gui.shared.sut.SuTCbNodePageData;
 
 
 public class SuTCbService implements ISuTCbService {
     private static final Logger                        LOG    = LoggerFactory.getLogger(ServerSession.class);
-    private static HashMap<String, SuTCbTablePageData> cap_hm = new HashMap<>();
+    private static HashMap<String, SuTCbNodePageData> cap_hm = new HashMap<>();
 
 
     //	/*

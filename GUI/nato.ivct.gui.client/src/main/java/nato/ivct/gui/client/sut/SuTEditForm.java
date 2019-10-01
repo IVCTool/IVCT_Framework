@@ -446,7 +446,7 @@ public class SuTEditForm extends AbstractForm {
             // mark the already implemented capabilities
             sutOutline.getSelectedNode().getChildNodes().forEach(node -> {
                 final List<String> keys = CollectionUtility.emptyArrayList();
-                keys.add(((SuTCbTablePage) node).getBadgeId());
+                keys.add(((SuTCbNodePage) node).getBadgeId());
                 getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
             });
 
