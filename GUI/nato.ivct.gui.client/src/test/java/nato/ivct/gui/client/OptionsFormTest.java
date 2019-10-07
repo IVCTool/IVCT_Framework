@@ -8,7 +8,7 @@ import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import nato.ivct.gui.shared.IOptionsService;
@@ -25,10 +25,10 @@ public class OptionsFormTest {
 	@Before
 	public void setup() {
 		OptionsFormData answer = new OptionsFormData();
-		Mockito.when(m_mockSvc.prepareCreate(Matchers.any(OptionsFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.create(Matchers.any(OptionsFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.load(Matchers.any(OptionsFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.store(Matchers.any(OptionsFormData.class))).thenReturn(answer);
+		Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any(OptionsFormData.class))).thenReturn(answer);
+		Mockito.when(m_mockSvc.create(ArgumentMatchers.any(OptionsFormData.class))).thenReturn(answer);
+		Mockito.when(m_mockSvc.load(ArgumentMatchers.any(OptionsFormData.class))).thenReturn(answer);
+		Mockito.when(m_mockSvc.store(ArgumentMatchers.any(OptionsFormData.class))).thenReturn(answer);
 	}
 
 	// TODO [hzg] add test cases
