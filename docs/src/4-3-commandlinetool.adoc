@@ -99,65 +99,81 @@ to start the program. Continue by using the commands explained below.
 
 == Commands
 
-=== addSUT (asut) sut "description text quoted" "vendor text quoted"
+=== asut (addSUT) "sut name text quoted" "description text quoted" "vendor text quoted" "version text quoted" "settings designator text quoted" "sut federate name quoted" "federation text quoted"
 Add a SUT to the SUT folder. The description and vendor must always be quoted, since blanks
 allowed in these fields. It will create an initial CS.json file with
 the values SUT name, SUT description and vendor id. Sets the SUT as active
 SUT.
 
-=== modifySUT (msut) sut "description text quoted" "vendor text quoted"
-Modify the values SUT description and vendor id. The description and vendor
-must always be quoted, since blanks allowed in these fields. It will modify
-CS.json file with the values of SUT description and vendor id.
+=== msnam (modifySUTname) "sut name"
+Modify the SUT name. The sut name must be double quoted.
 
-=== listBadges (lbg) - list all available badges
+=== msver (modifySUTversion) "version"
+Modify the SUT version. The version must be double quoted.
+
+=== msdes (modifySUTdescription) "description"
+Modify the SUT description. The description must be double quoted.
+
+=== msven (modifySUTvendor) "vendor"
+Modify the SUT vendor. The vendor must be double quoted.
+
+=== mssetdes (modifySUTsettingsDesignator) "settings designator"
+Modify the SUT settingsDesignator. The settingsDesignator must be double quoted.
+
+=== msfederate (modifySUTfederate) "sut federate name"
+Modify the SUT federate name. The federate name must be double quoted.
+
+=== msfederation (modifySUTfederation) "federation name"
+Modify the SUT federation name. The federation name must be double quoted.
+
+=== lbg (listBadges) - list all available badges
 Lists the all the Badges available in the badge folder. It is useful to
 call this method before adding badges in order to get the right badge names.
 
-=== addBadge (abg) badge ... badge
+=== abg (addBadge) badge ... badge
 Adds the badge(s) to the active SUT.
 
-=== deleteBadge (dbg) badge ... badge
+=== dbg (deleteBadge) badge ... badge
 Delete one or more badges from the active SUT.
 
-=== listSUT (lsut)
+=== lsut (listSUT)
 Give the list of SUT specific folders currently available. The SUT files and folders are expected to be copied into the folder specified by the _sutDir_ in the _IVCTconfig.xml_ file using a standard file management tool. The name of the folder will be used as the reference to the SUT during testing.
 
-=== setSUT (ssut)
+=== ssut (setSUT) sut
 Sets the name of the SUT within the IVCT in order to get the corresponding parameter files and provide a name for the location for writing the log files. It is necessary to set the SUT before running any tests.
 
-=== listTestSchedules (lts)
+=== lts (listTestSchedules)
 Provides a list of test schedules which the IVCT operator can start. This list is specific to the currently active test suite.
 
-=== startTestSchedule (sts)
+=== sts (startTestSchedule) testSchedule
 Accept a test schedule name from user and start specific test cases for a specific SUT. Each test case name should be displayed when started. At the end of each test case the verdict should be displayed. At the end of the test schedule, the message that the test schedule is completed should be displayed.
 
-=== abortTestSchedule (ats)
+=== ats (abortTestSchedule)
 Will abort the currently running test case (the verdict for the test case should be inconclusive with the message “user aborted”) and end the test schedule by not executing any further test cases of the test schedule.
 
-=== listTestCases (ltc)
+=== ltc (listTestCases)
 Provides a list of test cases which the IVCT operator can start. This list is specific to the currently active test suite.
 
-=== startTestCase (stc)
+=== stc (startTestCase) testSchedule testcase
 Accept **test schedule name** and a **test case name** from user and send them to the JMS bus via the IVCT Commander in order to start a specific test case in a specific test schedule for a specific SUT. A Json message with the specified parameters will be sent to the receiving module. In this case the receiving module must be able to interpret the Json message and start the test case with parameters to locate the SUT specific files.
 At the end of the test case the verdict should be displayed.
 
-=== abortTestCase (atc)
+=== atc (abortTestCase)
 Will abort the currently running test case. The verdict for the test case should be inconclusive with the message “user aborted”. If a test schedule is running, the next test case will be executed. **Not implemented yet.**
 
-=== setLogLevel (sll)
+=== sll (setLogLevel) logLevel
 Sets the log level for filtering log messages created by the test case.
 
-=== listVerdicts (lv)
+=== lv (listVerdicts)
 List the verdicts of the current session. A chronologically ordered list of test case verdicts will be displayed. Duplicate test cases will appear in the sequence in the order they were run. Where a comment was assigned in a test case for the verdict, the comment will also be displayed.
 
-=== status (s)
+=== s (status)
 Displays currently available information about the test session e.g. SUT name, test suite name, test schedule / case name.
 
-=== quit (q)
+=== q (quit)
 End the command line program. A force quit dialogue has been implemented to allow the UI to be exited when a test case crashes.
 
-=== help (h)
+=== h (help)
 A list of available commands and parameters will be shown.
 
 == Internal Structure
@@ -178,9 +194,9 @@ A command is shown in **shown in bold**, "-->" means the following value was ret
 
 --> _Response_
 
-**asut hw_iosb "HelloWorld system under federate for IVCT demonstration" "Fraunhofer IOSB"**
+**asut "hw_iosb" "HelloWorld system under federate for IVCT demonstration" "Fraunhofer IOSB" "2.1.0" "localhost" "federate name" "federation name"**
 
-**msut hw_iosb "HelloWorld system under federate for IVCT demonstration" "Fraunhofer IOSB"**
+**mssetdes "localhost:8989"**
 
 **lbg**
 
@@ -194,41 +210,53 @@ A command is shown in **shown in bold**, "-->" means the following value was ret
 
 **h**
 
-`-->	addSUT (asut) sut "description text quoted" "vendor text quoted"- add an SUT`
+`-->	asut (addSUT) "sut name text quoted" "description text quoted" "vendor text quoted" "version text quoted" "settings designator text quoted" "sut federate name quoted" "federation text quoted"- add an SUT`
 
-`-->	modifySUT (msut) sut "description text quoted" "vendor text quoted"- modify an SUT`
+`-->	msnam (modifySUTname) "name text quoted" - modify the SUT name`
 
-`-->	listBadges (lbg) - list all available badges`
+`-->	msver (modifySUTversion) "version text quoted" - modify the SUT version`
 
-`-->	addBadge (abg) badge ... badge - add one or more badges to SUT`
+`-->	msdes (modifySUTdescription ) "description text quoted" - modify the SUT description`
 
-`-->	deleteBadge (dbg) badge ... badge - delete one or more badges from SUT`
+`-->	msven (modifySUTvendor ) "vendor name text quoted" - modify the SUT vendor`
 
-`-->	listSUT (lsut) - list SUT folders`
+`-->	mssde (modifySUTsettingsDesignator ) "settings designator text quoted" - modify the SUT settingsDesignator`
 
-`-->	setSUT (ssut) - set active SUT`
+`-->	msfederate (modifySUTfederate ) "federate name text quoted" - modify the SUT federate name`
 
-`-->	listTestSchedules (lts) - list the available test schedules for the test suite`
+`-->	msfederation (modifySUTfederation ) "federation text quoted" - modify the SUT federation`
 
-`-->	startTestSchedule (sts) - start the named test schedule`
+`-->	lbg (listBadges) - list all available badges`
 
-`-->	abortTestSchedule (ats) - abort the running test schedule`
+`-->	abg (addBadge) badge ... badge - add one or more badges to SUT`
 
-`-->	listTestCases (ltc) - list the available test cases for the test suite`
+`-->	dbg (deleteBadge) badge ... badge - delete one or more badges from SUT`
 
-`-->	startTestCase (stc) - start the named test case`
+`-->	lsut (listSUT) - list SUT folders`
 
-`-->	abortTestCase (atc) - abort the running test case`
+`-->	ssut (setSUT) sut - set active SUT`
 
-`-->	setLogLevel (sll) - set the log level for logging - error, warning, debug, info`
+`-->	lts (listTestSchedules) - list the available test schedules for the test suite`
 
-`-->	listVerdicts (lv) - list the verdicts of the current session`
+`-->	sts (startTestSchedule) testSchedule - start the named test schedule`
 
-`-->	status (s) - display status information`
+`-->	ats (abortTestSchedule) - abort the running test schedule`
 
-`-->	quit (q) - quit the program`
+`-->	ltc (listTestCases) - list the available test cases for the test suite`
 
-`-->	help (h) - display the help information`
+`-->	stc (startTestCase) testSchedule testcase - start the named test case from the badge`
+
+`-->	atc (abortTestCase) - abort the running test case`
+
+`-->	sll (setLogLevel) loglevel - set the log level for logging - error, warning, debug, info`
+
+`-->	lv (listVerdicts) - list the verdicts of the current session`
+
+`-->	s (status) - display status information`
+
+`-->	q (quit) - quit the program`
+
+`-->	h (help) - display the help information`
 
 == Sample Test Session
 
