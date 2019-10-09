@@ -40,6 +40,7 @@ import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTileField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcLogField;
@@ -212,6 +213,11 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     public TcLogField getTcLogField() {
         return getFieldByClass(TcLogField.class);
+    }
+
+
+    public TcExecutionButton getTcExecutionButton() {
+        return getFieldByClass(TcExecutionButton.class);
     }
 
     //    public TcExecutionLogField getTcExecutionLogField() {
