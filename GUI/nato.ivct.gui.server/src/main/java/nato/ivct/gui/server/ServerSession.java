@@ -180,7 +180,7 @@ public class ServerSession extends AbstractServerSession {
     }
 
 
-    public void updateSutResultMap(final String sutId, final String badgeId, final String tcFullName) {
+    public void updateSutResultMap(final String sutId, final String tsId, final String tcFullName) {
         LOG.info("reload test results for all SuTs");
         loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
     }

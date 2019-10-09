@@ -128,7 +128,7 @@ public class SuTTcService implements ISuTTcService {
     public SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData) {
         final TcExecutionHistoryTable tbl = formData.getTcExecutionHistoryTable();
         // TODO make this smarter instead brute force
-        ServerSession.get().updateSutResultMap(formData.getSutIdProperty().getValue(), formData.getBadgeIdProperty().getValue(), formData.getTestCaseIdProperty().getValue());
+        ServerSession.get().updateSutResultMap(formData.getSutIdProperty().getValue(), formData.getTestsuiteIdProperty().getValue(), formData.getTestCaseIdProperty().getValue());
 
         tbl.clearRows();
         loadLogFiles(formData);

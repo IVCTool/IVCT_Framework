@@ -3,7 +3,6 @@ package nato.ivct.gui.client.sut;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -307,7 +306,7 @@ public class SuTForm extends AbstractForm {
 
                         public class SutCapabilityStatusTable extends AbstractTable {
                             @Order(1000)
-                            public class CbBadgeID extends AbstractColumn<String> {
+                            public class CbBadgeIDColumn extends AbstractStringColumn {
                                 @Override
                                 protected String getConfiguredHeaderText() {
                                     return TEXTS.get("BadgeId");
@@ -316,12 +315,12 @@ public class SuTForm extends AbstractForm {
 
                                 @Override
                                 protected boolean getConfiguredVisible() {
-                                    return false;
+                                    return true;
                                 }
                             }
 
                             @Order(2000)
-                            public class CbBadgeName extends AbstractColumn<String> {
+                            public class CbBadgeNameColumn extends AbstractStringColumn {
                                 @Override
                                 protected String getConfiguredHeaderText() {
                                     return TEXTS.get("BadgeName");
@@ -335,7 +334,7 @@ public class SuTForm extends AbstractForm {
                             }
 
                             @Order(3000)
-                            public class CbBadgeStatus extends AbstractColumn<String> {
+                            public class CbBadgeStatusColumn extends AbstractStringColumn {
                                 @Override
                                 protected String getConfiguredHeaderText() {
                                     return TEXTS.get("BadgeConformanceStatus");

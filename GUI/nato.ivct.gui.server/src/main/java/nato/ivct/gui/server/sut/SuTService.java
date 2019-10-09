@@ -186,6 +186,8 @@ public class SuTService implements ISuTService {
             final SutCapabilityStatusTableRowData row = fd.getSutCapabilityStatusTable().addRow();
             row.setCbBadgeID(badgeId);
             row.setCbBadgeName(BEANS.get(CbService.class).getBadgeDescription(badgeId).name);
+            //TODO (just for testing
+            row.setCbBadgeStatus("UNKNOWN");
         });
         return fd;
     }

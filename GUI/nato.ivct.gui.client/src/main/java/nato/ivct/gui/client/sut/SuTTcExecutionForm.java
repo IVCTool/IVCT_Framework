@@ -43,7 +43,6 @@ import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseEx
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcLogField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionLogField;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
@@ -215,10 +214,9 @@ public class SuTTcExecutionForm extends AbstractForm {
         return getFieldByClass(TcLogField.class);
     }
 
-
-    public TcExecutionLogField getTcExecutionLogField() {
-        return getFieldByClass(TcExecutionLogField.class);
-    }
+    //    public TcExecutionLogField getTcExecutionLogField() {
+    //        return getFieldByClass(TcExecutionLogField.class);
+    //    }
 
     @Order(10000)
     public class MainBox extends AbstractGroupBox {
@@ -552,60 +550,60 @@ public class SuTTcExecutionForm extends AbstractForm {
             }
         }
 
-        @Order(2100)
-        public class TcExecutionLogField extends AbstractStringField {
-
-            @Override
-            protected String getConfiguredLabel() {
-                return TEXTS.get("TcExecutionLog");
-            }
-
-
-            @Override
-            protected int getConfiguredGridW() {
-                // TODO Auto-generated method stub
-                return 3;
-            }
-
-
-            @Override
-            protected int getConfiguredGridH() {
-                // TODO Auto-generated method stub
-                return 2;
-            }
-
-
-            @Override
-            protected double getConfiguredGridWeightY() {
-                // TODO Auto-generated method stub
-                return -1;
-            }
-
-
-            @Override
-            protected boolean getConfiguredMultilineText() {
-                return true;
-            }
-
-
-            @Override
-            protected int getConfiguredMaxLength() {
-                return Integer.MAX_VALUE;
-            }
-
-
-            @Override
-            public boolean isEnabled() {
-                // set to r/w to activate the scrollbars
-                return true;
-            }
-
-
-            @Override
-            protected boolean getConfiguredVisible() {
-                return false;
-            }
-        }
+        //        @Order(2100)
+        //        public class TcExecutionLogField extends AbstractStringField {
+        //
+        //            @Override
+        //            protected String getConfiguredLabel() {
+        //                return TEXTS.get("TcExecutionLog");
+        //            }
+        //
+        //
+        //            @Override
+        //            protected int getConfiguredGridW() {
+        //                // TODO Auto-generated method stub
+        //                return 3;
+        //            }
+        //
+        //
+        //            @Override
+        //            protected int getConfiguredGridH() {
+        //                // TODO Auto-generated method stub
+        //                return 2;
+        //            }
+        //
+        //
+        //            @Override
+        //            protected double getConfiguredGridWeightY() {
+        //                // TODO Auto-generated method stub
+        //                return -1;
+        //            }
+        //
+        //
+        //            @Override
+        //            protected boolean getConfiguredMultilineText() {
+        //                return true;
+        //            }
+        //
+        //
+        //            @Override
+        //            protected int getConfiguredMaxLength() {
+        //                return Integer.MAX_VALUE;
+        //            }
+        //
+        //
+        //            @Override
+        //            public boolean isEnabled() {
+        //                // set to r/w to activate the scrollbars
+        //                return true;
+        //            }
+        //
+        //
+        //            @Override
+        //            protected boolean getConfiguredVisible() {
+        //                return false;
+        //            }
+        //        }
 
         @Order(100000)
         public class CloseButton extends AbstractButton {
@@ -651,10 +649,16 @@ public class SuTTcExecutionForm extends AbstractForm {
                 getTcExecutionStatus().setValue("");
                 setTestCaseProgress("100");
 
+                // clear the TC log field
+                if (getTcLogField().getValue() != null) {
+                    getTcLogField().resetValue();
+                }
+
                 // for testing
-                if (getTcExecutionHistoryTableField().getTable().getUserFilterManager().getFilter(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn().getColumnId()) == null) {
-                    final TextColumnUserFilterState filter = new TextColumnUserFilterState(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());
-                    filter.setFreeText("INCONCLUSIVE");
+                final TcExecutionHistoryTableField.TcExecutionHistoryTable tbl = getTcExecutionHistoryTableField().getTable();
+                if (tbl.getUserFilterManager().getFilter(tbl.getTcVerdictColumn().getColumnId()) == null) {
+                    final TextColumnUserFilterState filter = new TextColumnUserFilterState(tbl.getTcVerdictColumn());
+                    filter.setFreeText("TC_RUNNING");
                     getTcExecutionHistoryTableField().getTable().getUserFilterManager().addFilter(filter);
                 }
                 else {
