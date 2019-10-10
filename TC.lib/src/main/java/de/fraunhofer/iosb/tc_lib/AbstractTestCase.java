@@ -280,4 +280,26 @@ public abstract class AbstractTestCase {
 	public String getSutFederateName () {
 		return this.sutFederateName;
 	}
+
+  /**
+   * Returns the IVCT-Version which has this TestCase at building-time for
+   * checking against the IVCT-Version of at Runtime
+   * 
+   */
+  public String getIVCTVersion() {
+    InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
+    Properties devProperties = new Properties();
+    String infoIVCTVersion = "not defined yet";
+    try {
+      devProperties.load(in);
+      infoIVCTVersion = devProperties.getProperty("ivctVersion");
+      // to have a different Value for Testing get another Value
+      // infoIVCTVersion = devProperties.getProperty("helloWorldVersion");
+    } catch (IOException ex) {
+      ex.getStackTrace();
+      infoIVCTVersion = "undefined";
+    }
+    return infoIVCTVersion;
+  }
+	
 }
