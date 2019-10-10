@@ -284,7 +284,7 @@ public abstract class AbstractTestCase {
   /**
    * Returns the IVCT-Version which has this TestCase at building-time for
    * checking against the IVCT-Version of at Runtime
-   * 
+   *  
    */
   public String getIVCTVersion() {
     InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
