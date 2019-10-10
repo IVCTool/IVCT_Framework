@@ -33,16 +33,7 @@ public class IVCTVersionCheck {
   IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
     this.testCaseIVCTVersion = _testCaseIVCTVersion;
     this.FactoryIVCtVersion = _FactoryIVCtVersion;
-    this.compare() ;
-    
-    /*
-    try {
-      compare();
-    } catch (IVCTVersionCheckFailed cf) {
-      logger.warn("IVCTVersionCheck.compare  meldet  einen Fehler ");
-      cf.printStackTrace();
-    }
-    */
+    //this.compare() ;
   }
 
   // inner Class with own exception
@@ -66,11 +57,6 @@ public class IVCTVersionCheck {
    */
 
   public void compare() throws IVCTVersionCheckFailed {
-
-    // if (! testCaseIVCTVersion.equals(FactoryIVCtVersion) )
-    // throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and
-    // TestCase doesn't match " );
-    // }
 
     if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
       logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
