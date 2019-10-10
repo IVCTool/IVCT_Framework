@@ -210,16 +210,22 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					continue;
 				}
 				
+        /* Check the compatibility of the IVCT Version of TC.exec an TC.lib in a dedicated class */
+        logger.info("### check the IVCT-Version with which testcase is build - against IVct-version of Tc.exec");
+        //logger.info("### testCase.getIVCTVersion:"+testCase.getIVCTVersion()+"  Factory.getVersion: " +Factory.getVersion()); // Debug
 
-        // temporaerly tests here, later  in a  if (   -loop like above 
-
-				logger.info(" ### check the IVCT-Version with which testcase is build - against IVct-version of Tc.exec");
-		    logger.info("testCase.getIVCTVersion:" +testCase.getIVCTVersion() +"  Factory.getVersion: "+Factory.getVersion()); // Debug
-
-		    // Check the compatibility of the IVCT Version of TC.exec an TC.lib in a dedicated  class
-		   new IVCTVersionCheck(testCase.getIVCTVersion(), Factory.getVersion() ) ;
-
-				
+        try {
+          new IVCTVersionCheck(testCase.getIVCTVersion(), Factory.getVersion());
+        } catch (IVCTVersionCheck.IVCTVersionCheckFailed cf) {
+          logger.error("IVCTVersionCheck shows incompability of Version ");
+          verdicts[i] = new IVCT_Verdict();
+          verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+          verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+          i++;
+          cf.printStackTrace();
+          continue;
+        }
+        
 				
 				testCase.setSutName(info.sutName);
 				testCase.setTcName(classname);

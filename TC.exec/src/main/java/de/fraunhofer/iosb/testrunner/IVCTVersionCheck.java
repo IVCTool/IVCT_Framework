@@ -15,44 +15,38 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 package de.fraunhofer.iosb.testrunner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 public class IVCTVersionCheck {
-  
+
   String testCaseIVCTVersion;
   String FactoryIVCtVersion;
-  
- 
-  private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
-  
-  IVCTVersionCheck(){    
-  }
-  
-  
-  IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion ){
-    this.testCaseIVCTVersion =_testCaseIVCTVersion ;
-    this.FactoryIVCtVersion = _FactoryIVCtVersion ;
-    //this.compare() ;
 
+  private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
+
+  IVCTVersionCheck() {
+  }
+
+  IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
+    this.testCaseIVCTVersion = _testCaseIVCTVersion;
+    this.FactoryIVCtVersion = _FactoryIVCtVersion;
+    this.compare() ;
     
-    
+    /*
     try {
       compare();
-    } catch  (IVCTVersionCheckFailed cf)  {
+    } catch (IVCTVersionCheckFailed cf) {
       logger.warn("IVCTVersionCheck.compare  meldet  einen Fehler ");
       cf.printStackTrace();
-    }     
+    }
+    */
   }
-  
-  
-   // inner Class  with own exception
-   public class IVCTVersionCheckFailed extends Exception {
+
+  // inner Class with own exception
+  public class IVCTVersionCheckFailed extends Exception {
     private static final long serialVersionUID = 1L;
 
     public IVCTVersionCheckFailed() {
@@ -63,25 +57,25 @@ public class IVCTVersionCheck {
       super(exceptionText);
     }
   }
-   
-   
-   /* Tests for  verifying if the IVCT-Version of the components are compatible
-    * 
-    * here  has to be created some extended test, with former Version-Numbers
-    * in the moment we test only  if there is the same Version-Number
-    */
-   
-   public void compare() throws IVCTVersionCheckFailed{
-     
-     //if (! testCaseIVCTVersion.equals(FactoryIVCtVersion) )
-     //  throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match " );     
-     //}
-     
-     if (testCaseIVCTVersion.equals(FactoryIVCtVersion) ) {
-       logger.info("IVCTVersionCheck.compare: the versions match "+testCaseIVCTVersion+" - "+FactoryIVCtVersion);
-     } else {
-       throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match " );   
-     }
-   }
+
+  /*
+   * Tests for verifying if the IVCT-Version of the components are compatible
+   * 
+   * here has to be created some extended test, with former Version-Numbers in the
+   * moment we test only if there is the same Version-Number
+   */
+
+  public void compare() throws IVCTVersionCheckFailed {
+
+    // if (! testCaseIVCTVersion.equals(FactoryIVCtVersion) )
+    // throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and
+    // TestCase doesn't match " );
+    // }
+
+    if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
+      logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
+    } else {
+      throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match ");
+    }
+  }
 }
-    
