@@ -23,6 +23,11 @@ import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
 
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+
 /**
  * Abstract base class for test cases. In the concrete test cases, the three
  * methods preambleAction, performTest and postambleAction have to be
