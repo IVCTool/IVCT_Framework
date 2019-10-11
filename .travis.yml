@@ -7,40 +7,29 @@ branches:
   - master
   - development
 
+before_install:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
+    - docker pull app-docker136.hex.tno.nl/vtmak/lrc:4.5f-alpine
+    - docker pull app-docker136.hex.tno.nl/pitch/lrc:5.4.0.0-alpine-noslf4j
+    - docker pull app-docker136.hex.tno.nl/portico/lrc:nightly-20160528-alpine
+
 install:
-  - gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install 
+  - gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
 
 script:
   - export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
-  # LogSink Build
-  - cd LogSink
-  - docker build --build-arg version=$VERSION -t ivct/logsink:$TRAVIS_BRANCH-latest -t ivct/logsink:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/logsink:$TRAVIS_BRANCH-$VERSION ivct/logsink:$VERSION && docker tag ivct/logsink:$TRAVIS_BRANCH-$VERSION ivct/logsink:latest; fi
+  # tag branch version
+  - docker tag ivct/logsink:$VERSION ivct/logsink:$TRAVIS_BRANCH-latest
+  - docker tag ivct/runtime-config:$VERSION ivct/runtime-config:$TRAVIS_BRANCH-latest
+  - docker tag ivct/ivct-gui:$VERSION ivct/ivct-gui:$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:pi-$VERSION ivct/tc-runner:pi-$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$TRAVIS_BRANCH-latest
+  # push images to docker hub
   - docker push ivct/logsink
-  # TC-Runner Pitch LRC Build
-  - cd ../TC.exec
-  - docker build --build-arg version=$VERSION -f Dockerfile-pi -t ivct/tc-runner:pi-$TRAVIS_BRANCH-latest -t ivct/tc-runner:pi-$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/tc-runner:pi-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:pi-$VERSION && docker tag ivct/tc-runner:pi-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:pi-latest; fi
   - docker push ivct/tc-runner
-  # TC-Runner MAK LRC Build
-  - docker build --build-arg version=$VERSION -f Dockerfile-ma -t ivct/tc-runner:ma-$TRAVIS_BRANCH-latest -t ivct/tc-runner:ma-$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/tc-runner:ma-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:ma-$VERSION && docker tag ivct/tc-runner:ma-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:ma-latest; fi
-  - docker push ivct/tc-runner
-  # TC-Runner Portico LRC Build
-  - docker build --build-arg version=$VERSION -f Dockerfile-po -t ivct/tc-runner:po-$TRAVIS_BRANCH-latest -t ivct/tc-runner:po-$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/tc-runner:po-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:po-$VERSION && docker tag ivct/tc-runner:po-$TRAVIS_BRANCH-$VERSION ivct/tc-runner:po-latest; fi
-  - docker push ivct/tc-runner
-  # GUI Tomcat Build
-  - cd ../GUI
-  - docker build --build-arg version=$VERSION -t ivct/ivct-gui:$TRAVIS_BRANCH-latest -t ivct/ivct-gui:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/ivct-gui:$TRAVIS_BRANCH-$VERSION ivct/ivct-gui:$VERSION && docker tag ivct/ivct-gui:$TRAVIS_BRANCH-$VERSION ivct/ivct-gui:latest; fi
   - docker push ivct/ivct-gui
-  # Runtime Config Build
-  - cd ../RuntimeConfig
-  - docker build --build-arg version=$VERSION -t ivct/runtime-config:$TRAVIS_BRANCH-latest -t ivct/runtime-config:$TRAVIS_BRANCH-$VERSION .
-  - if [ $TRAVIS_BRANCH == "master" ]; then docker tag ivct/runtime-config:$TRAVIS_BRANCH-$VERSION ivct/runtime-config:$VERSION && docker tag ivct/runtime-config:$TRAVIS_BRANCH-$VERSION ivct/runtime-config:latest; fi
   - docker push ivct/runtime-config
 
 before_cache:

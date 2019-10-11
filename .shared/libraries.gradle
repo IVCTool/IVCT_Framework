@@ -21,8 +21,9 @@ ext {
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 		jsonIoVersion = '4.10.1'
+		javaxannotationVersion = '1.3.2'
 
-		gradleDockerPluginVersion = '3.2.4'
+		gradleDockerPluginVersion = '4.9.0'
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
         libraries = [
@@ -36,8 +37,11 @@ ext {
                 slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
+				activemqEmbedded: 				"org.apache.activemq:activemq-broker:${activemqVersion}",
 
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+
+				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
 
 				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
 

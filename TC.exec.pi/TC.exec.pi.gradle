@@ -37,6 +37,7 @@ dependencies {
 
 	compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
 }
+
 distributions {
     main {
         contents {

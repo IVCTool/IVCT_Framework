@@ -19,10 +19,10 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 
 task dockerBuildImage(type: DockerBuildImage) {
-	dependsOn subprojects.build
+    dependsOn 'install'
 	group = 'Docker'
 	description = 'Runtime configuration'
 
 	inputDir = file('.')
-	tag="ivct/runtime-config:${ivctVersion}"
+	tags.add ("ivct/runtime-config:${ivctVersion}")
 }

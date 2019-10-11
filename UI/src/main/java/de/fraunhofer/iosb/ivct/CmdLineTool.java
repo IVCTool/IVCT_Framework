@@ -58,7 +58,7 @@ public class CmdLineTool {
 	private Semaphore semaphore = new Semaphore(0);
 	public static Process p;
     public static IVCTcommander ivctCommander;
-    private static CmdListTestSuites cmdListTestSuites = new CmdListTestSuites();
+	private static CmdListTestSuites cmdListTestSuites = new CmdListTestSuites();
 	private CmdListBadges cmdListBadges;
 	private CmdListSuT sutList = null;
 
@@ -208,7 +208,6 @@ class Writer extends Thread {
      * This method will get the sut name, sut description and vendor from the user input
      * @param out the logging stream
      * @param line the user input
-     * @param addMode whether add or modify mode
      * @return the sut name, sut description and vendor in a class structure or
      *         null when error
      */
@@ -354,7 +353,7 @@ class Writer extends Thread {
 	 * Check if the test case name occurs in the badge.
 	 */
 	private boolean checkTestCaseNameKnown(final String badgeName, final String testCase) {
-		
+
 		List<String> ls = getTestcasesForBadge(badgeName);
 
 		if (ls.contains(testCase)) {
@@ -392,7 +391,7 @@ class Writer extends Thread {
 		}
 		return false;
 	}
-	
+
 	protected SutDescription getSutDescription(final String sutName) {
 		listSUTs();
 		return sutList.sutMap.get(sutName);
@@ -425,7 +424,7 @@ class Writer extends Thread {
 		}
 		return badges;
 	}
-	
+
    /*
      * Read user input and execute valid commands.
      */
@@ -613,7 +612,11 @@ class Writer extends Thread {
                 	command = null;
                 	break;
                 case "modifySUTsettingsDesignator":
-                case "mssde":
+                case "mssetdes":
+                    // Check any critical tasks are running
+                    if (ivctCommander.rtp.checkCtTcTsRunning("mssetdes")) {
+                        break;
+                    }
             	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
@@ -673,7 +676,7 @@ class Writer extends Thread {
                 	command = null;
                 	break;
                 case "modifySUTfederation":
-                case "msfed":
+                case "msfederation":
             	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
@@ -787,6 +790,34 @@ class Writer extends Thread {
                 	}
                 	sutDescription = getSutDescription(sutID);
                 	sutDescription.badges = badgesDbg;
+					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
+                	try {
+                		cmdUpdateSUT.execute();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+                	command = null;
+                	break;
+                //TODO: Check if this case is still needed
+                case "ssd":
+                case "setSettingsDesignator":
+            	    if (sutID == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	// Check any critical tasks are running
+                    if (ivctCommander.rtp.checkCtTcTsRunning("setSettingsDesignator")) {
+                		break;
+                	}
+                	// Warn about missing parameter
+                	if (split.length < 2) {
+                        out.println("setSettingsDesignator: Warning missing SettingsDesignator");
+                	}
+                	// Warn about extra parameter
+                	if (split.length > 2) {
+                        out.println("setSettingsDesignator: Warning extra parameter: " + split[3]);
+                	}
+                	sutDescription.settingsDesignator = split[1];
 					cmdUpdateSUT = Factory.createCmdUpdateSUT(sutDescription);
                 	try {
                 		cmdUpdateSUT.execute();
@@ -1067,17 +1098,19 @@ class Writer extends Thread {
                     System.exit(0);
                 case "help":
                 case "h":
-                    out.println("asut (addSUT) \"name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"sut federate name quoted\" \"federation text quoted\" - add an SUT");
-                    out.println("msnam (modifySUTname) sut \"name text quoted\" - modify the SUT name");
-                    out.println("msver (modifySUTversion) sut \"name text quoted\" - modify the SUT version");
-                    out.println("msdes (modifySUTdescription ) sut \"name text quoted\" - modify the SUT description");
-                    out.println("msven (modifySUTvendor ) sut \"name text quoted\" - modify the SUT vendor");
-                    out.println("mssde (modifySUTsettingsDesignator ) sut \"name text quoted\" - modify the SUT settingsDesignator");
-                    out.println("msfederate (modifySUTfederate ) sut \"name text quoted\" - modify the SUT federate name");
-                    out.println("msfed (modifySUTfederation ) sut \"name text quoted\" - modify the SUT federation");
+                    out.println("asut (addSUT) \"sut name text quoted\" \"description text quoted\" \"vendor text quoted\" \"version text quoted\" \"settings designator text quoted\" \"sut federate name quoted\" \"federation text quoted\" - add an SUT");
+                    out.println("msnam (modifySUTname) \"name text quoted\" - modify the SUT name");
+                    out.println("msver (modifySUTversion) \"version text quoted\" - modify the SUT version");
+                    out.println("msdes (modifySUTdescription) \"description text quoted\" - modify the SUT description");
+                    out.println("msven (modifySUTvendor) \"vendor name text quoted\" - modify the SUT vendor");
+                    out.println("mssetdes (modifySUTsettingsDesignator) \"settings designator text quoted\" - modify the SUT settingsDesignator");
+                    out.println("msfederate (modifySUTfederate) \"federate name text quoted\" - modify the SUT federate name");
+                    out.println("msfederation (modifySUTfederation) \"federation name text quoted\" - modify the SUT federation");
                     out.println("lbg (listBadges) - list all available badges");
                     out.println("abg (addBadge) badge ... badge - add one or more badges to SUT");
                     out.println("dbg (deleteBadge) badge ... badge - delete one or more badges from SUT");
+                    //TODO: Check if still relevant (see TODO above)
+                    out.println("ssd (setSettingsDesignator) settingsDesignator - set settings designator");
                     out.println("lsut (listSUT) - list SUT folders");
                     out.println("ssut (setSUT) sut - set active SUT");
                     out.println("lts (listTestSchedules) - list the available test schedules for the test suite");

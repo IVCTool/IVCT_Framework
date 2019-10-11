@@ -89,7 +89,7 @@ public class Factory {
 	public static final String LOGSINK_PASSWORD_DEFLT = "";
 
     public static final String SETTINGS_DESIGNATOR = "SETTINGS_DESIGNATOR";
-    public static final String SETTINGS_DESIGNATOR_DEFLT = "crcAddress=localhost:8989";
+    public static final String SETTINGS_DESIGNATOR_DEFLT = ""; 	// settings are RTI-specific, e.g. "crcAddress=localhost:8989" for pRTI;
     public static final String FEDERATION_NAME = "FEDERATION_NAME";
     public static final String FEDERATION_NAME_DEFLT = "TheWorld";
     public static final String FEDERATE_NAME_DEFLT = "sut";
