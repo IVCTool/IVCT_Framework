@@ -292,9 +292,9 @@ public abstract class AbstractTestCase {
     String infoIVCTVersion = "not defined yet";
     try {
       devProperties.load(in);
-      //infoIVCTVersion = devProperties.getProperty("ivctVersion");
+      infoIVCTVersion = devProperties.getProperty("ivctVersion");
       // to have a different Value for Testing get another Value
-      infoIVCTVersion = devProperties.getProperty("helloWorldVersion");
+      //infoIVCTVersion = devProperties.getProperty("helloWorldVersion");
     } catch (IOException ex) {
       ex.getStackTrace();
       infoIVCTVersion = "undefined";
