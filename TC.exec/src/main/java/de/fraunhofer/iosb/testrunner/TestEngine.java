@@ -15,6 +15,7 @@ import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckFailed;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdHeartbeatSend;
@@ -217,7 +218,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
         try {
           new IVCTVersionCheck(testCase.getIVCTVersion(), Factory.getVersion() ).compare();;
-        } catch (IVCTVersionCheck.IVCTVersionCheckFailed cf) {
+        } catch (IVCTVersionCheckFailed cf) {
           logger.error("IVCTVersionCheck shows incompability of Version ");
           verdicts[i] = new IVCT_Verdict();
           verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;

@@ -36,6 +36,7 @@ public class IVCTVersionCheck {
     //this.compare() ;
   }
 
+  /*
   // inner Class with own exception
   public class IVCTVersionCheckFailed extends Exception {
     private static final long serialVersionUID = 1L;
@@ -48,6 +49,7 @@ public class IVCTVersionCheck {
       super(exceptionText);
     }
   }
+  */
 
   /*
    * Tests for verifying if the IVCT-Version of the components are compatible

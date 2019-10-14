@@ -286,10 +286,20 @@ public abstract class AbstractTestCase {
    * checking against the IVCT-Version of at Runtime
    *  
    */
-  public String getIVCTVersion() {
-    InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
-    Properties devProperties = new Properties();
+  public String getIVCTVersion()  throws IVCTVersionCheckFailed {
+    
     String infoIVCTVersion = "not defined yet";
+    
+    InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
+    
+    if (in == null) {
+      throw new IVCTVersionCheckFailed("/testCaseBuild.properties could not be read ");
+    }   
+    
+    Properties devProperties = new Properties();
+    
+    
+    
     try {
       devProperties.load(in);
       infoIVCTVersion = devProperties.getProperty("ivctVersion");
