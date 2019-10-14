@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.testrunner;
+package de.fraunhofer.iosb.tc_lib;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +27,10 @@ public class IVCTVersionCheck {
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
 
-  IVCTVersionCheck() {
+  public IVCTVersionCheck() {
   }
 
-  IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
+  public IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
     this.testCaseIVCTVersion = _testCaseIVCTVersion;
     this.FactoryIVCtVersion = _FactoryIVCtVersion;
     //this.compare() ;

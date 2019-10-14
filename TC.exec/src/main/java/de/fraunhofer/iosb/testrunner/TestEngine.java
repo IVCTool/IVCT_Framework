@@ -14,6 +14,7 @@ import org.slf4j.MDC;
 import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.CmdHeartbeatSend;
