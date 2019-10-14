@@ -296,13 +296,11 @@ public abstract class AbstractTestCase {
       throw new IVCTVersionCheckFailed("/testCaseBuild.properties could not be read ");
     }   
     
-    Properties devProperties = new Properties();
-    
-    
+    Properties versionProperties = new Properties();
     
     try {
-      devProperties.load(in);
-      infoIVCTVersion = devProperties.getProperty("ivctVersion");
+      versionProperties.load(in);
+      infoIVCTVersion = versionProperties.getProperty("ivctVersion");
       // to have a different Value for Testing get another Value
       //infoIVCTVersion = devProperties.getProperty("helloWorldVersion");
     } catch (IOException ex) {
