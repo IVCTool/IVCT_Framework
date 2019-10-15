@@ -33,7 +33,6 @@ public class IVCTVersionCheck {
   public IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
     this.testCaseIVCTVersion = _testCaseIVCTVersion;
     this.FactoryIVCtVersion = _FactoryIVCtVersion;
-    //this.compare() ;
   }
 
   
