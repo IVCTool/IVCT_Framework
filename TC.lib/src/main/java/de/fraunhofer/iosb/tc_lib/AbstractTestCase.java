@@ -288,8 +288,7 @@ public abstract class AbstractTestCase {
    */
   public String getIVCTVersion()  throws IVCTVersionCheckFailed {
     
-    String infoIVCTVersion = "not defined yet";
-    
+    String infoIVCTVersion = "not defined yet";  
     InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
     
     if (in == null) {

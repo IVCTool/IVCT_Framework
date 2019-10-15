@@ -28,6 +28,8 @@ public class IVCTVersionCheck {
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
 
   public IVCTVersionCheck() {
+    this.testCaseIVCTVersion = null;
+    this.FactoryIVCtVersion = null;
   }
 
   public IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
@@ -48,6 +50,7 @@ public class IVCTVersionCheck {
     if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
       logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
     } else {
+      logger.info ("IVCTVersionCheck.compare: Versions: "+testCaseIVCTVersion+" - "+FactoryIVCtVersion);
       throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match ");
     }
   }
