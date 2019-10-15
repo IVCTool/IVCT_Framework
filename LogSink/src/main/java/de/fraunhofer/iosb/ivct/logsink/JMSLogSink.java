@@ -26,6 +26,7 @@ import javax.naming.NamingException;
 
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
@@ -146,6 +147,12 @@ public class JMSLogSink implements OnResultListener, OnQuitListener,
             Logger log = getTestCaseLogger(msg.tc, msg.sut, tcLogDir);
             String ds = dateFormatter.format(new Date (msg.time));
             switch (msg.level) {
+            case "TRACE":
+            	log.trace(ds + ": " + msg.txt);
+            	break;
+            case "DEBUG":
+            	log.debug(ds + ": " + msg.txt);
+            	break;
             case "INFO":
                 log.info(ds + ": " + msg.txt);
                 break;

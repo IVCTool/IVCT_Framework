@@ -7,7 +7,7 @@
 		</encoder>
 	</appender>
 
-	<root level="WARN">
+	<root level="TRACE">
 		<appender-ref ref="STDOUT" />
 	</root>
 
