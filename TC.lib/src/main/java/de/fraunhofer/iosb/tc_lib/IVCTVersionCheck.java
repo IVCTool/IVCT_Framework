@@ -40,18 +40,52 @@ public class IVCTVersionCheck {
   
   /*
    * Tests for verifying if the IVCT-Version of the components are compatible
-   * 
-   * here has to be created some extended test, with former Version-Numbers in the
-   * moment we test only if there is the same Version-Number
    */
 
   public void compare() throws IVCTVersionCheckFailed {
 
+    boolean testresult = false;
+    
+    // which are  possible values to return ?
+    // 2.1.1   2.1.0 2.0.0
+    
+    // if the Version-Number ist the same  we are content
     if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
+      testresult = true;
+ 
+    // if the Version-Numbers  differ we have to do some extended tests with former Version-Numbers  
+    } else { 
+      switch (FactoryIVCtVersion ) {
+        case "2.1.1" :
+          if ( testCaseIVCTVersion.equals("2.1.0") ) testresult = false;
+          if ( testCaseIVCTVersion.equals("2.0.0") ) testresult = false;          
+          break;   
+        case "2.1.0" :
+          if ( testCaseIVCTVersion.equals("2.1.1") ) testresult = false;
+          if ( testCaseIVCTVersion.equals("2.0.0") ) testresult = false;
+          break;
+        default:
+          testresult = false;
+      }
+    }
+    
+    if (testresult) {
       logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
     } else {
       logger.info ("IVCTVersionCheck.compare: Versions: "+testCaseIVCTVersion+" - "+FactoryIVCtVersion);
       throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match ");
     }
+        
+    /*    the former code
+    if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
+      logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
+    } else {
+      logger.info ("IVCTVersionCheck.compare  testCaseIVCTVersion: "+testCaseIVCTVersion+" FactoryIVCtVersion: "+FactoryIVCtVersion);
+      throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match ");
+    }
+    */
+    
+    
+    
   }
 }
