@@ -274,7 +274,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				break;
 			case DEBUG:
 				logger.trace("TestEngine:onMessageConsumer:run: debug");
-				lo.setLevel(Level.INFO);
+				lo.setLevel(Level.DEBUG);
 				break;
 			case TRACE:
 				logger.trace("TestEngine:onMessageConsumer:run: trace");
