@@ -41,6 +41,16 @@ public class SuTTcExecutionFormData extends AbstractFormData {
     }
 
 
+    public Html getHtml() {
+        return getFieldByClass(Html.class);
+    }
+
+
+    public ProgressbarTable getProgressbarTable() {
+        return getFieldByClass(ProgressbarTable.class);
+    }
+
+
     /**
      * access method for property SutId.
      */
@@ -191,6 +201,86 @@ public class SuTTcExecutionFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
+    public static class Html extends AbstractValueFieldData<String> {
+
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ProgressbarTable extends AbstractTableFieldBeanData {
+
+        private static final long serialVersionUID = 1L;
+
+
+        @Override
+        public ProgressbarTableRowData addRow() {
+            return (ProgressbarTableRowData) super.addRow();
+        }
+
+
+        @Override
+        public ProgressbarTableRowData addRow(int rowState) {
+            return (ProgressbarTableRowData) super.addRow(rowState);
+        }
+
+
+        @Override
+        public ProgressbarTableRowData createRow() {
+            return new ProgressbarTableRowData();
+        }
+
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return ProgressbarTableRowData.class;
+        }
+
+
+        @Override
+        public ProgressbarTableRowData[] getRows() {
+            return (ProgressbarTableRowData[]) super.getRows();
+        }
+
+
+        @Override
+        public ProgressbarTableRowData rowAt(int index) {
+            return (ProgressbarTableRowData) super.rowAt(index);
+        }
+
+
+        public void setRows(ProgressbarTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class ProgressbarTableRowData extends AbstractTableRowData {
+
+            private static final long  serialVersionUID = 1L;
+            public static final String type             = "type";
+            public static final String progress         = "progress";
+            private String             m_type;
+            private Integer            m_progress;
+
+
+            public String getType() {
+                return m_type;
+            }
+
+
+            public void setType(String newType) {
+                m_type = newType;
+            }
+
+
+            public Integer getProgress() {
+                return m_progress;
+            }
+
+
+            public void setProgress(Integer newProgress) {
+                m_progress = newProgress;
+            }
+        }
+    }
+
     public static class SutIdProperty extends AbstractPropertyData<String> {
 
         private static final long serialVersionUID = 1L;
@@ -249,22 +339,10 @@ public class SuTTcExecutionFormData extends AbstractFormData {
         public static class TcExecutionHistoryTableRowData extends AbstractTableRowData {
 
             private static final long  serialVersionUID = 1L;
-            public static final String interger         = "interger";
             public static final String fileName         = "fileName";
             public static final String tcVerdict        = "tcVerdict";
-            private Integer            m_interger;
             private String             m_fileName;
             private String             m_tcVerdict;
-
-
-            public Integer getInterger() {
-                return m_interger;
-            }
-
-
-            public void setInterger(Integer newInterger) {
-                m_interger = newInterger;
-            }
 
 
             public String getFileName() {

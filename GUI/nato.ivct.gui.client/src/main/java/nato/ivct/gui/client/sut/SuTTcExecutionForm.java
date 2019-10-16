@@ -11,35 +11,33 @@ import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractNumberColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.userfilter.TextColumnUserFilterState;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
-import org.eclipse.scout.rt.client.ui.form.fields.GridData;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 // import
 // org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 // import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
-import org.eclipse.scout.rt.client.ui.form.fields.tilefield.AbstractTileField;
-import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
-import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
-import org.eclipse.scout.rt.client.ui.tile.IHtmlTile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
 import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ProgressbarTableField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ProgressbarTableField.ProgressBarTable;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTileField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
@@ -136,10 +134,14 @@ public class SuTTcExecutionForm extends AbstractForm {
         if (testCaseProgress != null) {
             try {
                 final int progress = Integer.parseUnsignedInt(testCaseProgress);
-                final int maxProgressBarSize = getTestCaseExecutionStatusTileField().getGridDataHints().widthInPixel;
-                final IHtmlTile tile = getTestCaseExecutionStatusTileField().getTileGrid().getTiles().get(0);
-                final GridData gridData = tile.getGridDataHints();
-                gridData.withWidthInPixel((getTestCaseExecutionStatusTileField().getMaxProgressBarSize() - 310) / 100 * progress);
+
+                final ProgressBarTable tbl = getProgressbarTableField().getTable();
+                tbl.getRows().stream().filter(row -> tbl.getProgressType().equals(tbl.getCell(row, tbl.getTypeColumn()).getValue())).findFirst().ifPresent(row -> row.setCellValue(tbl.getProgressColumn().getColumnIndex(), progress));
+                //                final int maxProgressBarSize = getTestCaseExecutionStatusTileField().getGridDataHints().widthInPixel;
+                //                final IHtmlTile tile = getTestCaseExecutionStatusTileField().getTileGrid().getTiles().get(0);
+                //                final GridData gridData = tile.getGridDataHints();
+                //                ITileGrid grid = getTestCaseExecutionStatusTileField().getTileGrid();
+                //                gridData.withWidthInPixel((getTestCaseExecutionStatusTileField().getMaxProgressBarSize() - 200) / 100 * progress);
                 //                tile.setGridDataHints(gridData);
             }
             catch (final NumberFormatException exc) {
@@ -191,13 +193,17 @@ public class SuTTcExecutionForm extends AbstractForm {
         return getFieldByClass(TcExecutionStatus.class);
     }
 
-
     //    public TestCaseExecutionStatusTableField getTestCaseExecutionStatusTableField() {
     //        return getFieldByClass(TestCaseExecutionStatusTableField.class);
     //    }
 
-    public TestCaseExecutionStatusTileField getTestCaseExecutionStatusTileField() {
-        return getFieldByClass(TestCaseExecutionStatusTileField.class);
+
+    //    public TestCaseExecutionStatusTileField getTestCaseExecutionStatusTileField() {
+    //        return getFieldByClass(TestCaseExecutionStatusTileField.class);
+    //    }
+
+    public ProgressbarTableField getProgressbarTableField() {
+        return getFieldByClass(ProgressbarTableField.class);
     }
 
 
@@ -332,26 +338,7 @@ public class SuTTcExecutionForm extends AbstractForm {
             }
 
             @Order(1032)
-            public class TestCaseExecutionStatusTileField extends AbstractTileField<TestCaseExecutionStatusTileField.ProgressBar> {
-                private final int maxProgressBarSize = 800;
-
-
-                public int getMaxProgressBarSize() {
-                    return maxProgressBarSize;
-                }
-
-
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Progress");
-                }
-
-
-                @Override
-                protected boolean getConfiguredLabelVisible() {
-                    return true;
-                }
-
+            public class ProgressbarTableField extends AbstractTableField<ProgressbarTableField.ProgressBarTable> {
 
                 @Override
                 protected int getConfiguredGridW() {
@@ -360,47 +347,220 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
                 @Override
-                protected double getConfiguredGridWeightY() {
+                protected boolean getConfiguredVisible() {
+                    // only show progress bar when a TC is executed
+                    // TODO: set to false later!
+                    return true;
+                }
+
+                public class ProgressBarTable extends AbstractTable {
+
+                    final private int    progressColumnSize = 500;
+                    final private String SUMMARY_TYPE       = "Summary";
+                    final private String PROGRESS_TYPE      = "Progress";
+
+
+                    public int getProgressColumnSize() {
+                        return progressColumnSize;
+                    }
+
+
+                    public String getProgressType() {
+                        return PROGRESS_TYPE;
+                    }
+
+
+                    public TypeColumn getTypeColumn() {
+                        return getColumnSet().getColumnByClass(TypeColumn.class);
+                    }
+
+
+                    public ProgressColumn getProgressColumn() {
+                        return getColumnSet().getColumnByClass(ProgressColumn.class);
+                    }
+
+                    @Order(1032.1)
+                    public class TypeColumn extends AbstractStringColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("Type");
+                        }
+
+
+                        @Override
+                        protected boolean getConfiguredVisible() {
+                            return true;
+                        }
+                    }
+
+                    @Order(1032.2)
+                    public class ProgressColumn extends AbstractNumberColumn<Integer> {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("Progress");
+                        }
+
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return progressColumnSize;
+                        }
+
+
+                        @Override
+                        protected String getConfiguredBackgroundEffect() {
+                            // TODO Auto-generated method stub
+                            return BackgroundEffect.BAR_CHART;
+                        }
+
+
+                        @Override
+                        protected Integer getConfiguredMinValue() {
+                            return 0;
+                        }
+
+
+                        @Override
+                        protected Integer getConfiguredMaxValue() {
+                            return 100;
+                        }
+                    }
+
+
+                    @Override
+                    protected void execInitTable() {
+
+                        final ITableRow progressRow = this.addRow();
+                        getTypeColumn().setValue(progressRow, PROGRESS_TYPE);
+                        getProgressColumn().setValue(progressRow, 0);
+
+                        final ITableRow initialRow = this.addRow();
+                        getTypeColumn().setValue(initialRow, SUMMARY_TYPE);
+                        getProgressColumn().setValue(initialRow, 50);
+
+                        // only show the progress row
+                        if (getUserFilterManager().getFilter(getTypeColumn().getColumnId()) == null) {
+                            final TextColumnUserFilterState filter = new TextColumnUserFilterState(getTypeColumn());
+                            filter.setFreeText(PROGRESS_TYPE);
+                            getUserFilterManager().addFilter(filter);
+                        }
+
+                    }
+                }
+            }
+
+            @Order(1100)
+            public class HtmlField extends AbstractHtmlField {
+                @Override
+                protected int getConfiguredGridW() {
                     // TODO Auto-generated method stub
-                    return 0;
+                    return 3;
                 }
 
 
                 @Override
-                protected int getConfiguredHeightInPixel() {
+                protected int getConfiguredGridH() {
                     // TODO Auto-generated method stub
-                    return 20;
+                    return 2;
                 }
 
 
-                //                @Override
-                //                protected int getConfiguredWidthInPixel() {
-                //                    // TODO Auto-generated method stub
-                //                    return getMaxProgressBarSize();
-                //                }
+                @Override
+                protected String getConfiguredLabel() {
+                    // TODO Auto-generated method stub
+                    return TEXTS.get("HtmlField");
+                }
+
 
                 @Override
                 protected String getConfiguredBackgroundColor() {
                     // TODO Auto-generated method stub
-                    return "EFEFEF";
-                }
-
-                public class ProgressBar extends AbstractTileGrid<IHtmlTile> {
-
-                    public class StatusTile extends AbstractHtmlTile {
-                        @Override
-                        protected GridData getConfiguredGridDataHints() {
-                            return super.getConfiguredGridDataHints().withWeightX(0).withHeightInPixel(40).withWidthInPixel(50);
-                        }
-                    }
+                    return "AABBCC";
                 }
 
 
                 @Override
                 protected void execInitField() {
-                    setVisible(false);
+                    // TODO Auto-generated method stub
+                    setValue(createHtmlContent());
+                }
+
+
+                private String createHtmlContent() {
+                    return HTML.div("Html div element").toHtml();
+
                 }
             }
+
+            //            public class TestCaseExecutionStatusTileField extends AbstractTileField<TestCaseExecutionStatusTileField.ProgressBar> {
+            //                private final int maxProgressBarSize = 800;
+            //
+            //
+            //                public int getMaxProgressBarSize() {
+            //                    return maxProgressBarSize;
+            //                }
+            //
+            //
+            //                @Override
+            //                protected String getConfiguredLabel() {
+            //                    return TEXTS.get("Progress");
+            //                }
+            //
+            //
+            //                @Override
+            //                protected boolean getConfiguredLabelVisible() {
+            //                    return true;
+            //                }
+            //
+            //
+            //                @Override
+            //                protected int getConfiguredGridW() {
+            //                    return 2;
+            //                }
+            //
+            //
+            //                @Override
+            //                protected double getConfiguredGridWeightY() {
+            //                    // TODO Auto-generated method stub
+            //                    return 0;
+            //                }
+            //
+            //
+            //                @Override
+            //                protected int getConfiguredHeightInPixel() {
+            //                    // TODO Auto-generated method stub
+            //                    return 20;
+            //                }
+            //
+            //
+            //                //                @Override
+            //                //                protected int getConfiguredWidthInPixel() {
+            //                //                    // TODO Auto-generated method stub
+            //                //                    return getMaxProgressBarSize();
+            //                //                }
+            //
+            //                @Override
+            //                protected String getConfiguredBackgroundColor() {
+            //                    // TODO Auto-generated method stub
+            //                    return "EFEFEF";
+            //                }
+            //
+            //                public class ProgressBar extends AbstractTileGrid<IHtmlTile> {
+            //
+            //                    public class StatusTile extends AbstractHtmlTile {
+            //                        @Override
+            //                        protected GridData getConfiguredGridDataHints() {
+            //                            return super.getConfiguredGridDataHints().withWeightX(0).withHeightInPixel(40).withWidthInPixel(50);
+            //                        }
+            //                    }
+            //                }
+            //
+            //
+            //                @Override
+            //                protected void execInitField() {
+            //                    setVisible(false);
+            //                }
+            //            }
             //        }
         }
 
@@ -456,28 +616,6 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                         public TcVerdictColumn getTcVerdictColumn() {
                             return getColumnSet().getColumnByClass(TcVerdictColumn.class);
-                        }
-
-                        @Order(999)
-                        public class IntergerColumn extends AbstractIntegerColumn {
-                            @Override
-                            protected String getConfiguredHeaderText() {
-                                return TEXTS.get("Progress");
-                            }
-
-
-                            @Override
-                            protected String getConfiguredBackgroundEffect() {
-                                // TODO Auto-generated method stub
-                                return BackgroundEffect.BAR_CHART;
-                            }
-
-
-                            @Override
-                            protected int getConfiguredMinWidth() {
-                                return 100;
-                            }
-
                         }
 
                         @Order(1000)
@@ -644,7 +782,8 @@ public class SuTTcExecutionForm extends AbstractForm {
             @Override
             protected void execClickAction() {
                 // show progress bar
-                getTestCaseExecutionStatusTileField().setVisible(true);
+                //                getTestCaseExecutionStatusTileField().setVisible(true);
+                getProgressbarTableField().setVisible(true);
                 //hide tc execution button
                 this.setVisible(false);
                 //hide select log file table; only show log from current tc execution
@@ -653,7 +792,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 // clear TC status and progress bar
                 getTcExecutionStatus().setValue("");
-                setTestCaseProgress("100");
+                setTestCaseProgress("30");
 
                 // clear the TC log field
                 if (getTcLogField().getValue() != null) {
