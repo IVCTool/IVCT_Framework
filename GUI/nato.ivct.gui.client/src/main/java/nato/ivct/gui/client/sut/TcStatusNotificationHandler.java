@@ -45,7 +45,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
                                 form.getTcExecutionStatus().setValue(notification.getStatus());
 
                                 // set execution progress
-                                //                                ((Table) tbl).getProgressColumn().setValue(row, notification.getPercent());
+                                form.setTestCaseProgress(notification.getPercent());
                             }
                         });
                     }
