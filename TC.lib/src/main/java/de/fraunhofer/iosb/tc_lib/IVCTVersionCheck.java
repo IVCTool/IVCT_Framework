@@ -20,12 +20,18 @@ package de.fraunhofer.iosb.tc_lib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * Tests for verifying if the IVCT-Version of the components are compatible
+ */
+
 public class IVCTVersionCheck {
 
   String testCaseIVCTVersion;
   String FactoryIVCtVersion;
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
+  
 
   public IVCTVersionCheck() {
     this.testCaseIVCTVersion = null;
@@ -38,15 +44,12 @@ public class IVCTVersionCheck {
   }
 
   
-  /*
-   * Tests for verifying if the IVCT-Version of the components are compatible
-   */
 
   public void compare() throws IVCTVersionCheckFailed {
 
     boolean testresult = false;
     
-    // which are  possible values to return ?
+    // which are  possible values for IVCTVersion - Numbers ?
     // 2.1.1   2.1.0 2.0.0
     
     // if the Version-Number ist the same  we are content
