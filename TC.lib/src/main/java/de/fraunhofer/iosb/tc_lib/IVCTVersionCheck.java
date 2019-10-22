@@ -20,6 +20,8 @@ package de.fraunhofer.iosb.tc_lib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nato.ivct.commander.Factory;
+
 
 /**
  * Tests for verifying if the IVCT-Version of the components are compatible
@@ -28,16 +30,21 @@ import org.slf4j.LoggerFactory;
 public class IVCTVersionCheck {
 
   String testCaseIVCTVersion;
-  String FactoryIVCtVersion;
+  //String FactoryIVCtVersion;
+  String FactoryIVCtVersion = Factory.getVersion() ;
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
   
 
-  public IVCTVersionCheck() {
-    this.testCaseIVCTVersion = null;
-    this.FactoryIVCtVersion = null;
-  }
+  //public IVCTVersionCheck() {
+  //  this.testCaseIVCTVersion = null;
+  //  this.FactoryIVCtVersion = null;
+  //}
 
+  public IVCTVersionCheck(String _testCaseIVCTVersion ) throws IVCTVersionCheckFailed {
+    this.testCaseIVCTVersion = _testCaseIVCTVersion;
+  }
+  
   public IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckFailed {
     this.testCaseIVCTVersion = _testCaseIVCTVersion;
     this.FactoryIVCtVersion = _FactoryIVCtVersion;
@@ -55,7 +62,16 @@ public class IVCTVersionCheck {
     // if the Version-Number ist the same  we are content
     if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
       testresult = true;
- 
+      
+    // if the Version differ, we  test against a List of compatible Versions in a property-File  
+    } else {
+      
+    }
+      
+      
+      
+      
+    /* the former Version   
     // if the Version-Numbers  differ we have to do some extended tests with former Version-Numbers  
     } else { 
       switch (FactoryIVCtVersion ) {
@@ -70,7 +86,7 @@ public class IVCTVersionCheck {
         default:
           testresult = false;
       }
-    }
+    }  */
     
     if (testresult) {
       logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
