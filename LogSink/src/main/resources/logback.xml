@@ -1,9 +1,8 @@
 <!--configuration -->
-<configuration scan="true" scanPeriod="120 seconds" debug="false">
+<configuration scan="true" scanPeriod="120 seconds" debug="false" packagingData="true">
 
 	<!-- potential log file target dirs might be ${java.io.tmpdir} or ${user.home} -->
-	<appender name="FILE"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>./logs/LogSink.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
@@ -27,6 +26,7 @@
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
 			<!--pattern>%d{HH:mm:ss.SSS} %-5level %logger{10} - %msg%n</pattern -->
+			<!-- pattern>%d{HH:mm:ss} %-5level %class{36}:%L %M - %msg%n</pattern -->
 			<pattern>%date %X{testcase}: %msg%n</pattern>
 		</encoder>
 	</appender>
@@ -39,7 +39,7 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 	<!--  configure special settings for own packages -->
-	<logger name="de.fraunhofer.iosb" level="INFO" />
+	<logger name="de.fraunhofer.iosb" level="TRACE" />
 	<logger name="nato.ivct.etc" level="INFO" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
 	
