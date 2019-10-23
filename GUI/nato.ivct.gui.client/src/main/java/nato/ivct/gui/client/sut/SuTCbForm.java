@@ -521,7 +521,7 @@ public class SuTCbForm extends AbstractForm {
                             final Map<String, Object> options = new HashMap<>();
                             options.put(JsonWriter.PRETTY_PRINT, true);
                             options.put(JsonWriter.TYPE, false);
-                            service.storeTcParams(getSutId(), getCbId(), JsonWriter.objectToJson(jsonObjects, options));
+                            service.storeTcParams(getSutId(), getActiveTsId(), JsonWriter.objectToJson(jsonObjects, options));
 
                             // call super
                             super.doSave();
