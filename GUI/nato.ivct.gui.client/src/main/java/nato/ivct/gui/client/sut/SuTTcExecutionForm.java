@@ -128,9 +128,9 @@ public class SuTTcExecutionForm extends AbstractForm {
     @FormData
     public void setTestCaseProgress(int tcProgress) {
     	testCaseProgress = tcProgress;
-    	
+
     	getTcProgressField().setValue(getTcProgressField().createHtmlContent(testCaseProgress));
-        
+
     }
 
 
@@ -175,7 +175,7 @@ public class SuTTcExecutionForm extends AbstractForm {
     public TcExecutionStatus getTcExecutionStatus() {
         return getFieldByClass(TcExecutionStatus.class);
     }
-    
+
     public TcProgressField getTcProgressField() {
     	return getFieldByClass(TcProgressField.class);
     }
@@ -294,7 +294,7 @@ public class SuTTcExecutionForm extends AbstractForm {
             public class TcExecutionStatus extends AbstractStringField {
                 @Override
                 protected int getConfiguredGridW() {
-                    return 1;
+                    return 2;
                 }
 
 
@@ -323,7 +323,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 @Override
                 protected int getConfiguredGridW() {
                     // TODO Auto-generated method stub
-                    return 2;
+                    return 1;
                 }
 
 
@@ -340,11 +340,16 @@ public class SuTTcExecutionForm extends AbstractForm {
                     return TEXTS.get("TcProgress");
                 }
 
-
                 @Override
                 protected String getConfiguredBackgroundColor() {
                     // TODO Auto-generated method stub
                     return "AABBCC";
+                }
+                
+                @Override
+                protected boolean getConfiguredLabelVisible() {
+                	// TODO Auto-generated method stub
+                	return false;
                 }
 
 				@Override
@@ -352,8 +357,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 				// TODO Auto-generated method stub
 				return false;
 				}
-				
-				
+
+
                 @Override
                 protected void execInitField() {
                 	setTestCaseProgress(0);
@@ -366,7 +371,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 					+ Integer.toString(progress) + "%'>"
                 					+ Integer.toString(progress) + "%</div></div>")
                 		).toPlainText();
-        
+
                 }
             }
         }
