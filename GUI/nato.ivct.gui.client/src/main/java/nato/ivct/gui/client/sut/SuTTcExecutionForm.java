@@ -11,9 +11,7 @@ import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractNumberColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.userfilter.TextColumnUserFilterState;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -57,7 +55,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     private String testCaseStatus   = null;
     private String testCaseVerdict  = null;
-    private int testCaseProgress = 0;
+    private int    testCaseProgress = 0;
+
 
     @FormData
     public String getSutId() {
@@ -127,9 +126,9 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     @FormData
     public void setTestCaseProgress(int tcProgress) {
-    	testCaseProgress = tcProgress;
+        testCaseProgress = tcProgress;
 
-    	getTcProgressField().setValue(getTcProgressField().createHtmlContent(testCaseProgress));
+        getTcProgressField().setValue(getTcProgressField().createHtmlContent(testCaseProgress));
 
     }
 
@@ -176,22 +175,10 @@ public class SuTTcExecutionForm extends AbstractForm {
         return getFieldByClass(TcExecutionStatus.class);
     }
 
+
     public TcProgressField getTcProgressField() {
-    	return getFieldByClass(TcProgressField.class);
+        return getFieldByClass(TcProgressField.class);
     }
-
-    //    public TestCaseExecutionStatusTableField getTestCaseExecutionStatusTableField() {
-    //        return getFieldByClass(TestCaseExecutionStatusTableField.class);
-    //    }
-
-
-    //    public TestCaseExecutionStatusTileField getTestCaseExecutionStatusTileField() {
-    //        return getFieldByClass(TestCaseExecutionStatusTileField.class);
-    //    }
-
-//    public ProgressbarTableField getProgressbarTableField() {
-//        return getFieldByClass(ProgressbarTableField.class);
-//    }
 
 
     public TcExecutionDetailsBox getTcExecutionDetailsBox() {
@@ -213,10 +200,6 @@ public class SuTTcExecutionForm extends AbstractForm {
         return getFieldByClass(TcExecutionButton.class);
     }
 
-    //    public TcExecutionLogField getTcExecutionLogField() {
-    //        return getFieldByClass(TcExecutionLogField.class);
-    //    }
-
     @Order(10000)
     public class MainBox extends AbstractGroupBox {
 
@@ -224,20 +207,6 @@ public class SuTTcExecutionForm extends AbstractForm {
         protected int getConfiguredGridColumnCount() {
             return 3;
         }
-
-        //        @Order(1000)
-        //        public class MainBoxHorizontalSplitterBox extends AbstractSplitBox {
-        //            @Override
-        //            protected boolean getConfiguredSplitHorizontal() {
-        //                // split horizontal
-        //                return false;
-        //            }
-        //
-        //
-        //            @Override
-        //            protected double getConfiguredSplitterPosition() {
-        //                return 0.23;
-        //            }
 
         @Order(1000)
         public class GeneralBox extends AbstractGroupBox {
@@ -287,9 +256,6 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            //        @Order(1030)
-            //        public class TestCaseExecutionStatusBox extends AbstractGroupBox {
-
             @Order(1031)
             public class TcExecutionStatus extends AbstractStringField {
                 @Override
@@ -317,60 +283,52 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             }
 
-
             @Order(1100)
             public class TcProgressField extends AbstractHtmlField {
                 @Override
                 protected int getConfiguredGridW() {
-                    // TODO Auto-generated method stub
                     return 1;
                 }
 
 
                 @Override
                 protected int getConfiguredHeightInPixel() {
-                	// TODO Auto-generated method stub
-                	return 20;
+                    return 20;
                 }
 
 
                 @Override
                 protected String getConfiguredLabel() {
-                    // TODO Auto-generated method stub
                     return TEXTS.get("TcProgress");
                 }
 
+
                 @Override
                 protected String getConfiguredBackgroundColor() {
-                    // TODO Auto-generated method stub
                     return "AABBCC";
                 }
-                
+
+
                 @Override
                 protected boolean getConfiguredLabelVisible() {
-                	// TODO Auto-generated method stub
-                	return false;
+                    return false;
                 }
 
-				@Override
-				protected boolean getConfiguredVisible() {
-				// TODO Auto-generated method stub
-				return false;
-				}
+
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
+                }
 
 
                 @Override
                 protected void execInitField() {
-                	setTestCaseProgress(0);
+                    setTestCaseProgress(0);
                 }
 
 
                 protected String createHtmlContent(int progress) {
-                	return HTML.fragment(
-                			HTML.body("<div class='progress'><div class='progress-bar progress-bar-striped' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:"
-                					+ Integer.toString(progress) + "%'>"
-                					+ Integer.toString(progress) + "%</div></div>")
-                		).toPlainText();
+                    return HTML.fragment(HTML.body("<div class='progress'><div class='progress-bar progress-bar-striped' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:" + Integer.toString(progress) + "%'>" + Integer.toString(progress) + "%</div></div>")).toPlainText();
 
                 }
             }
@@ -506,61 +464,6 @@ public class SuTTcExecutionForm extends AbstractForm {
             }
         }
 
-        //        @Order(2100)
-        //        public class TcExecutionLogField extends AbstractStringField {
-        //
-        //            @Override
-        //            protected String getConfiguredLabel() {
-        //                return TEXTS.get("TcExecutionLog");
-        //            }
-        //
-        //
-        //            @Override
-        //            protected int getConfiguredGridW() {
-        //                // TODO Auto-generated method stub
-        //                return 3;
-        //            }
-        //
-        //
-        //            @Override
-        //            protected int getConfiguredGridH() {
-        //                // TODO Auto-generated method stub
-        //                return 2;
-        //            }
-        //
-        //
-        //            @Override
-        //            protected double getConfiguredGridWeightY() {
-        //                // TODO Auto-generated method stub
-        //                return -1;
-        //            }
-        //
-        //
-        //            @Override
-        //            protected boolean getConfiguredMultilineText() {
-        //                return true;
-        //            }
-        //
-        //
-        //            @Override
-        //            protected int getConfiguredMaxLength() {
-        //                return Integer.MAX_VALUE;
-        //            }
-        //
-        //
-        //            @Override
-        //            public boolean isEnabled() {
-        //                // set to r/w to activate the scrollbars
-        //                return true;
-        //            }
-        //
-        //
-        //            @Override
-        //            protected boolean getConfiguredVisible() {
-        //                return false;
-        //            }
-        //        }
-
         @Order(100000)
         public class CloseButton extends AbstractButton {
 
@@ -597,10 +500,6 @@ public class SuTTcExecutionForm extends AbstractForm {
                 getTcProgressField().setVisible(true);
                 //hide tc execution button
                 this.setVisible(false);
-                //hide select log file table; only show log from current tc execution
-                //                getTcExecutionDetailsBox().setVisible(false);
-                //                getTcExecutionLogField().setVisible(true);
-
                 // clear TC status and progress bar
                 getTcExecutionStatus().setValue("");
                 setTestCaseProgress(0);
