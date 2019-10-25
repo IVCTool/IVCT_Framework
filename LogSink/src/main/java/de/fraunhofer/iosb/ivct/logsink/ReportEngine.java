@@ -118,7 +118,7 @@ public class ReportEngine {
     @SuppressWarnings("unchecked")
     public void onResult(TcResult result, String tcLogName) {
         LOGGER.info("ReportEngine:checkMessage: announceVerdict");
-        if (result.sutName.equals(knownSut) == false) {
+        if (!result.sutName.equals(knownSut)) {
             try {
                 doSutChanged(result.sutName);
             }
@@ -137,9 +137,9 @@ public class ReportEngine {
         // check if the result section already exists
         final JSONObject allResults = (JSONObject) tcResults.computeIfAbsent(TCRESULTS_KW, key -> new JSONObject());
         // check if the requested badge/testschedule section already exists
-        final JSONObject badgeResults = (JSONObject) allResults.computeIfAbsent(testScheduleName, key -> new JSONObject());
+        final JSONObject testsuiteResults = (JSONObject) allResults.computeIfAbsent(testScheduleName, key -> new JSONObject());
         //check if the requested testcase section already exists
-        final JSONArray testcaseResults = (JSONArray) badgeResults.computeIfAbsent(testcase, key -> new JSONArray());
+        final JSONArray testcaseResults = (JSONArray) testsuiteResults.computeIfAbsent(testcase, key -> new JSONArray());
 
         // add result
         final HashMap<String, String> resElement = new HashMap<>();
@@ -217,9 +217,9 @@ public class ReportEngine {
         }
 
         // set the internal verdict counter
-        numFailed = (int) ((JSONObject) tcResults.get(VERDICTSUMMARY_KW)).get(NUMOFFAILED_KW);
-        numInconclusive = (int) ((JSONObject) tcResults.get(VERDICTSUMMARY_KW)).get(NUMOFINCONCLUSIVE_KW);
-        numPassed = (int) ((JSONObject) tcResults.get(VERDICTSUMMARY_KW)).get(NUMOFPASSED_KW);
+        numFailed = Integer.parseInt(((JSONObject) tcResults.get(VERDICTSUMMARY_KW)).get(NUMOFFAILED_KW).toString());
+        numInconclusive = Integer.parseInt(((JSONObject) tcResults.get(VERDICTSUMMARY_KW)).get(NUMOFINCONCLUSIVE_KW).toString());
+        numPassed = Integer.parseInt(((JSONObject) tcResults.get(VERDICTSUMMARY_KW)).get(NUMOFPASSED_KW).toString());
     }
 
 
