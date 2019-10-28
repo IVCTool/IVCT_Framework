@@ -90,30 +90,27 @@ public class IVCTVersionCheck {
         Set<Object> set = compaProperties.keySet();
       
         for (Object obj : set) {
-          logger.info("#####  should show a key " +obj + " and it's value: " + compaProperties.getProperty(obj.toString()) );    // Debug
+          logger.info("#### should show a key "+obj+" and it's value: "+compaProperties.getProperty(obj.toString()) ); // Debug
         
           //if(testCaseIVCTVersion.equals(obj) ) {
           if( testCaseIVCTVersion.equals(obj) && ( (compaProperties.getProperty(obj.toString()).equals("compatible")) ) ) {
             testresult = true;
             foundInCompatibleList = (String)obj ;
-            logger.info("##### found in TC.exec compatibleVersions List " + foundInCompatibleList );     // Debug       
+            logger.info("#### found in TC.exec compatibleVersions List " + foundInCompatibleList );  // Debug       
           }
-        
-      }
+        }
         
         
       } catch (IOException ex) {
         ex.getStackTrace();
         //infoIVCTVersion = "undefined";
         
-      }
-      
+      }      
     }
       
  
     if (testresult) {
       logger.info("VCTVersionCheck: found in TC.exec compatibleVersions List "+foundInCompatibleList ); 
-      //logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
       logger.info("IVCTVersionCheck: the versions are known as compatible: "+FactoryIVCtVersion+" - "+testCaseIVCTVersion);
       
     } else {

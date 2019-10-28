@@ -116,13 +116,13 @@ task writeCompatibleVersions {
     description = "Creates a file with information of compability"
 
     doLast {
-        def prop = new Properties()
-     compatibleVersions.each { key, value ->  prop."$key" = "$value".toString() }
-        //prop.'2.1.1' = compatibleVersions.get('2.1.1')
-        //prop.'2.1.0' = compatibleVersions.get('2.1.0')
-        mkdir "src/main/resources"
-        File compFile = file('src/main/resources/compatibleVersions.properties')
-        prop.store(compFile.newWriter(), null)
+     def prop = new Properties()
+     compatibleVersions.each { key, value -> prop."$key" = "$value".toString() }
+      //prop.'2.1.1' = compatibleVersions.get('2.1.1')
+      //prop.'2.1.0' = compatibleVersions.get('2.1.0')
+      mkdir "src/main/resources"
+      File compFile = file('src/main/resources/compatibleVersions.properties')
+      prop.store(compFile.newWriter(), null)
      }
 }
 processResources.dependsOn  writeCompatibleVersions

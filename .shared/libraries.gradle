@@ -10,8 +10,6 @@ ext {
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
         compatibleVersions = [ '2.1.1': 'compatible', '2.1.0': 'incompatible' ]
-        //compaVersions = '2.1.1 , 2.1.0'
-
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
         junitVersion = '4.+'
