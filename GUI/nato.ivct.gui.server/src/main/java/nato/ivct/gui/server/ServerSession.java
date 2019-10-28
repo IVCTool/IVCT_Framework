@@ -6,6 +6,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +17,10 @@ import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
 import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.server.session.ServerSessionProvider;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,35 +138,98 @@ public class ServerSession extends AbstractServerSession {
                 final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
                 //parse each report file to get the verdict and the corresponding log file name
                 reportFiles.forEach(reportFile -> {
-                    LOG.info("parse report file: {}\n", reportFile);
-                    try {
-                        Files.lines(Paths.get(reportFile)).filter(line -> VERDICT_LINE.matcher(line).matches()).forEach(verdictLine -> {
-                            LOG.info("\tparse verdict line: {}\n", verdictLine);
-                            // extract the required elements from the verdict line
-                            final String[] result = parseVerdictLine(verdictLine);
-                            if (result.length == 4) {
-                                //                                final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
-                                //                                //TODO: Get list for pairs (logfile,verdict) for each SUT
-                                //                                // get the matching log file from the list
-                                //                                final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
-                                //                                if (matchingFileName.isPresent()) {
-                                //                                    // add the match to the result map
-                                //                                    sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
-                                //                                }
-                                sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
-                            }
-                        });
-                    }
-                    catch (final NoSuchFileException exc) {
-                        LOG.info("report file not found: {}", reportFile);
-                    }
-                    catch (final IOException exc) {
-                        exc.printStackTrace();
-                    }
+                    parseResultFile(sutId, reportFile, sutTcResults);
                 });
             });
 
             return sutTcResults;
+        }
+
+
+        private void parseResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
+            LOG.info("parse report file: {}\n", reportFile);
+            final String fileExt = reportFile.substring(reportFile.lastIndexOf('.') + 1);
+            switch (fileExt.toLowerCase()) {
+                case "txt":
+                    parseTextResultFile(sutId, reportFile, sutTcResults);
+                    break;
+                case "json":
+                    parseJsonResultFile(sutId, reportFile, sutTcResults);
+                    break;
+            }
+
+        }
+
+
+        private void parseTextResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
+            try {
+                Files.lines(Paths.get(reportFile)).filter(line -> VERDICT_LINE.matcher(line).matches()).forEach(verdictLine -> {
+                    LOG.info("\tparse verdict line: {}\n", verdictLine);
+                    // extract the required elements from the verdict line
+                    final String[] result = parseVerdictLine(verdictLine);
+                    if (result.length == 4) {
+                        //                                final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
+                        //                                //TODO: Get list for pairs (logfile,verdict) for each SUT
+                        //                                // get the matching log file from the list
+                        //                                final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
+                        //                                if (matchingFileName.isPresent()) {
+                        //                                    // add the match to the result map
+                        //                                    sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
+                        //                                }
+                        sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
+                    }
+                });
+            }
+            catch (final NoSuchFileException exc) {
+                LOG.info("report file not found: {}", reportFile);
+            }
+            catch (final IOException exc) {
+                exc.printStackTrace();
+            }
+        }
+
+
+        @SuppressWarnings("unchecked")
+        private void parseJsonResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
+            final String TCRESULTS_KW = "TcResults";
+            final String TESTSUITE_KW = "TestSuite";
+            final String VERDICT_KW = "Verdict";
+            final String LOGFILEPATH_KW = "LogFilePath";
+
+            final JSONParser jparser = new JSONParser();
+            JSONObject tcResults = null;
+            try {
+                tcResults = (JSONObject) jparser.parse(new String(Files.readAllBytes(Paths.get(reportFile))));
+            }
+            catch (ParseException | IOException exc) {
+                LOG.error("Error reading//parsing the result file {}", reportFile.toString());
+                return;
+            }
+
+            final JSONObject results = (JSONObject) tcResults.get(TCRESULTS_KW);
+            results.forEach((badgeId, badgeRes) -> {
+                final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, (String) badgeId);
+                ((JSONObject) badgeRes).forEach((tcId, tcRes) -> {
+                    ((JSONArray) tcRes).forEach(result -> {
+                        try {
+                            final String verdict = (String) ((JSONObject) result).get(VERDICT_KW);
+                            final String logFileName = (String) ((JSONObject) result).get(LOGFILEPATH_KW);
+
+                            // get the matching log file from the list
+                            final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(logFileName)).findFirst();
+                            if (matchingFileName.isPresent()) {
+                                // add the match to the result map
+                                sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent((String) badgeId, k -> new HashMap<>()).put(matchingFileName.get(), verdict);
+                            }
+                        }
+                        catch (final ClassCastException exc) {
+                            LOG.info("Illegal result: {}", result.toString());
+                            return;
+                        }
+
+                    });
+                });
+            });
         }
 
 
