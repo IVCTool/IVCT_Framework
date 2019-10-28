@@ -17,6 +17,11 @@ limitations under the License.
 
 package de.fraunhofer.iosb.tc_lib;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +37,7 @@ public class IVCTVersionCheck {
   String testCaseIVCTVersion;
   //String FactoryIVCtVersion;
   String FactoryIVCtVersion = Factory.getVersion() ;
+  String foundInCompatibleList;
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
   
@@ -56,55 +62,66 @@ public class IVCTVersionCheck {
 
     boolean testresult = false;
     
-    // which are  possible values for IVCTVersion - Numbers ?
-    // 2.1.1   2.1.0 2.0.0
-    
     // if the Version-Number ist the same  we are content
     if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
       testresult = true;
       
-    // if the Version differ, we  test against a List of compatible Versions in a property-File  
+    /**
+     *  if the Version differ, we have to test the testCaseIVCTVersion against
+     *  a list of compatible versions which we get from TC.exec 
+     */
+      
     } else {
+      
+      // we get a propertie-file with compatible Version from TC.exec         
+      InputStream in = this.getClass().getResourceAsStream("/compatibleVersions.properties");
+      
+      if (in == null) {
+        throw new IVCTVersionCheckFailed("/compatibleVersions.properties could not be read ");
+      }   
+      
+      Properties compaProperties = new Properties();
+      
+      try {
+        compaProperties.load(in);
+        // compaProperties.list(System.out);            // Debug
+      
+        // we have to  know each Key of the property           
+        Set<Object> set = compaProperties.keySet();
+      
+        for (Object obj : set) {
+          logger.info("#####  should show a key " +obj + " and it's value: " + compaProperties.getProperty(obj.toString()) );    // Debug
+        
+          //if(testCaseIVCTVersion.equals(obj) ) {
+          if( testCaseIVCTVersion.equals(obj) && ( (compaProperties.getProperty(obj.toString()).equals("compatible")) ) ) {
+            testresult = true;
+            foundInCompatibleList = (String)obj ;
+            logger.info("##### found in TC.exec compatibleVersions List " + foundInCompatibleList );     // Debug       
+          }
+        
+      }
+        
+        
+      } catch (IOException ex) {
+        ex.getStackTrace();
+        //infoIVCTVersion = "undefined";
+        
+      }
       
     }
       
-      
-      
-      
-    /* the former Version   
-    // if the Version-Numbers  differ we have to do some extended tests with former Version-Numbers  
-    } else { 
-      switch (FactoryIVCtVersion ) {
-        case "2.1.1" :
-          if ( testCaseIVCTVersion.equals("2.1.0") ) testresult = false;
-          if ( testCaseIVCTVersion.equals("2.0.0") ) testresult = false;          
-          break;   
-        case "2.1.0" :
-          if ( testCaseIVCTVersion.equals("2.1.1") ) testresult = false;
-          if ( testCaseIVCTVersion.equals("2.0.0") ) testresult = false;
-          break;
-        default:
-          testresult = false;
-      }
-    }  */
-    
+ 
     if (testresult) {
-      logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
+      logger.info("VCTVersionCheck: found in TC.exec compatibleVersions List "+foundInCompatibleList ); 
+      //logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
+      logger.info("IVCTVersionCheck: the versions are known as compatible: "+FactoryIVCtVersion+" - "+testCaseIVCTVersion);
+      
     } else {
-      logger.info ("IVCTVersionCheck.compare: Versions: "+testCaseIVCTVersion+" - "+FactoryIVCtVersion);
-      throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match ");
+      logger.info ("IVCTVersionCheck.compare: Versions: "+FactoryIVCtVersion+" - "+testCaseIVCTVersion);
+      throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase are not known as compatible ");
     }
         
-    /*    the former code
-    if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
-      logger.info("IVCTVersionCheck.compare: the versions match " + testCaseIVCTVersion + " - " + FactoryIVCtVersion);
-    } else {
-      logger.info ("IVCTVersionCheck.compare  testCaseIVCTVersion: "+testCaseIVCTVersion+" FactoryIVCtVersion: "+FactoryIVCtVersion);
-      throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase doesn't match ");
-    }
-    */
-    
-    
+  
     
   }
 }
