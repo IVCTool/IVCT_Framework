@@ -37,7 +37,8 @@ public class IVCTVersionCheck {
   String testCaseIVCTVersion;
   //String FactoryIVCtVersion;
   String FactoryIVCtVersion = Factory.getVersion() ;
-  String foundInCompatibleList;
+  String compatibleListKey;
+  String compatibleListValue;
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
   
@@ -80,26 +81,28 @@ public class IVCTVersionCheck {
         throw new IVCTVersionCheckFailed("/compatibleVersions.properties could not be read ");
       }   
       
-      Properties compaProperties = new Properties();
+      Properties compareProperties = new Properties();
       
       try {
-        compaProperties.load(in);
+        compareProperties.load(in);
         // compaProperties.list(System.out);            // Debug
+        
+        logger.info("IVCTVersionCheck: read compatible Versions from TC.exec/../compatibleVersions.properties" ); // Debug
       
-        // we have to  know each Key of the property           
-        Set<Object> set = compaProperties.keySet();
+        // we have to  know each Key of the property -  and it's value          
+        Set<Object> set = compareProperties.keySet();
       
-        for (Object obj : set) {
-          logger.info("#### should show a key "+obj+" and it's value: "+compaProperties.getProperty(obj.toString()) ); // Debug
+        for (Object obj : set) {          
+          compatibleListKey = (String)obj ;
+          compatibleListValue = compareProperties.getProperty(obj.toString() );
+          
+          //logger.info("##IVCTVersionCheck: should show a key "+obj+" and it's value: "+ compatibleListValue ); // Debug
         
           //if(testCaseIVCTVersion.equals(obj) ) {
-          if( testCaseIVCTVersion.equals(obj) && ( (compaProperties.getProperty(obj.toString()).equals("compatible")) ) ) {
-            testresult = true;
-            foundInCompatibleList = (String)obj ;
-            logger.info("#### found in TC.exec compatibleVersions List " + foundInCompatibleList );  // Debug       
+          if( testCaseIVCTVersion.equals(obj) && ( compatibleListValue.equals("compatible") ) ) {
+            testresult = true;                  
           }
-        }
-        
+        }        
         
       } catch (IOException ex) {
         ex.getStackTrace();
@@ -107,18 +110,16 @@ public class IVCTVersionCheck {
         
       }      
     }
-      
  
     if (testresult) {
-      logger.info("VCTVersionCheck: found in TC.exec compatibleVersions List "+foundInCompatibleList ); 
-      logger.info("IVCTVersionCheck: the versions are known as compatible: "+FactoryIVCtVersion+" - "+testCaseIVCTVersion);
+      logger.info("IVCTVersionCheck: found in TC.exec-compatibleVersions "+compatibleListKey+" Value: "+compatibleListValue);
+      logger.info("IVCTVersionCheck: the versions are known as compatible: Factory: "+FactoryIVCtVersion+" TestCase: "+testCaseIVCTVersion);
       
     } else {
-      logger.info ("IVCTVersionCheck.compare: Versions: "+FactoryIVCtVersion+" - "+testCaseIVCTVersion);
+      logger.warn ("IVCTVersionCheck: Versions  Factory: "+FactoryIVCtVersion+" TestCase: "+testCaseIVCTVersion);
+      logger.warn ("IVCTVersionCheck: found in TC.exec-compatibleVersions "+compatibleListKey+" Value: "+compatibleListValue);      
       throw new IVCTVersionCheckFailed("The IVCT-Versions of Testrunner and TestCase are not known as compatible ");
-    }
-        
-  
+    }     
     
   }
 }
