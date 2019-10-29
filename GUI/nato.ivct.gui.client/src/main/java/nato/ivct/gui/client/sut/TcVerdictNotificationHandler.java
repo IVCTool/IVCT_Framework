@@ -1,7 +1,10 @@
 package nato.ivct.gui.client.sut;
 
+import java.util.List;
+
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
@@ -28,7 +31,7 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                 // set TC verdict in TC execution form
                 Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).stream().filter(form -> form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())).forEach(form -> {
                     logger.trace("Test Case Notification " + notification.getVerdict() + " received for TC " + notification.getTcId() + "and SuT " + notification.getSutId());
-
+                    
                     //                                // set TC execution notification in detail form
                     //                                final ITable tbl = form.getTestCaseExecutionStatusTableField().getTable();
                     //                                tbl.discardAllRows();
@@ -36,6 +39,9 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                     // set verdict
                     form.setTestCaseVerdict(notification.getVerdict());
                     form.getTcExecutionStatus().setValue(notification.getVerdict());
+                    
+                    // set tc execution status color
+                    setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
 
                     //update log file table
                     final ISuTTcService service = BEANS.get(ISuTTcService.class);
@@ -57,5 +63,10 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 
             }
         }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+    }
+    
+    private void setTcVerdictColor(String sutId, String badgeId, String tsId, String tcId, String tcVerdict) {
+    	SuTCbForm form = (SuTCbForm) Desktop.CURRENT.get().getPageDetailForm();
+        form.setTcTilecolor(tsId, tcId, tcVerdict);	
     }
 }

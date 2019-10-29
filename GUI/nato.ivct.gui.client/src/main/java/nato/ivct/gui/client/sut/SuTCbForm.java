@@ -66,6 +66,7 @@ import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.Test
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
+import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTCbFormData;
 
 
@@ -1244,7 +1245,8 @@ public class SuTCbForm extends AbstractForm {
             tile.setGridDataHints(gridDataHints);
             tile.setColorScheme(TileColorScheme.DEFAULT);
             // set content
-            tile.setTcTileContent(tc, "PASSED");
+            final String tcVerdict = BEANS.get(ISuTTcService.class).getTcLastVerdict(getSutId(), tsId, tc);
+            tile.setTcTileContent(tc, tcVerdict);
             // add to group (TS)
             tiles.add(tile);
         });
@@ -1252,5 +1254,19 @@ public class SuTCbForm extends AbstractForm {
         group.setTitle(tsId);
         group.getBody().setTiles(tiles);
         accordion.addGroup(group);
+    }
+    
+    void setTcTilecolor (String tsId, String tcId, String tcVerdict) {
+    	this.getAccordionField().getAccordion().getGroups().forEach(group -> {
+    		if (tsId.equals(group.getTitle())) {
+    			group.getBody().getChildren().forEach(child -> {
+    				CustomTile tile = (CustomTile) child;
+    	            if (tcId.equals(tile.getTcId())) {
+        				tile.setTcTileContent(tcId, tcVerdict);
+    	            }
+    			});
+    		}
+    	});
+    	
     }
 }

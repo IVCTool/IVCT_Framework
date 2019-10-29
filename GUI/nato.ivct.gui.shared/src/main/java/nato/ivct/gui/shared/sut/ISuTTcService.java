@@ -16,6 +16,9 @@ public interface ISuTTcService extends IService {
 
 
     String loadLogFileContent(String sutId, String testsuiteId, String tcName);
+    
+    
+    String getTcLastVerdict(String sutId, String testsuiteId, String tcId);
 
 
     SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData);

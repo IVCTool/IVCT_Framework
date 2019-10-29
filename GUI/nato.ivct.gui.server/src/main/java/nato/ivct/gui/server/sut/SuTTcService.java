@@ -277,4 +277,31 @@ public class SuTTcService implements ISuTTcService {
         //        }
     }
 
+
+	@Override
+	public String getTcLastVerdict(String sutId, String testsuiteId, String tcId) {
+        
+        final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId));
+        final String tcName = tcId.substring(tcId.lastIndexOf('.') + 1);
+
+        // load the (logfile,verdict) pairs
+        final IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
+        sutTcResults = future1.awaitDoneAndGet();
+ 
+        String verdict = "";
+        try {
+            final String logFileName = getLogFilesOrderedByCreationDate(tcName, folder).findFirst().get().getFileName().toString();
+                LOG.info("Log file found: {}", logFileName);
+                verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
+        }
+        catch (final NoSuchFileException exc) {
+            LOG.info("log files not found: {}", folder + "\\" + tcName);
+        }
+        catch (final IOException exc) {
+            exc.printStackTrace();
+        }
+     
+        return verdict;
+	}
+
 }
