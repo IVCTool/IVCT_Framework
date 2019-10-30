@@ -304,7 +304,7 @@ public class ServerSession extends AbstractServerSession {
         @Override
         public void hearHeartbeat(JSONObject heartBeat) {
             final HeartBeatNotification hbn = new HeartBeatNotification();
-            LOG.info("heartbeet received: {}", heartBeat.toJSONString());
+            LOG.trace("heartbeat received: {}", heartBeat.toJSONString());
 
             try {
                 final HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
