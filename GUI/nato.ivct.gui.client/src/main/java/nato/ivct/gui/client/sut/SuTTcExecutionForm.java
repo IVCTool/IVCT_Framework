@@ -328,7 +328,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
                 protected String createHtmlContent(int progress) {
-                    return HTML.fragment(HTML.body("<div class='progress'><div class='progress-bar progress-bar-striped' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:" + Integer.toString(progress) + "%'>" + Integer.toString(progress) + "%</div></div>")).toPlainText();
+                    return HTML.fragment(HTML.body("<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:" + Integer.toString(progress) + "%'>" + Integer.toString(progress) + "%</div></div>")).toPlainText();
 
                 }
             }

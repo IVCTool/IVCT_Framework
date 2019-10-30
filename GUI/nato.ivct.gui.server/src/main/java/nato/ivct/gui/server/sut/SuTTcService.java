@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -290,7 +291,8 @@ public class SuTTcService implements ISuTTcService {
  
         String verdict = "";
         try {
-            final String logFileName = getLogFilesOrderedByCreationDate(tcName, folder).findFirst().get().getFileName().toString();
+        	final Optional<Path> optionalLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
+            final String logFileName = optionalLogFile.isPresent() ? optionalLogFile.get().getFileName().toString() : "";
                 LOG.info("Log file found: {}", logFileName);
                 verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
         }
