@@ -10,4 +10,9 @@ public class IVCTVersionCheckFailed extends Exception {
   public IVCTVersionCheckFailed(String exceptionText) {
     super(exceptionText);
   }
+  
+  public IVCTVersionCheckFailed(String exceptionText, Throwable cause) {
+    super(exceptionText, cause);
+}
+  
 }
