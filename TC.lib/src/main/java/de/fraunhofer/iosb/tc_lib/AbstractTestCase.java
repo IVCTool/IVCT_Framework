@@ -300,10 +300,8 @@ public abstract class AbstractTestCase {
     try {
       versionProperties.load(in);
       infoIVCTVersion = versionProperties.getProperty("ivctVersion");
-    } catch (IOException ex) {
-      //ex.getStackTrace();
-      infoIVCTVersion = "undefined";
-      //throw new IVCTVersionCheckFailed("/testCaseBuild.properties could not be load ");
+    } catch (IOException ex) {      
+      infoIVCTVersion = "undefined";      
       throw new IVCTVersionCheckFailed("/testCaseBuild.properties could not be load ", ex );
     }
     return infoIVCTVersion;
