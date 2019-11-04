@@ -40,9 +40,6 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                     form.setTestCaseVerdict(notification.getVerdict());
                     form.getTcExecutionStatus().setValue(notification.getVerdict());
                     
-                    // set tc execution status color
-                    setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
-
                     //update log file table
                     final ISuTTcService service = BEANS.get(ISuTTcService.class);
                     SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
@@ -50,6 +47,9 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                     formData = service.updateLogFileTable(formData);
                     form.importFormData(formData);
 
+                    // set tc execution status color
+                    setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
+                    
                     // remove filter to show all log files
                     final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
                     tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
