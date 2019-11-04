@@ -1,6 +1,7 @@
 package nato.ivct.gui.client.sut;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -9,6 +10,7 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -56,6 +58,12 @@ public class SuTTcExecutionForm extends AbstractForm {
     private String testCaseStatus   = null;
     private String testCaseVerdict  = null;
     private int    testCaseProgress = 0;
+    
+    // verdicts
+    public static final String PASSED_VERDICT       = "PASSED";
+    public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
+    public static final String FAILED_VERDICT       = "FAILED";
+    public static final String NOT_RUN_VERDICT      = "NOT_RUN";
 
 
     @FormData
@@ -536,6 +544,24 @@ public class SuTTcExecutionForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
+           
+        	// set the color of the test results in TC Execution History Table Field
+            getTcExecutionHistoryTableField().getTable().getRows().forEach(row ->{
+            	Cell cell = row.getCellForUpdate(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());	
+            	switch (Objects.toString(cell.getValue(), "")) {
+            		case PASSED_VERDICT:
+                    	cell.setCssClass("passed-text");
+                    	break;
+            		case INCONCLUSIVE_VERDICT:
+                    	cell.setCssClass("inconclusive-text");
+                    	break;
+            		case FAILED_VERDICT:
+                    	cell.setCssClass("failed-text");
+            			break;
+            		default:
+            			;
+            	}
+            });
 
             getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
 
