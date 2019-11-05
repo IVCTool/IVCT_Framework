@@ -1,6 +1,7 @@
 package nato.ivct.gui.client.sut;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
@@ -11,6 +12,7 @@ import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
@@ -20,6 +22,12 @@ import nato.ivct.gui.shared.sut.TcVerdictNotification;
 public class TcVerdictNotificationHandler implements INotificationHandler<TcVerdictNotification> {
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
+    
+    // verdicts
+    public static final String PASSED_VERDICT       = "PASSED";
+    public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
+    public static final String FAILED_VERDICT       = "FAILED";
+    public static final String NOT_RUN_VERDICT      = "NOT_RUN";
 
 
     @Override
@@ -40,6 +48,21 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                     form.setTestCaseVerdict(notification.getVerdict());
                     form.getTcExecutionStatus().setValue(notification.getVerdict());
                     
+                    // set the color of the test result in TC Status
+                    switch (Objects.toString(notification.getVerdict(), "")) {
+                    	case PASSED_VERDICT:
+                            form.getTcExecutionStatus().setForegroundColor("0DAF66");
+                            break;
+                    	case INCONCLUSIVE_VERDICT:
+                    		form.getTcExecutionStatus().setForegroundColor("997bb7");
+                    		break;
+                    	case FAILED_VERDICT:
+                    		form.getTcExecutionStatus().setForegroundColor("db3d57");
+                    		break;
+                    	default:
+                    		;	
+                    }
+                    
                     //update log file table
                     final ISuTTcService service = BEANS.get(ISuTTcService.class);
                     SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
@@ -47,7 +70,10 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                     formData = service.updateLogFileTable(formData);
                     form.importFormData(formData);
 
-                    // set tc execution status color
+                    // set result color in the execution history table
+                    form.setTestResultColor();
+                    
+                    // set execution status color of the tc tile
                     setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
                     
                     // remove filter to show all log files
@@ -59,6 +85,7 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 
                     // reset progress bar
                     form.setTestCaseProgress(0);
+                    
                 });
 
             }

@@ -59,6 +59,8 @@ public class SuTTcExecutionForm extends AbstractForm {
     private String testCaseVerdict  = null;
     private int    testCaseProgress = 0;
     
+    private String defaultTcStatusForegroundColor;
+    
     // verdicts
     public static final String PASSED_VERDICT       = "PASSED";
     public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
@@ -152,6 +154,15 @@ public class SuTTcExecutionForm extends AbstractForm {
         this.testCaseVerdict = testCaseVerdict;
     }
 
+    @FormData
+    public void setDefaultTcStatusForegroundColor(String color) {
+    	defaultTcStatusForegroundColor = color;
+    }
+    
+    @FormData
+    public String getDefaultTcStatusForegroundColor() {
+    	return defaultTcStatusForegroundColor;
+    }
 
     @Override
     protected int getConfiguredDisplayHint() {
@@ -506,6 +517,8 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected void execClickAction() {
                 // show progress bar
                 getTcProgressField().setVisible(true);
+                // reset tc status foreground color
+                getTcExecutionStatus().setForegroundColor(getDefaultTcStatusForegroundColor());
                 //hide tc execution button
                 this.setVisible(false);
                 // clear TC status and progress bar
@@ -545,27 +558,34 @@ public class SuTTcExecutionForm extends AbstractForm {
             formData = service.load(formData);
             importFormData(formData);
            
-        	// set the color of the test results in TC Execution History Table Field
-            getTcExecutionHistoryTableField().getTable().getRows().forEach(row ->{
-            	Cell cell = row.getCellForUpdate(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());	
-            	switch (Objects.toString(cell.getValue(), "")) {
-            		case PASSED_VERDICT:
-                    	cell.setCssClass("passed-text");
-                    	break;
-            		case INCONCLUSIVE_VERDICT:
-                    	cell.setCssClass("inconclusive-text");
-                    	break;
-            		case FAILED_VERDICT:
-                    	cell.setCssClass("failed-text");
-            			break;
-            		default:
-            			;
-            	}
-            });
-
+            // set result color in the execution history table
+            setTestResultColor();
+            
+            setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
+            
             getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
 
             setEnabledPermission(new UpdateSuTPermission());
         }
+    }
+    
+    public void setTestResultColor() {
+    	// set the color of the test results in TC Execution History Table Field
+        getTcExecutionHistoryTableField().getTable().getRows().forEach(row ->{
+        	Cell cell = row.getCellForUpdate(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());	
+        	switch (Objects.toString(cell.getValue(), "")) {
+        		case PASSED_VERDICT:
+                	cell.setCssClass("passed-text");
+                	break;
+        		case INCONCLUSIVE_VERDICT:
+                	cell.setCssClass("inconclusive-text");
+                	break;
+        		case FAILED_VERDICT:
+                	cell.setCssClass("failed-text");
+        			break;
+        		default:
+        			;
+        	}
+        });	
     }
 }
