@@ -35,7 +35,6 @@ import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
-import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
@@ -59,16 +58,13 @@ public class ServerSession extends AbstractServerSession {
     private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$"); // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
     private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
-    private IFuture<CmdListSuT>                 loadSuTJob         = null;
-    private IFuture<SutTcResultDescription>     loadTcResultsJob   = null;
-    private IFuture<CmdListBadges>              loadBadgesJob      = null;
-    private IFuture<CmdListTestSuites>          loadTestSuitesJob  = null;
-    private IFuture<CmdStartTc>                 startTcJobs        = null;
-    private IFuture<CmdStartTestResultListener> testResultListener = null;
-    private ResultListener                      sessionResultListener;
-    private StatusListener                      statusListener;
-    private LogMsgListener                      logMsgListener;
-    private CmdHeartbeatListen                  heartBeatListener;
+    private IFuture<CmdListSuT>             loadSuTJob;
+    private IFuture<SutTcResultDescription> loadTcResultsJob;
+    private IFuture<CmdListBadges>          loadBadgesJob;
+    private IFuture<CmdListTestSuites>      loadTestSuitesJob;
+    private IFuture<CmdStartTc>             startTcJobs;
+
+    private static boolean serverSessionInitialized = false;
 
     public class SutTcResultDescription {
 
@@ -348,28 +344,6 @@ public class ServerSession extends AbstractServerSession {
     }
 
     /*
-     * Wait for test case results job
-     */
-    public class TestResultListener implements Callable<CmdStartTestResultListener> {
-
-        private CmdStartTestResultListener resultCmd;
-        private final ResultListener       resultListener;
-
-
-        public TestResultListener(ResultListener listener) {
-            resultListener = listener;
-        }
-
-
-        @Override
-        public CmdStartTestResultListener call() throws Exception {
-            resultCmd = Factory.createCmdStartTestResultListener(resultListener);
-            resultCmd.execute();
-            return resultCmd;
-        }
-    }
-
-    /*
      * Execute test case job
      */
     public class ExecuteTestCase implements Callable<CmdStartTc> {
@@ -456,6 +430,9 @@ public class ServerSession extends AbstractServerSession {
 
     @Override
     protected void execLoadSession() {
+        if (serverSessionInitialized)
+            return;
+
         LOG.info("created a new session for {}", getUserId());
         Factory.initialize();
 
@@ -472,22 +449,29 @@ public class ServerSession extends AbstractServerSession {
         loadTestSuitesJob = Jobs.schedule(new LoadTestSuiteDescriptions(), Jobs.newInput());
 
         LOG.info("start test case Result Listener");
-        sessionResultListener = new ResultListener();
-        testResultListener = Jobs.schedule(new TestResultListener(sessionResultListener), Jobs.newInput());
+        Factory.createCmdStartTestResultListener(new ResultListener()).execute();
 
         LOG.info("start test case Status Listener");
-        statusListener = new StatusListener();
-        Factory.createCmdTcStatusListener(statusListener).execute();
+        Factory.createCmdTcStatusListener(new StatusListener()).execute();
 
         LOG.info("start Log Message Listener");
-        logMsgListener = new LogMsgListener();
-        Factory.createCmdLogMsgListener(logMsgListener).execute();
+        Factory.createCmdLogMsgListener(new LogMsgListener()).execute();
 
         LOG.info("start heartbeat Listener");
         //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
         //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
         new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
         new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
+
+        serverSessionInitialized = true;
+    }
+
+
+    @Override
+    public void stop() {
+
+        // TODO Auto-generated method stub
+        super.stop();
     }
 
 
