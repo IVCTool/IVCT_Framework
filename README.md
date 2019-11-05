@@ -28,7 +28,7 @@ The general concepts of [HLA Certification is explained by the NATO Modelling & 
 
 The documentation is located inside the Wiki (https://github.com/MSG134/IVCT_Framework/wiki)
 
-## LICENSE
+## LICENCE
 
 Copyright 2019 NATO/OTAN
 
