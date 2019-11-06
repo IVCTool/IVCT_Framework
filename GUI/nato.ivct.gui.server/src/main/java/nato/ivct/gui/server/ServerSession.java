@@ -11,11 +11,9 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
-import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.server.session.ServerSessionProvider;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,28 +22,16 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nato.ivct.commander.CmdHeartbeatListen;
-import nato.ivct.commander.CmdHeartbeatListen.OnCmdHeartbeatListen;
-import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdListBadges;
 import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
-import nato.ivct.commander.CmdLogMsgListener.LogMsg;
-import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
+import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
-import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
-import nato.ivct.commander.CmdStartTestResultListener.TcResult;
-import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
-import nato.ivct.commander.CmdTcStatusListener.TcStatus;
+import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.CmdTcStatusListener;
 import nato.ivct.commander.Factory;
-import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
-import nato.ivct.gui.shared.HeartBeatNotification;
-import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
-import nato.ivct.gui.shared.sut.TcLogMsgNotification;
-import nato.ivct.gui.shared.sut.TcStatusNotification;
-import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
 
 /**
@@ -58,13 +44,15 @@ public class ServerSession extends AbstractServerSession {
     private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$"); // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
     private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
-    private IFuture<CmdListSuT>             loadSuTJob;
-    private IFuture<SutTcResultDescription> loadTcResultsJob;
-    private IFuture<CmdListBadges>          loadBadgesJob;
-    private IFuture<CmdListTestSuites>      loadTestSuitesJob;
-    private IFuture<CmdStartTc>             startTcJobs;
+    private static IFuture<CmdListSuT>             loadSuTJob;
+    private static IFuture<SutTcResultDescription> loadTcResultsJob;
+    private static IFuture<CmdListBadges>          loadBadgesJob;
+    private static IFuture<CmdListTestSuites>      loadTestSuitesJob;
+    private static IFuture<CmdStartTc>             startTcJobs;
 
-    private static boolean serverSessionInitialized = false;
+    private static CmdStartTestResultListener tcResultListener;
+    private static CmdTcStatusListener        tcStatusListener;
+    private static CmdLogMsgListener          logMsgListener;
 
     public class SutTcResultDescription {
 
@@ -248,100 +236,97 @@ public class ServerSession extends AbstractServerSession {
         loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
     }
 
-    public class ResultListener implements OnResultListener {
-
-        @Override
-        public void onResult(TcResult result) {
-            final TcVerdictNotification notification = new TcVerdictNotification();
-            notification.setSutId(result.sutName);
-            notification.setTcId(result.testcase);
-            notification.setVerdict(result.verdict);
-            notification.setText(result.verdictText);
-
-            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
-        }
-
-    }
-
-    public class StatusListener implements OnTcStatusListener {
-
-        @Override
-        public void onTcStatus(TcStatus status) {
-            final TcStatusNotification notification = new TcStatusNotification();
-            notification.setSutId(status.sutName);
-            notification.setTcId(status.tcName);
-            notification.setPercent(status.percentFinshed);
-            notification.setStatus(status.status);
-
-            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
-        }
-
-    }
-
-    public class LogMsgListener implements OnLogMsgListener {
-
-        @Override
-        public void onLogMsg(LogMsg logMsg) {
-            final TcLogMsgNotification notification = new TcLogMsgNotification();
-            notification.setSutId(logMsg.sut);
-            notification.setTcId(logMsg.tc);
-            notification.setBadgeId(logMsg.badge);
-            notification.setLogMsg(logMsg.txt);
-            notification.setLogLevel(logMsg.level);
-            notification.setTimeStamp(logMsg.time);
-
-            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
-        }
-
-    }
-
-    public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
-
-        @Override
-        public void hearHeartbeat(JSONObject heartBeat) {
-            final HeartBeatNotification hbn = new HeartBeatNotification();
-            LOG.trace("heartbeat received: {}", heartBeat.toJSONString());
-
-            try {
-                final HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
-                switch (hbMsgState) {
-                    case INTIME:
-                        hbn.notifyState = HbNotificationState.OK;
-                        break;
-                    case TIMEOUT:
-                    case WAITING:
-                    case ALERT:
-                        hbn.notifyState = HbNotificationState.WARNING;
-                        break;
-                    case FAIL:
-                        hbn.notifyState = HbNotificationState.CRITICAL;
-                        break;
-                    case DEAD:
-                        hbn.notifyState = HbNotificationState.DEAD;
-                        break;
-                    case UNKNOWN:
-                    default:
-                        hbn.notifyState = HbNotificationState.UNKNOWN;
-                }
-
-                hbn.lastSendingPeriod = (long) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
-                hbn.alertTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_ALLERTTIME, "");
-                hbn.heartBeatSender = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
-                hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
-                hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
-                hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
-            }
-            catch (final Exception exc) {
-                exc.printStackTrace();
-            }
-            finally {
-                // forward the heartbeat info to all registered notification handlers
-                BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
-            }
-
-        }
-
-    }
+    //    public class ResultListener implements OnResultListener {
+    //
+    //        @Override
+    //        public void onResult(TcResult result) {
+    //            final TcVerdictNotification notification = new TcVerdictNotification();
+    //            notification.setSutId(result.sutName);
+    //            notification.setTcId(result.testcase);
+    //            notification.setVerdict(result.verdict);
+    //            notification.setText(result.verdictText);
+    //
+    //            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+    //        }
+    //    }
+    //
+    //    public class StatusListener implements OnTcStatusListener {
+    //
+    //        @Override
+    //        public void onTcStatus(TcStatus status) {
+    //            final TcStatusNotification notification = new TcStatusNotification();
+    //            notification.setSutId(status.sutName);
+    //            notification.setTcId(status.tcName);
+    //            notification.setPercent(status.percentFinshed);
+    //            notification.setStatus(status.status);
+    //
+    //            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+    //        }
+    //    }
+    //
+    //    public class LogMsgListener implements OnLogMsgListener {
+    //
+    //        @Override
+    //        public void onLogMsg(LogMsg logMsg) {
+    //            final TcLogMsgNotification notification = new TcLogMsgNotification();
+    //            notification.setSutId(logMsg.sut);
+    //            notification.setTcId(logMsg.tc);
+    //            notification.setBadgeId(logMsg.badge);
+    //            notification.setLogMsg(logMsg.txt);
+    //            notification.setLogLevel(logMsg.level);
+    //            notification.setTimeStamp(logMsg.time);
+    //
+    //            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+    //        }
+    //    }
+    //
+    //    public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
+    //
+    //        @Override
+    //        public void hearHeartbeat(JSONObject heartBeat) {
+    //            final HeartBeatNotification hbn = new HeartBeatNotification();
+    //            LOG.trace("heartbeat received: {}", heartBeat.toJSONString());
+    //
+    //            try {
+    //                final HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+    //                switch (hbMsgState) {
+    //                    case INTIME:
+    //                        hbn.notifyState = HbNotificationState.OK;
+    //                        break;
+    //                    case TIMEOUT:
+    //                    case WAITING:
+    //                    case ALERT:
+    //                        hbn.notifyState = HbNotificationState.WARNING;
+    //                        break;
+    //                    case FAIL:
+    //                        hbn.notifyState = HbNotificationState.CRITICAL;
+    //                        break;
+    //                    case DEAD:
+    //                        hbn.notifyState = HbNotificationState.DEAD;
+    //                        break;
+    //                    case UNKNOWN:
+    //                    default:
+    //                        hbn.notifyState = HbNotificationState.UNKNOWN;
+    //                }
+    //
+    //                hbn.lastSendingPeriod = (long) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
+    //                hbn.alertTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_ALLERTTIME, "");
+    //                hbn.heartBeatSender = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
+    //                hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
+    //                hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
+    //                hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
+    //            }
+    //            catch (final Exception exc) {
+    //                exc.printStackTrace();
+    //            }
+    //            finally {
+    //                // forward the heartbeat info to all registered notification handlers
+    //                BEANS.get(ClientNotificationRegistry.class).putForAllSessions(hbn);
+    //            }
+    //
+    //        }
+    //
+    //    }
 
     /*
      * Execute test case job
@@ -430,11 +415,8 @@ public class ServerSession extends AbstractServerSession {
 
     @Override
     protected void execLoadSession() {
-        if (serverSessionInitialized)
-            return;
-
         LOG.info("created a new session for {}", getUserId());
-        Factory.initialize();
+        //        Factory.initialize();
 
         LOG.info("load SuT Information");
         loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());
@@ -448,30 +430,20 @@ public class ServerSession extends AbstractServerSession {
         LOG.info("load Testsuite Descriptions");
         loadTestSuitesJob = Jobs.schedule(new LoadTestSuiteDescriptions(), Jobs.newInput());
 
-        LOG.info("start test case Result Listener");
-        Factory.createCmdStartTestResultListener(new ResultListener()).execute();
-
-        LOG.info("start test case Status Listener");
-        Factory.createCmdTcStatusListener(new StatusListener()).execute();
-
-        LOG.info("start Log Message Listener");
-        Factory.createCmdLogMsgListener(new LogMsgListener()).execute();
-
-        LOG.info("start heartbeat Listener");
-        //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
-        //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
-        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
-        new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
-
-        serverSessionInitialized = true;
-    }
-
-
-    @Override
-    public void stop() {
-
-        // TODO Auto-generated method stub
-        super.stop();
+        //        LOG.info("start test case Result Listener");
+        //        (tcResultListener = Factory.createCmdStartTestResultListener(new ResultListener())).execute();
+        //
+        //        LOG.info("start test case Status Listener");
+        //        (tcStatusListener = Factory.createCmdTcStatusListener(new StatusListener())).execute();
+        //
+        //        LOG.info("start Log Message Listener");
+        //        (logMsgListener = Factory.createCmdLogMsgListener(new LogMsgListener())).execute();
+        //
+        //        LOG.info("start heartbeat Listener");
+        //        //		new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
+        //        //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+        //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
+        //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
     }
 
 
