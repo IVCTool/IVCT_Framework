@@ -26,6 +26,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
@@ -33,6 +34,7 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
 import nato.ivct.gui.client.ClientSession;
+import nato.ivct.gui.client.HeartBeatNotificationHandler;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
@@ -41,6 +43,8 @@ import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcLogField;
+import nato.ivct.gui.shared.HeartBeatNotification;
+import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
@@ -512,9 +516,16 @@ public class SuTTcExecutionForm extends AbstractForm {
                 return TEXTS.get("TCexec");
             }
 
-
             @Override
             protected void execClickAction() {
+            	
+            	// check the status of the TestEngine
+            	HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
+            	if (hbn.notifyState != HbNotificationState.OK) {
+                    MessageBoxes.createOk().withHeader(TEXTS.get("ExecMsgBoxHeader")).withBody(TEXTS.get("ExecMsgBoxBody")).show();
+                    return;
+            	}
+            	            	
                 // show progress bar
                 getTcProgressField().setVisible(true);
                 // reset tc status foreground color
