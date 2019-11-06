@@ -1,16 +1,17 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.List;
-
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
-import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.session.ClientSessionProvider;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
+import nato.ivct.gui.client.outlines.SuTOutline;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
@@ -29,44 +30,48 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
             @Override
             public void run() throws Exception {
                 // set TC verdict in TC execution form
-                Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).stream().filter(form -> form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())).forEach(form -> {
-                    logger.trace("Test Case Notification " + notification.getVerdict() + " received for TC " + notification.getTcId() + "and SuT " + notification.getSutId());
-                    
-                    //                                // set TC execution notification in detail form
-                    //                                final ITable tbl = form.getTestCaseExecutionStatusTableField().getTable();
-                    //                                tbl.discardAllRows();
-                    //
-                    // set verdict
-                    form.setTestCaseVerdict(notification.getVerdict());
-                    form.getTcExecutionStatus().setValue(notification.getVerdict());
-                    
-                    // set tc execution status color
-                    setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
+                final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
+                final IOutline outline = desktop.getOutline();
+                if (outline instanceof SuTOutline) {
+                    desktop.findForms(SuTTcExecutionForm.class).stream().filter(form -> form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())).forEach(form -> {
+                        logger.trace("Test Case Notification " + notification.getVerdict() + " received for TC " + notification.getTcId() + "and SuT " + notification.getSutId());
 
-                    //update log file table
-                    final ISuTTcService service = BEANS.get(ISuTTcService.class);
-                    SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
-                    form.exportFormData(formData);
-                    formData = service.updateLogFileTable(formData);
-                    form.importFormData(formData);
+                        //                                // set TC execution notification in detail form
+                        //                                final ITable tbl = form.getTestCaseExecutionStatusTableField().getTable();
+                        //                                tbl.discardAllRows();
+                        //
+                        // set verdict
+                        form.setTestCaseVerdict(notification.getVerdict());
+                        form.getTcExecutionStatus().setValue(notification.getVerdict());
 
-                    // remove filter to show all log files
-                    final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
-                    tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
+                        // set tc execution status color
+                        setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
 
-                    // show Execute TC button
-                    form.getTcExecutionButton().setVisible(true);
+                        //update log file table
+                        final ISuTTcService service = BEANS.get(ISuTTcService.class);
+                        SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
+                        form.exportFormData(formData);
+                        formData = service.updateLogFileTable(formData);
+                        form.importFormData(formData);
 
-                    // reset progress bar
-                    form.setTestCaseProgress(0);
-                });
+                        // remove filter to show all log files
+                        final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
+                        tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
 
+                        // show Execute TC button
+                        form.getTcExecutionButton().setVisible(true);
+
+                        // reset progress bar
+                        form.setTestCaseProgress(0);
+                    });
+                }
             }
         }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
     }
-    
+
+
     private void setTcVerdictColor(String sutId, String badgeId, String tsId, String tcId, String tcVerdict) {
-    	SuTCbForm form = (SuTCbForm) Desktop.CURRENT.get().getPageDetailForm();
-        form.setTcTilecolor(tsId, tcId, tcVerdict);	
+        final SuTCbForm form = (SuTCbForm) Desktop.CURRENT.get().getPageDetailForm();
+        form.setTcTilecolor(tsId, tcId, tcVerdict);
     }
 }
