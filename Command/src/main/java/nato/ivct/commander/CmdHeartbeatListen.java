@@ -74,7 +74,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     
         
     public CmdHeartbeatListen(OnCmdHeartbeatListen caller) {
-    	new CmdHeartbeatListen(caller, null);
+    	this(caller, null);
         //System.out.println ("client is delivered to the constructor CmdHeartbeatListen : " +client);   // Debug
     }
     
