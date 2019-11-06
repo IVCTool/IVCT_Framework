@@ -13,6 +13,8 @@ package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.session.ClientSessionProvider;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
@@ -35,20 +37,20 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
             @Override
             public void run() throws Exception {
                 logger.trace("Test Case Status Notification " + notification.getTcId() + " is at " + notification.getPercent() + "%");
-                for (final IOutline outline: Desktop.CURRENT.get().getAvailableOutlines()) {
-                    if (outline instanceof SuTOutline) {
-                        Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form -> {
-                            if (form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
-                                // set TC execution status attribute in detail form
-                                form.setTestCaseStatus(notification.getStatus());
-                                // set TC execution status field in detail form
-                                form.getTcExecutionStatus().setValue(notification.getStatus());
+                final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
+                final IOutline outline = desktop.getOutline();
+                if (outline instanceof SuTOutline) {
+                    Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form -> {
+                        if (form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
+                            // set TC execution status attribute in detail form
+                            form.setTestCaseStatus(notification.getStatus());
+                            // set TC execution status field in detail form
+                            form.getTcExecutionStatus().setValue(notification.getStatus());
 
-                                // set execution progress
-                                form.setTestCaseProgress(notification.getPercent());
-                            }
-                        });
-                    }
+                            // set execution progress
+                            form.setTestCaseProgress(notification.getPercent());
+                        }
+                    });
                 }
             }
         }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
