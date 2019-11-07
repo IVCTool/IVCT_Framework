@@ -79,6 +79,9 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 	                    // remove filter to show all log files
 //	                    final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
 //	                    tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
+	                    
+	                    // show TC Execution History Table after TC execution
+	                    form.getTcExecutionHistoryTableField().setVisible(true);
 
                         // show Execute TC button
                         form.getTcExecutionButton().setVisible(true);

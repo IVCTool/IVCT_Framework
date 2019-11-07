@@ -460,6 +460,12 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 @Order(1200)
                 public class TcLogField extends AbstractStringField {
+                	
+                	@Override
+                	protected int getConfiguredGridH() {
+                		return 2;
+                	}
+                	
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("TcExecutionLog");
@@ -532,6 +538,10 @@ public class SuTTcExecutionForm extends AbstractForm {
                 getTcExecutionStatus().setForegroundColor(getDefaultTcStatusForegroundColor());
                 //hide tc execution button
                 this.setVisible(false);
+                
+                // hide TC Execution History Table during TC execution
+                getTcExecutionHistoryTableField().setVisible(false);
+                
                 // clear TC status and progress bar
                 getTcExecutionStatus().setValue("");
                 setTestCaseProgress(0);
@@ -573,6 +583,9 @@ public class SuTTcExecutionForm extends AbstractForm {
             setTestResultColor();
             
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
+            
+            // mark the first line of the TC History Table to focus the currently executed test case
+            //getTcExecutionHistoryTableField().getTable().getSelectedRow();
             
             getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
 
