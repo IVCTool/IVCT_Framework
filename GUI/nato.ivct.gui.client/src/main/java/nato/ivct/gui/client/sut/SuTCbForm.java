@@ -655,7 +655,7 @@ public class SuTCbForm extends AbstractForm {
                             @Override
                             protected void execContentChanged() {
                                 // show save menu if a table value was changed
-                                if (execIsSaveNeeded()) {
+                                if (execIsSaveNeeded() && !isFormLoading()) {
                                     getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(true);
                                 }
                             }
