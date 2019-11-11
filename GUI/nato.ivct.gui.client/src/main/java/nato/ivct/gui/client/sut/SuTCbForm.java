@@ -744,15 +744,20 @@ public class SuTCbForm extends AbstractForm {
                                     // enable for use of adding/deleting parameters
                                     // N.B.: excluded from usage for the moment until functionality is completely
                                     // implemented
-                                    tbl.getMenuByClass(NewMenu.class).setVisible(true);
-                                    tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
-                                    tbl.getRows().forEach(row -> {
-                                        if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
-                                            row.setEnabled(false);
-                                            tbl.getMenuByClass(AbortMenu.class).setVisible(true);
-                                            row.getCell(getParameterNameColumn());
-                                        }
-                                    });
+                                    if (false) {
+                                        tbl.getMenuByClass(NewMenu.class).setVisible(true);
+                                        tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
+                                    }
+                                    else {
+                                        tbl.getRows().forEach(row -> {
+                                            if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
+                                                row.setEnabled(false);
+                                                tbl.getMenuByClass(AbortMenu.class).setVisible(true);
+                                                row.getCell(getParameterNameColumn());
+                                            }
+                                        });
+                                    }
+
                                     tbl.getMenuByClass(AbortMenu.class).setVisible(true);
                                 }
                             }
