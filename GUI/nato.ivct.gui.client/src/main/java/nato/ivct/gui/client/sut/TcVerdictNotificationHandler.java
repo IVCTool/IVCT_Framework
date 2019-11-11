@@ -73,6 +73,9 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 	                    // set result color in the execution history table
 	                    form.setTestResultColor();
 	                    
+	                    // mark the first line of the TC History Table to focus the currently executed test case
+	                    form.getTcExecutionHistoryTableField().getTable().selectFirstRow();
+	                    
 	                    // set execution status color of the tc tile
 	                    setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
 	                    
