@@ -73,11 +73,11 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     private  OnCmdHeartbeatListen querryClient;  
     
         
-    public CmdHeartbeatListen(OnCmdHeartbeatListen caller) {
-    	this(caller, null);
-        //System.out.println ("client is delivered to the constructor CmdHeartbeatListen : " +client);   // Debug
-    }
-    
+  public CmdHeartbeatListen(OnCmdHeartbeatListen caller) {
+    this(caller, null);
+    // System.out.println ("client is delivered to the constructor CmdHeartbeatListen : " +client); // Debug
+  }
+   
     // the client can use this with a special HeartbeatSender to observe
     public CmdHeartbeatListen(OnCmdHeartbeatListen  caller, String _desiredHeartBeatSenderClass) {
         this.querryClient = caller;
@@ -86,105 +86,123 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     
     //@SuppressWarnings("unchecked")
     @Override
-    public void onMessage(Message message) {
-        if (message instanceof TextMessage) {
-            final TextMessage textMessage = (TextMessage) message;
-            
-            try {
-                final String content = textMessage.getText();
-                // logger.info("CmdHeartbeatListener gets from ActiveMQ: " + content ); // Debug
-                JSONObject jMessage = (JSONObject) jsonParser.parse(content);
-                if (desiredHeartBeatSenderClass!=null && !Optional.ofNullable(jMessage.get(CmdHeartbeatSend.HB_SENDER)).orElse("").equals(desiredHeartBeatSenderClass))
-                	// discard message
-                	return;
-                
-                // put the contents of the message in a jsonObject               
-                this.jsonObject = jMessage;
-                
-                // we need some kind of timestamp history   
-                Timestamp now = new Timestamp(System.currentTimeMillis());                
-                this.first = last;
-                this.last = now;
-                this.sendingPeriod = (Long) jsonObject.get("LastSendingPeriod");                
- 
-            } catch (final Exception e) {
-                Factory.LOGGER.error("onMessage: problems with getText", e);
-            }
+  public void onMessage(Message message) {
+    if (message instanceof TextMessage) {
+      final TextMessage textMessage = (TextMessage) message;
+
+      try {
+        final String content = textMessage.getText();
+
+        // logger.info("CmdHeartbeatListener gets from ActiveMQ: " + content ); // Debug
+
+        JSONObject jMessage = (JSONObject) jsonParser.parse(content);
+
+        /*
+         * If a queryClient want to see all Heartbeat-Messages we deliver them to him
+         * stop here and wait for the next message
+         */
+        if (desiredHeartBeatSenderClass == null) {
+          this.jsonObject = jMessage;
+          sendbackToQuerryClient(jsonObject);
+          return;
         }
-    }    
-    
+
+        /*
+         * if we got a desiredHeartBeatSenderClass but in the Message of ActiveMQ in
+         * "HeartbeatSender" this name is not found, we discard this message
+         */       
+        if (desiredHeartBeatSenderClass!=null && !Optional.ofNullable(jMessage.get(CmdHeartbeatSend.HB_SENDER)).orElse("").equals(desiredHeartBeatSenderClass)) {
+          // discard message         
+          logger.debug("a "+CmdHeartbeatSend.HB_SENDER+": "+desiredHeartBeatSenderClass+" is not found in HeartbeatMessages: "+jMessage.get(CmdHeartbeatSend.HB_SENDER));
+          return;
+        }
+
+        // put the contents of the message in a jsonObject
+        this.jsonObject = jMessage;
+
+        // we need some kind of timestamp history
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        this.first = last;
+        this.last = now;
+        this.sendingPeriod = (Long) jsonObject.get("LastSendingPeriod");
+
+      } catch (final Exception e) {
+        Factory.LOGGER.error("onMessage: problems with getText", e);
+      }
+    }
+  }    
    
     @Override
     public void execute() {
         Factory.initialize();
         Factory.LOGGER.trace("subscribing the Heartbeat listener");
         Factory.jmsHelper.setupTopicListener(CmdHeartbeatSend.HB_MSG_TOPIC, this);
-        monitor();
+        if (desiredHeartBeatSenderClass != null) monitor();
     }
     
-    
-    // we need a method to monitor if there even are messages and which, and give back the necessary Information
-    @SuppressWarnings("unchecked")  
-    public void monitor() {
-       
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
+        
+ /*
+  * a method to monitor if there even are messages and which, 
+  * observe the frequency of incomming messages, draw conclusions of this
+  * and give back the necessary Information     
+  */    
+  @SuppressWarnings("unchecked")
+  public void monitor() {
 
-                Timestamp now = new Timestamp(System.currentTimeMillis());
-                
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
-                String alerttime = df.format(now);
+    Timer timer = new Timer();
+    timer.schedule(new TimerTask() {
+      public void run() {
 
-                Timestamp myFirst = getFirst();
-                Timestamp myLast = getLast();                
-                
-                JSONObject myJsonObject = getJsonObject();                
-                JSONObject failJsonObject = new JSONObject();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
 
-                if  (myFirst != null && myLast != null) {  
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+        String alerttime = df.format(now);
 
-                     if (myJsonObject != null) {                                             
-                         long mySendingPeriod = getSendingPeriod();
-                        
-                         if  (now.getTime() - myLast.getTime()  <= (mySendingPeriod + 1000) ) {        // <= 6000 ms
-                            setMessageState(HbMsgState.INTIME);
-                         }
-                         else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 6000 ) ) {  // <= 11 000 ms
-                             setMessageState(HbMsgState.WAITING);
-                          }
-                         else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 16000) ) {  // <= 21 000 ms
-                             setMessageState(HbMsgState.ALERT);    
-                         }
-                         else if (now.getTime() - myLast.getTime() > ((mySendingPeriod * 4) +1000 )) {   // ca > 21 000 ms
-                            setMessageState(HbMsgState.DEAD);
-                            myJsonObject.put(CmdHeartbeatSend.HB_ALLERTTIME, alerttime);                            
-                            myJsonObject.put(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);                            
-                            myJsonObject.put(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);                            
-                         } 
-                         else {
-                            setMessageState(HbMsgState.UNKNOWN);
-                         }
-                       
-                         myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState);    
-                         
-                         // give the enhanced json-object back to the caller  
-                         sendbackToQuerryClient(myJsonObject );
-                    }
-                }
-                else if (myLast==null) {                    
-                    //  if we have not got any message with onMessage there is nothing to monitor!                
-                	setMessageState(HbMsgState.UNKNOWN);
-                    failJsonObject.put(CmdHeartbeatSend.HB_SENDER, desiredHeartBeatSenderClass);
-                    failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState); 
-                    failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, "there is'nt any HeartBeat yet");
-                    
-                    sendbackToQuerryClient(failJsonObject );
-                }
+        Timestamp myFirst = getFirst();
+        Timestamp myLast = getLast();
+
+        JSONObject myJsonObject = getJsonObject();
+        JSONObject failJsonObject = new JSONObject();
+
+        if (myFirst != null && myLast != null) {
+
+          if (myJsonObject != null) {
+            long mySendingPeriod = getSendingPeriod();
+
+            if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 1000)) { // <= 6000 ms
+              setMessageState(HbMsgState.INTIME);
+            } else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 6000)) { // <= 11 000 ms
+              setMessageState(HbMsgState.WAITING);
+            } else if (now.getTime() - myLast.getTime() <= (mySendingPeriod + 16000)) { // <= 21 000 ms
+              setMessageState(HbMsgState.ALERT);
+            } else if (now.getTime() - myLast.getTime() > ((mySendingPeriod * 4) + 1000)) { // ca > 21 000 ms
+              setMessageState(HbMsgState.DEAD);
+              myJsonObject.put(CmdHeartbeatSend.HB_ALLERTTIME, alerttime);
+              myJsonObject.put(CmdHeartbeatSend.HB_LASTSENDINGPERIOD, 0L);
+              myJsonObject.put(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
+            } else {
+              setMessageState(HbMsgState.UNKNOWN);
             }
-        }, 0, 5000);
 
-    }
+            myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState);
+
+            // give the enhanced json-object back to the caller
+            sendbackToQuerryClient(myJsonObject);
+          }
+        } else if (myLast == null) {
+          // if we have not got any message with onMessage there is nothing to monitor!
+          setMessageState(HbMsgState.UNKNOWN);
+          failJsonObject.put(CmdHeartbeatSend.HB_SENDER, desiredHeartBeatSenderClass);
+          failJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState);
+          failJsonObject.put(CmdHeartbeatSend.HB_COMMENT, "there is'nt any HeartBeat yet");
+
+          sendbackToQuerryClient(failJsonObject);
+        }
+
+      }
+    }, 0, 5000);
+
+  }
     
     
     // give the enhanced json-object back to the caller
