@@ -744,20 +744,15 @@ public class SuTCbForm extends AbstractForm {
                                     // enable for use of adding/deleting parameters
                                     // N.B.: excluded from usage for the moment until functionality is completely
                                     // implemented
-                                    if (false) {
-                                        tbl.getMenuByClass(NewMenu.class).setVisible(true);
-                                        tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
-                                    }
-                                    else {
-                                        tbl.getRows().forEach(row -> {
-                                            if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
-                                                row.setEnabled(false);
-                                                tbl.getMenuByClass(AbortMenu.class).setVisible(true);
-                                                row.getCell(getParameterNameColumn());
-                                            }
-                                        });
-                                    }
-
+                                    tbl.getMenuByClass(NewMenu.class).setVisible(true);
+                                    tbl.getMenuByClass(DeleteMenu.class).setVisible(true);
+                                    tbl.getRows().forEach(row -> {
+                                        if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
+                                            row.setEnabled(false);
+                                            tbl.getMenuByClass(AbortMenu.class).setVisible(true);
+                                            row.getCell(getParameterNameColumn());
+                                        }
+                                    });
                                     tbl.getMenuByClass(AbortMenu.class).setVisible(true);
                                 }
                             }
@@ -804,6 +799,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
+                                    
+                                    @Override
+                                    protected void execAction() {
+                                    	// TODO Auto-generated method stub
+                                    	super.execAction();
+                                    }
                                 }
 
                                 @Order(3120)
@@ -817,6 +818,12 @@ public class SuTCbForm extends AbstractForm {
                                     @Override
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                                    }
+                                    
+                                    @Override
+                                    protected void execAction() {
+                                    	// TODO Auto-generated method stub
+                                    	super.execAction();
                                     }
                                 }
 
@@ -832,6 +839,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
+                                    
+                                    @Override
+                                    protected void execAction() {
+                                    	// TODO Auto-generated method stub
+                                    	super.execAction();
+                                    }
                                 }
 
                                 @Order(3140)
@@ -845,6 +858,12 @@ public class SuTCbForm extends AbstractForm {
                                     @Override
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                                    }
+                                    
+                                    @Override
+                                    protected void execAction() {
+                                    	// TODO Auto-generated method stub
+                                    	super.execAction();
                                     }
                                 }
                             }
@@ -1061,7 +1080,7 @@ public class SuTCbForm extends AbstractForm {
                                     final List<BinaryResource> files = fileChooser.startChooser();
                                     final ISuTCbService service = BEANS.get(ISuTCbService.class);
                                     files.forEach(file -> {
-                                        if (service.copyUploadedTcExtraParameterFile(getSutId(), getCbId(), file)) {
+                                        if (service.copyUploadedTcExtraParameterFile(getSutId(), getActiveTsId(), file)) {
                                             final ITableRow row = getTable().addRow(getTable().createRow());
                                             getTable().getFileNameColumn().setValue(row, file.getFilename());
                                         }
