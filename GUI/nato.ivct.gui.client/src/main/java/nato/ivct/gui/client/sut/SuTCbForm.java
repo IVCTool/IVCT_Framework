@@ -1122,7 +1122,7 @@ public class SuTCbForm extends AbstractForm {
                                         // no row selected - nothing to do
                                         return;
                                     // get the content of the selected file
-                                    final BinaryResource downloadFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getCbId(), getTable().getFileNameColumn().getValue(row));
+                                    final BinaryResource downloadFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getActiveTsId(), getTable().getFileNameColumn().getValue(row));
                                     if (downloadFileResource.getContentLength() != -1) {
                                         getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
                                     }
