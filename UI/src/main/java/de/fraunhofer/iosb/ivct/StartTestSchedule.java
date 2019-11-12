@@ -16,6 +16,7 @@ limitations under the License.
 
 package de.fraunhofer.iosb.ivct;
 
+import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.SutDescription;
 
 public class StartTestSchedule implements nato.ivct.commander.Command {
@@ -23,10 +24,12 @@ public class StartTestSchedule implements nato.ivct.commander.Command {
 	final SutDescription sutDescription;
 	final CommandCache commandCache;
 	final IVCTcommander ivctCommander;
+	final CmdListTestSuites cmdListTestSuites;
 
-	StartTestSchedule (final String sutName, final SutDescription sutDescription, final CommandCache commandCache, IVCTcommander ivctCommander) {
+	StartTestSchedule (final String sutName, final SutDescription sutDescription, final CmdListTestSuites cmdListTestSuites, final CommandCache commandCache, IVCTcommander ivctCommander) {
 		this.sutName = sutName;
 		this.sutDescription = sutDescription;
+		this.cmdListTestSuites = cmdListTestSuites;
 		this.commandCache = commandCache;
 		this.ivctCommander = ivctCommander;
 		ivctCommander.rtp.setTestScheduleRunningBool(true);
@@ -37,13 +40,13 @@ public class StartTestSchedule implements nato.ivct.commander.Command {
 			if (RuntimeParameters.getAbortTestScheduleBool()) {
 				break;
 			}
-			ivctCommander.rtp.startTestCase(this.sutName, this.sutDescription, commandCache.getTestschedule(), tc);
+			ivctCommander.rtp.startTestCase(this.sutName, this.sutDescription, cmdListTestSuites.getTestSuiteForTc(tc).id, tc);
 
 			this.ivctCommander.rtp.acquireSemaphore();
 		}
 		ivctCommander.addTestSessionSeparator();
 		RuntimeParameters.setAbortTestScheduleBool(false);
 		ivctCommander.rtp.setTestScheduleRunningBool(false);
-		System.out.println("Test schedule finished: " + commandCache.getTestschedule());
+		System.out.println("Test schedule finished: " + ivctCommander.rtp.getTestScheduleName());
 	}
 }

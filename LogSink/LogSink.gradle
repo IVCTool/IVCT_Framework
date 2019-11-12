@@ -32,6 +32,7 @@ dependencies {
 	compile 	libraries.logback_classic
 	compile     libraries.slf4j_api
 	compile		libraries.jsonSimple
+	compile		libraries.jsonIo
 
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core

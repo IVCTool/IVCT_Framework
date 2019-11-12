@@ -21,5 +21,6 @@ dependencies {
     compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared', version:"${scoutVersion}"
     compile libraries.slf4j_jul_to_slf4j
     compile libraries.logback_classic
+    compile libraries.javaxannotation
     testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared.test', version:"${scoutVersion}"
 }

@@ -23,7 +23,6 @@ public class BadgeOutline extends AbstractOutline {
 
 	@Override
 	protected void execCreateChildPages(List<IPage<?>> pageList) {
-//		pageList.add(new CbTablePage());
 		Set<String> badges = BEANS.get(ICbService.class).loadBadges();
 		badges.forEach(s -> {CbNodePage np = new CbNodePage(s); np.setOverviewIconId(getConfiguredIconId());pageList.add(np);});
 	}
@@ -35,6 +34,6 @@ public class BadgeOutline extends AbstractOutline {
 
 	@Override
 	protected String getConfiguredIconId() {
-		return Icons.CategoryBold;
+		return Icons.FolderBold;
 	}
 }

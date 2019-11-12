@@ -44,12 +44,12 @@ public class TcRunner extends HttpServlet {
 		super();
 		LOGGER.info("TcRunner instanciated");
 	}
-	
+
 	public String getLogLevel() {
 		return runner.logLevelId;
 	}
-	
-	public String getActiveTestCase () {
+
+	public String getActiveTestCase() {
 		return runner.testCaseId;
 	}
 
@@ -57,14 +57,9 @@ public class TcRunner extends HttpServlet {
 	 * 
 	 */
 	public void init(ServletConfig config) throws ServletException {
-        LogConfigurationHelper.configureLogging();
-        try {
-            runner = new TestEngine();
-        }
-        catch (final IOException ex) {
-        	LOGGER.error(ex.getMessage(), ex);
-        }
-        initialized = true;
+		LogConfigurationHelper.configureLogging();
+		runner = new TestEngine();
+		initialized = true;
 		LOGGER.info("TcRunner initialized");
 	}
 
