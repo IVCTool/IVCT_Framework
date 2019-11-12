@@ -23,9 +23,11 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
+import de.fraunhofer.iosb.ivct.IVCTcommander.UiHeartbeatData;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
@@ -888,6 +890,16 @@ class Writer extends Thread {
                 		out.println("SUT sutFederateName: " + sutDescription.sutFederateName);
                 		out.println("SUT federation: " + sutDescription.federation);
                 	}
+                    Map<String, UiHeartbeatData> heartBeatSenders = ivctCommander.getHeartBeatSenders();
+                    if (heartBeatSenders != null) {
+                        for (Map.Entry<String, UiHeartbeatData> entry: heartBeatSenders.entrySet()) {
+                            if (entry.getValue().senderHealthState) {
+                                out.println("Process state: " + entry.getKey() + " running");
+                            } else {
+                                out.println("Process state: " + entry.getKey() + " not running");
+                            }
+                        }
+                    }
                 	String testScheduleName = RuntimeParameters.getTestScheduleName();
                 	if (testScheduleName != null) {
                 		if (ivctCommander.rtp.getTestScheduleRunningBool()) {
