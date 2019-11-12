@@ -804,11 +804,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
 
@@ -824,11 +825,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
 
@@ -844,11 +846,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
 
@@ -864,11 +867,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
                             }
@@ -1122,7 +1126,7 @@ public class SuTCbForm extends AbstractForm {
                                         // no row selected - nothing to do
                                         return;
                                     // get the content of the selected file
-                                    final BinaryResource downloadFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getCbId(), getTable().getFileNameColumn().getValue(row));
+                                    final BinaryResource downloadFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getActiveTsId(), getTable().getFileNameColumn().getValue(row));
                                     if (downloadFileResource.getContentLength() != -1) {
                                         getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
                                     }
@@ -1279,18 +1283,19 @@ public class SuTCbForm extends AbstractForm {
         group.getBody().setTiles(tiles);
         accordion.addGroup(group);
     }
-    
-    void setTcTilecolor (String tsId, String tcId, String tcVerdict) {
-    	this.getAccordionField().getAccordion().getGroups().forEach(group -> {
-    		if (tsId.equals(group.getTitle())) {
-    			group.getBody().getChildren().forEach(child -> {
-    				CustomTile tile = (CustomTile) child;
-    	            if (tcId.equals(tile.getTcId())) {
-        				tile.setTcTileContent(tcId, tcVerdict);
-    	            }
-    			});
-    		}
-    	});
-    	
+
+
+    void setTcTilecolor(String tsId, String tcId, String tcVerdict) {
+        getAccordionField().getAccordion().getGroups().forEach(group -> {
+            if (tsId.equals(group.getTitle())) {
+                group.getBody().getChildren().forEach(child -> {
+                    final CustomTile tile = (CustomTile) child;
+                    if (tcId.equals(tile.getTcId())) {
+                        tile.setTcTileContent(tcId, tcVerdict);
+                    }
+                });
+            }
+        });
+
     }
 }
