@@ -91,6 +91,18 @@ public class SuTCbService implements ISuTCbService {
 
         return true;
     }
+    
+    @Override
+    public boolean deleteUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
+        try {
+            return Files.deleteIfExists(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()));
+        }
+        catch (final IOException exc) {
+            LOG.error("error when deleting file %", file.getFilename());
+            exc.printStackTrace();
+            return false;
+        }
+    }
 
 
     @Override

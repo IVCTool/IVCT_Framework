@@ -33,6 +33,8 @@ import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.group.AbstractGroup;
 import org.eclipse.scout.rt.client.ui.group.IGroup;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
@@ -1037,10 +1039,12 @@ public class SuTCbForm extends AbstractForm {
                                 if (rows.size() == 1) {
                                     // set downlowad menu visible
                                     getMenuByClass(FileDownloadMenu.class).setVisible(true);
+                                    getMenuByClass(FileDeleteMenu.class).setVisible(true);
                                 }
                                 else {
                                     // hide download menu if no row is selected
                                     getMenuByClass(FileDownloadMenu.class).setVisible(false);
+                                    getMenuByClass(FileDeleteMenu.class).setVisible(false);
                                 }
                             }
 
@@ -1126,6 +1130,48 @@ public class SuTCbForm extends AbstractForm {
                                     if (downloadFileResource.getContentLength() != -1) {
                                         getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
                                     }
+                                }
+                            }
+                            
+                            @Order(4000)
+                            public class FileDeleteMenu extends AbstractMenu {
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("FileDelete");
+                                }
+
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                                }
+
+
+                                @Override
+                                protected boolean getConfiguredVisible() {
+                                    return false;
+                                }
+
+
+                                @Override
+                                protected void execAction() {
+                                    // get the selected file name from the table
+                                    final ITableRow row = getTable().getSelectedRow();
+                                    if (row != null) {
+	                                    final BinaryResource deleteFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getActiveTsId(), getTable().getFileNameColumn().getValue(row));
+	                            		if (deleteFileResource.getContentLength() != -1) {
+	                            			int result = MessageBoxes.createYesNo().withHeader(TEXTS.get("DeleteMsgBoxHeader")).show();
+	                            			if (result == IMessageBox.YES_OPTION) {	
+	                            				if (! BEANS.get(ISuTCbService.class).deleteUploadedTcExtraParameterFile(getSutId(), getActiveTsId(), deleteFileResource)) {
+			                            			MessageBoxes.createOk().withHeader(TEXTS.get("DeleteErrorMsgBoxHeader")).show();
+	                            					return;
+	                            				}
+	                                            getTable().getSelectedRow().delete();
+	                            			}
+	                            		}
+                                    }
+                                    if (getTable().getSelectedRow() == null)
+                                    	setVisible(false);
                                 }
                             }
                         }
