@@ -8,12 +8,14 @@ import java.util.stream.Stream;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -528,9 +530,17 @@ public class SuTTcExecutionForm extends AbstractForm {
             	// check the status of the TestEngine
             	HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
             	if (hbn.notifyState != HbNotificationState.OK) {
-                    MessageBoxes.createOk().withHeader(TEXTS.get("ExecMsgBoxHeader")).withBody(TEXTS.get("ExecMsgBoxBody")).show();
+                    MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
                     return;
             	}
+            	
+            	// hide TC execute button if the same testcase is already executed
+                final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
+                List<SuTTcExecutionForm> forms = desktop.findForms(SuTTcExecutionForm.class);
+                if (forms.stream().filter(form -> form.getSutId().equalsIgnoreCase(getSutId()) && form.getTestCaseId().equalsIgnoreCase(getTestCaseId())).anyMatch(form -> !form.getTcExecutionButton().isVisible())) {
+                	MessageBoxes.createOk().withHeader(TEXTS.get("TcExecMsgBoxHeader")).withBody(TEXTS.get("TcExecMsgBoxBody")).show();
+        			return;
+                }
             	            	
                 // show progress bar
                 getTcProgressField().setVisible(true);
