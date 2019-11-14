@@ -145,14 +145,6 @@ public class ServerSession extends AbstractServerSession {
                     // extract the required elements from the verdict line
                     final String[] result = parseVerdictLine(verdictLine);
                     if (result.length == 4) {
-                        //                                final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
-                        //                                //TODO: Get list for pairs (logfile,verdict) for each SUT
-                        //                                // get the matching log file from the list
-                        //                                final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
-                        //                                if (matchingFileName.isPresent()) {
-                        //                                    // add the match to the result map
-                        //                                    sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
-                        //                                }
                         sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
                     }
                 });

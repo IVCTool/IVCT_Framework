@@ -69,7 +69,6 @@ public class SuTCbService implements ISuTCbService {
         }
         catch (IOException | InvalidPathException exc) {
             LOG.error("error to access fileName %", fileName);
-            // TODO Auto-generated catch block
             exc.printStackTrace();
             fileContent = new BinaryResource(fileName, null);
         }

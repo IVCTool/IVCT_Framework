@@ -307,7 +307,6 @@ public class SuTCbForm extends AbstractForm {
                         // show test case form in a separate form
                         @Override
                         protected void execTileAction(ITile tile) {
-                            // TODO
                             // open TC execution form
                             final SuTTcExecutionForm form = new SuTTcExecutionForm();
                             form.setSutId(getSutId());
@@ -992,7 +991,6 @@ public class SuTCbForm extends AbstractForm {
 
                                     tbl.getMenuByClass(EditMenu.class).setEnabled(true);
 
-                                    // ToDo: Save changes
                                     doSave();
                                     markSaved();
                                 }

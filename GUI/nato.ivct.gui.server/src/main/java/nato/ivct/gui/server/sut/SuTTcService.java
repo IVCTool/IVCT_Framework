@@ -102,27 +102,6 @@ public class SuTTcService implements ISuTTcService {
 
         return logFileContent;
     }
-    //
-    //
-    //    @Override
-    //    public SuTTcExecutionFormData loadLogFileContent(SuTTcExecutionFormData formData, String fileName) {
-    //        // get content of the requested log file
-    //        String logFileContent = null;
-    //        final Path tcLogFile = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(formData.getSutId(), formData.getTestsuiteId()), fileName);
-    //        try {
-    //            logFileContent = java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n"));
-    //            formData.getTcExecutionLog().setValue(logFileContent);
-    //        }
-    //        catch (final NoSuchFileException e) {
-    //            LOG.info("log files not found: {}", tcLogFile.toString());
-    //        }
-    //        catch (final IOException e) {
-    //            e.printStackTrace();
-    //        }
-    //
-    //        return formData;
-    //    }
-
 
     @Override
     public SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData) {
@@ -134,34 +113,6 @@ public class SuTTcService implements ISuTTcService {
         loadLogFiles(formData);
         return formData;
     }
-
-
-    //    @Override
-    //    public SuTTcExecutionFormData loadLogFileContent(SuTTcExecutionFormData formData, String tcFullName) {
-    //        // get requirement description and test case
-    //        final CbService cbService = BEANS.get(CbService.class);
-    //        final BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
-    //
-    //        if (bd != null) {
-    //            // load content of the newest log file for this test case
-    //            try {
-    //                final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(formData.getSutId(), bd.ID));
-    //                final String tcName = tcFullName.substring(tcFullName.lastIndexOf('.') + 1);
-    //
-    //                final Optional<Path> optionalTcLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
-    //
-    //                if (optionalTcLogFile.isPresent())
-    //                    formData.getTcExecutionLog().setValue(Files.lines(optionalTcLogFile.get()).collect(Collectors.joining("\n")));
-    //                else
-    //                    LOG.info("log files not found: {}*.log", folder + "\\" + tcName);
-    //            }
-    //            catch (IOException | IllegalStateException exc) {
-    //                LOG.error("", exc);
-    //            }
-    //        }
-    //
-    //        return formData;
-    //    }
 
     @Override
     public SuTTcExecutionFormData load(SuTTcExecutionFormData formData) {
@@ -262,20 +213,6 @@ public class SuTTcService implements ISuTTcService {
         // execute the CmdStartTc commands
         final SutDescription sut = BEANS.get(SuTService.class).getSutDescription(sutId);
         ServerSession.get().execStartTc(sutId, tc, tsId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
-        // mark test cases as being started
-        // TODO:
-        //        final SuTCbTablePageData capPage = cap_hm.get(badgeId);
-        //        if (capPage == null) {
-        //            LOG.error("no capability map found for badge: " + badgeId);
-        //        }
-        //        else {
-        //            for (int i = 0; i < capPage.getRowCount(); i++) {
-        //                final SuTCbTableRowData row = capPage.rowAt(i);
-        //                if (row.getAbstractTC().equals(tc)) {
-        //                    row.setTCstatus("starting");
-        //                }
-        //            }
-        //        }
     }
 
 

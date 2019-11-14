@@ -84,7 +84,6 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		try {
 			testSuites.execute();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

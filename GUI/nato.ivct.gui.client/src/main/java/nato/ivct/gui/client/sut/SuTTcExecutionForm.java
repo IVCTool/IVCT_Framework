@@ -58,7 +58,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     private String sutId       = null;
     private String badgeId     = null;
-    private String testsuiteId = null; // TODO: TcStatusNotification and TcVerdictNotification need adjustments
+    private String testsuiteId = null;
     private String testCaseId  = null;
 
     private String testCaseStatus   = null;

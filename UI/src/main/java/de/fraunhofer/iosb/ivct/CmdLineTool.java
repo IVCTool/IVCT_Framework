@@ -118,10 +118,8 @@ public class CmdLineTool {
     					command = null;
     				}
     			} catch (InterruptedException e) {
-    				// TODO Auto-generated catch block
     				e.printStackTrace();
     			} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -173,7 +171,6 @@ class TcRunnable implements Runnable {
 //	    		System.out.println(s);
 	    	}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -439,7 +436,6 @@ class Writer extends Thread {
     	try {
 			cmdListTestSuites.execute();
 		} catch (Exception e3) {
-			// TODO Auto-generated catch block
 			e3.printStackTrace();
 		}
 		cmdListBadges = Factory.createCmdListBadges();
