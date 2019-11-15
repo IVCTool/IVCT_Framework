@@ -549,7 +549,7 @@ public class SuTCbForm extends AbstractForm {
                             final ISuTCbService service = BEANS.get(ISuTCbService.class);
                             final String sParams = service.loadTcParams(getSutId(), getActiveTsId());
                             if (sParams != null) {
-                                // param file does not exist
+                                // param file exists
                                 final JSONParser parser = new JSONParser();
                                 Object jParams = null;
                                 try {
@@ -587,8 +587,17 @@ public class SuTCbForm extends AbstractForm {
                                 });
                             }
                             else if (jObject instanceof JSONArray) {
-                                // handle as JSONArray
-                                ((JSONArray) jObject).forEach(value -> addJsonObjectToTable(parentRow, value));
+                                // handle a JSONArray
+                                ((JSONArray) jObject).forEach(value -> {
+                                    if (value instanceof JSONArray) {
+                                        final ITableRow newRow = addElementToTable(parentRow, null, "[");
+                                        addJsonObjectToTable(newRow, value);
+                                    }
+                                    else {
+                                        // handle a JSONObject
+                                        addJsonObjectToTable(parentRow, value);
+                                    }	
+                                }); 	
                             }
                             else {
                                 // handle as element without having a key
