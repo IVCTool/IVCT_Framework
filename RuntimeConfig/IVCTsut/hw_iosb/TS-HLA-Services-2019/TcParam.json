@@ -1,0 +1,14 @@
+{
+  "somFiles":[
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorldSOM.xml"
+    }
+  ],
+  "fomFiles":[
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorld.xml"
+    }
+  ],
+  "resultDirectory":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)",
+  "testDuration":"60"
+}

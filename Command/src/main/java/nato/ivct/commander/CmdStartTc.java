@@ -20,34 +20,33 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
 public class CmdStartTc implements Command {
-
-	public static final String COMMAND_ID = "commandType";
-	public static final String COMMAND = "startTestCase";
-	public static final String SEQ = "sequence";
-	public static final String SUT_NAME = "sutName";
-	public static final String SUT_DIR = "sutDir";
-	public static final String BADGE = "badge";
-	public static final String TC_ID = "testCaseId";
-	public static final String TC_PARAM = "tcParam";
-	public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
-	public static final String FEDERATION = "federationName";
+    
+        public static final String COMMAND_ID          = "commandType";
+        public static final String COMMAND             = "startTestCase";
+        public static final String SEQ                 = "sequence";
+        public static final String SUT_NAME            = "sutName";
+        public static final String SUT_DIR             = "sutDir";
+        public static final String TS_ID               = "testSuiteId";
+        public static final String TC_ID               = "testCaseId";
+        public static final String TC_PARAM            = "tcParam";
+        public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
+        public static final String FEDERATION          = "federationName";
 	public static final String FEDERATE = "sutFederateName";
-
+            
 	// private MessageProducer producer;
 	private String sut;
-	private String badge;
-	private String tc;
-	private String settingsDesignator;
-	private String federationName;
+	private String testSuiteName;
+        private String tc;
+        private String settingsDesignator;
+        private String federationName;
 	private String sutFederateName;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	public CmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName,
-			String _sutFederateName) {
+	public CmdStartTc(String _sut, String _testSuiteName, String _tc, String _settingsDesignator, String _federationName, String _sutFederateName) {
 		sut = _sut;
 		tc = _tc;
-		badge = _badge;
+		testSuiteName = _testSuiteName;
 		settingsDesignator = _settingsDesignator;
 		federationName = _federationName;
 		sutFederateName = _sutFederateName;
@@ -58,13 +57,21 @@ public class CmdStartTc implements Command {
 	/*
 	 * The Structure of start test case command message looks like the following:
 	 *
-	 * { "commandType":"startTestCase", "sequence":"0",
-	 * "testScheduleName":"HelloWorld", "sutName":"hw_iosb",
-	 * "sutDir":"C:/projects/IVCT_Runtime/IVCTsut/hw_iosb",
-	 * "badge":"C:/projects/IVCT_Runtime/Badges/HelloWorld-1.0.0",
-	 * "testCaseId":"TC0002", "settingsDesignator":"crcAddress=localhost:8989",
-	 * "federationName":"TheWorld", "tcParam":{ "sutFederateName":"A"
-	 * "testDuration":"120" } }
+	 * { 
+	 *   "commandType":"startTestCase",
+	 *   "sequence":"0",
+	 *   "testScheduleName":"HelloWorld",
+	 *   "sutName":"hw_iosb",
+	 *   "sutDir":"C:/projects/IVCT_Runtime/IVCTsut/hw_iosb",
+	 *   "testSuiteId":"TS_HelloWorld-2019",
+	 *   "testCaseId":"TC0002",
+	 *   "settingsDesignator":"crcAddress=localhost:8989",
+	 *   "federationName":"TheWorld",
+	 *   "tcParam":{
+         *     "sutFederateName":"A" 
+         *     "testDuration":"120" 
+	 *     }
+	 *   }
 	 *
 	 * @see nato.ivct.commander.Command#execute()
 	 */
@@ -74,21 +81,23 @@ public class CmdStartTc implements Command {
 			JSONParser parser = new JSONParser();
 			JSONObject startCmd = new JSONObject();
 			String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
-			String paramFileName = sutHome + '/' + sut + '/' + badge + "/TcParam.json";
+			String paramFileName = sutHome + '/' + sut + '/' + testSuiteName + "/TcParam.json";
 			startCmd.put(COMMAND_ID, COMMAND);
 			startCmd.put(SEQ, Integer.toString(Factory.newCmdCount()));
 			startCmd.put(SUT_NAME, sut);
 			startCmd.put(SUT_DIR, sutHome + '/' + sut);
-			startCmd.put(BADGE, badge);
-			startCmd.put(TC_ID, tc);
-			startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
-			startCmd.put(FEDERATION, federationName);
+			startCmd.put(TS_ID, testSuiteName);
+                        startCmd.put(TC_ID, tc);
+                        startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
+                        startCmd.put(FEDERATION, federationName);
 			startCmd.put(FEDERATE, sutFederateName);
 			
 			LOGGER.info("StartTc Command: " + startCmd.toString());
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
+				Factory.props.setProperty("IVCT_SUT_ID", sut);
+				Factory.props.setProperty("IVCT_TESTSUITE_ID", testSuiteName);
 				String tmpString = Factory.replaceMacro(paramFileContentString);
 				JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 				startCmd.put(TC_PARAM, jsonParam);
@@ -101,7 +110,7 @@ public class CmdStartTc implements Command {
 			Factory.sendToJms(startCmd.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error("error in starting test case <" + badge + '/' + tc + ">");
+			LOGGER.error("error in starting test case <" + testSuiteName + '/' + tc + ">");
 			e.printStackTrace();
 		}
 
@@ -123,12 +132,12 @@ public class CmdStartTc implements Command {
 		this.tc = tc;
 	}
 
-	public String getBadge() {
-		return badge;
+	public String getSuiteName() {
+		return testSuiteName;
 	}
 
-	public void setBadge(String _badge) {
-		this.badge = _badge;
+	public void setSuiteName(String _testSuiteName) {
+		this.testSuiteName = _testSuiteName;
 	}
 
 	public String getSettingsDesignator() {

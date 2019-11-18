@@ -1,6 +1,5 @@
 package nato.ivct.gui.server.sut;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
@@ -69,7 +68,7 @@ public class SuTBadgeService implements ISuTBadgeService {
 		if (parentBadge != null) {
 			badgeCollection.add(parentBadge);
 			
-			Arrays.stream(parentBadge.dependency).map(cbService::getBadgeDescription).forEach(depBadge -> {
+			parentBadge.dependency.stream().map(cbService::getBadgeDescription).forEach(depBadge -> {
 				badgeCollection.add(depBadge);
 				addBadgeToCollection (depBadge, badgeCollection);
 			});

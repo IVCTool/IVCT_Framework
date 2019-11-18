@@ -8,7 +8,7 @@ import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import nato.ivct.gui.shared.cb.CbFormData;
@@ -25,10 +25,7 @@ public class CbFormTest {
 	@Before
 	public void setup() {
 		CbFormData answer = new CbFormData();
-		Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any(CbFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.create(ArgumentMatchers.any(CbFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.load(ArgumentMatchers.any(CbFormData.class))).thenReturn(answer);
-		Mockito.when(m_mockSvc.store(ArgumentMatchers.any(CbFormData.class))).thenReturn(answer);
+		Mockito.when(m_mockSvc.load(Matchers.any(CbFormData.class))).thenReturn(answer);
 	}
 
 	// TODO [hzg] add test cases

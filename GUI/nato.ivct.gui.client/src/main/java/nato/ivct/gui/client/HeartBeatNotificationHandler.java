@@ -20,7 +20,7 @@ public class HeartBeatNotificationHandler implements INotificationHandler<HeartB
 	
 	public static final HashMap<String, HeartBeatNotification> hbLastReceivedMap = new HashMap<>();
 	
-	public HeartBeatNotification lastReceivedFromSender(String hbSender) {
+	public static HeartBeatNotification lastReceivedFromSender(String hbSender) {
 		return hbLastReceivedMap.get(hbSender);
 	}
 

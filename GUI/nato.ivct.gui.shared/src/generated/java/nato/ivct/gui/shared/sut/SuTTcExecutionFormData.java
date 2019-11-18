@@ -18,10 +18,16 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * access method for property BadgeId.
+	 */
 	public String getBadgeId() {
 		return getBadgeIdProperty().getValue();
 	}
 
+	/**
+	 * access method for property BadgeId.
+	 */
 	public void setBadgeId(String badgeId) {
 		getBadgeIdProperty().setValue(badgeId);
 	}
@@ -30,26 +36,34 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(BadgeIdProperty.class);
 	}
 
-	public ReqDescr getReqDescr() {
-		return getFieldByClass(ReqDescr.class);
+	/**
+	 * access method for property DefaultTcStatusForegroundColor.
+	 */
+	public String getDefaultTcStatusForegroundColor() {
+		return getDefaultTcStatusForegroundColorProperty().getValue();
 	}
 
-	public String getRequirementId() {
-		return getRequirementIdProperty().getValue();
+	/**
+	 * access method for property DefaultTcStatusForegroundColor.
+	 */
+	public void setDefaultTcStatusForegroundColor(String defaultTcStatusForegroundColor) {
+		getDefaultTcStatusForegroundColorProperty().setValue(defaultTcStatusForegroundColor);
 	}
 
-	public void setRequirementId(String requirementId) {
-		getRequirementIdProperty().setValue(requirementId);
+	public DefaultTcStatusForegroundColorProperty getDefaultTcStatusForegroundColorProperty() {
+		return getPropertyByClass(DefaultTcStatusForegroundColorProperty.class);
 	}
 
-	public RequirementIdProperty getRequirementIdProperty() {
-		return getPropertyByClass(RequirementIdProperty.class);
-	}
-
+	/**
+	 * access method for property SutId.
+	 */
 	public String getSutId() {
 		return getSutIdProperty().getValue();
 	}
 
+	/**
+	 * access method for property SutId.
+	 */
 	public void setSutId(String sutId) {
 		getSutIdProperty().setValue(sutId);
 	}
@@ -58,18 +72,36 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(SutIdProperty.class);
 	}
 
-	public TcExecutionLog getTcExecutionLog() {
-		return getFieldByClass(TcExecutionLog.class);
+	public TcDescr getTcDescr() {
+		return getFieldByClass(TcDescr.class);
 	}
 
-	public TestCaseExecutionStatusTable getTestCaseExecutionStatusTable() {
-		return getFieldByClass(TestCaseExecutionStatusTable.class);
+	public TcExecutionHistoryTable getTcExecutionHistoryTable() {
+		return getFieldByClass(TcExecutionHistoryTable.class);
 	}
 
+	public TcExecutionStatus getTcExecutionStatus() {
+		return getFieldByClass(TcExecutionStatus.class);
+	}
+
+	public TcLog getTcLog() {
+		return getFieldByClass(TcLog.class);
+	}
+
+	public TcProgress getTcProgress() {
+		return getFieldByClass(TcProgress.class);
+	}
+
+	/**
+	 * access method for property TestCaseId.
+	 */
 	public String getTestCaseId() {
 		return getTestCaseIdProperty().getValue();
 	}
 
+	/**
+	 * access method for property TestCaseId.
+	 */
 	public void setTestCaseId(String testCaseId) {
 		getTestCaseIdProperty().setValue(testCaseId);
 	}
@@ -78,15 +110,17 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(TestCaseIdProperty.class);
 	}
 
-	public TestCaseName getTestCaseName() {
-		return getFieldByClass(TestCaseName.class);
+	/**
+	 * access method for property TestCaseProgress.
+	 */
+	public int getTestCaseProgress() {
+		return getTestCaseProgressProperty().getValue() == null ? 0 : getTestCaseProgressProperty().getValue();
 	}
 
-	public String getTestCaseProgress() {
-		return getTestCaseProgressProperty().getValue();
-	}
-
-	public void setTestCaseProgress(String testCaseProgress) {
+	/**
+	 * access method for property TestCaseProgress.
+	 */
+	public void setTestCaseProgress(int testCaseProgress) {
 		getTestCaseProgressProperty().setValue(testCaseProgress);
 	}
 
@@ -94,10 +128,16 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(TestCaseProgressProperty.class);
 	}
 
+	/**
+	 * access method for property TestCaseStatus.
+	 */
 	public String getTestCaseStatus() {
 		return getTestCaseStatusProperty().getValue();
 	}
 
+	/**
+	 * access method for property TestCaseStatus.
+	 */
 	public void setTestCaseStatus(String testCaseStatus) {
 		getTestCaseStatusProperty().setValue(testCaseStatus);
 	}
@@ -106,10 +146,16 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(TestCaseStatusProperty.class);
 	}
 
+	/**
+	 * access method for property TestCaseVerdict.
+	 */
 	public String getTestCaseVerdict() {
 		return getTestCaseVerdictProperty().getValue();
 	}
 
+	/**
+	 * access method for property TestCaseVerdict.
+	 */
 	public void setTestCaseVerdict(String testCaseVerdict) {
 		getTestCaseVerdictProperty().setValue(testCaseVerdict);
 	}
@@ -118,17 +164,30 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		return getPropertyByClass(TestCaseVerdictProperty.class);
 	}
 
+	/**
+	 * access method for property TestsuiteId.
+	 */
+	public String getTestsuiteId() {
+		return getTestsuiteIdProperty().getValue();
+	}
+
+	/**
+	 * access method for property TestsuiteId.
+	 */
+	public void setTestsuiteId(String testsuiteId) {
+		getTestsuiteIdProperty().setValue(testsuiteId);
+	}
+
+	public TestsuiteIdProperty getTestsuiteIdProperty() {
+		return getPropertyByClass(TestsuiteIdProperty.class);
+	}
+
 	public static class BadgeIdProperty extends AbstractPropertyData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class ReqDescr extends AbstractValueFieldData<String> {
-
-		private static final long serialVersionUID = 1L;
-	}
-
-	public static class RequirementIdProperty extends AbstractPropertyData<String> {
+	public static class DefaultTcStatusForegroundColorProperty extends AbstractPropertyData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}
@@ -138,73 +197,88 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class TcExecutionLog extends AbstractValueFieldData<String> {
+	public static class TcDescr extends AbstractValueFieldData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class TestCaseExecutionStatusTable extends AbstractTableFieldBeanData {
+	public static class TcExecutionHistoryTable extends AbstractTableFieldBeanData {
 
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public TestCaseExecutionStatusTableRowData addRow() {
-			return (TestCaseExecutionStatusTableRowData) super.addRow();
+		public TcExecutionHistoryTableRowData addRow() {
+			return (TcExecutionHistoryTableRowData) super.addRow();
 		}
 
 		@Override
-		public TestCaseExecutionStatusTableRowData addRow(int rowState) {
-			return (TestCaseExecutionStatusTableRowData) super.addRow(rowState);
+		public TcExecutionHistoryTableRowData addRow(int rowState) {
+			return (TcExecutionHistoryTableRowData) super.addRow(rowState);
 		}
 
 		@Override
-		public TestCaseExecutionStatusTableRowData createRow() {
-			return new TestCaseExecutionStatusTableRowData();
+		public TcExecutionHistoryTableRowData createRow() {
+			return new TcExecutionHistoryTableRowData();
 		}
 
 		@Override
 		public Class<? extends AbstractTableRowData> getRowType() {
-			return TestCaseExecutionStatusTableRowData.class;
+			return TcExecutionHistoryTableRowData.class;
 		}
 
 		@Override
-		public TestCaseExecutionStatusTableRowData[] getRows() {
-			return (TestCaseExecutionStatusTableRowData[]) super.getRows();
+		public TcExecutionHistoryTableRowData[] getRows() {
+			return (TcExecutionHistoryTableRowData[]) super.getRows();
 		}
 
 		@Override
-		public TestCaseExecutionStatusTableRowData rowAt(int index) {
-			return (TestCaseExecutionStatusTableRowData) super.rowAt(index);
+		public TcExecutionHistoryTableRowData rowAt(int index) {
+			return (TcExecutionHistoryTableRowData) super.rowAt(index);
 		}
 
-		public void setRows(TestCaseExecutionStatusTableRowData[] rows) {
+		public void setRows(TcExecutionHistoryTableRowData[] rows) {
 			super.setRows(rows);
 		}
 
-		public static class TestCaseExecutionStatusTableRowData extends AbstractTableRowData {
+		public static class TcExecutionHistoryTableRowData extends AbstractTableRowData {
 
 			private static final long serialVersionUID = 1L;
-			public static final String tcStatus = "tcStatus";
-			public static final String progress = "progress";
-			private String m_tcStatus;
-			private Integer m_progress;
+			public static final String fileName = "fileName";
+			public static final String tcVerdict = "tcVerdict";
+			private String m_fileName;
+			private String m_tcVerdict;
 
-			public String getTcStatus() {
-				return m_tcStatus;
+			public String getFileName() {
+				return m_fileName;
 			}
 
-			public void setTcStatus(String newTcStatus) {
-				m_tcStatus = newTcStatus;
+			public void setFileName(String newFileName) {
+				m_fileName = newFileName;
 			}
 
-			public Integer getProgress() {
-				return m_progress;
+			public String getTcVerdict() {
+				return m_tcVerdict;
 			}
 
-			public void setProgress(Integer newProgress) {
-				m_progress = newProgress;
+			public void setTcVerdict(String newTcVerdict) {
+				m_tcVerdict = newTcVerdict;
 			}
 		}
+	}
+
+	public static class TcExecutionStatus extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class TcLog extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class TcProgress extends AbstractValueFieldData<String> {
+
+		private static final long serialVersionUID = 1L;
 	}
 
 	public static class TestCaseIdProperty extends AbstractPropertyData<String> {
@@ -212,12 +286,7 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class TestCaseName extends AbstractValueFieldData<String> {
-
-		private static final long serialVersionUID = 1L;
-	}
-
-	public static class TestCaseProgressProperty extends AbstractPropertyData<String> {
+	public static class TestCaseProgressProperty extends AbstractPropertyData<Integer> {
 
 		private static final long serialVersionUID = 1L;
 	}
@@ -228,6 +297,11 @@ public class SuTTcExecutionFormData extends AbstractFormData {
 	}
 
 	public static class TestCaseVerdictProperty extends AbstractPropertyData<String> {
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	public static class TestsuiteIdProperty extends AbstractPropertyData<String> {
 
 		private static final long serialVersionUID = 1L;
 	}

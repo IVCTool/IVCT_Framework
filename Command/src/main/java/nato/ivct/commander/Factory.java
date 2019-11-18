@@ -48,8 +48,11 @@ public class Factory {
 	public static final String IVCT_CONF = "IVCT_CONF";
 	public static final String IVCT_CONF_DEFLT = "/root/conf/IVCT.properties";
 
-	public static final String IVCT_TS_HOME_ID = "IVCT_TS_HOME_ID";
-	public static final String IVCT_TS_HOME_ID_DEFLT = "/root/conf/TestSuites";
+	public static final String IVCT_TS_DIST_HOME_ID = "IVCT_TS_HOME_ID";
+	public static final String IVCT_TS_DIST_HOME_ID_DEFLT = "/root/conf/TestSuites";
+	public static final String IVCT_TS_DEF_HOME_ID = "IVCT_TS_DEF_HOME_ID";
+	public static final String IVCT_TS_DEF_HOME_ID_DEFLT = "/root/conf/TestSuites";
+	
 	public static final String IVCT_SUT_HOME_ID = "IVCT_SUT_HOME_ID";
 	public static final String IVCT_SUT_HOME_ID_DEFLT = "/root/conf/IVCTsut";
     public static final String IVCT_BADGE_HOME_ID = "IVCT_BADGE_HOME_ID";
@@ -139,11 +142,10 @@ public class Factory {
             versionProperties.load(Command.class.getResourceAsStream("/dev.properties"));
             setVersion(versionProperties.getProperty("version"));
             setBuild(versionProperties.getProperty("build"));
-        } catch (IOException e) {
+            } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
 	}
 
 	/*
@@ -157,7 +159,8 @@ public class Factory {
 
 			Properties fallback = new Properties();
 			fallback.put(IVCT_CONF, IVCT_CONF_DEFLT);
-			fallback.put(IVCT_TS_HOME_ID, IVCT_TS_HOME_ID_DEFLT);
+			fallback.put(IVCT_TS_DIST_HOME_ID, IVCT_TS_DIST_HOME_ID_DEFLT);
+			fallback.put(IVCT_TS_DEF_HOME_ID, IVCT_TS_DEF_HOME_ID_DEFLT);
 			fallback.put(IVCT_SUT_HOME_ID, IVCT_SUT_HOME_ID_DEFLT);
             fallback.put(IVCT_BADGE_HOME_ID, IVCT_BADGE_HOME_ID_DEFLT);
             fallback.put(IVCT_BADGE_ICONS_ID, IVCT_BADGE_ICONS_ID_DEFLT);
@@ -213,7 +216,7 @@ public class Factory {
 			}
 
 			// overwrite with environment settings
-			overwriteWithEnv(IVCT_TS_HOME_ID);
+			overwriteWithEnv(IVCT_TS_DIST_HOME_ID);
 			overwriteWithEnv(IVCT_SUT_HOME_ID);
             overwriteWithEnv(IVCT_BADGE_HOME_ID);
             overwriteWithEnv(IVCT_BADGE_ICONS_ID);
@@ -289,7 +292,7 @@ public class Factory {
 		int len;
 
 		env.setLength(512);
-		out.setLength(512);
+		out.setLength(4096);
 		out.setLength(0);
 		len = inString.length();
 
@@ -309,6 +312,7 @@ public class Factory {
 							env.setLength(k);
 							if (env.length() > 0) {
 								b = Factory.props.getProperty(env.toString());
+								env.setLength(512);
 							} else {
 								LOGGER.error("LineUtil:replaceMacro: Missing environment variable ");
 							}
@@ -366,9 +370,14 @@ public class Factory {
 		return new CmdListBadges();
 	}
 
-	public static CmdStartTc createCmdStartTc(String _sut, String _badge, String _tc, String _settingsDesignator, String _federationName, String _sutFederateName) {
+	public static CmdListTestSuites createCmdListTestSuites() {
 		initialize();
-		return new CmdStartTc(_sut, _badge, _tc, _settingsDesignator, _federationName, _sutFederateName);
+		return new CmdListTestSuites();
+	}
+
+	public static CmdStartTc createCmdStartTc(String _sut, String _testSuiteName, String _tc, String _settingsDesignator, String _federationName, String _sutFederateName) {
+		initialize();
+		return new CmdStartTc(_sut, _testSuiteName, _tc, _settingsDesignator, _federationName, _sutFederateName);
 	}
 
 	public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {

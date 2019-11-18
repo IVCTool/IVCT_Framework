@@ -13,6 +13,7 @@ ENTRYPOINT [ "sh", "-c", " \
 ADD IVCT.properties /root/conf/IVCT.properties
 ADD IVCTsut /root/conf/IVCTsut
 ADD Badges /root/conf/Badges
+ADD TestSuites /root/conf/TestSuites
 
 ENV VOLUMEDIR /root/conf/
 ENV VOLUME ${VOLUMEDIR}/.

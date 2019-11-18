@@ -1,0 +1,18 @@
+{
+    "id": "TS-HLA-Object-2019",
+    "version": "2.0.0",
+    "name": "HLA Object-2017 Test Suite 2019",
+    "description": "This testsuite verifies that the federate sends and receives only the objects and interactions specified in its SOM.",
+    "tsRunTimeFolder": "TS_HLA_Object-2.0.0/bin",
+    "tsLibTimeFolder": "TS_HLA_Object-2.0.0/lib",
+    "testcases": [{
+        "TC": "nato.ivct.etc.fr.tc_hla_object.TC_001_Object_Interaction_Check"
+        "IR": ["IR-SOM-0011", "IR-SOM-0012", "IR-SOM-0013", "IR-SOM-0014", "IR-SOM-0015", "IR-SOM-0016"],
+        "description": "Tests if SuT registers at least one object instance for each published object class.
+		Tests if SuT discovers object instances for all object classes with attributes defined as subscribed in CS/SOM.
+        Tests if SuT shall update attribute values for each published object class attribute.
+		Tests if SuT shall reflect attribute values for each subscribed object class attribute.
+		Tests if SuT shall send at least one interaction for each published interaction class.
+		Tests if SuT shall receive interactions for each subscribed interaction class ",
+    }]
+}

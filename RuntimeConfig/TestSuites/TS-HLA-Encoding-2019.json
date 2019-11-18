@@ -1,0 +1,20 @@
+{
+	"id" 			: 	"TS-HLA-Encoding-2019",
+	"version"		:	"2.0.0",
+	"name" 			: 	"HLA_EncodingRulesTester Test Suite 2019",
+	"description"	:	"This is a test to verify whether the HLA encoding rules are being used correctly.",
+	"tsRunTimeFolder":	"TS_HLA_EncodingRulesTester-2.0.0/bin",
+	"tsLibTimeFolder":	"TS_HLA_EncodingRulesTester-2.0.0/lib",
+	"testcases"	:	[
+		{
+			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0001"
+			"IR"			:	["IR-SOM-0017", "IR-SOM-0018"],
+			"description"	:	"Test if SuT encodes all updated attribute values according to CS/SOM. Test if SuT encode all sent interaction class parameters according to CS/SOM",
+		},
+		{
+			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0002"
+			"IR"			:	["IP-EN-0002"],
+			"description"	:	"Test if SuT encodes all updated attribute values according to CS/SOM. Test if SuT encode all sent interaction class parameters according to CS/SOM. In addition to basic HLA endoing, extended RPR encoding rules will be accepted",
+		}
+	]
+}

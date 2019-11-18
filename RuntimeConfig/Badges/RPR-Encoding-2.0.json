@@ -1,17 +1,14 @@
 {
 	"id" 			: 	"RPR-Encoding-2.0",
 	"version"		:	"2.0.0",
-	"name" 			: 	"TS_HLA_EncodingRulesTester Test 2017",
+	"name" 			: 	"TS_HLA_EncodingRulesTester Test 2019",
 	"description"	:	"This is a test to verify whether the HLA encoding rules are being used correctly.",
 	"graphics"		:	"RPR-Encoding-2.0.png",
-	"tsRunTimeFolder":	"TS_HLA_EncodingRulesTester-2.0.0/bin",
-	"tsLibTimeFolder":	"TS_HLA_EncodingRulesTester-2.0.0/lib",
 	"dependency"	:	[],
 	"requirements"	:	[
 		{
 			"id"			:	"IP-EN-0002",
 			"description"	:	"HLA Encoding Rules Tester",
-			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0002"
 		}
 	]
 }
