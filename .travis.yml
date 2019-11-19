@@ -23,9 +23,9 @@ script:
   - docker tag ivct/logsink:$VERSION ivct/logsink:$TRAVIS_BRANCH-latest
   - docker tag ivct/runtime-config:$VERSION ivct/runtime-config:$TRAVIS_BRANCH-latest
   - docker tag ivct/ivct-gui:$VERSION ivct/ivct-gui:$TRAVIS_BRANCH-latest
-  - docker tag ivct/tc-runner:pi-$VERSION ivct/tc-runner:pi-$TRAVIS_BRANCH-latest
+  - docker tag ivct/tc-runner:pi-bare-$VERSION ivct/tc-runner:pi-bare-$TRAVIS_BRANCH-latest
   - docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-$TRAVIS_BRANCH-latest
-  - docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$TRAVIS_BRANCH-latest
+  # - docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$TRAVIS_BRANCH-latest
   # push images to docker hub
   - docker push ivct/logsink
   - docker push ivct/tc-runner
