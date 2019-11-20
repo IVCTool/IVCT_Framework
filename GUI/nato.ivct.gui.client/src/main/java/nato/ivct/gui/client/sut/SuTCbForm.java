@@ -478,7 +478,7 @@ public class SuTCbForm extends AbstractForm {
                             final List<ITableRow> rows = tbl.getRows();
 
                             // map to record all JSONObject and all JSONArray
-                            final HashMap<ITableRow, Object> jsonElements = new HashMap<>();
+                            final HashMap<Long, Object> jsonElements = new HashMap<>();
 
                             // root JSON object
                             final JSONObject jsonObjects = new JSONObject();
@@ -493,16 +493,16 @@ public class SuTCbForm extends AbstractForm {
                                 final String value = row.getCell(tbl.getParameterValueColumn()).getText();
 
                                 // if the parent object is already known, then use it. Otherwise create it
-                                final Object jsonParentElement = jsonElements.getOrDefault(parentRow, jsonObjects);
+                                final Object jsonParentElement = jsonElements.getOrDefault(row.getCellValue(tbl.getParentIdColumn().getColumnIndex()), jsonObjects);
                                 Object jsonElement = null;
 
                                 if ("[".equals(value)) {
                                     jsonElement = new JSONArray();
-                                    jsonElements.put(row, jsonElement);
+                                    jsonElements.put((Long) row.getCellValue(tbl.getIdColumn().getColumnIndex()), jsonElement);
                                 }
                                 else if ("{".equals(value)) {
                                     jsonElement = new JSONObject();
-                                    jsonElements.put(row, jsonElement);
+                                    jsonElements.put((Long) row.getCellValue(tbl.getIdColumn().getColumnIndex()), jsonElement);
                                 }
                                 else {
                                     if (jsonParentElement instanceof JSONArray && key != null) {
@@ -596,8 +596,8 @@ public class SuTCbForm extends AbstractForm {
                                     else {
                                         // handle a JSONObject
                                         addJsonObjectToTable(parentRow, value);
-                                    }	
-                                }); 	
+                                    }
+                                });
                             }
                             else {
                                 // handle as element without having a key
@@ -814,11 +814,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
 
@@ -834,11 +835,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
 
@@ -854,11 +856,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
 
@@ -874,11 +877,12 @@ public class SuTCbForm extends AbstractForm {
                                     protected Set<? extends IMenuType> getConfiguredMenuTypes() {
                                         return CollectionUtility.hashSet(TableMenuType.EmptySpace);
                                     }
-                                    
+
+
                                     @Override
                                     protected void execAction() {
-                                    	// TODO Auto-generated method stub
-                                    	super.execAction();
+                                        // TODO Auto-generated method stub
+                                        super.execAction();
                                     }
                                 }
                             }
@@ -1139,7 +1143,7 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                 }
                             }
-                            
+
                             @Order(4000)
                             public class FileDeleteMenu extends AbstractMenu {
                                 @Override
@@ -1165,20 +1169,20 @@ public class SuTCbForm extends AbstractForm {
                                     // get the selected file name from the table
                                     final ITableRow row = getTable().getSelectedRow();
                                     if (row != null) {
-	                                    final BinaryResource deleteFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getActiveTsId(), getTable().getFileNameColumn().getValue(row));
-	                            		if (deleteFileResource.getContentLength() != -1) {
-	                            			int result = MessageBoxes.createYesNo().withHeader(TEXTS.get("DeleteMsgBoxHeader")).show();
-	                            			if (result == IMessageBox.YES_OPTION) {	
-	                            				if (! BEANS.get(ISuTCbService.class).deleteUploadedTcExtraParameterFile(getSutId(), getActiveTsId(), deleteFileResource)) {
-			                            			MessageBoxes.createOk().withHeader(TEXTS.get("DeleteErrorMsgBoxHeader")).show();
-	                            					return;
-	                            				}
-	                                            getTable().getSelectedRow().delete();
-	                            			}
-	                            		}
+                                        final BinaryResource deleteFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getActiveTsId(), getTable().getFileNameColumn().getValue(row));
+                                        if (deleteFileResource.getContentLength() != -1) {
+                                            final int result = MessageBoxes.createYesNo().withHeader(TEXTS.get("DeleteMsgBoxHeader")).show();
+                                            if (result == IMessageBox.YES_OPTION) {
+                                                if (!BEANS.get(ISuTCbService.class).deleteUploadedTcExtraParameterFile(getSutId(), getActiveTsId(), deleteFileResource)) {
+                                                    MessageBoxes.createOk().withHeader(TEXTS.get("DeleteErrorMsgBoxHeader")).show();
+                                                    return;
+                                                }
+                                                getTable().getSelectedRow().delete();
+                                            }
+                                        }
                                     }
                                     if (getTable().getSelectedRow() == null)
-                                    	setVisible(false);
+                                        setVisible(false);
                                 }
                             }
                         }
@@ -1332,18 +1336,19 @@ public class SuTCbForm extends AbstractForm {
         group.getBody().setTiles(tiles);
         accordion.addGroup(group);
     }
-    
-    void setTcTilecolor (String tsId, String tcId, String tcVerdict) {
-    	this.getAccordionField().getAccordion().getGroups().forEach(group -> {
-    		if (tsId.equals(group.getTitle())) {
-    			group.getBody().getChildren().forEach(child -> {
-    				CustomTile tile = (CustomTile) child;
-    	            if (tcId.equals(tile.getTcId())) {
-        				tile.setTcTileContent(tcId, tcVerdict);
-    	            }
-    			});
-    		}
-    	});
-    	
+
+
+    void setTcTilecolor(String tsId, String tcId, String tcVerdict) {
+        getAccordionField().getAccordion().getGroups().forEach(group -> {
+            if (tsId.equals(group.getTitle())) {
+                group.getBody().getChildren().forEach(child -> {
+                    final CustomTile tile = (CustomTile) child;
+                    if (tcId.equals(tile.getTcId())) {
+                        tile.setTcTileContent(tcId, tcVerdict);
+                    }
+                });
+            }
+        });
+
     }
 }
