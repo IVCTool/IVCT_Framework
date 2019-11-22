@@ -54,7 +54,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
-import com.cedarsoftware.util.io.JsonWriter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
@@ -469,64 +471,59 @@ public class SuTCbForm extends AbstractForm {
                             getSutTcParameterTableField().execMarkSaved();
                             getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
                         }
-
-
+                        
+                        
+                        private JsonElement wrap(JsonElement element, ITableRow row) {
+                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+                        	final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                        	if (key == null)
+                        		return element;
+                        	
+                        	com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+                        	object.add(key, element);
+                        	return object;
+                        }
+           
+                        private JsonElement transformRow(ITableRow currentRow, final List<ITableRow> rows) {
+                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+                        	Object rowId = currentRow.getCellValue(tbl.getIdColumn().getColumnIndex());
+                        	final String value = currentRow.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString();
+                        	if ("[".equals(value)) {
+                        		JsonArray array = new JsonArray();
+                        		rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                        			array.add(wrap(transformRow(row, rows), row));
+                        		});
+                        		return array;
+                        	}
+                        	if ("{".equals(value)) {
+                        		com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+                        		rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                        			final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                        			object.add(key, transformRow(row, rows));
+                        		});
+                        		return object;
+                        	}
+                        	final String key = currentRow.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                        		return new JsonPrimitive(value);
+                        }
+                        
                         // Save the TC parameters from the SuTCbParameterTable
                         @Override
                         public void doSave() {
                             final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
                             final List<ITableRow> rows = tbl.getRows();
+                            
+                            com.google.gson.JsonObject rootObject = new com.google.gson.JsonObject();
+                            rows.stream().filter(row -> Objects.equals(null, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                            	final String key = Objects.toString(row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()));	
+                            	rootObject.add(key, transformRow(row, rows));
+                            });
+     
+	                        final ISuTCbService service = BEANS.get(ISuTCbService.class);
+	                        service.storeTcParams(getSutId(), getActiveTsId(), rootObject.toString());
 
-                            // map to record all JSONObject and all JSONArray
-                            final HashMap<Long, Object> jsonElements = new HashMap<>();
-
-                            // root JSON object
-                            final JSONObject jsonObjects = new JSONObject();
-                            // record root JSON object
-                            jsonElements.put(null, jsonObjects);
-
-                            // interate over all children and grand-children of the root object
-                            for (final ITableRow row: rows) {
-                                final ITableRow parentRow = row.getParentRow();
-
-                                final String key = row.getCell(tbl.getParameterNameColumn()).getText();
-                                final String value = row.getCell(tbl.getParameterValueColumn()).getText();
-
-                                // if the parent object is already known, then use it. Otherwise create it
-                                final Object jsonParentElement = jsonElements.getOrDefault(row.getCellValue(tbl.getParentIdColumn().getColumnIndex()), jsonObjects);
-                                Object jsonElement = null;
-
-                                if ("[".equals(value)) {
-                                    jsonElement = new JSONArray();
-                                    jsonElements.put((Long) row.getCellValue(tbl.getIdColumn().getColumnIndex()), jsonElement);
-                                }
-                                else if ("{".equals(value)) {
-                                    jsonElement = new JSONObject();
-                                    jsonElements.put((Long) row.getCellValue(tbl.getIdColumn().getColumnIndex()), jsonElement);
-                                }
-                                else {
-                                    if (jsonParentElement instanceof JSONArray && key != null) {
-                                        jsonElement = new JSONObject();
-                                        ((JSONObject) jsonElement).put(key, value);
-                                    }
-                                    else
-                                        jsonElement = value;
-                                }
-
-                                if (jsonParentElement instanceof JSONArray)
-                                    ((JSONArray) jsonParentElement).add(jsonElement);
-                                else
-                                    ((JSONObject) jsonParentElement).put(key != null ? key : "", jsonElement);
-                            }
-
-                            final ISuTCbService service = BEANS.get(ISuTCbService.class);
-                            final Map<String, Object> options = new HashMap<>();
-                            options.put(JsonWriter.PRETTY_PRINT, true);
-                            options.put(JsonWriter.TYPE, false);
-                            service.storeTcParams(getSutId(), getActiveTsId(), JsonWriter.objectToJson(jsonObjects, options));
-
-                            // call super
-                            super.doSave();
+	                        // call super
+	                        super.doSave();
                         }
 
 
