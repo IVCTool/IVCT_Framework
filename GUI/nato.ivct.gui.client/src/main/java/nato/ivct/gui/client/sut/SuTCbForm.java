@@ -473,16 +473,16 @@ public class SuTCbForm extends AbstractForm {
                         }
                         
                         
-                        private JsonElement wrap(JsonElement element, ITableRow row) {
-                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
-                        	final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
-                        	if (key == null)
-                        		return element;
-                        	
-                        	com.google.gson.JsonObject object = new com.google.gson.JsonObject();
-                        	object.add(key, element);
-                        	return object;
-                        }
+//                        private JsonElement wrap(JsonElement element, ITableRow row) {
+//                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+//                        	final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+//                        	if (key == null)
+//                        		return element;
+//                        	
+//                        	com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+//                        	object.add(key, element);
+//                        	return object;
+//                        }
            
                         private JsonElement transformRow(ITableRow currentRow, final List<ITableRow> rows) {
                         	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
@@ -491,7 +491,8 @@ public class SuTCbForm extends AbstractForm {
                         	if ("[".equals(value)) {
                         		JsonArray array = new JsonArray();
                         		rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
-                        			array.add(wrap(transformRow(row, rows), row));
+                        			//array.add(wrap(transformRow(row, rows), row));
+                        			array.add(transformRow(row, rows));
                         		});
                         		return array;
                         	}
@@ -592,7 +593,8 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                     else {
                                         // handle a JSONObject
-                                        addJsonObjectToTable(parentRow, value);
+                                        final ITableRow newRow = addElementToTable(parentRow, null, "{");
+                                        addJsonObjectToTable(newRow, value);
                                     }
                                 });
                             }
