@@ -568,7 +568,7 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                     else {
                                         // value is a simple object
-                                        addElementToTable(parentRow, key.toString(), Objects.toString(value, null));
+                                        addElementToTable(parentRow, key.toString(), value.getAsString());
                                     }
                                 });
                             }
@@ -593,7 +593,7 @@ public class SuTCbForm extends AbstractForm {
                             }
                             else {
                                 // handle as element without having a key
-                                addElementToTable(parentRow, null, jObject.toString());
+                                addElementToTable(parentRow, null, jObject.getAsString());
                             }
                         }
 
