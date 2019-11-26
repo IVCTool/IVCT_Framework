@@ -5632,7 +5632,7 @@ Orlando, FL 32878-1238, USA
          </interactionClass>
          <interactionClass notes="RPRnoteSIMAN20">
             <name>RemoveObjectRequest</name>
-            <sharing>PublishSubscribe</sharing>
+            <sharing>Subscribe</sharing>
             <transportation>HLAbestEffort</transportation>
             <order>Receive</order>
             <semantics>A Simulation Management (SIMAN) interaction, sent from a Simulation Manager to request that one or more specified objects be removed from the simulation.</semantics>
