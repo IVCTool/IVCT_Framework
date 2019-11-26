@@ -48,14 +48,11 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.data.tile.TileColorScheme;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
@@ -551,34 +548,22 @@ public class SuTCbForm extends AbstractForm {
                             final String sParams = service.loadTcParams(getSutId(), getActiveTsId());
                             if (sParams != null) {
                                 // param file exists
-                                final JSONParser parser = new JSONParser();
-                                Object jParams = null;
-                                try {
-                                    jParams = parser.parse(sParams);
-                                }
-                                catch (final ParseException e) {
-                                    e.printStackTrace();
-                                }
-
-                                if (jParams != null) {
-                                    addJsonObjectToTable(null, jParams);
-                                }
+                                final JsonElement jParams = JsonParser.parseString(sParams);
+                                addJsonObjectToTable(null, jParams);
                             }
 
                             return mRows;
                         }
 
 
-                        private void addJsonObjectToTable(final ITableRow parentRow, final Object jObject) {
-                            if (jObject instanceof JSONObject) {
-                                if (((JSONObject) jObject).isEmpty())
-                                    return;
-
+                        private void addJsonObjectToTable(final ITableRow parentRow, final JsonElement jObject) {
+                            if (jObject.isJsonObject()) {
                                 // handle JSONObject of the form (key:value)
-                                ((JSONObject) jObject).forEach((key, value) -> {
-                                    if (value instanceof JSONObject || value instanceof JSONArray) {
+                                jObject.getAsJsonObject().keySet().forEach(key -> {
+                                    final JsonElement value = jObject.getAsJsonObject().get(key);
+                                    if (value.isJsonObject() || value.isJsonArray()) {
                                         // value is itself a JSONObject or JSONArray
-                                        final ITableRow newRow = addElementToTable(parentRow, key.toString(), value instanceof JSONObject ? "{" : "[");
+                                        final ITableRow newRow = addElementToTable(parentRow, key.toString(), value.isJsonObject() ? "{" : "[");
                                         addJsonObjectToTable(newRow, value);
                                     }
                                     else {
@@ -587,16 +572,16 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                 });
                             }
-                            else if (jObject instanceof JSONArray) {
+                            else if (jObject.isJsonArray()) {
                                 // handle a JSONArray
-                                ((JSONArray) jObject).forEach(value -> {
-                                    if (value instanceof JSONArray) {
+                                jObject.getAsJsonArray().forEach(value -> {
+                                    if (value.isJsonArray()) {
                                         final ITableRow newRow = addElementToTable(parentRow, null, "[");
                                         addJsonObjectToTable(newRow, value);
                                     }
                                     else {
                                         // handle a JSONObject
-                                        if (value instanceof JSONObject) {
+                                        if (value.isJsonObject()) {
                                             final ITableRow newRow = addElementToTable(parentRow, null, "{");
                                             addJsonObjectToTable(newRow, value);
                                         }
