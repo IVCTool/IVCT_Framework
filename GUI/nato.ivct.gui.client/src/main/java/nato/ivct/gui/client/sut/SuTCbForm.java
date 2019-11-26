@@ -98,7 +98,6 @@ public class SuTCbForm extends AbstractForm {
     // unique table row ID generator
     private final AtomicLong m_nextRowId = new AtomicLong();
 
-
     @Override
     protected String getConfiguredTitle() {
         return TEXTS.get("Badge");
@@ -442,7 +441,6 @@ public class SuTCbForm extends AbstractForm {
                     public class SutTcParameterTableField extends AbstractTableField<SutTcParameterTableField.SuTTcParameterTable> {
                         List<ITableRow> mRows = new ArrayList<>();
 
-
                         @Override
                         protected int getConfiguredGridH() {
                             return 3;
@@ -471,60 +469,65 @@ public class SuTCbForm extends AbstractForm {
                             getSutTcParameterTableField().execMarkSaved();
                             getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
                         }
-                        
-                        
-//                        private JsonElement wrap(JsonElement element, ITableRow row) {
-//                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
-//                        	final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
-//                        	if (key == null)
-//                        		return element;
-//                        	
-//                        	com.google.gson.JsonObject object = new com.google.gson.JsonObject();
-//                        	object.add(key, element);
-//                        	return object;
-//                        }
-           
+
+                        //                        private JsonElement wrap(JsonElement element, ITableRow row) {
+                        //                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+                        //                        	final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                        //                        	if (key == null)
+                        //                        		return element;
+                        //                        	
+                        //                        	com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+                        //                        	object.add(key, element);
+                        //                        	return object;
+                        //                        }
+
+
                         private JsonElement transformRow(ITableRow currentRow, final List<ITableRow> rows) {
-                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
-                        	Object rowId = currentRow.getCellValue(tbl.getIdColumn().getColumnIndex());
-                        	final String value = currentRow.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString();
-                        	if ("[".equals(value)) {
-                        		JsonArray array = new JsonArray();
-                        		rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
-                        			//array.add(wrap(transformRow(row, rows), row));
-                        			array.add(transformRow(row, rows));
-                        		});
-                        		return array;
-                        	}
-                        	if ("{".equals(value)) {
-                        		com.google.gson.JsonObject object = new com.google.gson.JsonObject();
-                        		rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
-                        			final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
-                        			object.add(key, transformRow(row, rows));
-                        		});
-                        		return object;
-                        	}
-                        	final String key = currentRow.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
-                        		return new JsonPrimitive(value);
+                            final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+                            Object rowId = currentRow.getCellValue(tbl.getIdColumn().getColumnIndex());
+
+                            String value = "";
+                            Object cellValue = currentRow.getCellValue(tbl.getParameterValueColumn().getColumnIndex());
+                            if (cellValue != null && !cellValue.toString().isEmpty())
+                                value = currentRow.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString();
+
+                            if ("[".equals(value)) {
+                                JsonArray array = new JsonArray();
+                                rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                                    //array.add(wrap(transformRow(row, rows), row));
+                                    array.add(transformRow(row, rows));
+                                });
+                                return array;
+                            }
+                            if ("{".equals(value)) {
+                                com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+                                rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                                    final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                                    object.add(key, transformRow(row, rows));
+                                });
+                                return object;
+                            }
+                            return new JsonPrimitive(value);
                         }
-                        
+
+
                         // Save the TC parameters from the SuTCbParameterTable
                         @Override
                         public void doSave() {
                             final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
                             final List<ITableRow> rows = tbl.getRows();
-                            
+
                             com.google.gson.JsonObject rootObject = new com.google.gson.JsonObject();
                             rows.stream().filter(row -> Objects.equals(null, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
-                            	final String key = Objects.toString(row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()));	
-                            	rootObject.add(key, transformRow(row, rows));
+                                final String key = Objects.toString(row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()));
+                                rootObject.add(key, transformRow(row, rows));
                             });
-     
-	                        final ISuTCbService service = BEANS.get(ISuTCbService.class);
-	                        service.storeTcParams(getSutId(), getActiveTsId(), rootObject.toString());
 
-	                        // call super
-	                        super.doSave();
+                            final ISuTCbService service = BEANS.get(ISuTCbService.class);
+                            service.storeTcParams(getSutId(), getActiveTsId(), rootObject.toString());
+
+                            // call super
+                            super.doSave();
                         }
 
 
@@ -593,8 +596,13 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                     else {
                                         // handle a JSONObject
-                                        final ITableRow newRow = addElementToTable(parentRow, null, "{");
-                                        addJsonObjectToTable(newRow, value);
+                                        if (value instanceof JSONObject) {
+                                            final ITableRow newRow = addElementToTable(parentRow, null, "{");
+                                            addJsonObjectToTable(newRow, value);
+                                        }
+                                        else {
+                                            addJsonObjectToTable(parentRow, value);
+                                        }
                                     }
                                 });
                             }
@@ -759,10 +767,14 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                     else {
                                         tbl.getRows().forEach(row -> {
-                                            if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
-                                                row.setEnabled(false);
-                                                tbl.getMenuByClass(AbortMenu.class).setVisible(true);
-                                                row.getCell(getParameterNameColumn());
+
+                                            Object cellValue = row.getCellValue(tbl.getParameterValueColumn().getColumnIndex());
+                                            if (cellValue != null && !cellValue.toString().isEmpty()) {
+                                                if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
+                                                    row.setEnabled(false);
+                                                    tbl.getMenuByClass(AbortMenu.class).setVisible(true);
+                                                    row.getCell(getParameterNameColumn());
+                                                }
                                             }
                                         });
                                     }
@@ -1186,7 +1198,6 @@ public class SuTCbForm extends AbstractForm {
                             }
                         }
 
-
                         protected void loadTcExtraParamTable(String tsId) {
                             clearTcExtraParamTable();
                             loadExtraParams();
@@ -1305,7 +1316,6 @@ public class SuTCbForm extends AbstractForm {
         }
 
     }
-
 
     protected void addTsGroupWithTcTiles(String tsId) {
 
