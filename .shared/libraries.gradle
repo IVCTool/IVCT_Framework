@@ -18,6 +18,7 @@ ext {
 		hamcrestVersion = '1.1'
 		scoutVersion = '8.0.0.010_Photon'
 		jsonSimpleVersion = '1.1.1'
+		gsonVersion = '2.8.6'
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 		jsonIoVersion = '4.10.1'
@@ -40,6 +41,7 @@ ext {
 				activemqEmbedded: 				"org.apache.activemq:activemq-broker:${activemqVersion}",
 
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+				gson:							"com.google.code.gson:gson:${gsonVersion}",
 
 				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
 
