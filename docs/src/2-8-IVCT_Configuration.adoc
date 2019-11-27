@@ -13,7 +13,7 @@ The IVCTool configuration is controlled by variables. There are several places, 
 . In the final configuration step, the IVCTool will check if any of the configuration elements are defined in the *environment settings*. These environment values will overwrite the earlier settings.
 . *Conformance statement* settings will always overwrite initialization settings. It a variable is defined in the conformance statement itself, or in any test suite specific parameter file, that definition will be used. Settings from the earlier initialization steps will never overwrite any conformance statement specfic setting. Only if a certain setting was not found in a conformance statement, like a missing ``SETTINGS_DESIGNATOR``, the setting from the earlier steps will be used.
 
-WARNING: Currently there is no option to revert to default settings, for any assignments inside the conformance statement. It is planed extend the GUI to enable this. 
+WARNING: Currently there is no option to revert to default settings, for any assignments inside the conformance statement. It is planed extend the GUI to enable this.
 
 
 .IVCTool Configuration Elements
@@ -23,6 +23,7 @@ WARNING: Currently there is no option to revert to default settings, for any ass
 
 | IVCT_CONF          | Path name to the root configuration file. This file will be read at startup time and it may contain  | ``/root/conf/IVCT.properties``
 | IVCT_TS_HOME_ID    | Folder name containing the test suites to be used by the IVCTool | ``/root/conf/TestSuites``
+| IVCT_TS_DEF_HOME_ID | Folder name containing the test suites definitions to be used by the IVCTool | ``/root/conf/TestSuites``
 | IVCT_SUT_HOME_ID   | Folder name containing the SuT configurations | ``/root/conf/IVCTsut``
 | IVCT_BADGE_HOME_ID | Folder name containing the interoperability badge definition files | ``/root/conf/Badges``
 | IVCT_BADGE_ICONS   | Folder name containing the icons for the interoperbility badges | ``/root/conf/Badges``
