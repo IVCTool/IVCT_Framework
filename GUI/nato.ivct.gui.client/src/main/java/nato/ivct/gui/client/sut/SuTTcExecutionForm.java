@@ -29,6 +29,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
+import org.eclipse.scout.rt.client.ui.tile.fields.AbstractTableFieldTile.TableField.Table;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
@@ -64,15 +65,14 @@ public class SuTTcExecutionForm extends AbstractForm {
     private String testCaseStatus   = null;
     private String testCaseVerdict  = null;
     private int    testCaseProgress = 0;
-    
+
     private String defaultTcStatusForegroundColor;
-    
+
     // verdicts
     public static final String PASSED_VERDICT       = "PASSED";
     public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
-
 
     @FormData
     public String getSutId() {
@@ -160,15 +160,18 @@ public class SuTTcExecutionForm extends AbstractForm {
         this.testCaseVerdict = testCaseVerdict;
     }
 
+
     @FormData
     public void setDefaultTcStatusForegroundColor(String color) {
-    	defaultTcStatusForegroundColor = color;
+        defaultTcStatusForegroundColor = color;
     }
-    
+
+
     @FormData
     public String getDefaultTcStatusForegroundColor() {
-    	return defaultTcStatusForegroundColor;
+        return defaultTcStatusForegroundColor;
     }
+
 
     @Override
     protected int getConfiguredDisplayHint() {
@@ -442,32 +445,58 @@ public class SuTTcExecutionForm extends AbstractForm {
                             }
                         }
 
-
                         @Override
                         protected void execRowsSelected(List<? extends ITableRow> rows) {
-
+                            // clear table
+                            //getTcLogField().getTable().discardAllRows();
                             if (!rows.isEmpty()) {
+                                // row is selected
                                 final String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
                                 // load log file content
                                 final ISuTTcService service = BEANS.get(ISuTTcService.class);
-                                getTcLogField().setValue(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));
-                            }
-                            else {
-                                getTcLogField().setValue(null);
+                                // getTcLogField().setValue(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));
+                                // getTcLogField().addLine(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));                  
                             }
                         }
 
                     }
                 }
 
+                //                @Order(1200)
+                //                public class TcLogField extends AbstractStringField {
+                //                	
+                //                	@Override
+                //                	protected int getConfiguredGridH() {
+                //                		return 2;
+                //                	}
+                //                	
+                //                    @Override
+                //                    protected String getConfiguredLabel() {
+                //                        return TEXTS.get("TcExecutionLog");
+                //                    }
+                //
+                //
+                //                    @Override
+                //                    protected boolean getConfiguredMultilineText() {
+                //                        return true;
+                //                    }
+                //
+                //
+                //                    @Override
+                //                    protected int getConfiguredMaxLength() {
+                //                        return Integer.MAX_VALUE;
+                //                    }
+                //
+                //
+                //                    @Override
+                //                    public boolean isEnabled() {
+                //                        // set to r/w to activate the scrollbars
+                //                        return true;
+                //                    }
+
                 @Order(1200)
-                public class TcLogField extends AbstractStringField {
-                	
-                	@Override
-                	protected int getConfiguredGridH() {
-                		return 2;
-                	}
-                	
+                public class TcLogField extends AbstractTableField<TcLogField.TcLogFieldTable> {
+
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("TcExecutionLog");
@@ -475,21 +504,89 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
                     @Override
-                    protected boolean getConfiguredMultilineText() {
-                        return true;
+                    protected int getConfiguredGridH() {
+                        return 2;
                     }
 
 
-                    @Override
-                    protected int getConfiguredMaxLength() {
-                        return Integer.MAX_VALUE;
+                    public void addLine(String logLevel, String timeStamp, String logMsg) {
+                        TcLogFieldTable tbl = getTcLogField().getTable();
+                        ITableRow row = tbl.addRow(tbl.createRow());
+                        tbl.getLogLevelColumn().setValue(row, logLevel);
+                        tbl.getTimeStampColumn().setValue(row, timeStamp);
+                        tbl.getLogMsgColumn().setValue(row, logMsg);
+                        tbl.selectLastRow();
+                        tbl.scrollToSelection();
+
                     }
 
+                    @Order(2200)
+                    public class TcLogFieldTable extends AbstractTable {
 
-                    @Override
-                    public boolean isEnabled() {
-                        // set to r/w to activate the scrollbars
-                        return true;
+                        public LogLevelColumn getLogLevelColumn() {
+                            return getColumnSet().getColumnByClass(LogLevelColumn.class);
+                        }
+
+
+                        public TimeStampColumn getTimeStampColumn() {
+                            return getColumnSet().getColumnByClass(TimeStampColumn.class);
+                        }
+
+
+                        public LogMsgColumn getLogMsgColumn() {
+                            return getColumnSet().getColumnByClass(LogMsgColumn.class);
+                        }
+
+                        @Order(1000)
+                        public class LogLevelColumn extends AbstractStringColumn {
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("LogLevel");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 100;
+                            }
+
+                        }
+
+                        @Order(1200)
+                        public class TimeStampColumn extends AbstractStringColumn {
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("TimeStamp");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 200;
+                            }
+
+                        }
+
+                        @Order(1400)
+                        public class LogMsgColumn extends AbstractStringColumn {
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("LogMsg");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 1000;
+                            }
+
+
+                            @Override
+                            protected boolean getConfiguredTextWrap() {
+                                return true;
+                            }
+                        }
+
                     }
                 }
             }
@@ -524,41 +621,47 @@ public class SuTTcExecutionForm extends AbstractForm {
                 return TEXTS.get("TCexec");
             }
 
+
             @Override
             protected void execClickAction() {
-            	
-            	// check the status of the TestEngine
-            	HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
-            	if (hbn.notifyState != HbNotificationState.OK) {
+
+                // check the status of the TestEngine
+                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
+                if (hbn.notifyState != HbNotificationState.OK) {
                     MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
                     return;
-            	}
-            	
-            	// hide TC execute button if the same testcase is already executed
+                }
+
+                // hide TC execute button if the same testcase is already executed
                 final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
                 List<SuTTcExecutionForm> forms = desktop.findForms(SuTTcExecutionForm.class);
                 if (forms.stream().filter(form -> form.getSutId().equalsIgnoreCase(getSutId()) && form.getTestCaseId().equalsIgnoreCase(getTestCaseId())).anyMatch(form -> !form.getTcExecutionButton().isVisible())) {
-                	MessageBoxes.createOk().withHeader(TEXTS.get("TcExecMsgBoxHeader")).withBody(TEXTS.get("TcExecMsgBoxBody")).show();
-        			return;
+                    MessageBoxes.createOk().withHeader(TEXTS.get("TcExecMsgBoxHeader")).withBody(TEXTS.get("TcExecMsgBoxBody")).show();
+                    return;
                 }
-            	            	
+
                 // show progress bar
                 getTcProgressField().setVisible(true);
                 // reset tc status foreground color
                 getTcExecutionStatus().setForegroundColor(getDefaultTcStatusForegroundColor());
                 //hide tc execution button
                 this.setVisible(false);
-                
+
                 // hide TC Execution History Table during TC execution
                 getTcExecutionHistoryTableField().setVisible(false);
-                
+
                 // clear TC status and progress bar
                 getTcExecutionStatus().setValue("");
                 setTestCaseProgress(0);
 
+                //                // clear the TC log field
+                //                if (getTcLogField().getValue() != null) {
+                //                    getTcLogField().resetValue();
+                //                }
+
                 // clear the TC log field
-                if (getTcLogField().getValue() != null) {
-                    getTcLogField().resetValue();
+                if (getTcLogField().getTableStatus() != null) {
+                    getTcLogField().getTable().discardAllRows();
                 }
 
                 // use ModelJobs to asynchronously start test case execution sequence
@@ -588,38 +691,38 @@ public class SuTTcExecutionForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
-           
+
             // set result color in the execution history table
             setTestResultColor();
-            
+
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
-            
+
             // mark the first line of the TC History Table to focus the currently executed test case
             //getTcExecutionHistoryTableField().getTable().getSelectedRow();
-            
+
             getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
 
             setEnabledPermission(new UpdateSuTPermission());
         }
     }
-    
+
     public void setTestResultColor() {
-    	// set the color of the test results in TC Execution History Table Field
-        getTcExecutionHistoryTableField().getTable().getRows().forEach(row ->{
-        	Cell cell = row.getCellForUpdate(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());	
-        	switch (Objects.toString(cell.getValue(), "")) {
-        		case PASSED_VERDICT:
-                	cell.setCssClass("passed-text");
-                	break;
-        		case INCONCLUSIVE_VERDICT:
-                	cell.setCssClass("inconclusive-text");
-                	break;
-        		case FAILED_VERDICT:
-                	cell.setCssClass("failed-text");
-        			break;
-        		default:
-        			;
-        	}
-        });	
+        // set the color of the test results in TC Execution History Table Field
+        getTcExecutionHistoryTableField().getTable().getRows().forEach(row -> {
+            Cell cell = row.getCellForUpdate(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());
+            switch (Objects.toString(cell.getValue(), "")) {
+                case PASSED_VERDICT:
+                    cell.setCssClass("passed-text");
+                    break;
+                case INCONCLUSIVE_VERDICT:
+                    cell.setCssClass("inconclusive-text");
+                    break;
+                case FAILED_VERDICT:
+                    cell.setCssClass("failed-text");
+                    break;
+                default:
+                    ;
+            }
+        });
     }
 }
