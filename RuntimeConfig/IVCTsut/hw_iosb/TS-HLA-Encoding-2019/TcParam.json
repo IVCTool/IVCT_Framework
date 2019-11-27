@@ -1,0 +1,19 @@
+{
+  "somFiles":[
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/BasicSimpleTypes.xml"
+    },
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorldSOM.xml"
+    }
+  ],
+  "fomFiles":[
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorld.xml"
+    },
+    {
+      "fileName":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/BasicSimpleTypes.xml"
+    }
+  ],
+  "sleepTestTimeWaitSeconds":"60"
+}

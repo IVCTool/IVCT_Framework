@@ -1,431 +1,615 @@
 package nato.ivct.gui.client.sut;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.IWidget;
+import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-//import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-//import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+// import
+// org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
+// import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
+import nato.ivct.gui.client.ClientSession;
+import nato.ivct.gui.client.HeartBeatNotificationHandler;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.ReqDescrField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseExecutionStatusTableField;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TestCaseNameField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcProgressField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionLogField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcLogField;
+import nato.ivct.gui.shared.HeartBeatNotification;
+import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
+import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
+
 @FormData(value = SuTTcExecutionFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SuTTcExecutionForm extends AbstractForm {
-	
-	private String sutId = null;
-	private String badgeId = null;
-	private String requirementId = null;
-	private String testCaseId = null;
-	
-	private String testCaseStatus = null;
-	private String testCaseProgress = null;
-	private String testCaseVerdict = null;
 
-	@FormData
-	public String getSutId() {
-		return sutId;
-	}
-	
-	@FormData
-	public void setSutId(final String _sutId) {
-		this.sutId = _sutId;
-	}
+    private String sutId       = null;
+    private String badgeId     = null;
+    private String testsuiteId = null; // TODO: TcStatusNotification and TcVerdictNotification need adjustments
+    private String testCaseId  = null;
 
-	@FormData
-	public String getBadgeId() {
-		return badgeId;
-	}
+    private String testCaseStatus   = null;
+    private String testCaseVerdict  = null;
+    private int    testCaseProgress = 0;
+    
+    private String defaultTcStatusForegroundColor;
+    
+    // verdicts
+    public static final String PASSED_VERDICT       = "PASSED";
+    public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
+    public static final String FAILED_VERDICT       = "FAILED";
+    public static final String NOT_RUN_VERDICT      = "NOT_RUN";
 
-	@FormData
-	public void setBadgeId(final String _badgeId) {
-		this.badgeId = _badgeId;
-	}
 
-	@FormData
-	public String getRequirementId() {
-		return requirementId;
-	}	
-	
-	@FormData
-	public void setRequirementId(final String _sutCapabilityId) {
-		this.requirementId = _sutCapabilityId;
-	}
+    @FormData
+    public String getSutId() {
+        return sutId;
+    }
 
-	@FormData
-	public String getTestCaseId() {
-		return testCaseId;
-	}
-	
-	@FormData
-	public void setTestCaseId(String testCaseId) {
-		this.testCaseId = testCaseId;
-	}
-	
-	@FormData
-	public String getTestCaseStatus() {
-		return testCaseStatus;
-	}
-	
-	@FormData
-	public void setTestCaseStatus(String testCaseStatus) {
-		this.testCaseStatus = testCaseStatus;
-	}
-	
-	@FormData
-	public String getTestCaseProgress() {
-		return testCaseProgress;
-	}
-	
-	@FormData
-	public void setTestCaseProgress(String testCaseProgress) {
-		this.testCaseProgress = testCaseProgress;
-	}
-	
-	@FormData
-	public String getTestCaseVerdict() {
-		return testCaseVerdict;
-	}
-	
-	@FormData
-	public void setTestCaseVerdict(String testCaseVerdict) {
-		this.testCaseVerdict = testCaseVerdict;
-	}
-	
-//	@Override
-//	protected String getConfiguredTitle() {
-//		// TODO [the] verify translation
-//		return TEXTS.get("TCExecution");
-//	}
-	
-	@Override
-	protected int getConfiguredDisplayHint() {
-		return IForm.DISPLAY_HINT_VIEW;
-	}
 
-	public void startView() {
-		startInternal(new ViewHandler());
-	}
-	
-//	public void startModify() {
-//		startInternalExclusive(new ModifyHandler());
-//	}
-//
-//	public void startNew() {
-//		startInternal(new NewHandler());
-//	}
+    @FormData
+    public void setSutId(final String _sutId) {
+        sutId = _sutId;
+    }
 
-//	public CancelButton getCancelButton() {
-//		return getFieldByClass(CancelButton.class);
-//	}
 
-	public MainBox getMainBox() {
-		return getFieldByClass(MainBox.class);
-	}
+    @FormData
+    public String getBadgeId() {
+        return badgeId;
+    }
 
-	public GeneralBox getGeneralBox() {
-		return getFieldByClass(GeneralBox.class);
-	}
 
-	public ReqDescrField getDescrField() {
-		return getFieldByClass(ReqDescrField.class);
-	}
+    @FormData
+    public void setBadgeId(final String _badgeId) {
+        badgeId = _badgeId;
+    }
 
-	public TestCaseNameField getTestCaseNameField() {
-		return getFieldByClass(TestCaseNameField.class);
-	}
-	
-	public TestCaseExecutionStatusTableField getTestCaseExecutionStatusTableField() {
-		return getFieldByClass(TestCaseExecutionStatusTableField.class);
-	}
-	public TcExecutionDetailsBox getTcExecutionDetailsBox() {
-		return getFieldByClass(TcExecutionDetailsBox.class);
-	}
-	
-	public TcExecutionLogField getTcExecutionLogField() {
-		return getFieldByClass(TcExecutionLogField.class);
-	}
 
-//	public OkButton getOkButton() {
-//		return getFieldByClass(OkButton.class);
-//	}
+    @FormData
+    public String getTestsuiteId() {
+        return testsuiteId;
+    }
 
-	@Order(10000)
-	public class MainBox extends AbstractGroupBox {
-		
-		@Order(1000)
-		public class GeneralBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("Requirement");
-			}
-			
-			@Override
-			public boolean isEnabled() {
-				// set all fields to read-only
-				return false;
-			}
-			
-			@Order(1010)
-			public class ReqDescrField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("RequirementDescription");
-				}
-				
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
 
-				@Override
-				protected boolean getConfiguredMultilineText() {
-					return true;
-				}
+    @FormData
+    public void setTestsuiteId(final String _testsuiteId) {
+        testsuiteId = _testsuiteId;
+    }
 
-				@Override
-				protected boolean getConfiguredWrapText() {
-					return true;
-				}
 
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 256;
-				}
-			}
+    @FormData
+    public String getTestCaseId() {
+        return testCaseId;
+    }
 
-			@Order(1020)
-			public class TestCaseNameField extends AbstractStringField {
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("TC");
-				}
-				
-				@Override
-				protected int getConfiguredGridW() {
-					return 3;
-				}
 
-				@Override
-				protected int getConfiguredMaxLength() {
-					return 128;
-				}
-			}
+    @FormData
+    public void setTestCaseId(String testCaseId) {
+        this.testCaseId = testCaseId;
+    }
 
-			@Order(1030)
-			public class TestCaseExecutionStatusTableField extends AbstractTableField<TestCaseExecutionStatusTableField.Table> {
 
-				@Override
-				protected String getConfiguredLabel() {
-					return TEXTS.get("TCStatus");
-				}
+    @FormData
+    public String getTestCaseStatus() {
+        return testCaseStatus;
+    }
 
-				@Override
-				protected int getConfiguredGridH() {
-					return 1;
-				}
-				
-				@Override
-				protected int getConfiguredGridW() {
-					return 2;
-				}
-				
 
-				public class Table extends AbstractTable {
-					
-					@Override
-					protected boolean getConfiguredHeaderVisible() {
-						// do not show headline
-						return true;
-					}
-					
-					public ProgressColumn getProgressColumn() {
-						return getColumnSet().getColumnByClass(ProgressColumn.class);
-					}
+    @FormData
+    public void setTestCaseStatus(String testCaseStatus) {
+        this.testCaseStatus = testCaseStatus;
+    }
 
-					public TcStatusColumn getTcStatusColumn() {
-						return getColumnSet().getColumnByClass(TcStatusColumn.class);
-					}
 
-					@Order(1000)
-					public class TcStatusColumn extends AbstractStringColumn {
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("TCStatus");
-						}
+    @FormData
+    public int getTestCaseProgress() {
+        return testCaseProgress;
+    }
 
-						@Override
-						protected int getConfiguredWidth() {
-							return 200;
-						}
-					}
 
-					@Order(2000)
-					public class ProgressColumn extends AbstractIntegerColumn {
-						@Override
-						protected String getConfiguredHeaderText() {
-							return TEXTS.get("Progress");
-						}
-						@Override
-						protected int getConfiguredHorizontalAlignment() {
-							// left alignment
-							return -1;
-						}
+    @FormData
+    public void setTestCaseProgress(int tcProgress) {
+        testCaseProgress = tcProgress;
 
-						@Override
-						protected int getConfiguredWidth() {
-							return 200;
-						}
-						
-						@Override
-						protected String getConfiguredBackgroundEffect() {
-							return BackgroundEffect.BAR_CHART;
-						}
-						
-					}
-				}
-			}
-		}
-		
-		@Order(2000)
-		public class TcExecutionDetailsBox extends AbstractGroupBox {
-			@Override
-			protected String getConfiguredLabel() {
-				return TEXTS.get("TCExecutionDetails");
-			}
-			
-			@Order(1000)
-			public class DetailsHorizontalSplitBox extends AbstractSplitBox {
-				@Override
-				protected boolean getConfiguredSplitHorizontal() {
-					// split horizontal
-					return false;
-				}
-				
-				@Override
-				protected double getConfiguredSplitterPosition() {
-				return 0.4;
-				}
+        getTcProgressField().setValue(getTcProgressField().createHtmlContent(testCaseProgress));
 
-				@Order(2000)
-				public class TcExecutionLogField extends AbstractStringField {
-					@Override
-					protected String getConfiguredLabel() {
-						return TEXTS.get("TcExecutionLog");
-					}
-										
-					@Override
-					protected int getConfiguredGridH() {
-						return 5;
-					}
-					
-					@Override
-					protected boolean getConfiguredMultilineText() {
-						return true;
-					}
-					
-					@Override
-					protected int getConfiguredMaxLength() {
-						return Integer.MAX_VALUE;
-					}
-					
-					@Override
-					public boolean isEnabled() {
-						// set to r/w to activate the scrollbars
-						return true;
-					}
-				}
-			}
-		}
+    }
 
-//		@Order(100000)
-//		public class OkButton extends AbstractOkButton {
-//		}
-//
-//		@Order(101000)
-//		public class CancelButton extends AbstractCancelButton {
-//		}
-		
-		@Order(100000)
-		public class CloseButton extends AbstractButton {
-			
-			  @Override
-			  protected int getConfiguredSystemType() {
-			    return SYSTEM_TYPE_CLOSE;
-			  }
 
-			  @Override
-			  protected String getConfiguredLabel() {
-			    return TEXTS.get("CloseButton");
-			  }
+    @FormData
+    public String getTestCaseVerdict() {
+        return testCaseVerdict;
+    }
 
-			  @Override
-			  protected String getConfiguredKeyStroke() {
-			    return IKeyStroke.ESCAPE;
-			  }
-		}
 
-	}
+    @FormData
+    public void setTestCaseVerdict(String testCaseVerdict) {
+        this.testCaseVerdict = testCaseVerdict;
+    }
 
-	public class ViewHandler extends AbstractFormHandler {
+    @FormData
+    public void setDefaultTcStatusForegroundColor(String color) {
+    	defaultTcStatusForegroundColor = color;
+    }
+    
+    @FormData
+    public String getDefaultTcStatusForegroundColor() {
+    	return defaultTcStatusForegroundColor;
+    }
 
-		@Override
-		protected void execLoad() {
-			ISuTTcService service = BEANS.get(ISuTTcService.class);
-			SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
-			exportFormData(formData);
-			formData = service.load(formData);
-			importFormData(formData);
-			
-			getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a,b) -> b).get());
+    @Override
+    protected int getConfiguredDisplayHint() {
+        return IForm.DISPLAY_HINT_VIEW;
+    }
 
-			setEnabledPermission(new UpdateSuTPermission());
-		}
-	}
 
-	public class ModifyHandler extends AbstractFormHandler {
+    public void startView() {
+        startInternal(new ViewHandler());
+    }
 
-		@Override
-		protected void execLoad() {
-		}
 
-		@Override
-		protected void execStore() {
-		}
-	}
+    public MainBox getMainBox() {
+        return getFieldByClass(MainBox.class);
+    }
 
-	public class NewHandler extends AbstractFormHandler {
 
-		@Override
-		protected void execLoad() {
-		}
+    public GeneralBox getGeneralBox() {
+        return getFieldByClass(GeneralBox.class);
+    }
 
-		@Override
-		protected void execStore() {
-		}
-	}
+
+    public TcDescrField getDescrField() {
+        return getFieldByClass(TcDescrField.class);
+    }
+
+
+    public TcExecutionStatus getTcExecutionStatus() {
+        return getFieldByClass(TcExecutionStatus.class);
+    }
+
+
+    public TcProgressField getTcProgressField() {
+        return getFieldByClass(TcProgressField.class);
+    }
+
+
+    public TcExecutionDetailsBox getTcExecutionDetailsBox() {
+        return getFieldByClass(TcExecutionDetailsBox.class);
+    }
+
+
+    public TcExecutionHistoryTableField getTcExecutionHistoryTableField() {
+        return getFieldByClass(TcExecutionHistoryTableField.class);
+    }
+
+
+    public TcLogField getTcLogField() {
+        return getFieldByClass(TcLogField.class);
+    }
+
+
+    public TcExecutionButton getTcExecutionButton() {
+        return getFieldByClass(TcExecutionButton.class);
+    }
+
+    @Order(10000)
+    public class MainBox extends AbstractGroupBox {
+
+        @Override
+        protected int getConfiguredGridColumnCount() {
+            return 3;
+        }
+
+        @Order(1000)
+        public class GeneralBox extends AbstractGroupBox {
+
+            @Override
+            public boolean isEnabled() {
+                // set all fields to read-only
+                return false;
+            }
+
+            @Order(1010)
+            public class TcDescrField extends AbstractStringField {
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Description");
+                }
+
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 3;
+                }
+
+
+                @Override
+                protected int getConfiguredHeightInPixel() {
+                    return 80;
+                }
+
+
+                @Override
+                protected boolean getConfiguredMultilineText() {
+                    return true;
+                }
+
+
+                @Override
+                protected boolean getConfiguredWrapText() {
+                    return true;
+                }
+
+
+                @Override
+                protected int getConfiguredMaxLength() {
+                    return 2000;
+                }
+            }
+
+            @Order(1031)
+            public class TcExecutionStatus extends AbstractStringField {
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
+
+                @Override
+                protected double getConfiguredGridWeightY() {
+                    return 0;
+                }
+
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("TCStatus");
+                }
+
+
+                @Override
+                public boolean isLabelVisible() {
+                    return true;
+                }
+
+            }
+
+            @Order(1100)
+            public class TcProgressField extends AbstractHtmlField {
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+
+
+                @Override
+                protected int getConfiguredHeightInPixel() {
+                    return 20;
+                }
+
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("TcProgress");
+                }
+
+
+                @Override
+                protected String getConfiguredBackgroundColor() {
+                    return "AABBCC";
+                }
+
+
+                @Override
+                protected boolean getConfiguredLabelVisible() {
+                    return false;
+                }
+
+
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
+                }
+
+
+                @Override
+                protected void execInitField() {
+                    setTestCaseProgress(0);
+                }
+
+
+                protected String createHtmlContent(int progress) {
+                    return HTML.fragment(HTML.body("<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:" + Integer.toString(progress) + "%'>" + Integer.toString(progress) + "%</div></div>")).toPlainText();
+
+                }
+            }
+        }
+
+        @Order(2000)
+        public class TcExecutionDetailsBox extends AbstractGroupBox {
+
+            @Override
+            protected double getConfiguredGridWeightY() {
+                return 1;
+            }
+
+
+            @Override
+            protected int getConfiguredHeightInPixel() {
+                return 700;
+            }
+
+            @Order(1000)
+            public class DetailsHorizontalSplitBox extends AbstractSplitBox {
+                @Override
+                protected boolean getConfiguredSplitHorizontal() {
+                    // split horizontal
+                    return false;
+                }
+
+
+                @Override
+                protected double getConfiguredSplitterPosition() {
+                    return 0.3;
+                }
+
+                @Order(1100)
+                public class TcExecutionHistoryTableField extends AbstractTableField<TcExecutionHistoryTableField.TcExecutionHistoryTable> {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TcExecutionHistory");
+                    }
+
+                    public class TcExecutionHistoryTable extends AbstractTable {
+
+                        @Override
+                        protected boolean getConfiguredMultiSelect() {
+                            // only a single row can be selected
+                            return false;
+                        }
+
+
+                        public FileNameColumn getFileNameColumn() {
+                            return getColumnSet().getColumnByClass(FileNameColumn.class);
+                        }
+
+
+                        public TcVerdictColumn getTcVerdictColumn() {
+                            return getColumnSet().getColumnByClass(TcVerdictColumn.class);
+                        }
+
+                        @Order(1000)
+                        public class FileNameColumn extends AbstractStringColumn {
+
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("FileName");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredMinWidth() {
+                                return 600;
+                            }
+                        }
+
+                        @Order(2000)
+                        public class TcVerdictColumn extends AbstractStringColumn {
+                            @Override
+                            protected String getConfiguredHeaderText() {
+                                return TEXTS.get("TcResult");
+                            }
+
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 100;
+                            }
+                        }
+
+
+                        @Override
+                        protected void execRowsSelected(List<? extends ITableRow> rows) {
+
+                            if (!rows.isEmpty()) {
+                                final String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
+                                // load log file content
+                                final ISuTTcService service = BEANS.get(ISuTTcService.class);
+                                getTcLogField().setValue(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));
+                            }
+                            else {
+                                getTcLogField().setValue(null);
+                            }
+                        }
+
+                    }
+                }
+
+                @Order(1200)
+                public class TcLogField extends AbstractStringField {
+                	
+                	@Override
+                	protected int getConfiguredGridH() {
+                		return 2;
+                	}
+                	
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TcExecutionLog");
+                    }
+
+
+                    @Override
+                    protected boolean getConfiguredMultilineText() {
+                        return true;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredMaxLength() {
+                        return Integer.MAX_VALUE;
+                    }
+
+
+                    @Override
+                    public boolean isEnabled() {
+                        // set to r/w to activate the scrollbars
+                        return true;
+                    }
+                }
+            }
+        }
+
+        @Order(100000)
+        public class CloseButton extends AbstractButton {
+
+            @Override
+            protected int getConfiguredSystemType() {
+                return SYSTEM_TYPE_CLOSE;
+            }
+
+
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("CloseButton");
+            }
+
+
+            @Override
+            protected String getConfiguredKeyStroke() {
+                return IKeyStroke.ESCAPE;
+            }
+        }
+
+        @Order(110000)
+        public class TcExecutionButton extends AbstractButton {
+
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("TCexec");
+            }
+
+            @Override
+            protected void execClickAction() {
+            	
+            	// check the status of the TestEngine
+            	HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
+            	if (hbn.notifyState != HbNotificationState.OK) {
+                    MessageBoxes.createOk().withHeader(TEXTS.get("ExecMsgBoxHeader")).withBody(TEXTS.get("ExecMsgBoxBody")).show();
+                    return;
+            	}
+            	            	
+                // show progress bar
+                getTcProgressField().setVisible(true);
+                // reset tc status foreground color
+                getTcExecutionStatus().setForegroundColor(getDefaultTcStatusForegroundColor());
+                //hide tc execution button
+                this.setVisible(false);
+                
+                // hide TC Execution History Table during TC execution
+                getTcExecutionHistoryTableField().setVisible(false);
+                
+                // clear TC status and progress bar
+                getTcExecutionStatus().setValue("");
+                setTestCaseProgress(0);
+
+                // clear the TC log field
+                if (getTcLogField().getValue() != null) {
+                    getTcLogField().resetValue();
+                }
+
+                // use ModelJobs to asynchronously start test case execution sequence
+                ModelJobs.schedule(new IRunnable() {
+
+                    @Override
+                    public void run() throws Exception {
+                        // before starting the TC, communicate this user's last used log level
+                        final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
+                        final IOptionsService service = BEANS.get(IOptionsService.class);
+                        service.setLogLevel(logLevel);
+                        // now start the TC
+                        final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
+                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId());
+                    }
+                }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+            }
+        }
+    }
+
+    public class ViewHandler extends AbstractFormHandler {
+
+        @Override
+        protected void execLoad() {
+            final ISuTTcService service = BEANS.get(ISuTTcService.class);
+            SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
+            exportFormData(formData);
+            formData = service.load(formData);
+            importFormData(formData);
+           
+            // set result color in the execution history table
+            setTestResultColor();
+            
+            setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
+            
+            // mark the first line of the TC History Table to focus the currently executed test case
+            //getTcExecutionHistoryTableField().getTable().getSelectedRow();
+            
+            getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
+
+            setEnabledPermission(new UpdateSuTPermission());
+        }
+    }
+    
+    public void setTestResultColor() {
+    	// set the color of the test results in TC Execution History Table Field
+        getTcExecutionHistoryTableField().getTable().getRows().forEach(row ->{
+        	Cell cell = row.getCellForUpdate(getTcExecutionHistoryTableField().getTable().getTcVerdictColumn());	
+        	switch (Objects.toString(cell.getValue(), "")) {
+        		case PASSED_VERDICT:
+                	cell.setCssClass("passed-text");
+                	break;
+        		case INCONCLUSIVE_VERDICT:
+                	cell.setCssClass("inconclusive-text");
+                	break;
+        		case FAILED_VERDICT:
+                	cell.setCssClass("failed-text");
+        			break;
+        		default:
+        			;
+        	}
+        });	
+    }
 }

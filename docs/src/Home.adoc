@@ -49,8 +49,6 @@ reading log files and the available test suite.
 Finally there are some guidelines on writing test cases and considerations for
 guture enhancements.
 
-* <<5-1-TcDevelGuide.adoc#,Test Case Development Guide>>
-* <<5-2-Executable-Test-Case-Development-Rules.adoc#,Executable Test Case Development Rules>>
 * <<5-3-Add-new-test-suites.adoc#,Add new test suites>>
 * <<5-4-TClogging.adoc#,Test case logging>>
 

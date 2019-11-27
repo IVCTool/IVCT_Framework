@@ -8,7 +8,7 @@ import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import nato.ivct.gui.shared.sut.ISuTService;
@@ -25,7 +25,7 @@ public class SuTFormTest {
 	@Before
 	public void setup() {
 		SuTFormData answer = new SuTFormData();
-		Mockito.when(m_mockSvc.load(Matchers.any(SuTFormData.class))).thenReturn(answer);
+		Mockito.when(m_mockSvc.load(ArgumentMatchers.any(SuTFormData.class))).thenReturn(answer);
 	}
 
 	// TODO [hzg] add test cases

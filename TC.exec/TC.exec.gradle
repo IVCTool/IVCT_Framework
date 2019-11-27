@@ -36,7 +36,7 @@ task dockerBuildPitchImage(type: DockerBuildImage) {
     dockerFile = project.file('Dockerfile-pi')
     buildArgs.put('version', "${ivctVersion}")
 	inputDir = file('.')
-	tags.add ("ivct/tc-runner:pi-${ivctVersion}")
+	tags.add ("ivct/tc-runner:pi-bare-${ivctVersion}")
 }
 
 task dockerBuildPorticoImage(type: DockerBuildImage) {
@@ -64,7 +64,7 @@ tasks.register ("dockerBuildImage") {
     description = 'Creates docker images for RTIs'
     dependsOn 'dockerBuildPitchImage'
     dependsOn 'dockerBuildPorticoImage'
-    dependsOn 'dockerBuildMakImage'
+    // dependsOn 'dockerBuildMakImage'
 }
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
@@ -80,7 +80,7 @@ dependencies {
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
 
-	compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
+	// compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
 }
 distributions {
     main {

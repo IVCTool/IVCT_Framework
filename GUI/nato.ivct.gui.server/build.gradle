@@ -10,4 +10,6 @@ dependencies {
     compile group: 'org.apache.geronimo.specs', name: 'geronimo-jms_1.1_spec', version:"${geronimoJmsVersion}"
     compile group: 'javax.servlet', name: 'javax.servlet-api', version:"${javaxServletVersion}"
     testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.test', version:"${scoutVersion}"
+	testImplementation	libraries.hamcrest_core
+	testImplementation	libraries.activemqEmbedded
 }

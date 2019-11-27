@@ -17,109 +17,147 @@ package nato.ivct.commander;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import nato.ivct.commander.BadgeDescription.InteroperabilityRequirement;
-
+/**
+ * The CmdListBadges implements the loading of the badge description files. The Command.execute will
+ * load the json files located inside the IVCT_BADGE_HOME_ID folder, and will fill a hashmap with a
+ * badge id as a key, and BadgeDescription as value. A simple badge file will look like the
+ * following example:
+ *
+ * { "id" : "HelloWorld-2017", "version" : "2.0.0", "name" : "HelloWorld Tutorial Badge",
+ * "description" : "This is a simple example for capability badge to test the compliance of an
+ * federate to the hello world federation.", "graphics" : "HelloWorld-2017.png", "dependency" : [],
+ * "requirements" : [ { "id" : "IR-HW-0001", "description" : "Test population growing rate", }, {
+ * "id" : "IP-HW-0002", "description" : "Test inter-country communication", } ] }
+ *
+ * @author hzg
+ *
+ */
 public class CmdListBadges implements Command {
-	public HashMap<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
 
-	/**
-	 * The structure of a badge description looks like:
-	 * 
-	 * { "id" : "HelloWorld", "version" : "0.4.0", "name" : "HelloWorld Tutorial
-	 * Badge", "description" : "This is a simple example for ...", "graphics" :
-	 * "/some/icon.png", "tsRunTimeFolder" :
-	 * "TS_HelloWorld-0.4.0/TS_HelloWorld/bin", "tsLibTimeFolder" :
-	 * "TS_HelloWorld-0.4.0/TS_HelloWorld/lib", "dependency" : ["HLA-BASE-2016"],
-	 * "requirements" : [ { "id" : "IR-HW-0001", "description" : "Test population
-	 * growing rate", "TC" : "de.fraunhofer.iosb.tc_helloworld.TC0001" }, { "id" :
-	 * "IP-HW-0002", "description" : "Test inter-country communication", "TC" :
-	 * "de.fraunhofer.iosb.tc_helloworld.TC0002" } ] }
-	 */
-	@Override
-	public void execute() {
-		Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID " + Factory.IVCT_BADGE_HOME_ID);
+    public Map<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
+    private Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
+
+    @Override
+    public void execute() {
+        Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID = " + Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
-		File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
-		String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
-		if (dir.exists() == false){
-			Factory.LOGGER.error("badge: {} does not exist", dirName);
-			return;
-		}
-		if (dir.isDirectory()) {
-			Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
+        File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
+        String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
+        if (dir.exists() == false) {
+            Factory.LOGGER.error("badge: {} does not exist", dirName);
+            return;
+        }
+        
+        // clear maps to allow re-execution of the command
+        badgeMap.clear();
+        irMap.clear();
+        
+        if (dir.isDirectory()) {
+            Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
-			File[] filesList = dir.listFiles();
-			for (File file : filesList) {
-				Object obj;
-				if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
-					FileReader fr = null;
-					try {
-						BadgeDescription badge = new BadgeDescription();
-						fr = new FileReader(file);
-						obj = parser.parse(fr);
-						JSONObject jsonObj = (JSONObject) obj;
-						badge.ID = (String) jsonObj.get("id");
-						badge.version = (String) jsonObj.get("version");
-						badge.name = (String) jsonObj.get("name");
-						badge.description = (String) jsonObj.get("description");
-						badge.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
-						badge.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
-						badge.cbVisual = (String) jsonObj.get("graphics");
-						// if the badge defines an icon then try to get it from the icon folder 
-						// (respectively from its default folder)
-						if (badge.cbVisual != null) {
-							Path iconFile = Paths.get(iconsFolder, badge.cbVisual);
-							if (iconFile.toFile().exists())
-								badge.cbVisual = iconFile.toString();
-							else
-							    badge.cbVisual = null;
-						}
-						JSONArray depend = (JSONArray) jsonObj.get("dependency");
-						if (depend != null) {
-							badge.dependency = new String[depend.size()];
-							for (int i = 0; i < depend.size(); i++) {
-								badge.dependency[i] = depend.get(i).toString();
-							}
-						} else {
-							badge.dependency = null;
-						}
-						JSONArray requirements = (JSONArray) jsonObj.get("requirements");
-						if (requirements != null) {
-							badge.requirements = new InteroperabilityRequirement[requirements.size()];
-							for (int i = 0; i < requirements.size(); i++) {
-								JSONObject req = (JSONObject) requirements.get(i);
-								badge.requirements[i] = badge.new InteroperabilityRequirement();
-								badge.requirements[i].ID = (String) req.get("id");
-								badge.requirements[i].description = (String) req.get("description");
-								badge.requirements[i].TC = (String) req.get("TC");
-							}
-						} else {
-							badge.requirements = null;
-						}
+            File[] filesList = dir.listFiles();
+            for (File file : filesList) {
+                Factory.LOGGER.trace("reading badge description: " + file.getAbsolutePath());
+                Object obj;
+                if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
+                    FileReader fr = null;
+                    try {
+                        BadgeDescription badge = new BadgeDescription();
+                        fr = new FileReader(file);
+                        obj = parser.parse(fr);
+                        JSONObject jsonObj = (JSONObject) obj;
+                        badge.ID = (String) jsonObj.get("id");
+                        badge.version = (String) jsonObj.get("version");
+                        badge.name = (String) jsonObj.get("name");
+                        badge.description = (String) jsonObj.get("description");
+                        badge.cbVisual = (String) jsonObj.get("graphics");
+                        // if the badge defines an icon then try to get it from the icon folder
+                        // (respectively from its default folder)
+                        if (badge.cbVisual != null) {
+                            Path iconFile = Paths.get(iconsFolder, badge.cbVisual);
+                            if (iconFile.toFile().exists()) {
+                                badge.cbVisual = iconFile.toString();
+                            } else {
+                                badge.cbVisual = null;
+                            }
+                        }
+                        JSONArray depend = (JSONArray) jsonObj.get("dependency");
+                        if (depend != null) {
+                            badge.dependency = new HashSet<String>();
+                            for (int i = 0; i < depend.size(); i++) {
+                            	if (badge.dependency.contains(depend.get(i).toString()) == false) {
+                            		badge.dependency.add(depend.get(i).toString());
+                            	}
+                            }
+                        } else {
+                            badge.dependency = null;
+                        }
+                        JSONArray requirements = (JSONArray) jsonObj.get("requirements");
+                        badge.requirements = new HashMap <String, InteroperabilityRequirement>();
+                        if (requirements != null) {
+                            for (int i = 0; i < requirements.size(); i++) {
+                                JSONObject req = (JSONObject) requirements.get(i);
+                                InteroperabilityRequirement ir = new InteroperabilityRequirement();
+                                ir.ID = (String) req.get("id");
+                                ir.description = (String) req.get("description");
+                                badge.requirements.put(ir.ID, ir);
+                                irMap.put(ir.ID, ir);
+                            }
+                        }
 
-						badgeMap.put(badge.ID, badge);
-						fr.close();
-						fr = null;
-					} catch (IOException | ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+                        this.badgeMap.put(badge.ID, badge);
+                        fr.close();
+                        fr = null;
+                    } catch (IOException | ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
 
-				}
-			}
-		} else {
-			Factory.LOGGER.error("badge: {} value not a folder", dirName);
-			return;
-		}
-	}
+                }
+            }
+        } else {
+            Factory.LOGGER.error("badge: {} value not a folder", dirName);
+            return;
+        }
+    }
+
+    public void collectIrForCs(Set<String> ir_set, Set<String> cs) {
+        if (this.badgeMap == null) {
+            return;
+        }
+
+        for (String badge_id : cs) {
+            BadgeDescription b = this.badgeMap.get(badge_id);
+            if (b == null) {
+            	continue;
+            }
+            // collect badge requirements
+            for (Map.Entry<String, InteroperabilityRequirement> entry : b.requirements.entrySet()) {
+                ir_set.add(entry.getKey());
+            }
+            // collect recursively from dependend badges
+            collectIrForCs(ir_set, b.dependency);
+        }
+    }
+    
+    /**
+     * 
+     * @param irName the id of the interoperability requirement
+     * @return the InteroperabilityRequirement value
+     */
+    public InteroperabilityRequirement getIR (String irName) {
+    	return irMap.get(irName);
+    }
 }
