@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  21.11.2019) 
+(v  26.11.2019) 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -60,15 +60,17 @@ public class CmdHeartbeatListen implements MessageListener, Command {
 
   private JSONParser jsonParser = new JSONParser();
 
-  private JSONObject jsonObject = new JSONObject();
-
   private HbMsgState messageState = HbMsgState.UNKNOWN;
+  
   private String desiredHeartBeatSenderClass;
+  
+  // we have to organize timestamps and messages from different HB_Sender
+  // for this we use 2 maps :  lastTimestampsMap and jsonObjectsMap
 
-  // eine Datenstruktur, in die wir verschiedene Timestamps eintragen koennen
+  // a data structure to insert different timestamps
   HashMap<String, Timestamp> lastTimestampsMap = new HashMap<String, Timestamp>();
 
-  // eine Datenstruktur, in die wir verschiedene JsonObjecte eintragen koennen
+  // a data structure to insert different JsonObjects
   HashMap<String, JSONObject> jsonObjectsMap = new HashMap<String, JSONObject>();
 
   // the referenz to the caller
@@ -76,8 +78,6 @@ public class CmdHeartbeatListen implements MessageListener, Command {
 
   public CmdHeartbeatListen(OnCmdHeartbeatListen caller) {
     this(caller, null);
-    // System.out.println ("client is delivered to the constructor
-    // CmdHeartbeatListen : " +client); // Debug
   }
 
   // the client can use this with a special HeartbeatSender to observe
@@ -91,11 +91,10 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     Factory.initialize();
     Factory.LOGGER.trace("subscribing the Heartbeat listener");
     Factory.jmsHelper.setupTopicListener(CmdHeartbeatSend.HB_MSG_TOPIC, this);
-    // if (desiredHeartBeatSenderClass != null) monitor();
     monitor();
   }
     
-  // @SuppressWarnings("unchecked")
+
   @Override
   public void onMessage(Message message) {
     if (message instanceof TextMessage) {
@@ -103,17 +102,15 @@ public class CmdHeartbeatListen implements MessageListener, Command {
 
       try {
         final String content = textMessage.getText();
-        // logger.DEBUG("####### CmdHeartbeatListener gets from ActiveMQ: " + content );
-        // // Debug
+        // logger.DEBUG("####### CmdHeartbeatListener gets from ActiveMQ: " + content ); // Debug
 
+        // put the contents of the Message in a JsonObject
         JSONObject jMessage = (JSONObject) jsonParser.parse(content);
-
+                
         // get the HB_Sender-name from the JsonObject
         String senderName = (String) jMessage.get(CmdHeartbeatSend.HB_SENDER);
-        // logger.debug("####### in OnMessage ist SenderName " +senderName); // Debug
 
-        /*
-         * if we got a desiredHeartBeatSenderClass but in the Message of ActiveMQ in
+        /* if we got a desiredHeartBeatSenderClass but in the Message of ActiveMQ in
          * "HeartbeatSender" this name is not found, we discard this message
          */
         if (desiredHeartBeatSenderClass != null && !Optional.ofNullable(jMessage.get(CmdHeartbeatSend.HB_SENDER)).orElse("").equals(desiredHeartBeatSenderClass)) {
@@ -122,20 +119,15 @@ public class CmdHeartbeatListen implements MessageListener, Command {
           jMessage = null;
           return;
         }
-      
-        // we have to organize timestamps and messages from different HB_Sender
-        // so we use 2 maps : jsonObjectsMap and lastTimestampsMap
-
-        // put the contents of the message in jsonObject-Map
+        
+        // put the JsonObject with the message in the jsonObject-Map
         jsonObjectsMap.put(senderName, jMessage);
 
-        // we need some kind of incoming timestamp
+        // we need some kind of timestamp
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        // put the timestamp in timestamp-Map
+        // put the timestamp in the timestamp-Map
         lastTimestampsMap.put(senderName, now);
-
-        // this.sendingPeriod = (Long) jsonObjectsMap.get(senderName).get(CmdHeartbeatSend.HB_LASTSENDINGPERIOD);
 
       } catch (final Exception e) {
         Factory.LOGGER.error("onMessage: problems with getText", e);
@@ -143,10 +135,9 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     }
   }   
    
- 
         
   /*
-   * a method to monitor if there even are messages and which, observe the
+   * a method to monitor if there even are messages, observe the
    * frequency of incomming messages, draw conclusions of this and give back the
    * necessary Information
    */
@@ -165,14 +156,14 @@ public class CmdHeartbeatListen implements MessageListener, Command {
         if (!lastTimestampsMap.isEmpty() && (!jsonObjectsMap.isEmpty())) {
 
           // for every Entry in lastTimestampsMap
-          for (HashMap.Entry<String, Timestamp> timestampEintrag : getLastTimestampsMap().entrySet()) {
-            //logger.debug("####### in Monitor HB_Sender is now : " + timestampEintrag.getKey()); // Debug
+          for (HashMap.Entry<String, Timestamp> timestampEntry : getLastTimestampsMap().entrySet()) {
+            //logger.debug("in Monitor HB_Sender is now : " + timestampEintrag.getKey()); // Debug
 
             // get the HB_Sender for this message
-            String tempHB_Sender = timestampEintrag.getKey();
+            String tempHB_Sender = timestampEntry.getKey();
 
             // get the incomming timestamp of this message
-            Timestamp myLast = timestampEintrag.getValue();
+            Timestamp myLast = timestampEntry.getValue();
 
             // get the JsonObject with the message for this HB_Sender from the jsonObjectsMap
             JSONObject myJsonObject = getJsonObjectsMap().get(tempHB_Sender);
@@ -196,7 +187,7 @@ public class CmdHeartbeatListen implements MessageListener, Command {
               setMessageState(HbMsgState.UNKNOWN);
             }
       
-            myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, messageState.state());
+            myJsonObject.put(CmdHeartbeatSend.HB_MESSAGESTATE, getMessageState().state());
 
             // give the enhanced json-object back to the caller
             sendbackToQuerryClient(myJsonObject);
@@ -234,8 +225,6 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     
   //  getter und Setter
     
-    
-    
   private HashMap<String,Timestamp> getLastTimestampsMap() {
     return lastTimestampsMap;
   }
@@ -252,10 +241,5 @@ public class CmdHeartbeatListen implements MessageListener, Command {
   public void setMessageState(HbMsgState messageState) {
     this.messageState = messageState;
   }
-
-  public JSONObject getJsonObject() {
-    return jsonObject;
-  }
-
     
 }
