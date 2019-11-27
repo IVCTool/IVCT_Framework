@@ -27,7 +27,7 @@ import nato.ivct.gui.shared.sut.SuTCbNodePageData;
 
 
 public class SuTCbService implements ISuTCbService {
-    private static final Logger                        LOG    = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger                       LOG    = LoggerFactory.getLogger(ServerSession.class);
     private static HashMap<String, SuTCbNodePageData> cap_hm = new HashMap<>();
 
     @Override
@@ -49,8 +49,13 @@ public class SuTCbService implements ISuTCbService {
 
     @Override
     public boolean copyUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
+
+        Path filePath = Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename());
+        boolean fileExist = Files.exists(filePath);
+
         try {
-            Files.copy(new ByteArrayInputStream(file.getContent()), Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()), StandardCopyOption.REPLACE_EXISTING);
+
+            Files.copy(new ByteArrayInputStream(file.getContent()), filePath, StandardCopyOption.REPLACE_EXISTING);
         }
         catch (final IOException exc) {
             LOG.error("error when copying file %", file.getFilename());
@@ -58,9 +63,10 @@ public class SuTCbService implements ISuTCbService {
             return false;
         }
 
-        return true;
+        return !fileExist;
     }
-    
+
+
     @Override
     public boolean deleteUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
         try {
