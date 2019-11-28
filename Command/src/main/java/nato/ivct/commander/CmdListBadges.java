@@ -121,7 +121,6 @@ public class CmdListBadges implements Command {
                         fr.close();
                         fr = null;
                     } catch (IOException | ParseException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 

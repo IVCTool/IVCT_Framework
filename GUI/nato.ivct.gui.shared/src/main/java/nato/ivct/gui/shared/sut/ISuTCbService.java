@@ -17,6 +17,9 @@ public interface ISuTCbService extends IService {
 
 
     boolean copyUploadedTcExtraParameterFile(String sutId, String tsId, BinaryResource file);
+    
+   
+    boolean deleteUploadedTcExtraParameterFile(String sutId, String tsId, BinaryResource file);
 
 
     BinaryResource getFileContent(String sutId, String tsId, String fileName);

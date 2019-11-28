@@ -261,13 +261,11 @@ public class TsForm extends AbstractForm {
 							
 							@Override
 							protected boolean getConfiguredSortEnabled() {
-								// TODO Auto-generated method stub
 								return false;
 							}
 							
 							@Override
 							public void sort() {
-								// TODO Auto-generated method stub
 								super.sort();
 							}
 							
@@ -360,7 +358,6 @@ public class TsForm extends AbstractForm {
 							
 							@Override
 							protected boolean getConfiguredSortEnabled() {
-								// TODO Auto-generated method stub
 								return false;
 							}
 						}

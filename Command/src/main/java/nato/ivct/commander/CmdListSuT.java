@@ -119,14 +119,12 @@ public class CmdListSuT implements Command {
                     this.sutMap.put(sut.ID, sut);
                     Factory.LOGGER.debug("found SuT description: " + sut.toString());
                 } catch (IOException | ParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } finally {
                     if (fReader != null) {
                         try {
                             fReader.close();
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -202,14 +200,12 @@ public class CmdListSuT implements Command {
             }
             this.sutMap.put(sut.ID, sut);
         } catch (IOException | ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
             if (fReader != null) {
                 try {
                     fReader.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                     return null;
                 }
