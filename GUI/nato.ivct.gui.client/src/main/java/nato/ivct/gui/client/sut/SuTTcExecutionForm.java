@@ -20,16 +20,12 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-// import
-// org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-// import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
-import org.eclipse.scout.rt.client.ui.tile.fields.AbstractTableFieldTile.TableField.Table;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
@@ -49,6 +45,7 @@ import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox
 import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.IOptionsService;
+import nato.ivct.gui.shared.LogLevelLookupCall;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
@@ -448,7 +445,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                         @Override
                         protected void execRowsSelected(List<? extends ITableRow> rows) {
                             // clear table
-                            //getTcLogField().getTable().discardAllRows();
+                            // activate!!! --> getTcLogField().getTable().discardAllRows();
                             if (!rows.isEmpty()) {
                                 // row is selected
                                 final String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
@@ -458,41 +455,8 @@ public class SuTTcExecutionForm extends AbstractForm {
                                 // getTcLogField().addLine(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));                  
                             }
                         }
-
                     }
                 }
-
-                //                @Order(1200)
-                //                public class TcLogField extends AbstractStringField {
-                //                	
-                //                	@Override
-                //                	protected int getConfiguredGridH() {
-                //                		return 2;
-                //                	}
-                //                	
-                //                    @Override
-                //                    protected String getConfiguredLabel() {
-                //                        return TEXTS.get("TcExecutionLog");
-                //                    }
-                //
-                //
-                //                    @Override
-                //                    protected boolean getConfiguredMultilineText() {
-                //                        return true;
-                //                    }
-                //
-                //
-                //                    @Override
-                //                    protected int getConfiguredMaxLength() {
-                //                        return Integer.MAX_VALUE;
-                //                    }
-                //
-                //
-                //                    @Override
-                //                    public boolean isEnabled() {
-                //                        // set to r/w to activate the scrollbars
-                //                        return true;
-                //                    }
 
                 @Order(1200)
                 public class TcLogField extends AbstractTableField<TcLogField.TcLogFieldTable> {
@@ -515,6 +479,10 @@ public class SuTTcExecutionForm extends AbstractForm {
                         tbl.getLogLevelColumn().setValue(row, logLevel);
                         tbl.getTimeStampColumn().setValue(row, timeStamp);
                         tbl.getLogMsgColumn().setValue(row, logMsg);
+                        if (LogLevelLookupCall.LogLevels.ERROR.name().equalsIgnoreCase(logLevel)) {
+                            row.setBackgroundColor("efa9b5");
+                        }
+
                         tbl.selectLastRow();
                         tbl.scrollToSelection();
 
@@ -654,15 +622,8 @@ public class SuTTcExecutionForm extends AbstractForm {
                 getTcExecutionStatus().setValue("");
                 setTestCaseProgress(0);
 
-                //                // clear the TC log field
-                //                if (getTcLogField().getValue() != null) {
-                //                    getTcLogField().resetValue();
-                //                }
-
                 // clear the TC log field
-                if (getTcLogField().getTableStatus() != null) {
-                    getTcLogField().getTable().discardAllRows();
-                }
+                getTcLogField().getTable().discardAllRows();
 
                 // use ModelJobs to asynchronously start test case execution sequence
                 ModelJobs.schedule(new IRunnable() {
@@ -696,9 +657,6 @@ public class SuTTcExecutionForm extends AbstractForm {
             setTestResultColor();
 
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
-
-            // mark the first line of the TC History Table to focus the currently executed test case
-            //getTcExecutionHistoryTableField().getTable().getSelectedRow();
 
             getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
 
