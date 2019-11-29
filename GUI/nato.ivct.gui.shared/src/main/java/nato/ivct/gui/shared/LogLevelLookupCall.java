@@ -14,7 +14,7 @@ public class LogLevelLookupCall extends LocalLookupCall<String> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public enum LogLevels {
+	public static enum LogLevels {
 		TRACE("trace"), DEBUG("debug"), INFO("info"), WARNING("warn"), ERROR("error");
 		private String key;
 		
