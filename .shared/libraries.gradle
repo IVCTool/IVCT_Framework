@@ -12,7 +12,7 @@ ext {
         junitVersion = '4.+'
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-        logbackVersion = '1.1.7'
+        logbackVersion = '1.2.3'
         slf4jVersion = '1.7.10'
 		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
@@ -29,14 +29,14 @@ ext {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
         libraries = [
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
+                // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
                 logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
+                // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
                 logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
-
-                // logback_ext_json:               "ch.qos.logback.extensions:logback-ext-json-classic:0.1.4",
-                // logback_ext:                    "runtime ch.qos.logback.extensions:logback-ext-jackson:0.1.4",
-                // jackson_mapper_asl:             "org.codehaus.jackson:jackson-mapper-asl:1.9.5",
-
-                logback_ext:                    "org.logback-extensions:logback-ext-parent:0.1.4",
+                // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+                logback_contrib:                "ch.qos.logback.contrib:logback-json-classic:0.1.5",
+                // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+                logback_json_classic:            "ch.qos.logback.contrib:logback-json-classic:0.1.5",
 
                 slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
                 slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",

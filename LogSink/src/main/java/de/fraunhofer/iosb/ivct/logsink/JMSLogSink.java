@@ -23,20 +23,16 @@ import javax.naming.NamingException;
 
 import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.contrib.json.JsonLayoutBase;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
-import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnJsonLogMsgListener;
-import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendLogMsg;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
@@ -51,7 +47,7 @@ public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnSta
 
     static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
-    private final Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
+    private final Logger logger = (Logger) LoggerFactory.getLogger(JMSLogSink.class);
     // private Logger log;
     private final Map<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<>();
     private final Map<String, String>                      tcLogMap    = new HashMap<>();
@@ -90,7 +86,7 @@ public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnSta
             final LayoutWrappingEncoder<ILoggingEvent> ple = new ch.qos.logback.core.encoder.LayoutWrappingEncoder<ILoggingEvent>();
 
             JsonLayoutBase<ILoggingEvent> layout = new JsonLayoutBase<ILoggingEvent>() {
-				
+
 				@Override
 				protected Map toJsonMap(ILoggingEvent e) {
 					JSONObject m = null;
@@ -175,7 +171,7 @@ public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnSta
             final SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
         	String sut = msg.get(CmdSendLogMsg.LOG_MSG_SUT).toString();
         	String badge = msg.get(CmdSendLogMsg.LOG_MSG_BADGE).toString();
-            
+
             final String tcLogDir = sutPathsFiles.getSutLogPathName(sut, badge);
             final Logger log = getTestCaseLogger(tc, sut, tcLogDir);
             log.trace(msg.toString(),msg);
