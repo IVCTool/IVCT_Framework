@@ -12,7 +12,7 @@ ext {
         junitVersion = '4.+'
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-        logbackVersion = '1.1.3'
+        logbackVersion = '1.1.7'
         slf4jVersion = '1.7.10'
 		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
@@ -31,6 +31,12 @@ ext {
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
                 logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
                 logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
+
+                // logback_ext_json:               "ch.qos.logback.extensions:logback-ext-json-classic:0.1.4",
+                // logback_ext:                    "runtime ch.qos.logback.extensions:logback-ext-jackson:0.1.4",
+                // jackson_mapper_asl:             "org.codehaus.jackson:jackson-mapper-asl:1.9.5",
+
+                logback_ext:                    "org.logback-extensions:logback-ext-parent:0.1.4",
 
                 slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
                 slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",

@@ -34,8 +34,16 @@ dependencies {
 	compile		libraries.jsonSimple
 	compile		libraries.jsonIo
 
-	runtime		libraries.logback_classic
-	runtime		libraries.logback_core
+    // runtime libraries.logback_ext_json
+    // runtime libraries.logback_ext
+    // runtime libraries.jackson_mapper_asl
+
+    runtime libraries.logback_ext
+
+	// runtime		libraries.logback_classic
+	// runtime		libraries.logback_core
+    // runtime     libraries.logback_jackson
+    // runtime     libraries.jackson_databindkey
 }
 
 distributions {
