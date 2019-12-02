@@ -33,6 +33,8 @@ import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.group.AbstractGroup;
 import org.eclipse.scout.rt.client.ui.group.IGroup;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
@@ -46,13 +48,12 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.data.tile.TileColorScheme;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
 
-import com.cedarsoftware.util.io.JsonWriter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
@@ -93,7 +94,6 @@ public class SuTCbForm extends AbstractForm {
 
     // unique table row ID generator
     private final AtomicLong m_nextRowId = new AtomicLong();
-
 
     @Override
     protected String getConfiguredTitle() {
@@ -305,7 +305,6 @@ public class SuTCbForm extends AbstractForm {
                         // show test case form in a separate form
                         @Override
                         protected void execTileAction(ITile tile) {
-                            // TODO
                             // open TC execution form
                             final SuTTcExecutionForm form = new SuTTcExecutionForm();
                             form.setSutId(getSutId());
@@ -439,7 +438,6 @@ public class SuTCbForm extends AbstractForm {
                     public class SutTcParameterTableField extends AbstractTableField<SutTcParameterTableField.SuTTcParameterTable> {
                         List<ITableRow> mRows = new ArrayList<>();
 
-
                         @Override
                         protected int getConfiguredGridH() {
                             return 3;
@@ -469,6 +467,46 @@ public class SuTCbForm extends AbstractForm {
                             getSutTcParameterTableField().getTable().getMenuByClass(SaveMenu.class).setVisible(false);
                         }
 
+                        //                        private JsonElement wrap(JsonElement element, ITableRow row) {
+                        //                        	final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+                        //                        	final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                        //                        	if (key == null)
+                        //                        		return element;
+                        //                        	
+                        //                        	com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+                        //                        	object.add(key, element);
+                        //                        	return object;
+                        //                        }
+
+
+                        private JsonElement transformRow(ITableRow currentRow, final List<ITableRow> rows) {
+                            final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
+                            Object rowId = currentRow.getCellValue(tbl.getIdColumn().getColumnIndex());
+
+                            String value = "";
+                            Object cellValue = currentRow.getCellValue(tbl.getParameterValueColumn().getColumnIndex());
+                            if (cellValue != null && !cellValue.toString().isEmpty())
+                                value = currentRow.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString();
+
+                            if ("[".equals(value)) {
+                                JsonArray array = new JsonArray();
+                                rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                                    //array.add(wrap(transformRow(row, rows), row));
+                                    array.add(transformRow(row, rows));
+                                });
+                                return array;
+                            }
+                            if ("{".equals(value)) {
+                                com.google.gson.JsonObject object = new com.google.gson.JsonObject();
+                                rows.stream().filter(row -> Objects.equals(rowId, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                                    final String key = row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()).toString();
+                                    object.add(key, transformRow(row, rows));
+                                });
+                                return object;
+                            }
+                            return new JsonPrimitive(value);
+                        }
+
 
                         // Save the TC parameters from the SuTCbParameterTable
                         @Override
@@ -476,53 +514,14 @@ public class SuTCbForm extends AbstractForm {
                             final SuTTcParameterTable tbl = getSutTcParameterTableField().getTable();
                             final List<ITableRow> rows = tbl.getRows();
 
-                            // map to record all JSONObject and all JSONArray
-                            final HashMap<ITableRow, Object> jsonElements = new HashMap<>();
-
-                            // root JSON object
-                            final JSONObject jsonObjects = new JSONObject();
-                            // record root JSON object
-                            jsonElements.put(null, jsonObjects);
-
-                            // interate over all children and grand-children of the root object
-                            for (final ITableRow row: rows) {
-                                final ITableRow parentRow = row.getParentRow();
-
-                                final String key = row.getCell(tbl.getParameterNameColumn()).getText();
-                                final String value = row.getCell(tbl.getParameterValueColumn()).getText();
-
-                                // if the parent object is already known, then use it. Otherwise create it
-                                final Object jsonParentElement = jsonElements.getOrDefault(parentRow, jsonObjects);
-                                Object jsonElement = null;
-
-                                if ("[".equals(value)) {
-                                    jsonElement = new JSONArray();
-                                    jsonElements.put(row, jsonElement);
-                                }
-                                else if ("{".equals(value)) {
-                                    jsonElement = new JSONObject();
-                                    jsonElements.put(row, jsonElement);
-                                }
-                                else {
-                                    if (jsonParentElement instanceof JSONArray && key != null) {
-                                        jsonElement = new JSONObject();
-                                        ((JSONObject) jsonElement).put(key, value);
-                                    }
-                                    else
-                                        jsonElement = value;
-                                }
-
-                                if (jsonParentElement instanceof JSONArray)
-                                    ((JSONArray) jsonParentElement).add(jsonElement);
-                                else
-                                    ((JSONObject) jsonParentElement).put(key != null ? key : "", jsonElement);
-                            }
+                            com.google.gson.JsonObject rootObject = new com.google.gson.JsonObject();
+                            rows.stream().filter(row -> Objects.equals(null, row.getCellValue(tbl.getParentIdColumn().getColumnIndex()))).forEach(row -> {
+                                final String key = Objects.toString(row.getCellValue(tbl.getParameterNameColumn().getColumnIndex()));
+                                rootObject.add(key, transformRow(row, rows));
+                            });
 
                             final ISuTCbService service = BEANS.get(ISuTCbService.class);
-                            final Map<String, Object> options = new HashMap<>();
-                            options.put(JsonWriter.PRETTY_PRINT, true);
-                            options.put(JsonWriter.TYPE, false);
-                            service.storeTcParams(getSutId(), getActiveTsId(), JsonWriter.objectToJson(jsonObjects, options));
+                            service.storeTcParams(getSutId(), getActiveTsId(), rootObject.toString());
 
                             // call super
                             super.doSave();
@@ -548,50 +547,53 @@ public class SuTCbForm extends AbstractForm {
                             final ISuTCbService service = BEANS.get(ISuTCbService.class);
                             final String sParams = service.loadTcParams(getSutId(), getActiveTsId());
                             if (sParams != null) {
-                                // param file does not exist
-                                final JSONParser parser = new JSONParser();
-                                Object jParams = null;
-                                try {
-                                    jParams = parser.parse(sParams);
-                                }
-                                catch (final ParseException e) {
-                                    e.printStackTrace();
-                                }
-
-                                if (jParams != null) {
-                                    addJsonObjectToTable(null, jParams);
-                                }
+                                // param file exists
+                                final JsonElement jParams = JsonParser.parseString(sParams);
+                                addJsonObjectToTable(null, jParams);
                             }
 
                             return mRows;
                         }
 
 
-                        private void addJsonObjectToTable(final ITableRow parentRow, final Object jObject) {
-                            if (jObject instanceof JSONObject) {
-                                if (((JSONObject) jObject).isEmpty())
-                                    return;
-
+                        private void addJsonObjectToTable(final ITableRow parentRow, final JsonElement jObject) {
+                            if (jObject.isJsonObject()) {
                                 // handle JSONObject of the form (key:value)
-                                ((JSONObject) jObject).forEach((key, value) -> {
-                                    if (value instanceof JSONObject || value instanceof JSONArray) {
+                                jObject.getAsJsonObject().keySet().forEach(key -> {
+                                    final JsonElement value = jObject.getAsJsonObject().get(key);
+                                    if (value.isJsonObject() || value.isJsonArray()) {
                                         // value is itself a JSONObject or JSONArray
-                                        final ITableRow newRow = addElementToTable(parentRow, key.toString(), value instanceof JSONObject ? "{" : "[");
+                                        final ITableRow newRow = addElementToTable(parentRow, key.toString(), value.isJsonObject() ? "{" : "[");
                                         addJsonObjectToTable(newRow, value);
                                     }
                                     else {
                                         // value is a simple object
-                                        addElementToTable(parentRow, key.toString(), Objects.toString(value, null));
+                                        addElementToTable(parentRow, key.toString(), value.getAsString());
                                     }
                                 });
                             }
-                            else if (jObject instanceof JSONArray) {
-                                // handle as JSONArray
-                                ((JSONArray) jObject).forEach(value -> addJsonObjectToTable(parentRow, value));
+                            else if (jObject.isJsonArray()) {
+                                // handle a JSONArray
+                                jObject.getAsJsonArray().forEach(value -> {
+                                    if (value.isJsonArray()) {
+                                        final ITableRow newRow = addElementToTable(parentRow, null, "[");
+                                        addJsonObjectToTable(newRow, value);
+                                    }
+                                    else {
+                                        // handle a JSONObject
+                                        if (value.isJsonObject()) {
+                                            final ITableRow newRow = addElementToTable(parentRow, null, "{");
+                                            addJsonObjectToTable(newRow, value);
+                                        }
+                                        else {
+                                            addJsonObjectToTable(parentRow, value);
+                                        }
+                                    }
+                                });
                             }
                             else {
                                 // handle as element without having a key
-                                addElementToTable(parentRow, null, jObject.toString());
+                                addElementToTable(parentRow, null, jObject.getAsString());
                             }
                         }
 
@@ -750,10 +752,14 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                     else {
                                         tbl.getRows().forEach(row -> {
-                                            if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
-                                                row.setEnabled(false);
-                                                tbl.getMenuByClass(AbortMenu.class).setVisible(true);
-                                                row.getCell(getParameterNameColumn());
+
+                                            Object cellValue = row.getCellValue(tbl.getParameterValueColumn().getColumnIndex());
+                                            if (cellValue != null && !cellValue.toString().isEmpty()) {
+                                                if (row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("[") || row.getCellValue(tbl.getParameterValueColumn().getColumnIndex()).toString().equals("{")) {
+                                                    row.setEnabled(false);
+                                                    tbl.getMenuByClass(AbortMenu.class).setVisible(true);
+                                                    row.getCell(getParameterNameColumn());
+                                                }
                                             }
                                         });
                                     }
@@ -994,7 +1000,6 @@ public class SuTCbForm extends AbstractForm {
 
                                     tbl.getMenuByClass(EditMenu.class).setEnabled(true);
 
-                                    // ToDo: Save changes
                                     doSave();
                                     markSaved();
                                 }
@@ -1041,10 +1046,12 @@ public class SuTCbForm extends AbstractForm {
                                 if (rows.size() == 1) {
                                     // set downlowad menu visible
                                     getMenuByClass(FileDownloadMenu.class).setVisible(true);
+                                    getMenuByClass(FileDeleteMenu.class).setVisible(true);
                                 }
                                 else {
                                     // hide download menu if no row is selected
                                     getMenuByClass(FileDownloadMenu.class).setVisible(false);
+                                    getMenuByClass(FileDeleteMenu.class).setVisible(false);
                                 }
                             }
 
@@ -1132,8 +1139,49 @@ public class SuTCbForm extends AbstractForm {
                                     }
                                 }
                             }
-                        }
 
+                            @Order(4000)
+                            public class FileDeleteMenu extends AbstractMenu {
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("FileDelete");
+                                }
+
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                                }
+
+
+                                @Override
+                                protected boolean getConfiguredVisible() {
+                                    return false;
+                                }
+
+
+                                @Override
+                                protected void execAction() {
+                                    // get the selected file name from the table
+                                    final ITableRow row = getTable().getSelectedRow();
+                                    if (row != null) {
+                                        final BinaryResource deleteFileResource = BEANS.get(ISuTCbService.class).getFileContent(getSutId(), getActiveTsId(), getTable().getFileNameColumn().getValue(row));
+                                        if (deleteFileResource.getContentLength() != -1) {
+                                            final int result = MessageBoxes.createYesNo().withHeader(TEXTS.get("DeleteMsgBoxHeader")).show();
+                                            if (result == IMessageBox.YES_OPTION) {
+                                                if (!BEANS.get(ISuTCbService.class).deleteUploadedTcExtraParameterFile(getSutId(), getActiveTsId(), deleteFileResource)) {
+                                                    MessageBoxes.createOk().withHeader(TEXTS.get("DeleteErrorMsgBoxHeader")).show();
+                                                    return;
+                                                }
+                                                getTable().getSelectedRow().delete();
+                                            }
+                                        }
+                                    }
+                                    if (getTable().getSelectedRow() == null)
+                                        setVisible(false);
+                                }
+                            }
+                        }
 
                         protected void loadTcExtraParamTable(String tsId) {
                             clearTcExtraParamTable();
@@ -1253,7 +1301,6 @@ public class SuTCbForm extends AbstractForm {
         }
 
     }
-
 
     protected void addTsGroupWithTcTiles(String tsId) {
 

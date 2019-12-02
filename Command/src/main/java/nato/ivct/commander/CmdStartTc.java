@@ -109,7 +109,6 @@ public class CmdStartTc implements Command {
 			// send the start message
 			Factory.sendToJms(startCmd.toString());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			LOGGER.error("error in starting test case <" + testSuiteName + '/' + tc + ">");
 			e.printStackTrace();
 		}

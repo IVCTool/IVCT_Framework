@@ -123,7 +123,6 @@ public class ReportEngine {
                 doSutChanged(result.sutName);
             }
             catch (final IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             knownSut = result.sutName;

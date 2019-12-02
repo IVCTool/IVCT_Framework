@@ -143,7 +143,6 @@ public class Factory {
             setVersion(versionProperties.getProperty("version"));
             setBuild(versionProperties.getProperty("build"));
             } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 	}
@@ -269,10 +268,8 @@ public class Factory {
 			}
 			everything = sb.toString();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			if (br != null) {

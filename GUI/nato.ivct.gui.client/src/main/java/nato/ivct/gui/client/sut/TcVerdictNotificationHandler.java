@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.Desktop;
 import nato.ivct.gui.client.outlines.SuTOutline;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcExecutionHistoryTableField.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;

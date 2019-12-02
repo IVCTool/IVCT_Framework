@@ -27,38 +27,8 @@ import nato.ivct.gui.shared.sut.SuTCbNodePageData;
 
 
 public class SuTCbService implements ISuTCbService {
-    private static final Logger                        LOG    = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger                       LOG    = LoggerFactory.getLogger(ServerSession.class);
     private static HashMap<String, SuTCbNodePageData> cap_hm = new HashMap<>();
-
-
-    //	/*
-    //	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
-    //	 *
-    //	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
-    //	 */
-    //	@Override
-    //	public SuTCbTablePageData getSuTCbTableData(SearchFilter filter) {
-    //		String[] searchText = filter.getDisplayTexts();
-    //		SuTCbTablePageData pageData = cap_hm.get (searchText);
-    //		if (pageData == null) {
-    //			pageData = new SuTCbTablePageData();
-    //		}
-    //
-    //		LOG.info("getCapabilityTableData");
-    //		CbService cbService = BEANS.get(CbService.class);
-    //		BadgeDescription badge = cbService.getBadgeDescription(searchText[0]);
-    //
-    //		for (nato.ivct.commander.InteroperabilityRequirement requirement : badge.requirements.values()) {
-    //			SuTCbTableRowData row = pageData.addRow();
-    //			row.setRequirementId(requirement.ID);
-    //			row.setRequirementDesc(requirement.description);
-    ////			row.setAbstractTC(badge.requirements[j].TC);
-    ////			row.setTCstatus("no result");
-    //		};
-    //
-    //		cap_hm.put(badge.ID, pageData);
-    //		return pageData;
-    //	}
 
     @Override
     public BinaryResource getFileContent(final String sutId, final String tsId, final String fileName) {
@@ -69,7 +39,6 @@ public class SuTCbService implements ISuTCbService {
         }
         catch (IOException | InvalidPathException exc) {
             LOG.error("error to access fileName %", fileName);
-            // TODO Auto-generated catch block
             exc.printStackTrace();
             fileContent = new BinaryResource(fileName, null);
         }
@@ -80,8 +49,13 @@ public class SuTCbService implements ISuTCbService {
 
     @Override
     public boolean copyUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
+
+        Path filePath = Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename());
+        boolean fileExist = Files.exists(filePath);
+
         try {
-            Files.copy(new ByteArrayInputStream(file.getContent()), Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()), StandardCopyOption.REPLACE_EXISTING);
+
+            Files.copy(new ByteArrayInputStream(file.getContent()), filePath, StandardCopyOption.REPLACE_EXISTING);
         }
         catch (final IOException exc) {
             LOG.error("error when copying file %", file.getFilename());
@@ -89,7 +63,20 @@ public class SuTCbService implements ISuTCbService {
             return false;
         }
 
-        return true;
+        return !fileExist;
+    }
+
+
+    @Override
+    public boolean deleteUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
+        try {
+            return Files.deleteIfExists(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()));
+        }
+        catch (final IOException exc) {
+            LOG.error("error when deleting file %", file.getFilename());
+            exc.printStackTrace();
+            return false;
+        }
     }
 
 
@@ -191,33 +178,4 @@ public class SuTCbService implements ISuTCbService {
         else
             return null;
     }
-
-    //	@Override
-    //	public SuTCbFormData store(SuTCbFormData formData) {
-    //		LOG.info("store");
-    //		if (!ACCESS.check(new UpdateCbPermission())) {
-    //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //		}
-    //
-    //		return formData;
-    //	}
-    //
-    //	@Override
-    //	public SuTCbFormData prepareCreate(SuTCbFormData formData) {
-    //		LOG.info("prepareCreate");
-    //		if (!ACCESS.check(new CreateCbPermission())) {
-    //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //		}
-    //		return formData;
-    //	}
-    //
-    //	@Override
-    //	public SuTCbFormData create(SuTCbFormData formData) {
-    //		LOG.info("create");
-    //		if (!ACCESS.check(new CreateCbPermission())) {
-    //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //		}
-    //
-    //		return formData;
-    //	}
 }

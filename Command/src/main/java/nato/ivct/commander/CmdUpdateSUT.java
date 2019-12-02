@@ -585,7 +585,6 @@ public class CmdUpdateSUT {
         		try {
         			fw.close();
         		} catch (IOException e) {
-        			// TODO Auto-generated catch block
         			e.printStackTrace();
         		}
         	}

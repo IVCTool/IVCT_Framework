@@ -100,7 +100,6 @@ public class SuTForm extends AbstractForm {
 
     @Override
     protected int getConfiguredDisplayHint() {
-        // TODO Auto-generated method stub
         return IForm.DISPLAY_HINT_VIEW;
     }
 
@@ -287,7 +286,6 @@ public class SuTForm extends AbstractForm {
                 public class CapabilityStatusBox extends AbstractGroupBox {
                     @Override
                     protected boolean getConfiguredVisible() {
-                        // !!! TODO Hide this box until it has no real content !!!
                         return true;
                     }
 
