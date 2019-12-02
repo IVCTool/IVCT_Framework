@@ -37,6 +37,7 @@ import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcExecutionHistoryTable.TcExecutionHistoryTableRowData;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcLog.TcLogRowData;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
+import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 
 
 public class SuTTcService implements ISuTTcService {
@@ -59,24 +60,32 @@ public class SuTTcService implements ISuTTcService {
     public SuTTcExecutionFormData loadJSONLogFileContent(String sutId, String testsuiteId, String fileName, SuTTcExecutionFormData formData) {
         final Path logFilePath = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId), fileName);
         try {
-            java.nio.file.Files.lines(logFilePath).forEach(line -> {
+            java.nio.file.Files.lines(logFilePath).map(line -> {
+                TcLogMsgNotification logMsgNotification = null;
                 try {
-                    JsonObject jObj = new Gson().fromJson(line, JsonObject.class);
-                    TcLogRowData row = formData.getTcLog().addRow();
-                    row.setLogLevel(jObj.get(CmdSendLogMsg.LOG_MSG_LEVEL).getAsString());
-                    row.setTimeStamp(jObj.get(CmdSendLogMsg.LOG_MSG_TIME).getAsString());
-                    row.setLogMsg(jObj.get(CmdSendLogMsg.LOG_MSG_EVENT).getAsString());
+                    final JsonObject jObj = new Gson().fromJson(line, JsonObject.class);
+                    logMsgNotification = new TcLogMsgNotification();
+                    logMsgNotification.setLogLevel(jObj.get(CmdSendLogMsg.LOG_MSG_LEVEL).getAsString());
+                    logMsgNotification.setTimeStamp(jObj.get(CmdSendLogMsg.LOG_MSG_TIME).getAsLong());
+                    logMsgNotification.setLogMsg(jObj.get(CmdSendLogMsg.LOG_MSG_EVENT).getAsString());
                 }
                 catch (JsonSyntaxException exc) {
-                    LOG.info("incorrect log format", logFilePath);
+                    LOG.info("incorrect log format " + logFilePath, exc);
                 }
+                return Optional.ofNullable(logMsgNotification);
+            }).filter(Optional::isPresent).forEach(optionalLogMsgNotification -> {
+                final TcLogRowData row = formData.getTcLog().addRow();
+                final TcLogMsgNotification logMsgNotification = optionalLogMsgNotification.get();
+                row.setLogLevel(logMsgNotification.getLogLevel());
+                row.setTimeStamp(logMsgNotification.getTimeStamp());
+                row.setLogMsg(logMsgNotification.getLogMsg());
             });
         }
         catch (final NoSuchFileException exc) {
-            LOG.info("log files not found: {}", logFilePath.toString());
+            LOG.info("log files not found: " + logFilePath, exc);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error("", exc);
         }
         return formData;
     }
