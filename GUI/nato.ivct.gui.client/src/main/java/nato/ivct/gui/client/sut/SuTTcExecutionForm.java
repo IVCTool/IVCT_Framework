@@ -71,10 +71,6 @@ public class SuTTcExecutionForm extends AbstractForm {
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
 
-    // log verdicts
-    public static final String ERROR_VERDICT = "ERROR";
-    public static final String WARN_VERDICT  = "WARN";
-
     @FormData
     public String getSutId() {
         return sutId;
@@ -463,10 +459,10 @@ public class SuTTcExecutionForm extends AbstractForm {
                                 getTcLogField().getTable().getRows().forEach(row -> {
                                     Cell cell = row.getCellForUpdate(getTcLogField().getTable().getLogLevelColumn());
                                     switch (Objects.toString(cell.getValue(), "")) {
-                                        case ERROR_VERDICT:
+                                        case "ERROR":
                                             row.setBackgroundColor("efa9b5");
                                             break;
-                                        case WARN_VERDICT:
+                                        case "WARN":
                                             row.setBackgroundColor("FFDB9D");
                                             break;
                                         default:
