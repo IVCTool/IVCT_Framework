@@ -65,11 +65,15 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     private String defaultTcStatusForegroundColor;
 
-    // verdicts
+    // test result verdicts
     public static final String PASSED_VERDICT       = "PASSED";
     public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
+
+    // log verdicts
+    public static final String ERROR_VERDICT = "ERROR";
+    public static final String WARN_VERDICT  = "WARN";
 
     @FormData
     public String getSutId() {
@@ -444,15 +448,32 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                         @Override
                         protected void execRowsSelected(List<? extends ITableRow> rows) {
-                            // clear table
-                            // activate!!! --> getTcLogField().getTable().discardAllRows();
+                            // clear TC Execution Log table
+                            getTcLogField().getTable().discardAllRows();
                             if (!rows.isEmpty()) {
                                 // row is selected
-                                final String tcName = getTable().getFileNameColumn().getValue(getSelectedRow());
+                                final String logFileName = getTable().getFileNameColumn().getValue(getSelectedRow());
                                 // load log file content
                                 final ISuTTcService service = BEANS.get(ISuTTcService.class);
-                                // getTcLogField().setValue(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));
-                                // getTcLogField().addLine(service.loadLogFileContent(getSutId(), getTestsuiteId(), tcName));                  
+                                SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
+                                formData = service.loadJSONLogFileContent(getSutId(), getTestsuiteId(), logFileName, formData);
+                                importFormData(formData);
+
+                                // set the log level color of the TC Execution Log table
+                                getTcLogField().getTable().getRows().forEach(row -> {
+                                    Cell cell = row.getCellForUpdate(getTcLogField().getTable().getLogLevelColumn());
+                                    switch (Objects.toString(cell.getValue(), "")) {
+                                        case ERROR_VERDICT:
+                                            row.setBackgroundColor("efa9b5");
+                                            break;
+                                        case WARN_VERDICT:
+                                            row.setBackgroundColor("FFDB9D");
+                                            break;
+                                        default:
+                                            ;
+                                    }
+                                });
+
                             }
                         }
                     }
@@ -481,6 +502,9 @@ public class SuTTcExecutionForm extends AbstractForm {
                         tbl.getLogMsgColumn().setValue(row, logMsg);
                         if (LogLevelLookupCall.LogLevels.ERROR.name().equalsIgnoreCase(logLevel)) {
                             row.setBackgroundColor("efa9b5");
+                        }
+                        if (LogLevelLookupCall.LogLevels.WARN.name().equalsIgnoreCase(logLevel)) {
+                            row.setBackgroundColor("FFDB9D");
                         }
 
                         tbl.selectLastRow();
