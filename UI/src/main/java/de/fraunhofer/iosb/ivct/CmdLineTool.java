@@ -43,6 +43,7 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
 
+
 class NamePosition {
 	String string;
 	int position;
@@ -1058,6 +1059,12 @@ class Writer extends Thread {
                 		out.println("SUT sutFederateName: " + sutDescription.sutFederateName);
                 		out.println("SUT federation: " + sutDescription.federation);
                 	}
+                    Map<String, String> heartBeatSenders = ivctCommander.getHeartBeatSenders();
+                    if (heartBeatSenders != null) {
+                        for (Map.Entry<String, String> entry: heartBeatSenders.entrySet()) {
+                            out.println("Process state: " + entry.getKey() + " " + entry);
+                        }
+                    }
                 	String testScheduleName = ivctCommander.rtp.getTestScheduleName();
                 	if (testScheduleName != null) {
                 		if (ivctCommander.rtp.getTestScheduleRunningBool()) {

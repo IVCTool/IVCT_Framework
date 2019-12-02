@@ -17,12 +17,20 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
+import org.json.simple.JSONObject;
+
+import nato.ivct.commander.CmdHeartbeatListen;
+import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
 
 /**
  * IVCTcommander takes user input strings, creates and sends messages to the JMS bus,
@@ -31,11 +39,21 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
  *
  * @author Johannes Mulder (Fraunhofer IOSB)
  */
-public class IVCTcommander implements OnResultListener {
+public class IVCTcommander implements OnResultListener, CmdHeartbeatListen.OnCmdHeartbeatListen {
+	private Map<String, String> uiHeartbeatDataMap = new HashMap<String, String>();
 
+	public Map<String, String> getHeartBeatSenders() {
+		return uiHeartbeatDataMap;
+	}
+
+    private boolean firstTime = true;
 	private static Vector<String> listOfVerdicts = new Vector<String>();
     public RuntimeParameters rtp = new RuntimeParameters();
-    private boolean firstTime = true;
+    private static CmdHeartbeatListen heartbeatListener;
+
+    // You can choose a special  Class to be monitored
+    //private static String desiredHeartBeatSenderClass="Use_CmdHeartbeatSend";
+    //private static String desiredHeartBeatSenderClass="TestRunner";
 
     /**
      * public constructor.
@@ -44,6 +62,16 @@ public class IVCTcommander implements OnResultListener {
      */
     public IVCTcommander() throws IOException {
         new CmdStartTestResultListener(this);
+        // creating a instance of this 'client'  to  deliver it to the listener
+        heartbeatListener = new CmdHeartbeatListen(this);
+
+        // instantiating a new heartbeatListener and deliver this client  without a special Sender-class to observe
+        //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
+
+        // instantiating a new heartbeatListener and deliver this client  an  a special Sender-class to observe
+//        CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(this, desiredHeartBeatSenderClass );
+
+        heartbeatListener.execute();
     }
 
     public void addTestSessionSeparator() {
@@ -65,6 +93,22 @@ public class IVCTcommander implements OnResultListener {
       public void resetSUT() {
     	  listOfVerdicts.clear();
       }
+
+	@Override
+	public void hearHeartbeat(JSONObject heartBeat) {
+
+		try {
+			String heartbeatSenderName = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
+			String notifyState = (String)heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+			if (heartbeatSenderName != null) {
+			    uiHeartbeatDataMap.put(heartbeatSenderName, notifyState);
+			}
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+		}
+
+	}
 
     public void onResult(TcResult result) {
 		String testSchedule = rtp.getTestScheduleName();
