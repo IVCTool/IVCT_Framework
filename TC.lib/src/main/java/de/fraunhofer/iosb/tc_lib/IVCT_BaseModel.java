@@ -102,9 +102,6 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         try {
         	ivct_rti.createFederationExecution(this.federationName, this.ivct_TcParam.getUrls(), "HLAfloat64Time");
         }
-        catch (final FederationExecutionAlreadyExists e) {
-            this.logger.warn("initiateRti: FederationExecutionAlreadyExists (ignored)");
-        }
         catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
             this.logger.error("initiateRti: ", e);
             return null;

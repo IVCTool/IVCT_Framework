@@ -261,15 +261,17 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @throws ErrorReadingMIM error reading mim
      * @throws CouldNotOpenMIM could not open mim
      * @throws DesignatorIsHLAstandardMIM designator is hla standard mim
-     * @throws FederationExecutionAlreadyExists federation already exists
      * @throws NotConnected not connected
      * @throws RTIinternalError rti internal error
      */
-    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
+    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, NotConnected, RTIinternalError {
         this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", mimModule=" + mimModule.toString() + ", logicalTimeImplementationName=" + logicalTimeImplementationName);
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule, logicalTimeImplementationName);
-        } catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+        } catch (FederationExecutionAlreadyExists e) {
+        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        }
+        catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | NotConnected | RTIinternalError e) {
         	this.logger.error("createFederationExecution exception=" + e.getMessage());
         	throw e;
         }
@@ -285,15 +287,17 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @throws InconsistentFDD inconsistent fdd
      * @throws ErrorReadingFDD error reading fdd
      * @throws CouldNotOpenFDD could not open fdd
-     * @throws FederationExecutionAlreadyExists federation execution already exists
      * @throws NotConnected not connected
      * @throws RTIinternalError rti internal error
      */
-    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
+    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, NotConnected, RTIinternalError {
         this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", logicalTimeImplementationName=" + logicalTimeImplementationName);
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, logicalTimeImplementationName);
-        } catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+        } catch (FederationExecutionAlreadyExists e) {
+        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        }
+        catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
         	this.logger.error("createFederationExecution exception=" + e.getMessage());
         	throw e;
         }
@@ -301,11 +305,14 @@ public class IVCT_RTIambassador implements RTIambassador {
 
 
     //4.5
-    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
+    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, NotConnected, RTIinternalError {
         this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", mimModule=" + mimModule.toString());
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule);
-        } catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+        } catch (FederationExecutionAlreadyExists e) {
+        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        }
+        catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | NotConnected | RTIinternalError e) {
         	this.logger.error("createFederationExecution exception=" + e.getMessage());
         	throw e;
         }
@@ -313,11 +320,14 @@ public class IVCT_RTIambassador implements RTIambassador {
 
 
     //4.5
-    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
+    public void createFederationExecution(final String federationExecutionName, final URL[] fomModules) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, NotConnected, RTIinternalError {
         this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules));
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules);
-        } catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+        } catch (FederationExecutionAlreadyExists e) {
+        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        }
+        catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
         	this.logger.error("createFederationExecution exception=" + e.getMessage());
         	throw e;
         }
@@ -325,11 +335,14 @@ public class IVCT_RTIambassador implements RTIambassador {
 
 
     //4.5
-    public void createFederationExecution(final String federationExecutionName, final URL fomModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, FederationExecutionAlreadyExists, NotConnected, RTIinternalError {
+    public void createFederationExecution(final String federationExecutionName, final URL fomModule) throws InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, NotConnected, RTIinternalError {
         this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModule=" + fomModule.toString());
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModule);
-        } catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | FederationExecutionAlreadyExists | NotConnected | RTIinternalError e) {
+        } catch (FederationExecutionAlreadyExists e) {
+        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        }
+        catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
         	this.logger.error("createFederationExecution exception=" + e.getMessage());
         	throw e;
         }
