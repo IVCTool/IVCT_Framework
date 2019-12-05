@@ -29,6 +29,9 @@ import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
 
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
+
+
 /**
  * Testrunner that listens for certain commands to start and stop test cases.
  *
@@ -207,6 +210,27 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
+				
+        /**
+         * Check the compability of IVCT-Version which had this testCase at
+         * building-time against the IVCT-Version at Runtime
+         */	
+     
+			try {			 
+			  logger.debug("#### the IVCTVersion of testcase "+testCase +" is: "   +testCase.getIVCTVersion());  // Debug
+			   
+			  new IVCTVersionCheck(testCase.getIVCTVersion() ).compare();
+			 
+			} catch (IVCTVersionCheckException cf ){			  
+			  logger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");			  
+			  verdicts[i] = new IVCT_Verdict();
+        verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+        verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+        i++;
+        cf.printStackTrace();
+        continue;			  
+			}
+							
 
 				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), logger);
 			}
