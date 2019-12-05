@@ -63,8 +63,6 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                                 form.getTcExecutionStatus().setForegroundColor("db3d57");
                                 MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus")).withHtml(HTML.fragment(HTML.bold(HTML.italic(notification.getVerdict())))).show();
                                 break;
-                            default:
-                                ;
                         }
 
                         //update log file table
