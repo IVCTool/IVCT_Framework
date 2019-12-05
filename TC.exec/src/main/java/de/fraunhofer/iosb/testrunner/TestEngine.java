@@ -14,6 +14,7 @@ import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
@@ -211,26 +212,24 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
 				
+				
         /**
          * Check the compability of IVCT-Version which had this testCase at
          * building-time against the IVCT-Version at Runtime
-         */	
-     
-			try {			 
-			  logger.debug("#### the IVCTVersion of testcase "+testCase +" is: "   +testCase.getIVCTVersion());  // Debug
-			   
-			  new IVCTVersionCheck(testCase.getIVCTVersion() ).compare();
-			 
-			} catch (IVCTVersionCheckException cf ){			  
-			  logger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");			  
-			  verdicts[i] = new IVCT_Verdict();
-        verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-        verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
-        i++;
-        cf.printStackTrace();
-        continue;			  
-			}
-							
+         */
+
+        try {
+          logger.debug("#### the IVCTVersion of testcase " + testCase + " is: " + testCase.getIVCTVersion()); // Debug
+          new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
+        } catch (IVCTVersionCheckException cf) {
+          logger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
+          verdicts[i] = new IVCT_Verdict();
+          verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+          verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+          i++;
+          cf.printStackTrace();
+          continue;
+        }		
 
 				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), logger);
 			}
