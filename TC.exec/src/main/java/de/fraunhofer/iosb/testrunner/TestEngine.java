@@ -218,9 +218,11 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
          * building-time against the IVCT-Version at Runtime
          */
 
-        try {
-          logger.debug("#### the IVCTVersion of testcase " + testCase + " is: " + testCase.getIVCTVersion()); // Debug
+        try {          
+          logger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: " + testCase.getIVCTVersion()); // Debug
+          
           new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
+          
         } catch (IVCTVersionCheckException cf) {
           logger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
           verdicts[i] = new IVCT_Verdict();

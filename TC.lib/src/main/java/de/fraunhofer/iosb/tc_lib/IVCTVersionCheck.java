@@ -42,14 +42,9 @@ public class IVCTVersionCheck {
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
 
-  // Constructor takes one or two Parameter
+  // Constructor
   public IVCTVersionCheck(String _testCaseIVCTVersion) throws IVCTVersionCheckException {
     this.testCaseIVCTVersion = _testCaseIVCTVersion;
-  }
-
-  public IVCTVersionCheck(String _testCaseIVCTVersion, String _FactoryIVCtVersion) throws IVCTVersionCheckException {
-    this.testCaseIVCTVersion = _testCaseIVCTVersion;
-    this.FactoryIVCtVersion = _FactoryIVCtVersion;
   }
 
   public void compare() throws IVCTVersionCheckException {
@@ -59,38 +54,39 @@ public class IVCTVersionCheck {
     // if the Version-Number ist the same we are content
     if (testCaseIVCTVersion.equals(FactoryIVCtVersion)) {
       testresult = true;
+      
+    } else {
+      logger.debug ("IVCTVersionCheck.compare: Versions differ: Factory: "+FactoryIVCtVersion+" TestCase: "+testCaseIVCTVersion);
 
       /**
        * if the Version differ, we have to test the testCaseIVCTVersion against a list
-       * of compatible versions which we get from TC.exec in
-       * compatibleVersions.properties
+       * of compatible versions which we get from TC.exec in property-file compatibleVersions.properties
        */
-
-    } else {
-
-      // we get a propertie-file with compatible Version from TC.exec
-      InputStream in = this.getClass().getResourceAsStream("/compatibleVersions.properties");
-
+      InputStream in = this.getClass().getResourceAsStream("/compatibleVersions.properties");      
+      
       if (in == null) {
         throw new IVCTVersionCheckException("/compatibleVersions.properties could not be loaded ");
       }
 
-      Properties compareProperties = new Properties();
-
+      Properties compareProperties = new Properties();      
+      
       try {
         compareProperties.load(in);
-
-        logger.debug("IVCTVersionCheck: read compatible Versions from TC.exec/../compatibleVersions.properties");
-
+        
+        // for debugging show the whole content of property - file 
+        logger.debug("IVCTVersionCheck.compare: the whole content of TC.exec/../compatibleVersions.properties: "+compareProperties.toString());
+        
         // we have to know each Key of the property - and it's value
         Set<Object> set = compareProperties.keySet();
 
         for (Object obj : set) {
           compatibleListKey = (String) obj;
           compatibleListValue = compareProperties.getProperty(obj.toString());
-
+          
+          // if we find the same version-number with 'compatible' we are as well content and stop searching
           if (testCaseIVCTVersion.equals(obj) && (compatibleListValue.equals("compatible"))) {
             testresult = true;
+            break;
           }
         }
 
@@ -100,19 +96,16 @@ public class IVCTVersionCheck {
     }
 
     if (testresult) {
-
-      logger.debug("IVCTVersionCheck: found in TC.exec-compatibleVersions " + compatibleListKey + " Value: "
+      logger.debug("IVCTVersionCheck testresult: found in TC.exec-compatibleVersions " + compatibleListKey + " Value: "
           + compatibleListValue);
-      logger.debug("IVCTVersionCheck: the versions are known as compatible: Factory: " + FactoryIVCtVersion
+      logger.debug("IVCTVersionCheck testresult: the versions are known as compatible: Factory: " + FactoryIVCtVersion
           + " TestCase: " + testCaseIVCTVersion);
-
+      
     } else {
-      logger.warn("IVCTVersionCheck: Versions  Factory: " + FactoryIVCtVersion + " TestCase: " + testCaseIVCTVersion);
-      logger.warn("IVCTVersionCheck: found in TC.exec-compatibleVersions " + compatibleListKey + " Value: "
+      logger.warn("IVCTVersionCheck testresult: Versions  Factory: " + FactoryIVCtVersion + " TestCase: " + testCaseIVCTVersion);
+      logger.warn("IVCTVersionCheck testresult: found in TC.exec-compatibleVersions " + compatibleListKey + " Value: "
           + compatibleListValue);
       throw new IVCTVersionCheckException("The IVCT-Versions of Testrunner and TestCase are not known as compatible ");
     }
-
   }
-
 }
