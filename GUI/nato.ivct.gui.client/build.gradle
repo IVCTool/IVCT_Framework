@@ -7,6 +7,6 @@ dependencies {
 	
 	implementation	libraries.gson
 
-    compile "org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}"
-    testCompile "org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}"
+    compile libraries.scout_rt_client
+    testCompile libraries.scout_rt_client_test
 }

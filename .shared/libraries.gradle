@@ -16,7 +16,7 @@ ext {
         slf4jVersion = '1.7.10'
 		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
-		scoutVersion = '8.0.0.010_Photon'
+		scoutVersion = '9.0.0.025_Simrel_2019_09'
 		jsonSimpleVersion = '1.1.1'
 		gsonVersion = '2.8.6'
 		javaxServletVersion = '3.0.1'
@@ -52,6 +52,9 @@ ext {
 				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
 
 				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
+				
+				scout_rt_client:				"org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}",
+				scout_rt_client_test:			"org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}",
 
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
