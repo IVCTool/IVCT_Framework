@@ -35,6 +35,7 @@ import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+import nato.ivct.commander.CmdOperatorRequestListener;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
@@ -98,6 +99,7 @@ public class CmdLineTool {
     		return;
     	}
 		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
+		(new CmdOperatorRequestListener(CmdLineTool.ivctCommander)).execute();
     }
 
     class commandRunnable implements Runnable {
@@ -1075,6 +1077,33 @@ class Writer extends Thread {
                 		}
                 	}
                 	out.println("loglevel: " + logLevelString);
+                	if (ivctCommander.isOperatorRequestOutstanding()) {
+                    	out.println("OPERATOR REQUEST OUTSTANDING: " + ivctCommander.getOperatorRequestTcId() + " " + ivctCommander.getOperatorRequestText());
+                	}
+                	break;
+                case "cnf":
+            	    if (sutID == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	boolean b = ivctCommander.isOperatorRequestOutstanding();
+                	if (b == false) {
+                    	out.println("cnf: No operator request outstanding");
+                		break;
+                	}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("cnf: Error missing true/false value");
+                	}
+                	if (split[1].contentEquals("true")) {
+                        ivctCommander.sendOperatorConfirmation(ivctCommander.getOperatorRequestTcId(), true, "beta");
+                	} else {
+						if (split[1].contentEquals("false")) {
+	                        ivctCommander.sendOperatorConfirmation(ivctCommander.getOperatorRequestTcId(), false, "beta");
+						} else {
+	                        out.println("cnf: incorrect true/false value - found: " + split[1]);
+						}
+					}
                 	break;
                 case "quit":
                 case "q":

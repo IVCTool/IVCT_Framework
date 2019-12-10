@@ -18,6 +18,9 @@ import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+import nato.ivct.commander.CmdOperatorConfirmationListener;
+import nato.ivct.commander.CmdOperatorConfirmationListener.OnOperatorConfirmationListener;
+import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -35,12 +38,13 @@ import nato.ivct.commander.Factory;
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
-public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend {
+public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
 	private static Logger logger = LoggerFactory.getLogger(TestEngine.class);
 
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
+	private AbstractTestCase testCase = null;
 
 	private CmdListTestSuites testSuites;
 	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
@@ -78,6 +82,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		} catch (Exception e1) {
 			logger.error("Could not start HeartbeatSend: " + e1.toString());
 		}
+		(new CmdOperatorConfirmationListener(this)).execute();
 
 		// get the test suite descriptions
 		testSuites = new CmdListTestSuites();
@@ -188,7 +193,6 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 			int i = 0;
 			for (final String classname : testcases) {
-				AbstractTestCase testCase = null;
 				try {
 					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
@@ -266,6 +270,11 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		this.testCaseId = new String(info.testCaseId);
 		Thread th1 = new Thread(new TestScheduleRunner(info, this));
 		th1.start();
+	}
+	
+	@Override
+	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+		testCase.onOperatorConfirmation(operatorConfirmationInfo);
 	}
 	
 	

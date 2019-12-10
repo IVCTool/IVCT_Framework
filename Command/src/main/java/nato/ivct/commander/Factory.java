@@ -432,6 +432,17 @@ public class Factory {
 	    initialize();
 	    return new CmdListSuT();
 	}
+
+	public static CmdOperatorRequest createCmdOperatorRequest(String tc, String text) {
+	    initialize();
+	    return new CmdOperatorRequest(tc, text);
+	}
+
+	public static CmdOperatorConfirmation createCmdOperatorConfirmation(String tc, boolean confirmationBool, String text) {
+	    initialize();
+	    return new CmdOperatorConfirmation(tc, confirmationBool, text);
+	}
+
 	public static int getCmdCounter() {
 		return cmdCounter;
 	}

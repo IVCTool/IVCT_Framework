@@ -11,9 +11,13 @@
 
 package de.fraunhofer.iosb.tc_lib;
 
+import java.util.concurrent.Semaphore;
+
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
+import nato.ivct.commander.CmdOperatorRequest;
 import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
 
@@ -30,7 +34,6 @@ public abstract class AbstractTestCase {
 
     private final CmdSendTcStatus statusCmd = Factory.createCmdSendTcStatus();
 
-
     public void sendTcStatus(String status, int percent) {
         statusCmd.setStatus(status);
         statusCmd.setPercentFinshed(percent);
@@ -44,6 +47,8 @@ public abstract class AbstractTestCase {
     private String settingsDesignator;
     private String federationName;
     private String sutFederateName;
+    
+    private Semaphore semOperatorRequest = new Semaphore(0);
 
 
     /**
@@ -82,7 +87,16 @@ public abstract class AbstractTestCase {
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
 
+    public void sendOperatorRequest(String text) throws InterruptedException {
+    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(tcName, text);
+    	operatorRequestCmd.execute();
+    	semOperatorRequest.acquire();
+    	}
 
+    public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+    	System.out.println("onOperatorConfirmation " + operatorConfirmationInfo.testCaseId + " " + operatorConfirmationInfo.text);
+    	semOperatorRequest.release();
+    }
     /**
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
