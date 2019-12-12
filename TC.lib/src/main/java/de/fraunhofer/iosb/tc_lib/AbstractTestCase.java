@@ -13,6 +13,8 @@ package de.fraunhofer.iosb.tc_lib;
 
 import java.util.concurrent.Semaphore;
 
+import javax.xml.soap.Text;
+
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -42,6 +44,7 @@ public abstract class AbstractTestCase {
         statusCmd.execute();
     }
 
+    private String testSuiteId = null;
     private String tcName  = null;
     private String sutName = null;
     private String settingsDesignator;
@@ -49,6 +52,9 @@ public abstract class AbstractTestCase {
     private String sutFederateName;
     
     private Semaphore semOperatorRequest = new Semaphore(0);
+    private boolean confirmationBool = false;
+    private String text;
+    private String testCaseId;
 
 
     /**
@@ -87,14 +93,26 @@ public abstract class AbstractTestCase {
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
 
-    public void sendOperatorRequest(String text) throws InterruptedException {
-    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(tcName, text);
+    public void sendOperatorRequest(String text) throws InterruptedException, TcInconclusive {
+    	if (text == null) {
+    		// Make an empty string
+    		text = new String();
+    	}
+    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(sutName, testSuiteId, tcName, text);
     	operatorRequestCmd.execute();
     	semOperatorRequest.acquire();
+    	if (confirmationBool == false) {
+    		if (text != null) {
+                throw new TcInconclusive("Operator reject message: " + text);
+    		}
     	}
+    }
 
     public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
-    	System.out.println("onOperatorConfirmation " + operatorConfirmationInfo.testCaseId + " " + operatorConfirmationInfo.text);
+    	testCaseId = operatorConfirmationInfo.testCaseId;
+    	confirmationBool = operatorConfirmationInfo.confirmationBool;
+    	text = operatorConfirmationInfo.text;
+    	System.out.println("onOperatorConfirmation " + testCaseId + " " + text);
     	semOperatorRequest.release();
     }
     /**
@@ -234,6 +252,21 @@ public abstract class AbstractTestCase {
 
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
         return ivct_Verdict;
+    }
+
+
+    /**
+     * Returns the name test suite
+     *
+     * @return Test Suite Name
+     */
+    public String getTsName() {
+        return testSuiteId;
+    }
+
+
+    public void setTsName(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
     }
 
 

@@ -1096,10 +1096,10 @@ class Writer extends Thread {
                         out.println("cnf: Error missing true/false value");
                 	}
                 	if (split[1].contentEquals("true")) {
-                        ivctCommander.sendOperatorConfirmation(ivctCommander.getOperatorRequestTcId(), true, "beta");
+                        ivctCommander.sendOperatorConfirmation(true, "beta");
                 	} else {
 						if (split[1].contentEquals("false")) {
-	                        ivctCommander.sendOperatorConfirmation(ivctCommander.getOperatorRequestTcId(), false, "beta");
+	                        ivctCommander.sendOperatorConfirmation(false, "beta");
 						} else {
 	                        out.println("cnf: incorrect true/false value - found: " + split[1]);
 						}

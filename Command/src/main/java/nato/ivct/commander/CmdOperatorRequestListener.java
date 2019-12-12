@@ -28,6 +28,8 @@ public class CmdOperatorRequestListener implements MessageListener, Command {
 	private OnOperatorRequestListener listener;
 	
 	public class OperatorRequestInfo {
+		public String sutName;
+		public String testSuiteId;
 		public String testCaseId;
 		public String text;
 	}
@@ -62,6 +64,8 @@ public class CmdOperatorRequestListener implements MessageListener, Command {
 						Factory.LOGGER.trace("JMS Message received: " + content);
 						OperatorRequestInfo info = new OperatorRequestInfo();
 
+                        info.sutName = (String) jsonObject.get(CmdOperatorRequest.SUT_NAME);
+                        info.testSuiteId = (String) jsonObject.get(CmdOperatorRequest.TS_ID);
                         info.testCaseId = (String) jsonObject.get(CmdOperatorRequest.TC_ID);
                         info.text = (String) jsonObject.get(CmdOperatorRequest.TEXT);
 

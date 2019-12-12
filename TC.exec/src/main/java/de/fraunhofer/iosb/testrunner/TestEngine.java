@@ -207,6 +207,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					continue;
 				}
 				testCase.setSutName(info.sutName);
+				testCase.setTsName(info.testSuiteId);
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);

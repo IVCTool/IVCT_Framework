@@ -29,7 +29,7 @@ public class CmdOperatorConfirmationListener implements MessageListener, Command
 	
 	public class OperatorConfirmationInfo {
 		public String testCaseId;
-		private boolean confirmationBool;
+		public boolean confirmationBool;
 		public String text;
 	}
 

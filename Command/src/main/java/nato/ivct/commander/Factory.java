@@ -433,14 +433,14 @@ public class Factory {
 	    return new CmdListSuT();
 	}
 
-	public static CmdOperatorRequest createCmdOperatorRequest(String tc, String text) {
+	public static CmdOperatorRequest createCmdOperatorRequest(String sutName, String testSuiteId, String tc, String text) {
 	    initialize();
-	    return new CmdOperatorRequest(tc, text);
+	    return new CmdOperatorRequest(sutName, testSuiteId, tc, text);
 	}
 
-	public static CmdOperatorConfirmation createCmdOperatorConfirmation(String tc, boolean confirmationBool, String text) {
+	public static CmdOperatorConfirmation createCmdOperatorConfirmation(String sutName, String testSuiteId, String tc, boolean confirmationBool, String text) {
 	    initialize();
-	    return new CmdOperatorConfirmation(tc, confirmationBool, text);
+	    return new CmdOperatorConfirmation(sutName, testSuiteId, tc, confirmationBool, text);
 	}
 
 	public static int getCmdCounter() {

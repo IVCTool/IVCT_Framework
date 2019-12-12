@@ -41,6 +41,8 @@ public class IVCTcommander implements OnResultListener, OnOperatorRequestListene
     public RuntimeParameters rtp = new RuntimeParameters();
     private boolean firstTime = true;
     private boolean gotOperatorRequest = false;
+    private String sutName;
+    private String testSuiteId;
     private String tcName;
     private String text;
 
@@ -100,14 +102,16 @@ public class IVCTcommander implements OnResultListener, OnOperatorRequestListene
     }
 
     public void onOperatorRequest(OperatorRequestInfo operatorRequestInfo) {
+    	sutName = operatorRequestInfo.sutName;
+    	testSuiteId = operatorRequestInfo.testSuiteId;
     	tcName = operatorRequestInfo.testCaseId;
     	text = operatorRequestInfo.text;
 		System.out.println("Operator request: " + operatorRequestInfo.testCaseId + " " + operatorRequestInfo.text);
 		gotOperatorRequest = true;
     }
 
-    public void sendOperatorConfirmation(String tcName, boolean confirmationBoolean, String text) {
-    	CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(tcName, confirmationBoolean, text);
+    public void sendOperatorConfirmation(boolean confirmationBoolean, String text) {
+    	CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, tcName, confirmationBoolean, text);
     	operatorConfirmationCmd.execute();
 		gotOperatorRequest = false;
     }
