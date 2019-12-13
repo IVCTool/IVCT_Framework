@@ -53,15 +53,15 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                         switch (Objects.toString(notification.getVerdict(), "")) {
                             case PASSED_VERDICT:
                                 form.getTcExecutionStatus().setForegroundColor("0DAF66");
-                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus")).withHtml(HTML.fragment(HTML.bold(HTML.italic(notification.getVerdict())))).withAutoCloseMillis(10000).show();
+                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus") + "\n\n" + notification.getVerdict()).withHtml(HTML.fragment(HTML.italic(TEXTS.get("TestcaseId") + ": " + notification.getTcId()))).withAutoCloseMillis(30000).show();
                                 break;
                             case INCONCLUSIVE_VERDICT:
                                 form.getTcExecutionStatus().setForegroundColor("997bb7");
-                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus")).withHtml(HTML.fragment(HTML.bold(HTML.italic(notification.getVerdict())))).withAutoCloseMillis(10000).show();
+                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus") + "\n\n" + notification.getVerdict()).withHtml(HTML.fragment(HTML.italic(TEXTS.get("TestcaseId") + ": " + notification.getTcId()))).withAutoCloseMillis(30000).show();
                                 break;
                             case FAILED_VERDICT:
                                 form.getTcExecutionStatus().setForegroundColor("db3d57");
-                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus")).withHtml(HTML.fragment(HTML.bold(HTML.italic(notification.getVerdict())))).withAutoCloseMillis(10000).show();
+                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus") + "\n\n" + notification.getVerdict()).withHtml(HTML.fragment(HTML.italic(TEXTS.get("TestcaseId") + ": " + notification.getTcId()))).withAutoCloseMillis(30000).show();
                                 break;
                         }
 
