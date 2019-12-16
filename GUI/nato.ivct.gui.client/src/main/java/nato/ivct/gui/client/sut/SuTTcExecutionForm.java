@@ -22,6 +22,7 @@ import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
+import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
@@ -32,8 +33,11 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
+import nato.ivct.commander.CmdOperatorConfirmation;
+import nato.ivct.commander.Factory;
 import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.HeartBeatNotificationHandler;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.ContentForm.MainBox.FieldsBox.CommentField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
@@ -223,6 +227,253 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     public TcExecutionButton getTcExecutionButton() {
         return getFieldByClass(TcExecutionButton.class);
+    }
+
+
+    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
+        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, operatorMessage);
+        form.start();
+        form.waitFor();
+    }
+
+    public class ContentForm extends AbstractForm {
+
+        private String sutName;
+        private String testSuiteId;
+        private String testCaseId;
+        private String operatorMessage;
+
+        public ContentForm(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
+            this.sutName = sutName;
+            this.testSuiteId = testSuiteId;
+            this.testCaseId = testCaseId;
+            this.operatorMessage = operatorMessage;
+        }
+
+
+        @Override
+        public boolean isModal() {
+            return true;
+        }
+
+
+        @Override
+        public int getDisplayHint() {
+            return DISPLAY_HINT_DIALOG;
+        }
+
+        @Order(10)
+        public class MainBox extends AbstractGroupBox {
+
+            @Order(10)
+            public class FieldsBox extends AbstractGroupBox {
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 5;
+                }
+
+                @Order(10)
+                public class SutNameField extends AbstractLabelField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("SystemUnderTest");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(sutName);
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                }
+
+                @Order(20)
+                public class SutIdField extends AbstractLabelField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TestsuiteId");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(testSuiteId);
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                }
+
+                @Order(30)
+                public class TestCaseIdField extends AbstractLabelField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TestcaseId");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(testCaseId);
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                }
+
+                @Order(40)
+                public class MessageField extends AbstractStringField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("OperatorMessage");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(operatorMessage);
+                    }
+
+
+                    protected boolean getConfiguredMultilineText() {
+                        return true;
+                    }
+
+
+                    @Override
+                    protected String getConfiguredForegroundColor() {
+                        return "db3d57";
+                    }
+
+
+                    @Override
+                    protected boolean getConfiguredEnabled() {
+                        return false;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 4;
+                    }
+
+                }
+
+                @Order(50)
+                public class CommentField extends AbstractStringField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Comment");
+                    }
+
+
+                    @Override
+                    protected int getConfiguredMaxLength() {
+                        return 250;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+                }
+            }
+
+            @Order(60)
+            public class ConfirmButton extends AbstractButton {
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Confirm");
+                }
+
+
+                @Override
+                protected void execClickAction() {
+                    ContentForm.this.doClose();
+
+                    // Confirmation Message for the TestEngine            
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, true, getCommentField().getValue());
+                    operatorConfirmationCmd.execute();
+
+                }
+
+
+                public CommentField getCommentField() {
+                    return getFieldByClass(CommentField.class);
+                }
+            }
+
+            @Order(70)
+            public class CancelButton extends AbstractButton {
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Reject");
+                }
+
+
+                @Override
+                protected void execClickAction() {
+                    ContentForm.this.doClose();
+
+                    // Reject Message for the TestEngine              
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, false, getCommentField().getValue());
+                    operatorConfirmationCmd.execute();
+
+                }
+
+
+                public CommentField getCommentField() {
+                    return getFieldByClass(CommentField.class);
+                }
+            }
+        }
     }
 
     @Order(10000)
@@ -465,8 +716,6 @@ public class SuTTcExecutionForm extends AbstractForm {
                                         case "WARN":
                                             row.setBackgroundColor("FFDB9D");
                                             break;
-                                        default:
-                                            ;
                                     }
                                 });
 

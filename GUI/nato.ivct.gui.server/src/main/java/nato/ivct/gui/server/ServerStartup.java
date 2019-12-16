@@ -15,6 +15,9 @@ import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
+import nato.ivct.commander.CmdOperatorRequestListener;
+import nato.ivct.commander.CmdOperatorRequestListener.OnOperatorRequestListener;
+import nato.ivct.commander.CmdOperatorRequestListener.OperatorRequestInfo;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
@@ -26,6 +29,7 @@ import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
 import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.sut.TcLogMsgNotification;
+import nato.ivct.gui.shared.sut.TcOperatorRequestNotification;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
@@ -36,6 +40,7 @@ public class ServerStartup implements IPlatformListener {
     private CmdStartTestResultListener tcResultListener;
     private CmdTcStatusListener        tcStatusListener;
     private CmdLogMsgListener          logMsgListener;
+    private CmdOperatorRequestListener tcOperatorListener;
 
     public class ResultListener implements OnResultListener {
 
@@ -76,6 +81,20 @@ public class ServerStartup implements IPlatformListener {
             notification.setLogMsg(logMsg.txt);
             notification.setLogLevel(logMsg.level);
             notification.setTimeStamp(logMsg.time);
+
+            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+        }
+    }
+
+    public class OperatorRequestListener implements OnOperatorRequestListener {
+
+        @Override
+        public void onOperatorRequest(OperatorRequestInfo operatorRequestInfo) {
+            final TcOperatorRequestNotification notification = new TcOperatorRequestNotification();
+            notification.setSutName(operatorRequestInfo.sutName);
+            notification.setTestSuiteId(operatorRequestInfo.testSuiteId);
+            notification.setTestCaseId(operatorRequestInfo.testCaseId);
+            notification.setOperatorMessage(operatorRequestInfo.text);
 
             BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
         }
@@ -127,7 +146,6 @@ public class ServerStartup implements IPlatformListener {
         }
     }
 
-
     @Override
     public void stateChanged(PlatformEvent event) {
         if (event.getState() == State.PlatformStarted) {
@@ -141,6 +159,9 @@ public class ServerStartup implements IPlatformListener {
 
             LOG.info("start Log Message Listener");
             (logMsgListener = Factory.createCmdLogMsgListener(new LogMsgListener())).execute();
+
+            LOG.info("start Operator Request Listener");
+            (tcOperatorListener = Factory.createCmdStartOperatorRequestListener(new OperatorRequestListener())).execute();
 
             LOG.info("start heartbeat Listener");
             //      new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose

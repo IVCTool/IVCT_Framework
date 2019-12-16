@@ -4,6 +4,7 @@ description = """IVCT Client"""
 
 dependencies {
     compile     project(':GUI:nato.ivct.gui.shared')
+    compile     project(':Command')
 	
 	implementation	libraries.gson
 
