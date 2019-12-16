@@ -39,9 +39,11 @@ public class CmdOperatorConfirmation implements Command {
 
 	/***
 	 * 
+	 * @param sutName the SUT name
+	 * @param testSuiteId the testsuite id
 	 * @param tc the fully qualified text case name
-	 * @param text the text to be written to the tc log.
 	 * @param confirmationBool true means positive, false negative
+	 * @param text the text to be written to the tc log
 	 */
 	public CmdOperatorConfirmation(String sutName, String testSuiteId, String tc, boolean confirmationBool, String text) {
 		this.sutName = sutName;

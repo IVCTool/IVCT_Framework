@@ -53,7 +53,7 @@ public abstract class AbstractTestCase {
     
     private Semaphore semOperatorRequest = new Semaphore(0);
     private boolean confirmationBool = false;
-    private String text;
+    private String cnfText;
     private String testCaseId;
 
 
@@ -102,8 +102,10 @@ public abstract class AbstractTestCase {
     	operatorRequestCmd.execute();
     	semOperatorRequest.acquire();
     	if (confirmationBool == false) {
-    		if (text != null) {
-                throw new TcInconclusive("Operator reject message: " + text);
+    		if (cnfText != null) {
+                throw new TcInconclusive("Operator reject message: " + cnfText);
+    		} else {
+                throw new TcInconclusive("Operator reject message: - no reject text -");
     		}
     	}
     }
@@ -111,8 +113,7 @@ public abstract class AbstractTestCase {
     public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
     	testCaseId = operatorConfirmationInfo.testCaseId;
     	confirmationBool = operatorConfirmationInfo.confirmationBool;
-    	text = operatorConfirmationInfo.text;
-    	System.out.println("onOperatorConfirmation " + testCaseId + " " + text);
+    	cnfText = operatorConfirmationInfo.text;
     	semOperatorRequest.release();
     }
     /**

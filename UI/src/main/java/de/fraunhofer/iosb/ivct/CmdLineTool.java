@@ -47,6 +47,9 @@ import nato.ivct.commander.SutPathsFiles;
 class NamePosition {
 	String string;
 	int position;
+	NamePosition() {
+		string = new String();
+	}
 }
 /*
  * Dialog program using keyboard input.
@@ -1095,11 +1098,21 @@ class Writer extends Thread {
                 	if (split.length < 2) {
                         out.println("cnf: Error missing true/false value");
                 	}
+                	NamePosition textPosition;
+                	// NB. Assume only one quoted string
+                	if (line.indexOf('"') == -1) {
+                		textPosition = new NamePosition();
+                	} else {
+                	    textPosition = getQuotedString(out, line, line.indexOf('"') - 1, "Confirmation Text");
+                	    if (textPosition == null) {
+                	    	break;
+                	    }
+                	}
                 	if (split[1].contentEquals("true")) {
-                        ivctCommander.sendOperatorConfirmation(true, "beta");
+                        ivctCommander.sendOperatorConfirmation(true, textPosition.string);
                 	} else {
 						if (split[1].contentEquals("false")) {
-	                        ivctCommander.sendOperatorConfirmation(false, "beta");
+	                        ivctCommander.sendOperatorConfirmation(false, textPosition.string);
 						} else {
 	                        out.println("cnf: incorrect true/false value - found: " + split[1]);
 						}
@@ -1147,6 +1160,7 @@ class Writer extends Thread {
                     out.println("sll (setLogLevel) loglevel - set the log level for logging - error, warning, info, debug, trace");
                     out.println("lv (listVerdicts) - list the verdicts of the current session");
                     out.println("s (status) - display status information");
+                    out.println("cnf (operator confirmation) true/false \"confirmation text quoted\"- answer operator request");
                     out.println("q (quit) - quit the program");
                     out.println("h (help) - display the help information");
                     break;
