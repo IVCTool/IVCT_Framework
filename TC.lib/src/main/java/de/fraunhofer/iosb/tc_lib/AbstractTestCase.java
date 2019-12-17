@@ -43,6 +43,8 @@ public abstract class AbstractTestCase {
         statusCmd.setSutName(sutName);
         statusCmd.execute();
     }
+    
+    private Logger defaultLogger = null;
 
     private String testSuiteId = null;
     private String tcName  = null;
@@ -53,7 +55,7 @@ public abstract class AbstractTestCase {
     
     private Semaphore semOperatorRequest = new Semaphore(0);
     private boolean confirmationBool = false;
-    private String text;
+    private String cnfText;
     private String testCaseId;
 
 
@@ -92,6 +94,10 @@ public abstract class AbstractTestCase {
      * @throws TcInconclusive if test is inconclusive
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
+    
+    public void setDefaultLogger(final Logger logger) {
+    	this.defaultLogger = logger;
+    }
 
     public void sendOperatorRequest(String text) throws InterruptedException, TcInconclusive {
     	if (text == null) {
@@ -102,17 +108,30 @@ public abstract class AbstractTestCase {
     	operatorRequestCmd.execute();
     	semOperatorRequest.acquire();
     	if (confirmationBool == false) {
-    		if (text != null) {
-                throw new TcInconclusive("Operator reject message: " + text);
+    		if (cnfText != null) {
+                throw new TcInconclusive("Operator reject message: " + cnfText);
+    		} else {
+                throw new TcInconclusive("Operator reject message: - no reject text -");
     		}
     	}
     }
 
     public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+        MDC.put("testcase", this.getClass().getName());
+        MDC.put("sutName", sutName);
+        MDC.put("badge", testSuiteId);
     	testCaseId = operatorConfirmationInfo.testCaseId;
     	confirmationBool = operatorConfirmationInfo.confirmationBool;
-    	text = operatorConfirmationInfo.text;
-    	System.out.println("onOperatorConfirmation " + testCaseId + " " + text);
+    	cnfText = operatorConfirmationInfo.text;
+		String boolText;
+		if (operatorConfirmationInfo.confirmationBool) {
+			boolText = "true";
+		} else {
+			boolText = "false";
+		}
+		if (defaultLogger != null) {
+		    defaultLogger.info("OperatorConfirmation: " + boolText + " Text: " + operatorConfirmationInfo.text);
+		}
     	semOperatorRequest.release();
     }
     /**
