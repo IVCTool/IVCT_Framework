@@ -278,7 +278,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                     @Override
                     protected String getConfiguredLabel() {
-                        return TEXTS.get("SystemUnderTest");
+                        return TEXTS.get("SuT");
                     }
 
 
