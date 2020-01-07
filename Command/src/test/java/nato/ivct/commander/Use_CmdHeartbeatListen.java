@@ -41,10 +41,10 @@ import org.slf4j.LoggerFactory;
      
     
      // instantiating a new heartbeatListener and deliver this client  without a special Sender-class to observe
-     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
+     CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
 
      // instantiating a new heartbeatListener and deliver this client  an  a special Sender-class to observe
-     CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient, Use_CmdHeartbeatListen.desiredHeartBeatSenderClass );
+     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient, Use_CmdHeartbeatListen.desiredHeartBeatSenderClass );
      
 
      heartbeatListener.execute();
