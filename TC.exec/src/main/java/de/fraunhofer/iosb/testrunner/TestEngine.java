@@ -163,11 +163,11 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		}
 
 		public void run() {
-			logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
 			MDC.put("badge", info.testSuiteId);
 			MDC.put("testcase", info.testCaseId);
+	        logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
 			if (tsd == null) {
@@ -238,24 +238,24 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
 			switch (level) {
 			case ERROR:
-				logger.trace("TestEngine:onMessageConsumer:run: error");
+				logger.warn("TestEngine:onMessageConsumer:run: error");
 				lo.setLevel(Level.ERROR);
 				break;
 			case WARNING:
-				logger.trace("TestEngine:onMessageConsumer:run: warning");
 				lo.setLevel(Level.WARN);
+                logger.warn("TestEngine:onMessageConsumer:run: warning");
 				break;
 			case INFO:
-				logger.trace("TestEngine:onMessageConsumer:run: info");
 				lo.setLevel(Level.INFO);
+                logger.warn("TestEngine:onMessageConsumer:run: info");
 				break;
 			case DEBUG:
-				logger.trace("TestEngine:onMessageConsumer:run: debug");
 				lo.setLevel(Level.DEBUG);
+                logger.warn("TestEngine:onMessageConsumer:run: debug");
 				break;
 			case TRACE:
-				logger.trace("TestEngine:onMessageConsumer:run: trace");
 				lo.setLevel(Level.TRACE);
+                logger.warn("TestEngine:onMessageConsumer:run: trace");
 				break;
 			}
 		}
