@@ -15,6 +15,7 @@ import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
@@ -30,7 +31,6 @@ import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
 
-import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
 
 
 /**
