@@ -26,3 +26,6 @@ gradle.properties
 
 /.sonarlint
 /TC.exec/src/main/resources/JMSTestRunner_logback.xml
+
+#  brf
+*.org

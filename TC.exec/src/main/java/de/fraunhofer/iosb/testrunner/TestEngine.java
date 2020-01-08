@@ -14,6 +14,8 @@ import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
@@ -28,6 +30,8 @@ import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
+
+
 
 /**
  * Testrunner that listens for certain commands to start and stop test cases.
@@ -207,6 +211,27 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
+				
+				
+        /**
+         * Check the compability of IVCT-Version which had this testCase at
+         * building-time against the IVCT-Version at Runtime
+         */
+
+        try {          
+          logger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: " + testCase.getIVCTVersion()); // Debug
+          
+          new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
+          
+        } catch (IVCTVersionCheckException cf) {
+          logger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
+          verdicts[i] = new IVCT_Verdict();
+          verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+          verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+          i++;
+          cf.printStackTrace();
+          continue;
+        }		
 
 				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), logger);
 			}
