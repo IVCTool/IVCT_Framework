@@ -13,9 +13,6 @@ public interface ISuTTcService extends IService {
 
 
     SuTTcExecutionFormData load(SuTTcExecutionFormData formData);
-
-
-    String loadLogFileContent(String sutId, String testsuiteId, String tcName);
     
     
     String getTcLastVerdict(String sutId, String testsuiteId, String tcId);
@@ -25,4 +22,7 @@ public interface ISuTTcService extends IService {
 
 
     void executeTestCase(String sutId, String tc, String badgeId);
+
+
+    SuTTcExecutionFormData loadJSONLogFileContent(String sutId, String testsuiteId, String fileName, SuTTcExecutionFormData formData);
 }

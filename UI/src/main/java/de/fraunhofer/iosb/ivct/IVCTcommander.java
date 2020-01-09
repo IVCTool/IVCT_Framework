@@ -23,14 +23,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import org.json.simple.JSONObject;
-
-import nato.ivct.commander.CmdHeartbeatListen;
-import nato.ivct.commander.CmdHeartbeatSend;
+import nato.ivct.commander.CmdOperatorConfirmation;
+import nato.ivct.commander.CmdOperatorRequestListener.OnOperatorRequestListener;
+import nato.ivct.commander.CmdOperatorRequestListener.OperatorRequestInfo;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
-import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
+import nato.ivct.commander.Factory;
+
 
 /**
  * IVCTcommander takes user input strings, creates and sends messages to the JMS bus,
@@ -39,21 +39,19 @@ import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
  *
  * @author Johannes Mulder (Fraunhofer IOSB)
  */
-public class IVCTcommander implements OnResultListener, CmdHeartbeatListen.OnCmdHeartbeatListen {
-	private Map<String, String> uiHeartbeatDataMap = new HashMap<String, String>();
+public class IVCTcommander implements OnResultListener, OnOperatorRequestListener {
 
-	public Map<String, String> getHeartBeatSenders() {
-		return uiHeartbeatDataMap;
-	}
 
     private boolean firstTime = true;
 	private static Vector<String> listOfVerdicts = new Vector<String>();
     public RuntimeParameters rtp = new RuntimeParameters();
-    private static CmdHeartbeatListen heartbeatListener;
+    private boolean firstTime = true;
+    private boolean gotOperatorRequest = false;
+    private String sutName;
+    private String testSuiteId;
+    private String tcName;
+    private String text;
 
-    // You can choose a special  Class to be monitored
-    //private static String desiredHeartBeatSenderClass="Use_CmdHeartbeatSend";
-    //private static String desiredHeartBeatSenderClass="TestRunner";
 
     /**
      * public constructor.
@@ -136,4 +134,31 @@ public class IVCTcommander implements OnResultListener, CmdHeartbeatListen.OnCmd
 		rtp.releaseSemaphore();
     }
 
+    public void onOperatorRequest(OperatorRequestInfo operatorRequestInfo) {
+    	sutName = operatorRequestInfo.sutName;
+    	testSuiteId = operatorRequestInfo.testSuiteId;
+    	tcName = operatorRequestInfo.testCaseId;
+    	text = operatorRequestInfo.text;
+		System.out.println("Operator request: " + operatorRequestInfo.testCaseId + " " + operatorRequestInfo.text);
+		gotOperatorRequest = true;
+    }
+
+    public void sendOperatorConfirmation(boolean confirmationBoolean, String text) {
+    	CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, tcName, confirmationBoolean, text);
+    	operatorConfirmationCmd.execute();
+		gotOperatorRequest = false;
+    }
+
+    public String getOperatorRequestTcId() {
+    	return tcName;
+    }
+
+    public String getOperatorRequestText() {
+    	return text;
+    }
+
+    public boolean isOperatorRequestOutstanding() {
+    	return gotOperatorRequest;
+    }
 }
+

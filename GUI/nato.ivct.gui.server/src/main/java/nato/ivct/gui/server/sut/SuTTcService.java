@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -21,6 +20,11 @@ import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import nato.ivct.commander.CmdSendLogMsg;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
@@ -31,13 +35,14 @@ import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcExecutionHistoryTable.TcExecutionHistoryTableRowData;
+import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcLog.TcLogRowData;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
+import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 
 
 public class SuTTcService implements ISuTTcService {
     private static final Logger    LOG          = LoggerFactory.getLogger(ServerSession.class);
     private SutTcResultDescription sutTcResults = null;
-
 
     @Override
     public SuTTcRequirementFormData prepareCreate(SuTTcRequirementFormData formData) {
@@ -51,57 +56,40 @@ public class SuTTcService implements ISuTTcService {
     }
 
 
-    //    @Override
-    //    public SuTTcRequirementFormData load(SuTTcRequirementFormData formData) {
-    //        LOG.info("load requirement form");
-    //        if (!ACCESS.check(new ReadCbPermission())) {
-    //            throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //        }
-    //
-    //        final CbService cbService = BEANS.get(CbService.class);
-    //
-    //        // get requirement description and test case
-    //        final BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
-    //        if (bd != null) {
-    //            // get the requirements for this badge
-    //            final Optional<Entry<String, InteroperabilityRequirement>> first = bd.requirements.entrySet().stream().filter(requirement -> formData.getRequirementId().equals(requirement.getValue().ID)).findFirst();
-    //            first.ifPresent(requirement -> {
-    //                formData.getReqDescr().setValue(requirement.getValue().description);
-    //                //				formData.getTestCaseName().setValue(requirement.TC);
-    //
-    //                // get log files for this test case
-    //                //				if (bd.ID != null && requirement.TC != null)
-    //                //					// work-around if the requirement has no test case associated
-    //                //					loadLogFiles(formData, bd.ID, requirement.TC);
-    //            });
-    //        }
-    //
-    //        return formData;
-    //    }
-    //
-    //
-    //    @Override
-    //    public SuTTcRequirementFormData store(SuTTcRequirementFormData formData) {
-    //        return formData;
-    //    }
-
     @Override
-    public String loadLogFileContent(final String sutId, final String tsId, final String fileName) {
-        // get content of the requested log file
-        String logFileContent = null;
-        final Path tcLogFile = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, tsId), fileName);
+    public SuTTcExecutionFormData loadJSONLogFileContent(String sutId, String testsuiteId, String fileName, SuTTcExecutionFormData formData) {
+        final Path logFilePath = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId), fileName);
         try {
-            logFileContent = java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n"));
+            java.nio.file.Files.lines(logFilePath).map(line -> {
+                TcLogMsgNotification logMsgNotification = null;
+                try {
+                    final JsonObject jObj = new Gson().fromJson(line, JsonObject.class);
+                    logMsgNotification = new TcLogMsgNotification();
+                    logMsgNotification.setLogLevel(jObj.get(CmdSendLogMsg.LOG_MSG_LEVEL).getAsString());
+                    logMsgNotification.setTimeStamp(jObj.get(CmdSendLogMsg.LOG_MSG_TIME).getAsLong());
+                    logMsgNotification.setLogMsg(jObj.get(CmdSendLogMsg.LOG_MSG_EVENT).getAsString());
+                }
+                catch (JsonSyntaxException exc) {
+                    LOG.info("incorrect log format " + logFilePath, exc);
+                }
+                return Optional.ofNullable(logMsgNotification);
+            }).filter(Optional::isPresent).forEach(optionalLogMsgNotification -> {
+                final TcLogRowData row = formData.getTcLog().addRow();
+                final TcLogMsgNotification logMsgNotification = optionalLogMsgNotification.get();
+                row.setLogLevel(logMsgNotification.getLogLevel());
+                row.setTimeStamp(logMsgNotification.getTimeStamp());
+                row.setLogMsg(logMsgNotification.getLogMsg());
+            });
         }
-        catch (final NoSuchFileException e) {
-            LOG.info("log files not found: {}", tcLogFile.toString());
+        catch (final NoSuchFileException exc) {
+            LOG.info("log files not found: " + logFilePath, exc);
         }
-        catch (final IOException e) {
-            e.printStackTrace();
+        catch (final IOException exc) {
+            LOG.error("", exc);
         }
-
-        return logFileContent;
+        return formData;
     }
+
 
     @Override
     public SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData) {
@@ -113,6 +101,7 @@ public class SuTTcService implements ISuTTcService {
         loadLogFiles(formData);
         return formData;
     }
+
 
     @Override
     public SuTTcExecutionFormData load(SuTTcExecutionFormData formData) {
@@ -207,7 +196,6 @@ public class SuTTcService implements ISuTTcService {
         }
     }
 
-
     @Override
     public void executeTestCase(String sutId, String tc, String tsId) {
         // execute the CmdStartTc commands
@@ -216,22 +204,22 @@ public class SuTTcService implements ISuTTcService {
     }
 
 
-	@Override
-	public String getTcLastVerdict(String sutId, String testsuiteId, String tcId) {
-        
+    @Override
+    public String getTcLastVerdict(String sutId, String testsuiteId, String tcId) {
+
         final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId));
         final String tcName = tcId.substring(tcId.lastIndexOf('.') + 1);
 
         // load the (logfile,verdict) pairs
         final IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
         sutTcResults = future1.awaitDoneAndGet();
- 
+
         String verdict = "";
         try {
-        	final Optional<Path> optionalLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
+            final Optional<Path> optionalLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
             final String logFileName = optionalLogFile.isPresent() ? optionalLogFile.get().getFileName().toString() : "";
-                LOG.info("Log file found: {}", logFileName);
-                verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
+            LOG.info("Log file found: {}", logFileName);
+            verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
         }
         catch (final NoSuchFileException exc) {
             LOG.info("log files not found: {}", folder + "\\" + tcName);
@@ -239,8 +227,8 @@ public class SuTTcService implements ISuTTcService {
         catch (final IOException exc) {
             exc.printStackTrace();
         }
-     
+
         return verdict;
-	}
+    }
 
 }

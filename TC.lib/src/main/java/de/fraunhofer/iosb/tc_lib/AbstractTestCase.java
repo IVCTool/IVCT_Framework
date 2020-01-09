@@ -11,9 +11,15 @@
 
 package de.fraunhofer.iosb.tc_lib;
 
+import java.util.concurrent.Semaphore;
+
+import javax.xml.soap.Text;
+
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
+import nato.ivct.commander.CmdOperatorRequest;
 import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
 
@@ -33,7 +39,6 @@ public abstract class AbstractTestCase {
 
     private final CmdSendTcStatus statusCmd = Factory.createCmdSendTcStatus();
 
-
     public void sendTcStatus(String status, int percent) {
         statusCmd.setStatus(status);
         statusCmd.setPercentFinshed(percent);
@@ -41,12 +46,20 @@ public abstract class AbstractTestCase {
         statusCmd.setSutName(sutName);
         statusCmd.execute();
     }
+    
+    private Logger defaultLogger = null;
 
+    private String testSuiteId = null;
     private String tcName  = null;
     private String sutName = null;
     private String settingsDesignator;
     private String federationName;
     private String sutFederateName;
+    
+    private Semaphore semOperatorRequest = new Semaphore(0);
+    private boolean confirmationBool = false;
+    private String cnfText;
+    private String testCaseId;
 
 
     /**
@@ -84,8 +97,46 @@ public abstract class AbstractTestCase {
      * @throws TcInconclusive if test is inconclusive
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
+    
+    public void setDefaultLogger(final Logger logger) {
+    	this.defaultLogger = logger;
+    }
 
+    public void sendOperatorRequest(String text) throws InterruptedException, TcInconclusive {
+    	if (text == null) {
+    		// Make an empty string
+    		text = new String();
+    	}
+    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(sutName, testSuiteId, tcName, text);
+    	operatorRequestCmd.execute();
+    	semOperatorRequest.acquire();
+    	if (confirmationBool == false) {
+    		if (cnfText != null) {
+                throw new TcInconclusive("Operator reject message: " + cnfText);
+    		} else {
+                throw new TcInconclusive("Operator reject message: - no reject text -");
+    		}
+    	}
+    }
 
+    public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+        MDC.put("testcase", this.getClass().getName());
+        MDC.put("sutName", sutName);
+        MDC.put("badge", testSuiteId);
+    	testCaseId = operatorConfirmationInfo.testCaseId;
+    	confirmationBool = operatorConfirmationInfo.confirmationBool;
+    	cnfText = operatorConfirmationInfo.text;
+		String boolText;
+		if (operatorConfirmationInfo.confirmationBool) {
+			boolText = "true";
+		} else {
+			boolText = "false";
+		}
+		if (defaultLogger != null) {
+		    defaultLogger.info("OperatorConfirmation: " + boolText + " Text: " + operatorConfirmationInfo.text);
+		}
+    	semOperatorRequest.release();
+    }
     /**
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
@@ -223,6 +274,21 @@ public abstract class AbstractTestCase {
 
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
         return ivct_Verdict;
+    }
+
+
+    /**
+     * Returns the name test suite
+     *
+     * @return Test Suite Name
+     */
+    public String getTsName() {
+        return testSuiteId;
+    }
+
+
+    public void setTsName(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
     }
 
 

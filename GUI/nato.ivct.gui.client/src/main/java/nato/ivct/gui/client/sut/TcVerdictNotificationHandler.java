@@ -7,7 +7,10 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
@@ -22,13 +25,12 @@ import nato.ivct.gui.shared.sut.TcVerdictNotification;
 public class TcVerdictNotificationHandler implements INotificationHandler<TcVerdictNotification> {
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     // verdicts
     public static final String PASSED_VERDICT       = "PASSED";
     public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
-
 
     @Override
     public void handleNotification(TcVerdictNotification notification) {
@@ -43,47 +45,48 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                     desktop.findForms(SuTTcExecutionForm.class).stream().filter(form -> form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())).forEach(form -> {
                         logger.trace("Test Case Notification " + notification.getVerdict() + " received for TC " + notification.getTcId() + "and SuT " + notification.getSutId());
 
-	                    // set verdict
-	                    form.setTestCaseVerdict(notification.getVerdict());
-	                    form.getTcExecutionStatus().setValue(notification.getVerdict());
-	                    
-	                    // set the color of the test result in TC Status
-	                    switch (Objects.toString(notification.getVerdict(), "")) {
-	                    	case PASSED_VERDICT:
-	                            form.getTcExecutionStatus().setForegroundColor("0DAF66");
-	                            break;
-	                    	case INCONCLUSIVE_VERDICT:
-	                    		form.getTcExecutionStatus().setForegroundColor("997bb7");
-	                    		break;
-	                    	case FAILED_VERDICT:
-	                    		form.getTcExecutionStatus().setForegroundColor("db3d57");
-	                    		break;
-	                    	default:
-	                    		;	
-	                    }
-	                    
+                        // set verdict
+                        form.setTestCaseVerdict(notification.getVerdict());
+                        form.getTcExecutionStatus().setValue(notification.getVerdict());
+
+                        // show the TC execution status in a message box and set the color of the test result in TC Status
+                        switch (Objects.toString(notification.getVerdict(), "")) {
+                            case PASSED_VERDICT:
+                                form.getTcExecutionStatus().setForegroundColor("0DAF66");
+                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus") + "\n\n" + notification.getVerdict()).withHtml(HTML.fragment(HTML.italic(TEXTS.get("TestcaseId") + ": " + notification.getTcId()))).withAutoCloseMillis(30000).show();
+                                break;
+                            case INCONCLUSIVE_VERDICT:
+                                form.getTcExecutionStatus().setForegroundColor("997bb7");
+                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus") + "\n\n" + notification.getVerdict()).withHtml(HTML.fragment(HTML.italic(TEXTS.get("TestcaseId") + ": " + notification.getTcId()))).withAutoCloseMillis(30000).show();
+                                break;
+                            case FAILED_VERDICT:
+                                form.getTcExecutionStatus().setForegroundColor("db3d57");
+                                MessageBoxes.createOk().withHeader(TEXTS.get("TCExecutionStatus") + "\n\n" + notification.getVerdict()).withHtml(HTML.fragment(HTML.italic(TEXTS.get("TestcaseId") + ": " + notification.getTcId()))).withAutoCloseMillis(30000).show();
+                                break;
+                        }
+
                         //update log file table
                         final ISuTTcService service = BEANS.get(ISuTTcService.class);
                         SuTTcExecutionFormData formData = new SuTTcExecutionFormData();
                         form.exportFormData(formData);
                         formData = service.updateLogFileTable(formData);
                         form.importFormData(formData);
-	
-	                    // set result color in the execution history table
-	                    form.setTestResultColor();
-	                    
-	                    // mark the first line of the TC History Table to focus the currently executed test case
-	                    form.getTcExecutionHistoryTableField().getTable().selectFirstRow();
-	                    
-	                    // set execution status color of the tc tile
-	                    setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
-	                    
-	                    // remove filter to show all log files
-//	                    final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
-//	                    tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
-	                    
-	                    // show TC Execution History Table after TC execution
-	                    form.getTcExecutionHistoryTableField().setVisible(true);
+
+                        // set result color in the execution history table
+                        form.setTestResultColor();
+
+                        // mark the first line of the TC History Table to focus the currently executed test case
+                        form.getTcExecutionHistoryTableField().getTable().selectFirstRow();
+
+                        // set execution status color of the tc tile
+                        setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
+
+                        // remove filter to show all log files
+                        //	                    final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
+                        //	                    tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
+
+                        // show TC Execution History Table after TC execution
+                        form.getTcExecutionHistoryTableField().setVisible(true);
 
                         // show Execute TC button
                         form.getTcExecutionButton().setVisible(true);

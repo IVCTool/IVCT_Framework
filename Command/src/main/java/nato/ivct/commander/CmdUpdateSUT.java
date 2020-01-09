@@ -258,7 +258,7 @@ public class CmdUpdateSUT {
 		if (myTestsuiteURLs == null) {
 			TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(ts);
 			if (tsd != null) {
-				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID);
+				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID);
 				logger.trace(ts_path);
 				if (tsd.tsLibTimeFolder != null) {
 					String lib_path = ts_path + "/" + tsd.tsLibTimeFolder;

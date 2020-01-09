@@ -21,18 +21,20 @@ import javax.naming.Context;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.classic.net.JMSTopicSink;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.contrib.json.JsonLayoutBase;
 import ch.qos.logback.core.FileAppender;
-import nato.ivct.commander.CmdLogMsgListener.LogMsg;
-import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+
+import nato.ivct.commander.CmdLogMsgListener.OnJsonLogMsgListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
+import nato.ivct.commander.CmdSendLogMsg;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
@@ -41,11 +43,11 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutPathsFiles;
 
 
-public class JMSLogSink implements OnResultListener, OnQuitListener, OnStartTestCaseListener, OnLogMsgListener {
+public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnStartTestCaseListener, OnJsonLogMsgListener {
 
     static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
-    private final Logger logger = (Logger) LoggerFactory.getLogger(JMSTopicSink.class);
+    private final Logger logger = (Logger) LoggerFactory.getLogger(JMSLogSink.class);
     // private Logger log;
     private final Map<String, FileAppender<ILoggingEvent>> appenderMap = new HashMap<>();
     private final Map<String, String>                      tcLogMap    = new HashMap<>();
@@ -80,10 +82,23 @@ public class JMSLogSink implements OnResultListener, OnQuitListener, OnStartTest
         if (fileAppender == null) {
             logger.debug("create new Appender for " + tcName);
             final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-            final PatternLayoutEncoder ple = new PatternLayoutEncoder();
+            // final PatternLayoutEncoder ple = new PatternLayoutEncoder();
+            final LayoutWrappingEncoder<ILoggingEvent> ple = new ch.qos.logback.core.encoder.LayoutWrappingEncoder<ILoggingEvent>();
 
-            //            ple.setPattern("%date %level [%logger{36}] [%file:%line] %X{testcase}: %msg%n");
-            ple.setPattern("[%level] %msg%n");
+            JsonLayoutBase<ILoggingEvent> layout = new JsonLayoutBase<ILoggingEvent>() {
+
+				@Override
+				protected Map toJsonMap(ILoggingEvent e) {
+					JSONObject m = null;
+					Object[] args = e.getArgumentArray();
+					if (args[0] != null) {
+						m = (JSONObject) args[0];
+					}
+					return m;
+				}
+			};
+			layout.setAppendLineSeparator(true);
+            ple.setLayout(layout);
             ple.setContext(lc);
             ple.start();
             final LocalDateTime ldt = LocalDateTime.now();
@@ -149,29 +164,17 @@ public class JMSLogSink implements OnResultListener, OnQuitListener, OnStartTest
 
 
     @Override
-    public void onLogMsg(LogMsg msg) {
-        if (msg.tc != null) {
+	public void onLogMsgJson(JSONObject msg) {
+    	Object tcObj = msg.get(CmdSendLogMsg.LOG_MSG_TESTCASE);
+        if (tcObj != null) {
+        	String tc = tcObj.toString();
             final SutPathsFiles sutPathsFiles = Factory.getSutPathsFiles();
-            final String tcLogDir = sutPathsFiles.getSutLogPathName(msg.sut, msg.badge);
-            final Logger log = getTestCaseLogger(msg.tc, msg.sut, tcLogDir);
-            final String ds = dateFormatter.format(new Date(msg.time));
-            switch (msg.level) {
-                case "TRACE":
-                    log.trace(ds + ": " + msg.txt);
-                    break;
-                case "DEBUG":
-                    log.debug(ds + ": " + msg.txt);
-                    break;
-                case "INFO":
-                    log.info(ds + ": " + msg.txt);
-                    break;
-                case "WARN":
-                    log.warn(ds + ": " + msg.txt);
-                    break;
-                case "ERROR":
-                    log.error(ds + ": " + msg.txt);
-                    break;
-            }
+        	String sut = msg.get(CmdSendLogMsg.LOG_MSG_SUT).toString();
+        	String badge = msg.get(CmdSendLogMsg.LOG_MSG_BADGE).toString();
+
+            final String tcLogDir = sutPathsFiles.getSutLogPathName(sut, badge);
+            final Logger log = getTestCaseLogger(tc, sut, tcLogDir);
+            log.trace(msg.toString(),msg);
         }
 
     }

@@ -20,6 +20,9 @@ import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+import nato.ivct.commander.CmdOperatorConfirmationListener;
+import nato.ivct.commander.CmdOperatorConfirmationListener.OnOperatorConfirmationListener;
+import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -39,12 +42,13 @@ import nato.ivct.commander.Factory;
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
-public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend {
+public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
 	private static Logger logger = LoggerFactory.getLogger(TestEngine.class);
 
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
+	private AbstractTestCase testCase = null;
 
 	private CmdListTestSuites testSuites;
 	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
@@ -82,6 +86,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		} catch (Exception e1) {
 			logger.error("Could not start HeartbeatSend: " + e1.toString());
 		}
+		(new CmdOperatorConfirmationListener(this)).execute();
 
 		// get the test suite descriptions
 		testSuites = new CmdListTestSuites();
@@ -162,11 +167,11 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		}
 
 		public void run() {
-			logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 			MDC.put("sutName", info.sutName);
 			MDC.put("sutDir", info.sutDir);
 			MDC.put("badge", info.testSuiteId);
 			MDC.put("testcase", info.testCaseId);
+	        logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
 			if (tsd == null) {
@@ -192,7 +197,6 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 			int i = 0;
 			for (final String classname : testcases) {
-				AbstractTestCase testCase = null;
 				try {
 					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
@@ -206,7 +210,9 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					i++;
 					continue;
 				}
+				testCase.setDefaultLogger(logger);
 				testCase.setSutName(info.sutName);
+				testCase.setTsName(info.testSuiteId);
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
@@ -257,24 +263,24 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
 			switch (level) {
 			case ERROR:
-				logger.trace("TestEngine:onMessageConsumer:run: error");
+				logger.warn("TestEngine:onMessageConsumer:run: error");
 				lo.setLevel(Level.ERROR);
 				break;
 			case WARNING:
-				logger.trace("TestEngine:onMessageConsumer:run: warning");
 				lo.setLevel(Level.WARN);
+                logger.warn("TestEngine:onMessageConsumer:run: warning");
 				break;
 			case INFO:
-				logger.trace("TestEngine:onMessageConsumer:run: info");
 				lo.setLevel(Level.INFO);
+                logger.warn("TestEngine:onMessageConsumer:run: info");
 				break;
 			case DEBUG:
-				logger.trace("TestEngine:onMessageConsumer:run: debug");
 				lo.setLevel(Level.DEBUG);
+                logger.warn("TestEngine:onMessageConsumer:run: debug");
 				break;
 			case TRACE:
-				logger.trace("TestEngine:onMessageConsumer:run: trace");
 				lo.setLevel(Level.TRACE);
+                logger.warn("TestEngine:onMessageConsumer:run: trace");
 				break;
 			}
 		}
@@ -291,6 +297,11 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		this.testCaseId = new String(info.testCaseId);
 		Thread th1 = new Thread(new TestScheduleRunner(info, this));
 		th1.start();
+	}
+	
+	@Override
+	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+		testCase.onOperatorConfirmation(operatorConfirmationInfo);
 	}
 	
 	
