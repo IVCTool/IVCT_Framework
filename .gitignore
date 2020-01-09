@@ -29,3 +29,5 @@ gradle.properties
 
 #  brf
 *.org
+
+compatibleVersions.properties
