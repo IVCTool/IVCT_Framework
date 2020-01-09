@@ -17,7 +17,10 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import nato.ivct.commander.CmdOperatorConfirmation;
@@ -28,6 +31,7 @@ import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 import nato.ivct.commander.Factory;
 
+
 /**
  * IVCTcommander takes user input strings, creates and sends messages to the JMS bus,
  * listens to the JMS bus and forwards the messages via callbacks to the user
@@ -37,6 +41,8 @@ import nato.ivct.commander.Factory;
  */
 public class IVCTcommander implements OnResultListener, OnOperatorRequestListener {
 
+
+    private boolean firstTime = true;
 	private static Vector<String> listOfVerdicts = new Vector<String>();
     public RuntimeParameters rtp = new RuntimeParameters();
     private boolean firstTime = true;
@@ -46,6 +52,7 @@ public class IVCTcommander implements OnResultListener, OnOperatorRequestListene
     private String tcName;
     private String text;
 
+
     /**
      * public constructor.
      *
@@ -53,6 +60,16 @@ public class IVCTcommander implements OnResultListener, OnOperatorRequestListene
      */
     public IVCTcommander() throws IOException {
         new CmdStartTestResultListener(this);
+        // creating a instance of this 'client'  to  deliver it to the listener
+        heartbeatListener = new CmdHeartbeatListen(this);
+
+        // instantiating a new heartbeatListener and deliver this client  without a special Sender-class to observe
+        //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
+
+        // instantiating a new heartbeatListener and deliver this client  an  a special Sender-class to observe
+//        CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(this, desiredHeartBeatSenderClass );
+
+        heartbeatListener.execute();
     }
 
     public void addTestSessionSeparator() {
@@ -74,6 +91,22 @@ public class IVCTcommander implements OnResultListener, OnOperatorRequestListene
       public void resetSUT() {
     	  listOfVerdicts.clear();
       }
+
+	@Override
+	public void hearHeartbeat(JSONObject heartBeat) {
+
+		try {
+			String heartbeatSenderName = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDER, "");
+			String notifyState = (String)heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+			if (heartbeatSenderName != null) {
+			    uiHeartbeatDataMap.put(heartbeatSenderName, notifyState);
+			}
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+		}
+
+	}
 
     public void onResult(TcResult result) {
 		String testSchedule = rtp.getTestScheduleName();
@@ -128,3 +161,4 @@ public class IVCTcommander implements OnResultListener, OnOperatorRequestListene
     	return gotOperatorRequest;
     }
 }
+

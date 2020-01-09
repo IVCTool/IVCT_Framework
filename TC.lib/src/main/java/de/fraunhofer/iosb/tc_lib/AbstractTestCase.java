@@ -23,6 +23,9 @@ import nato.ivct.commander.CmdOperatorRequest;
 import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the three
@@ -360,4 +363,42 @@ public abstract class AbstractTestCase {
     public String getSutFederateName() {
         return sutFederateName;
     }
+    
+    
+    
+    /**
+     * Returns the IVCT-Version which has this TestCase at building-time for
+     * checking against the IVCT-Version of at Runtime
+     *  
+     */
+    public String getIVCTVersion()  throws IVCTVersionCheckException {
+      
+      String infoIVCTVersion = "not defined yet";  
+      InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
+      
+      
+      if (in == null) {
+        throw new IVCTVersionCheckException("/testCaseBuild.properties could not be read ");
+      }   
+      
+      Properties versionProperties = new Properties();
+      
+      try {
+        versionProperties.load(in);
+        infoIVCTVersion = versionProperties.getProperty("ivctVersion");
+      } catch (IOException ex) {      
+        infoIVCTVersion = "undefined";      
+        throw new IVCTVersionCheckException("/testCaseBuild.properties could not be load ", ex );
+      }
+      return infoIVCTVersion;
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
 }

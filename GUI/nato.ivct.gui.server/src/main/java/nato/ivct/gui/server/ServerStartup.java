@@ -108,23 +108,23 @@ public class ServerStartup implements IPlatformListener {
             LOG.trace("heartbeat received: {}", heartBeat.toJSONString());
 
             try {
-                final HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+                final String hbMsgState = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
                 switch (hbMsgState) {
-                    case INTIME:
+                    case "intime":
                         hbn.notifyState = HbNotificationState.OK;
                         break;
-                    case TIMEOUT:
-                    case WAITING:
-                    case ALERT:
+                    case "time-out":
+                    case "waiting":
+                    case "alert":
                         hbn.notifyState = HbNotificationState.WARNING;
                         break;
-                    case FAIL:
+                    case "fail":
                         hbn.notifyState = HbNotificationState.CRITICAL;
                         break;
-                    case DEAD:
+                    case "dead":
                         hbn.notifyState = HbNotificationState.DEAD;
                         break;
-                    case UNKNOWN:
+                    case "unknown":
                     default:
                         hbn.notifyState = HbNotificationState.UNKNOWN;
                 }
