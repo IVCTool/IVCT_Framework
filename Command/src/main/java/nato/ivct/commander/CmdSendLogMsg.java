@@ -6,6 +6,7 @@ import javax.jms.MessageProducer;
 import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class CmdSendLogMsg implements Command {
@@ -30,9 +31,17 @@ public class CmdSendLogMsg implements Command {
     @Override
     public void execute() throws Exception {
         JSONObject startCmd = new JSONObject();
-        String tc = logMessage.getMDCPropertyMap().get("testcase");
-        String sut = logMessage.getMDCPropertyMap().get("sutName");
-        String badge = logMessage.getMDCPropertyMap().get("badge");
+        String loggerName = logMessage.getLoggerName();
+        LoggerData loggerData = TcLoggerData.getLoggerData(loggerName);
+        if (loggerData == null) {
+        	return;
+        }
+        Level levelUser = TcLoggerData.getLogLevel();
+        Level levelMsg = logMessage.getLevel();
+        if (levelMsg.isGreaterOrEqual(levelUser)) {
+        String tc = loggerData.tcName;
+        String sut = loggerData.sutName;
+        String badge = loggerData.badgeName;
         String level = logMessage.getLevel().toString();
         long ts = logMessage.getTimeStamp();
         startCmd.put(LOG_MSG_LEVEL, level);
@@ -44,6 +53,7 @@ public class CmdSendLogMsg implements Command {
 
         Message message = Factory.jmsHelper.createTextMessage(startCmd.toString());
         logProducer.send(message);
+        }
     }
 
     public void send(ILoggingEvent newMsg) {

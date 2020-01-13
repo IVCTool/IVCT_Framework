@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
@@ -22,6 +23,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.TableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractLongColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -194,7 +196,7 @@ public class SuTCbForm extends AbstractForm {
 
         @Override
         protected int getConfiguredGridColumnCount() {
-            return 5;
+            return 2;
         }
 
 
@@ -215,7 +217,7 @@ public class SuTCbForm extends AbstractForm {
 
             @Override
             protected double getConfiguredSplitterPosition() {
-                return 0.35;
+                return 0.45;
             }
 
             // Box for testsuites and their fulfilled requirements
@@ -304,14 +306,23 @@ public class SuTCbForm extends AbstractForm {
 
                         // show test case form in a separate form
                         @Override
-                        protected void execTileAction(ITile tile) {
+                        protected void execTileAction(final ITile tile) {
                             // open TC execution form
                             final SuTTcExecutionForm form = new SuTTcExecutionForm();
                             form.setSutId(getSutId());
                             form.setTestsuiteId(activeTsId);
                             form.setTestCaseId(((CustomTile) tile).getTcId());
 
-                            form.startView();
+                            // Check whether a test case is already open and set the focus on the test case
+                            final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
+                            List<SuTTcExecutionForm> forms = desktop.findForms(SuTTcExecutionForm.class);
+                            Optional<SuTTcExecutionForm> optionalForm = forms.stream().filter(executionForm -> executionForm.getSutId().equalsIgnoreCase(getSutId()) && executionForm.getTestCaseId().equalsIgnoreCase(((CustomTile) tile).getTcId())).findFirst();
+                            if (optionalForm.isPresent()) {
+                                optionalForm.get().activate();
+                            }
+                            else {
+                                form.startView();
+                            }
                         }
 
                         public class TileGroup extends AbstractGroup {

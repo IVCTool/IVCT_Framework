@@ -120,9 +120,6 @@ public abstract class AbstractTestCase {
     }
 
     public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
-        MDC.put("testcase", this.getClass().getName());
-        MDC.put("sutName", sutName);
-        MDC.put("badge", testSuiteId);
     	testCaseId = operatorConfirmationInfo.testCaseId;
     	confirmationBool = operatorConfirmationInfo.confirmationBool;
     	cnfText = operatorConfirmationInfo.text;

@@ -12,7 +12,7 @@ public interface ISuTService extends IService {
 	/*
 	 * SuTFormData
 	 */
-
+	
 	SuTFormData load(SuTFormData formData);
 	
 	/*
@@ -26,6 +26,11 @@ public interface ISuTService extends IService {
     SuTEditFormData prepareCreate(SuTEditFormData formData);
 
     SuTEditFormData create(SuTEditFormData formData);
+    
+    /*
+     * TestReportFormData
+     */
 
 	TestReportFormData load(TestReportFormData formData);
+
 }
