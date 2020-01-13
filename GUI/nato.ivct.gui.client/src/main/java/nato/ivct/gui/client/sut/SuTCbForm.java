@@ -196,7 +196,7 @@ public class SuTCbForm extends AbstractForm {
 
         @Override
         protected int getConfiguredGridColumnCount() {
-            return 5;
+            return 2;
         }
 
 
@@ -217,7 +217,7 @@ public class SuTCbForm extends AbstractForm {
 
             @Override
             protected double getConfiguredSplitterPosition() {
-                return 0.35;
+                return 0.45;
             }
 
             // Box for testsuites and their fulfilled requirements
