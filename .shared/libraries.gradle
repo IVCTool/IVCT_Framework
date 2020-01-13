@@ -1,19 +1,21 @@
 // Provides a map of the dependency artifacts to use.
 // Allows centralized definition of the version of artifacts to use.
 ext {
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-        gradleVersion = '5.1.1'
-        gradleWrapperVersion = "${gradleVersion}"
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
+    gradleVersion = '5.1.1'
+    gradleWrapperVersion = "${gradleVersion}"
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-        ivctVersion = '2.2.2-SNAPSHOT'
+    ivctVersion = '2.2.2-SNAPSHOT'
+    compatibleVersions = ['2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
+
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
-        junitVersion = '4.+'
+    junitVersion = '4.+'
 
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-        logbackVersion = '1.2.3'
-        slf4jVersion = '1.7.10'
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
+    logbackVersion = '1.2.3'
+    slf4jVersion = '1.7.10'
 		activemqVersion = '5.14.5'
 		hamcrestVersion = '1.1'
 		scoutVersion = '9.0.0.025_Simrel_2019_09'
@@ -25,6 +27,7 @@ ext {
 		javaxannotationVersion = '1.3.2'
 
 		gradleDockerPluginVersion = '4.9.0'
+
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
         libraries = [
@@ -52,7 +55,7 @@ ext {
 				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
 
 				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
-				
+
 				scout_rt_client:				"org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}",
 				scout_rt_client_test:			"org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}",
 

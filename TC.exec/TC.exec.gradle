@@ -109,3 +109,18 @@ doLast {
         unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib:$LRC_CLASSPATH')
     }
 }
+
+// write Information about compatible Versions from libraries.gradle to a file
+task writeCompatibleVersions {
+  group = "Build"
+  description = "Creates a file with information of compability"
+
+  doLast {
+    def prop = new Properties()
+    compatibleVersions.each { key, value -> prop."$key" = "$value".toString() }
+    mkdir "src/main/resources"
+    File compFile = file('src/main/resources/compatibleVersions.properties')
+    prop.store(compFile.newWriter(), null)
+  }
+}
+processResources.dependsOn  writeCompatibleVersions

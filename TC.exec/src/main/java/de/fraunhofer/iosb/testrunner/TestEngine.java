@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,8 @@ import org.slf4j.MDC;
 import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
@@ -31,6 +35,10 @@ import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.LoggerData;
+import nato.ivct.commander.TcLoggerData;
+
+
 
 /**
  * Testrunner that listens for certain commands to start and stop test cases.
@@ -39,8 +47,6 @@ import nato.ivct.commander.Factory;
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend, OnOperatorConfirmationListener {
-
-	private static Logger logger = LoggerFactory.getLogger(TestEngine.class);
 
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
@@ -80,7 +86,13 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		try {
 			(new CmdHeartbeatSend(this)).execute();
 		} catch (Exception e1) {
-			logger.error("Could not start HeartbeatSend: " + e1.toString());
+			Set<Logger>loggers = TcLoggerData.getLoggers();
+			for (Logger entry : loggers) {
+				entry.error("Could not start HeartbeatSend: " + e1.toString());
+			}
+			if (loggers.size() == 0) {
+				System.out.println("Could not start HeartbeatSend: " + e1.toString());
+			}
 		}
 		(new CmdOperatorConfirmationListener(this)).execute();
 
@@ -144,7 +156,13 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				File dir = new File(lib_path);
 				File[] filesList = dir.listFiles();
 				if (filesList == null) {
-					logger.info("No files found in folder {}", dir.getPath());
+					Set<Logger>loggers = TcLoggerData.getLoggers();
+					for (Logger entry : loggers) {
+						entry.info("No files found in folder {}", dir.getPath());
+					}
+					if (loggers.size() == 0) {
+						System.out.println("No files found in folder {}" + dir.getPath());
+					}
 					return;
 				}
 
@@ -163,29 +181,27 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		}
 
 		public void run() {
-			MDC.put("sutName", info.sutName);
-			MDC.put("sutDir", info.sutDir);
-			MDC.put("badge", info.testSuiteId);
-			MDC.put("testcase", info.testCaseId);
-	        logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
+			Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+			TcLoggerData.setLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
 			if (tsd == null) {
-				logger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
+				tcLogger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
 				return;
 			}
 			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID) + '/' + tsd.tsRunTimeFolder;
 
-			logger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
+			tcLogger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
 			if (setCurrentDirectory(runFolder)) {
-				logger.info("TestEngine:onMessageConsumer:run: setCurrentDirectory true");
+				tcLogger.info("TestEngine:onMessageConsumer:run: setCurrentDirectory true");
 			}
 
 			File f = getCwd();
 			String tcDir = f.getAbsolutePath();
-			logger.info("TestEngine:onMessageConsumer:run: TC DIR is " + tcDir);
+			tcLogger.info("TestEngine:onMessageConsumer:run: TC DIR is " + tcDir);
 
-			logger.info("TestEngine:onMessageConsumer:run: The test case class is: " + testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: The test case class is: " + testCaseId);
 			String[] testcases = info.testCaseId.split("\\s");
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
@@ -197,7 +213,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-					logger.error("Could not instantiate " + classname + " !", ex);
+					tcLogger.error("Could not instantiate " + classname + " !", ex);
 				}
 				if (testCase == null) {
 					verdicts[i] = new IVCT_Verdict();
@@ -206,21 +222,42 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					i++;
 					continue;
 				}
-				testCase.setDefaultLogger(logger);
+				testCase.setDefaultLogger(tcLogger);
 				testCase.setSutName(info.sutName);
 				testCase.setTsName(info.testSuiteId);
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
+				
+				
+        /**
+         * Check the compability of IVCT-Version which had this testCase at
+         * building-time against the IVCT-Version at Runtime
+         */
 
-				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), logger);
+        try {
+        	tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: " + testCase.getIVCTVersion()); // Debug
+          
+          new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
+          
+        } catch (IVCTVersionCheckException cf) {
+        	tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
+          verdicts[i] = new IVCT_Verdict();
+          verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+          verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+          i++;
+          cf.printStackTrace();
+          continue;
+        }		
+
+				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), tcLogger);
 			}
 
 			// The JMSLogSink waits on this message!
 			// The following pair of lines will cause the JMSLogSink to close the log file!
 			MDC.put("tcStatus", "ended");
-			logger.info("Test Case Ended");
+			tcLogger.info("Test Case Ended");
 
 			for (i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
@@ -233,33 +270,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	@Override
 	public void onSetLogLevel(LogLevel level) {
-		this.logLevelId = level.name();
-		if (logger instanceof ch.qos.logback.classic.Logger) {
-			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
-			switch (level) {
-			case ERROR:
-				logger.warn("TestEngine:onMessageConsumer:run: error");
-				lo.setLevel(Level.ERROR);
-				break;
-			case WARNING:
-				lo.setLevel(Level.WARN);
-                logger.warn("TestEngine:onMessageConsumer:run: warning");
-				break;
-			case INFO:
-				lo.setLevel(Level.INFO);
-                logger.warn("TestEngine:onMessageConsumer:run: info");
-				break;
-			case DEBUG:
-				lo.setLevel(Level.DEBUG);
-                logger.warn("TestEngine:onMessageConsumer:run: debug");
-				break;
-			case TRACE:
-				lo.setLevel(Level.TRACE);
-                logger.warn("TestEngine:onMessageConsumer:run: trace");
-				break;
-			}
-		}
-
+		TcLoggerData.setLogLevel(level.name());
 	}
 
 	@Override

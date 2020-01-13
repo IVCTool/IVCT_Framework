@@ -47,7 +47,7 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 		  // we need a Instance of this class
 		  Use_CmdHeartbeatSend testHeartbeatSender = new  Use_CmdHeartbeatSend();
 		  
-		  // and deliver it to  CmdHeartbeatSend
+		  // and deliver it to  an new instance of  CmdHeartbeatSend
 		  CmdHeartbeatSend  cmdHeartbeatSend = new CmdHeartbeatSend(testHeartbeatSender);
 		  
 		  testHeartbeatSender.health=true;

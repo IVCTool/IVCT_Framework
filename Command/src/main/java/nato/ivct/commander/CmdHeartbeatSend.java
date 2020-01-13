@@ -1,6 +1,6 @@
 /*
 Copyright 2019, brf (Fraunhofer IOSB)
-(v  18.07.2019)
+(v  07.01.2020)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ public class CmdHeartbeatSend  implements Command {
     public static final String HB_MESSAGESTATE= "MessageState";    
     public static final String HB_ALLERTTIME= "Alert-Time";
     public static final String HB_COMMENT= "Comment";
+    public static final String HB_IVCTVERSION= "IVCTVersion";
         
-      
     private boolean health;    
        
     private String heartbeatSenderName;
@@ -92,8 +92,8 @@ public class CmdHeartbeatSend  implements Command {
         // Info:   for the Message we put some Keys/values in a json object        
         JSONObject heartbeatjson = new JSONObject();              
         heartbeatjson.put(HB_SENDER, this.heartbeatSenderName);
-        heartbeatjson.put(HB_LASTSENDINGPERIOD, 5000L);
-        
+        heartbeatjson.put(HB_LASTSENDINGPERIOD, 5000L);         
+        heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );    
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
         Timer timer = new Timer();
