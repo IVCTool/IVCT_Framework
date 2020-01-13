@@ -40,7 +40,6 @@ public class SuTEditForm extends AbstractForm {
     private String sutId = null;
     private String title = null;
 
-
     public SuTEditForm(String formTitle) {
         title = formTitle;
     }
@@ -51,7 +50,7 @@ public class SuTEditForm extends AbstractForm {
         if (title != null)
             return title;
         else
-            return TEXTS.get("NewSuT");
+            return TEXTS.get("SuT");
     }
 
 
@@ -355,7 +354,6 @@ public class SuTEditForm extends AbstractForm {
             }
         }
     }
-
 
     @Override
     protected boolean execIsSaveNeeded() {

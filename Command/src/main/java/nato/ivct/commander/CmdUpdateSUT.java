@@ -464,13 +464,14 @@ public class CmdUpdateSUT {
 		// The SUT is placed in a known folder
 		String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
 		String sutDir = sutsDir + "/" + this.sutDescription.ID;
-		File f = new File(sutDir);
-		if (f.exists() == false) {
-			if (f.mkdir() == false) {
-				logger.error("Failed to create directory: " + sutDir);
-			}
-		}
-
+//		File f = new File(sutDir);
+//		
+//		if (f.exists() == false) {
+//			if (f.mkdir() == false) {
+//				logger.error("Failed to create directory: " + sutDir);
+//			}
+//		}
+		
         Set<String> badges_list = new HashSet<>();
 		// Check if no badges
 		if (!this.sutDescription.badges.isEmpty()) {
@@ -500,19 +501,19 @@ public class CmdUpdateSUT {
 	        }
 
 
-			// For each test suite copy or modify the TcParam.json file
-			for (String testsuite : csTs) {
-				// Add badge folder
-				String sutBadge = sutDir + "/" + testsuite;
-				f = new File(sutBadge);
-				if (f.exists() == false) {
-					if (f.mkdir() == false) {
-						logger.trace("Failed to create directory!");
-					}
-				}
+	     // For each test suite copy or modify the TcParam.json file
+            for (String testsuite : csTs) {
+                // Add badge folder
+                String sutBadge = sutDir + "/" + testsuite;
+                File f = new File(sutBadge);
+                if (f.exists() == false) {
+                    if (f.mkdir() == false) {
+                        logger.trace("Failed to create directory!");
+                    }
+                }
 
-				// This is the file to copy
-				extractResource(testsuite, sutBadge, "TcParam.json", "ExtraParamTemplates");
+                // This is the file to copy
+                extractResource(testsuite, sutBadge, "TcParam.json", "ExtraParamTemplates");
 			}
 		}
 

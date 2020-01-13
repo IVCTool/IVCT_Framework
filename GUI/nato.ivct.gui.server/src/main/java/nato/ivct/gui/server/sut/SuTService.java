@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -43,7 +44,6 @@ public class SuTService implements ISuTService {
     private static final Logger             LOG    = LoggerFactory.getLogger(ServerSession.class);
     private HashMap<String, SutDescription> sutMap = null;
 
-
     @Override
     public Set<String> loadSuts() {
         if (sutMap == null) {
@@ -74,10 +74,10 @@ public class SuTService implements ISuTService {
         sutMap = sutCmd.sutMap;
     }
 
-
     /*
      * functions for SuTFormData
      */
+
 
     @Override
     public SuTFormData load(SuTFormData formData) {
@@ -86,7 +86,7 @@ public class SuTService implements ISuTService {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
         // find the SuT description by selected SuTid.
-        final SutDescription sut = sutMap.get(formData.getSutId());
+        SutDescription sut = sutMap.get(formData.getSutId());   
         if (sut != null) {
             formData.setSutId(sut.ID);
 
@@ -98,6 +98,7 @@ public class SuTService implements ISuTService {
             formData.getRtiSettingDesignator().setValue(sut.settingsDesignator);
             formData.getFederationName().setValue(sut.federation);
             formData.getFederateName().setValue(sut.sutFederateName);
+
         }
 
         // fill the form data: SuTCapabilities table with conformance status
@@ -109,10 +110,10 @@ public class SuTService implements ISuTService {
         return formData;
     }
 
-
     /*
      * functions for TestReport
      */
+
 
     @Override
     public TestReportFormData load(TestReportFormData formData) {
@@ -179,9 +180,9 @@ public class SuTService implements ISuTService {
             }
         }
     }
-
-
-    private SuTFormData loadCapabilityStatus(final SuTFormData fd) {
+  
+    private SuTFormData loadCapabilityStatus(final SuTFormData fd) {     
+               
         sutMap.get(fd.getSutId()).badges.stream().sorted().forEachOrdered(badgeId -> {
             final SutCapabilityStatusTableRowData row = fd.getSutCapabilityStatusTable().addRow();
             row.setCbBadgeID(badgeId);
@@ -192,10 +193,10 @@ public class SuTService implements ISuTService {
         return fd;
     }
 
-
     /*
      * functions for SuTEditFormData
      */
+
 
     @Override
     public SuTEditFormData load(final SuTEditFormData formData) {
@@ -252,18 +253,34 @@ public class SuTService implements ISuTService {
         // get the selected capabilities
         sut.badges = formData.getSuTCapabilityBox().getValue();
 
-        // save SuT
+        // create new SuT
         try {
+
+            String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+            String sutDir = sutsDir + "/" + sut.name;
+            final File f = new File(sutDir);
+            final Path path = f.toPath();
+            // check if the file name already exists and create a new directory
+            if (Files.exists(path) && Files.isDirectory(path)) {
+                throw new VetoException("SuT Name already exists! Please choose another name for the SuT.");
+            }
+            else {
+                f.mkdir();
+                sut.ID = new CmdUpdateSUT(sut).execute();
+                // set the SUT ID in the form
+                formData.setSutId(sut.ID);
+            }
+
             LOG.info("SuT description stored for: " + formData.getName().getValue());
-            sut.ID = new CmdUpdateSUT(sut).execute();
+
+        }
+        catch (final VetoException vetoExc) {
+            throw vetoExc;
         }
         catch (final Exception e) {
             LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
             e.printStackTrace();
         }
-
-        // set the SUT ID in the form
-        formData.setSutId(sut.ID);
 
         // Update SuT map
         updateSutMap(sut);
@@ -292,16 +309,36 @@ public class SuTService implements ISuTService {
         // get the selected capabilities
         sut.badges = formData.getSuTCapabilityBox().getValue();
 
-        // save SuT
+        // edit a existing SuT
         try {
+
+            String sutsDir = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+            String sutDir = sutsDir + "/" + sut.name;
+            final File f = new File(sutDir);
+            final Path path = f.toPath();
+            final File oldSutDir = new File(sutsDir + "/" + formData.getSutId());
+            // check if the file name already exists and forbid the SuT renaming
+            if (Files.exists(path) && Files.isDirectory(path)) {
+                sut.ID = new CmdUpdateSUT(sut).execute();
+            }
+            else {
+                throw new VetoException("SuT renaming not possible! You can delete the SuT in the file system and create it again.");
+            }
+
             LOG.info("SuT description stored for: " + formData.getName().getValue());
-            sut.ID = new CmdUpdateSUT(sut).execute();
+
+        }
+        catch (final VetoException vetoExc) {
+            throw vetoExc;
         }
         catch (final Exception e) {
             LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
             e.printStackTrace();
         }
 
+        // set the SUT ID in the form
+        formData.setSutId(sut.ID);
+        
         // update SuT map
         updateSutMap(sut);
 
