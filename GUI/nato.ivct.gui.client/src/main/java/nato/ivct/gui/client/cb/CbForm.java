@@ -399,7 +399,7 @@ public class CbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 100;
+                                    return 200;
                                 }
                             }
 
@@ -413,7 +413,7 @@ public class CbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 400;
+                                    return 1000;
                                 }
                             }
 

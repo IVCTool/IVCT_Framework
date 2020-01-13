@@ -672,11 +672,11 @@ public class SuTTcExecutionForm extends AbstractForm {
                                 return TEXTS.get("FileName");
                             }
 
-
                             @Override
-                            protected int getConfiguredMinWidth() {
-                                return 600;
+                            protected int getConfiguredWidth() {
+                                return 700;
                             }
+
                         }
 
                         @Order(2000)
@@ -689,7 +689,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                             @Override
                             protected int getConfiguredWidth() {
-                                return 100;
+                                return 200;
                             }
                         }
 
@@ -799,7 +799,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                             @Override
                             protected int getConfiguredWidth() {
-                                return 200;
+                                return 220;
                             }
 
                         }
@@ -814,7 +814,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                             @Override
                             protected int getConfiguredWidth() {
-                                return 1000;
+                                return 1200;
                             }
 
 

@@ -322,7 +322,7 @@ public class SuTService implements ISuTService {
                 sut.ID = new CmdUpdateSUT(sut).execute();
             }
             else {
-                throw new VetoException("SuT renaming not possible! You can delete the SuT in the file system and create it again.");
+                throw new VetoException("SuT renaming is currently not possible!");
             }
 
             LOG.info("SuT description stored for: " + formData.getName().getValue());

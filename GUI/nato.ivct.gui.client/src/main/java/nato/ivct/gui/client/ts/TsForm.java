@@ -230,7 +230,7 @@ public class TsForm extends AbstractForm {
 
 								@Override
 								protected int getConfiguredWidth() {
-									return 200;
+									return 250;
 								}
 							}
 
@@ -243,8 +243,13 @@ public class TsForm extends AbstractForm {
 
 								@Override
 								protected int getConfiguredWidth() {
-									return 800;
+									return 1000;
 								}
+								
+	                            @Override
+	                            protected boolean getConfiguredTextWrap() {
+	                                return true;
+	                            }
 							}
 							
 							public TcIdColumn getTcIdColumn() {
@@ -344,7 +349,7 @@ public class TsForm extends AbstractForm {
 
 								@Override
 								protected int getConfiguredWidth() {
-									return 800;
+									return 1000;
 								}
 							}
 							

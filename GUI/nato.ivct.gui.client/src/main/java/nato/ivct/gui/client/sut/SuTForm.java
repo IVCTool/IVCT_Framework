@@ -310,6 +310,10 @@ public class SuTForm extends AbstractForm {
                                     return TEXTS.get("BadgeId");
                                 }
 
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 200;
+                                }
 
                                 @Override
                                 protected boolean getConfiguredVisible() {
@@ -327,7 +331,7 @@ public class SuTForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 300;
+                                    return 400;
                                 }
                             }
 
@@ -341,7 +345,7 @@ public class SuTForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 100;
+                                    return 200;
                                 }
                             }
                         }

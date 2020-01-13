@@ -422,7 +422,7 @@ public class SuTCbForm extends AbstractForm {
 
                             @Override
                             protected int getConfiguredWidth() {
-                                return 650;
+                                return 1250;
                             }
                         }
                     }
@@ -729,7 +729,7 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 600;
+                                    return 1200;
                                 }
                             }
 
@@ -1076,7 +1076,7 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 300;
+                                    return 600;
                                 }
 
 
