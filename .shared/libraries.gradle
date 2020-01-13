@@ -7,6 +7,8 @@ ext {
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
     ivctVersion = '2.2.2-SNAPSHOT'
+    compatibleVersions = ['2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
+
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ testing
     junitVersion = '4.+'
@@ -53,7 +55,7 @@ ext {
 				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
 
 				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
-				
+
 				scout_rt_client:				"org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}",
 				scout_rt_client_test:			"org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}",
 
