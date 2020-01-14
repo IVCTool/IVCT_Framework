@@ -86,7 +86,7 @@ public class SuTService implements ISuTService {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
         // find the SuT description by selected SuTid.
-        SutDescription sut = sutMap.get(formData.getSutId());   
+        final SutDescription sut = sutMap.get(formData.getSutId());   
         if (sut != null) {
             formData.setSutId(sut.ID);
 
