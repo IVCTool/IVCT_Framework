@@ -140,18 +140,29 @@ public class OptionsForm extends AbstractForm {
                 // publish log level
                 final IOptionsService service = BEANS.get(IOptionsService.class);
                 final String level = getLogLevelField().getValue();
-                service.setLogLevel(level);
-                // store log level
-                storeLogLevel(level);
-                // store gui language
-                storeLanguageOptions();
+                final Locale language = getLocaleField().getValue();
+
+                if (level == null) {
+                    MessageBoxes.createOk().withHeader(TEXTS.get("SetLogLevelMsg")).show();
+                }
+                else {
+                    // store log level
+                    storeLogLevel(level);
+                }
+
+                if (language == null) {
+                    MessageBoxes.createOk().withHeader(TEXTS.get("SetLanguageMsg")).show();
+                }
+                else {
+                    // store gui language
+                    storeLanguageOptions();
+                }
             }
         }
 
         @Order(101000)
         public class CancelButton extends AbstractCancelButton {}
     }
-
 
     protected void storeLogLevel(String logLevel) {
         final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue().toString());

@@ -16,7 +16,6 @@ public class OptionsFormData extends AbstractFormData {
 
     private static final long serialVersionUID = 1L;
 
-
     public Locale getLocale() {
         return getFieldByClass(Locale.class);
     }
