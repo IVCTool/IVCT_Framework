@@ -10,7 +10,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
-import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -21,7 +20,6 @@ import nato.ivct.gui.client.OptionsForm.MainBox.LocaleField;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.shared.AvailableLocaleLookupCall;
-import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
 import nato.ivct.gui.shared.OptionsFormData;
 
@@ -138,23 +136,14 @@ public class OptionsForm extends AbstractForm {
             @Override
             protected void execClickAction() {
                 // publish log level
-                final IOptionsService service = BEANS.get(IOptionsService.class);
                 final String level = getLogLevelField().getValue();
                 final Locale language = getLocaleField().getValue();
 
-                if (level == null) {
-                    MessageBoxes.createOk().withHeader(TEXTS.get("SetLogLevelMsg")).show();
-                }
-                else {
-                    // store log level
+                if (level != null) {
                     storeLogLevel(level);
                 }
 
-                if (language == null) {
-                    MessageBoxes.createOk().withHeader(TEXTS.get("SetLanguageMsg")).show();
-                }
-                else {
-                    // store gui language
+                if (language != null) {
                     storeLanguageOptions();
                 }
             }
@@ -177,7 +166,6 @@ public class OptionsForm extends AbstractForm {
         final boolean localeChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.PREF_USER_LOCALE, getLocaleField().getValue().toString());
         if (localeChanged) {
             ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
-
             MessageBoxes.createOk().withBody(TEXTS.get("ChangeOfLanguageApplicationOnNextLogin")).show();
         }
     }

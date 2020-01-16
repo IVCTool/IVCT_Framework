@@ -11,6 +11,7 @@ import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.shared.services.common.code.CODES;
 
 import nato.ivct.gui.shared.IOptionsService;
+import nato.ivct.gui.shared.LogLevelLookupCall.LogLevels;
 
 
 /**
@@ -23,7 +24,6 @@ public class ClientSession extends AbstractClientSession {
     public static final String PREF_USER_LOCALE = "PREF_USER_LOCALE";
     public static final String DEF_LOG_LEVEL    = "DEF_LOG_LEVEL";
     public static final String CUR_LOG_LEVEL    = "CUR_LOG_LEVEL";
-
 
     public ClientSession() {
         super(true);
@@ -47,19 +47,17 @@ public class ClientSession extends AbstractClientSession {
         // pre-load all known code types
         CODES.getAllCodeTypes("nato.ivct.gui.shared");
 
-        // communicate this user's last used log level
-        final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
-        final IOptionsService service = BEANS.get(IOptionsService.class);
-        service.setLogLevel(logLevel);
+        // communicate this user's last used log level or set the default logging level "INFO"
+        final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, LogLevels.INFO.toString());
+        BEANS.get(IOptionsService.class).setLogLevel(logLevel);
 
-        // The locale needs to be set before the Desktop is created.
-        final String localeString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(PREF_USER_LOCALE, null);
-        if (localeString != null) {
-            final Locale userLocale = LocaleUtility.parse(localeString);
-            setLocale(userLocale);
-        }
+        // The locale needs to be set before the Desktop is created. Set the last language settings or set the default language "EN"
+        final String localeString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(PREF_USER_LOCALE, Locale.ENGLISH.toString());
+        final Locale userLocale = LocaleUtility.parse(localeString);
+        setLocale(userLocale);
 
         setDesktop(new Desktop());
+
     }
 
 }
