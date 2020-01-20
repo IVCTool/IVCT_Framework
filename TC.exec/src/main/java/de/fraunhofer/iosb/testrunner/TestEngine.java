@@ -53,7 +53,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	private AbstractTestCase testCase = null;
 
 	private CmdListTestSuites testSuites;
-	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
+	private Map<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
 	/**
 	 * Main entry point from the command line.
@@ -258,6 +258,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 			// The following pair of lines will cause the JMSLogSink to close the log file!
 			MDC.put("tcStatus", "ended");
 			tcLogger.info("Test Case Ended");
+			TcLoggerData.removeLogger(tcLogger.getName());
 
 			for (i = 0; i < testcases.length; i++) {
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
