@@ -75,7 +75,7 @@ public class TcLoggerData {
 			break;
 		case "WARNING":
 			lo.setLevel(Level.WARN);
-			levelStr = "WARN";
+			levelStr = "WARNING";
 			break;
 		case "INFO":
 			lo.setLevel(Level.INFO);
