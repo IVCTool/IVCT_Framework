@@ -50,7 +50,7 @@ public class SuTEditForm extends AbstractForm {
         if (title != null)
             return title;
         else
-            return TEXTS.get("SuT");
+            return TEXTS.get("EditSUT");
     }
 
 
@@ -377,6 +377,7 @@ public class SuTEditForm extends AbstractForm {
 
         final AbstractPageWithNodes pageWithNode = (AbstractPageWithNodes) sutOutline.getRootNode();
         // add only a newly created node
+        SuTBadgeTablePage page = null;
         if (pageWithNode.getTree().findNode(getSutId()) == null) {
             final SuTBadgeTablePage newPage = sutOutline.createChildPage(getSutId());
             pageWithNode.getTree().addChildNode(pageWithNode, newPage);
@@ -384,12 +385,16 @@ public class SuTEditForm extends AbstractForm {
             //			notesToAdd.add(newPage);
             //			pageWithNode.getTree().updateChildNodeOrder(pageWithNode, pageWithNode.getChildPages());
             sutOutline.selectNode(newPage);
+            page = newPage;
         }
         else {
             // toggle selection to reload to form content
             final SuTBadgeTablePage selNode = (SuTBadgeTablePage) sutOutline.getSelectedNode();
             sutOutline.deselectNode(selNode);
             sutOutline.selectNode(selNode);
+            page = selNode;
+            //            IForm form = selNode.getDetailForm();
+            //            form.activate();
 
             // reload capabilities
             if (getFieldByClass(SuTCapabilityBox.class).getTable().getUpdatedRowCount() > 0)
@@ -398,6 +403,11 @@ public class SuTEditForm extends AbstractForm {
 
         // close the edit form
         doClose();
+
+        //        sutOutline.requestFocus();
+        //        sutOutline.activate();
+        //        sutOutline.getActivePage().setDetailFormVisible(true);
+
     }
 
     public class NewHandler extends AbstractFormHandler {
