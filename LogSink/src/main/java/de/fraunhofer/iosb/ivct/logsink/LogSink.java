@@ -6,15 +6,13 @@ import java.io.InputStreamReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
-
-import nato.ivct.commander.CmdHeartbeatSend;
 
 
 /**
@@ -41,7 +39,6 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
      * @param args command line arguments
      */
     public static void main(final String[] args) {
-        MDC.put("testcase", "LogSink");
 		Factory.initialize();
         final LogSink instance = new LogSink();
         instance.init();

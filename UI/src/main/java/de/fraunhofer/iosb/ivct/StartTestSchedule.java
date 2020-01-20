@@ -47,6 +47,6 @@ public class StartTestSchedule implements nato.ivct.commander.Command {
 		ivctCommander.addTestSessionSeparator();
 		RuntimeParameters.setAbortTestScheduleBool(false);
 		ivctCommander.rtp.setTestScheduleRunningBool(false);
-		System.out.println("Test schedule finished: " + ivctCommander.rtp.getTestScheduleName());
+		System.out.println("Test badge finished: " + ivctCommander.rtp.getTestScheduleName());
 	}
 }
