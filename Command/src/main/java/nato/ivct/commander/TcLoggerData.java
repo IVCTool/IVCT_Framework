@@ -55,6 +55,10 @@ public class TcLoggerData {
 		return loggers;
 	}
 
+	public static void removeLogger(final String loggerName) {
+		loggerDataMap.remove(loggerName);
+	}
+
 	public static void setLogLevel(final String level) {
 		for (Map.Entry<String, LoggerData> entry : loggerDataMap.entrySet()) {
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) entry.getValue().logger;
