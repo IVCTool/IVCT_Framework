@@ -11,21 +11,17 @@
 
 package de.fraunhofer.iosb.tc_lib;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.Semaphore;
 
-import javax.xml.soap.Text;
-
 import org.slf4j.Logger;
-import org.slf4j.MDC;
 
 import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
 import nato.ivct.commander.CmdOperatorRequest;
 import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
-
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the three
@@ -143,13 +139,9 @@ public abstract class AbstractTestCase {
 
         IVCT_BaseModel ivct_BaseModel = null;
         final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
-        MDC.put("testcase", this.getClass().getName());
 
         // A one-time start message
-        MDC.put("tcStatus", "started");
         logger.info("Test Case Started");
-
-        MDC.put("tcStatus", "running");
 
         final StringBuilder tcGlobalVariables = new StringBuilder();
         tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- BEGIN");
