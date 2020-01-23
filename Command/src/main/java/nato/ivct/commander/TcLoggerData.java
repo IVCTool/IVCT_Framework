@@ -60,6 +60,7 @@ public class TcLoggerData {
 	}
 
 	public static void setLogLevel(final String level) {
+		levelStr = level;
 		for (Map.Entry<String, LoggerData> entry : loggerDataMap.entrySet()) {
 			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) entry.getValue().logger;
 			setLogLevel(lo, level);
