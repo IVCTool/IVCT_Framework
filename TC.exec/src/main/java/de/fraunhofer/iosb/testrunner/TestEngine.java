@@ -180,7 +180,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 		public void run() {
 			Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
-			TcLoggerData.setLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
+			TcLoggerData.addLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
 			tcLogger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);

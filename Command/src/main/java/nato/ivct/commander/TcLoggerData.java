@@ -18,7 +18,7 @@ public class TcLoggerData {
 		return loggerData;
 	}
 
-	public static void setLoggerData(final Logger logger, final String loggerName, final String sutName, final String badgeName, final String tcName) {
+	public static void addLoggerData(final Logger logger, final String loggerName, final String sutName, final String badgeName, final String tcName) {
 		ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
 		setLogLevel(lo, levelStr);
 		LoggerData loggerData = new LoggerData(logger, sutName, badgeName, tcName);
@@ -72,23 +72,18 @@ public class TcLoggerData {
 		switch (level) {
 		case "ERROR":
 			lo.setLevel(Level.ERROR);
-			levelStr = "ERROR";
 			break;
 		case "WARNING":
 			lo.setLevel(Level.WARN);
-			levelStr = "WARN";
 			break;
 		case "INFO":
 			lo.setLevel(Level.INFO);
-			levelStr = "INFO";
 			break;
 		case "DEBUG":
 			lo.setLevel(Level.DEBUG);
-			levelStr = "DEBUG";
 			break;
 		case "TRACE":
 			lo.setLevel(Level.TRACE);
-			levelStr = "TRACE";
 			break;
 		}
 	}
