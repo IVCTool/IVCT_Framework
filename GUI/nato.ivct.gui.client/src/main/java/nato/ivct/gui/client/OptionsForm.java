@@ -10,6 +10,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.nls.LocaleUtility;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -20,6 +21,7 @@ import nato.ivct.gui.client.OptionsForm.MainBox.LocaleField;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.shared.AvailableLocaleLookupCall;
+import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
 import nato.ivct.gui.shared.OptionsFormData;
 
@@ -156,7 +158,8 @@ public class OptionsForm extends AbstractForm {
     protected void storeLogLevel(String logLevel) {
         final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue().toString());
         if (logLevelChanged) {
-            ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+            //ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+            BEANS.get(IOptionsService.class).setLogLevel(logLevel);
         }
     }
 
