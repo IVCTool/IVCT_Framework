@@ -158,7 +158,7 @@ public class OptionsForm extends AbstractForm {
     protected void storeLogLevel(String logLevel) {
         final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue().toString());
         if (logLevelChanged) {
-            //ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+            //Required for multiuser support: ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
             BEANS.get(IOptionsService.class).setLogLevel(logLevel);
         }
     }
