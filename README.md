@@ -26,8 +26,6 @@ You can find a list of [test suites](docs/src/testsuite-overview.adoc) which are
 
 The general concepts of [HLA Certification is explained by the NATO Modelling & Simulation Centre of Excellence](https://www.mscoe.org/nato-hla-certification-home/).
 
-The documentation is located inside the Wiki (https://github.com/MSG134/IVCT_Framework/wiki)
-
 ## LICENCE
 
 Copyright 2019 NATO/OTAN

@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
@@ -35,7 +34,6 @@ import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
-import nato.ivct.commander.LoggerData;
 import nato.ivct.commander.TcLoggerData;
 
 
@@ -182,7 +180,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 		public void run() {
 			Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
-			TcLoggerData.setLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
+			TcLoggerData.addLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
 			tcLogger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
@@ -256,7 +254,6 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 			// The JMSLogSink waits on this message!
 			// The following pair of lines will cause the JMSLogSink to close the log file!
-			MDC.put("tcStatus", "ended");
 			tcLogger.info("Test Case Ended");
 			TcLoggerData.removeLogger(tcLogger.getName());
 
@@ -264,7 +261,6 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
 						verdicts[i].verdict.name(), verdicts[i].text).execute();
 			}
-			MDC.put("tcStatus", "inactive");
 		}
 
 	}

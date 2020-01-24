@@ -121,7 +121,7 @@ public class CmdListBadges implements Command {
                         fr.close();
                         fr = null;
                     } catch (IOException | ParseException e) {
-                        e.printStackTrace();
+                    	Factory.LOGGER.error("Error while reading badge description", e);
                     }
 
                 }
