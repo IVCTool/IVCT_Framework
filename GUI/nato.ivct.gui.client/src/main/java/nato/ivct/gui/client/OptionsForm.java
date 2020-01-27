@@ -156,7 +156,7 @@ public class OptionsForm extends AbstractForm {
     }
 
     protected void storeLogLevel(String logLevel) {
-        final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue().toString());
+        final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue());
         if (logLevelChanged) {
             //Required for multiuser support: ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
             BEANS.get(IOptionsService.class).setLogLevel(logLevel);
@@ -172,49 +172,4 @@ public class OptionsForm extends AbstractForm {
             MessageBoxes.createOk().withBody(TEXTS.get("ChangeOfLanguageApplicationOnNextLogin")).show();
         }
     }
-
-    // Not used by this form
-    //	public class ModifyHandler extends AbstractFormHandler {
-    //
-    //		@Override
-    //		protected void execLoad() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			formData = service.load(formData);
-    //			importFormData(formData);
-    //
-    //			setEnabledPermission(new UpdateOptionsPermission());
-    //		}
-    //
-    //		@Override
-    //		protected void execStore() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			service.store(formData);
-    //		}
-    //	}
-    //
-    //	public class NewHandler extends AbstractFormHandler {
-    //
-    //		@Override
-    //		protected void execLoad() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			formData = service.prepareCreate(formData);
-    //			importFormData(formData);
-    //
-    //			setEnabledPermission(new CreateOptionsPermission());
-    //		}
-    //
-    //		@Override
-    //		protected void execStore() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			service.create(formData);
-    //		}
-    //	}
 }

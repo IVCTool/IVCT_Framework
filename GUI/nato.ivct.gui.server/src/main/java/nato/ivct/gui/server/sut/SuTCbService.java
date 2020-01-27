@@ -95,11 +95,9 @@ public class SuTCbService implements ISuTCbService {
             LOG.info("no extra TC parameter files found in folder: {}", folder);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error("", exc);
         }
-        finally {
-            return extraParamFileNames;
-        }
+        return extraParamFileNames;
     }
 
 

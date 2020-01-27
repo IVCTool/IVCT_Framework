@@ -60,9 +60,7 @@ public class TsService implements ITsService {
     @Override
     public TsFormData load(TsFormData formData) {
         LOG.info("load testsuite description");
-        //		if (!ACCESS.check(new ReadTsPermission())) {
-        //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-        //		}
+
         final TestSuiteDescription ts = tsCmd.testsuites.get(formData.getTsId());
         formData.getTsName().setValue(ts.name);
         formData.getTsVersion().setValue(ts.version);
@@ -122,7 +120,7 @@ public class TsService implements ITsService {
 
     @Override
     public HashMap<String, String> getIrForTc(String tcId) {
-        final HashMap irList = new HashMap<String, String>();
+        final HashMap<String, String> irList = new HashMap<String, String>();
         final Set<String> irs = tsCmd.getIrForTc(tcId);
 
         irs.stream().sorted().forEach(irId -> irList.put(irId, BEANS.get(CbService.class).getIrDescription(irId).description));

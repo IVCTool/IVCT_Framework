@@ -67,7 +67,6 @@ public class SuTService implements ISuTService {
 
     private void waitForSutLoading() {
         final IFuture<CmdListSuT> future1 = ServerSession.get().getLoadSuTJob();
-        // ServerSession.get().getLoadBadgesJob().awaitDone();
         final CmdListSuT sutCmd = future1.awaitDoneAndGet();
         // copy sut descriptions into table rows
         sutMap = sutCmd.sutMap;
