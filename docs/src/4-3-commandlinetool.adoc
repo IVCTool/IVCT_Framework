@@ -11,7 +11,7 @@ A new test suite should not mean any code changes to this tool: a new test suite
 
 == Example: HelloWorld.json Badge
 
-The HelloWorld.json file provides the runtime folder, dependent Badges and fully qualified test case names in the test suite. The test scheduler does not internally know the package names for the test cases, it dynamically obtains this information through the Badges.
+The HelloWorld.json file provides the runtime folder, dependent Badges and fully qualified test case names in the test suite. The test runner does not internally know the package names for the test cases, it dynamically obtains this information through the Badges.
 
     {
         "id"              : "HelloWorld",
@@ -38,7 +38,7 @@ This badge has 2 explicitly defined interoperability requirements ("IR-HW-0001" 
 
 Please note that this is a serialized JSON representation. That means that escape characters need to be quoted. Each interoperability requirement is defined by a unique identification ("id"), a description of the requirement ("description") and the fully qualified name of the executable test case class to test the requirement ("TC").
 
-It is necessary to set the name of a SUT to be able to run any test cases or test schedules.
+It is necessary to set the name of a SUT to be able to run any test cases or test badges.
 
 == SUT Folder Structure
 The _IVCTsut_ folder is read by the Command Line Tool and has the following structure: e.g.
@@ -142,24 +142,24 @@ Give the list of SUT specific folders currently available. The SUT files and fol
 === ssut (setSUT) sut
 Sets the name of the SUT within the IVCT in order to get the corresponding parameter files and provide a name for the location for writing the log files. It is necessary to set the SUT before running any tests.
 
-=== lts (listTestSchedules)
-Provides a list of test schedules which the IVCT operator can start. This list is specific to the currently active test suite.
+=== ltb (listTestBadges)
+Provides a list of test badges which the IVCT operator can start. This list is specific to the currently active test suite.
 
-=== sts (startTestSchedule) testSchedule
-Accept a test schedule name from user and start specific test cases for a specific SUT. Each test case name should be displayed when started. At the end of each test case the verdict should be displayed. At the end of the test schedule, the message that the test schedule is completed should be displayed.
+=== stb (startTestBadge) testBadge
+Accept a test badge name from user and start specific test cases for a specific SUT. Each test case name should be displayed when started. At the end of each test case the verdict should be displayed. At the end of the test badge, the message that the test badge is completed should be displayed.
 
-=== ats (abortTestSchedule)
-Will abort the currently running test case (the verdict for the test case should be inconclusive with the message “user aborted”) and end the test schedule by not executing any further test cases of the test schedule.
+=== atb (abortTestBadge)
+Will abort the currently running test case (the verdict for the test case should be inconclusive with the message “user aborted”) and end the test badge by not executing any further test cases of the test badge.
 
 === ltc (listTestCases)
 Provides a list of test cases which the IVCT operator can start. This list is specific to the currently active test suite.
 
-=== stc (startTestCase) testSchedule testcase
-Accept **test schedule name** and a **test case name** from user and send them to the JMS bus via the IVCT Commander in order to start a specific test case in a specific test schedule for a specific SUT. A Json message with the specified parameters will be sent to the receiving module. In this case the receiving module must be able to interpret the Json message and start the test case with parameters to locate the SUT specific files.
+=== stc (startTestCase) testBadge testcase
+Accept **test badge name** and a **test case name** from user and send them to the JMS bus via the IVCT Commander in order to start a specific test case in a specific test badge for a specific SUT. A Json message with the specified parameters will be sent to the receiving module. In this case the receiving module must be able to interpret the Json message and start the test case with parameters to locate the SUT specific files.
 At the end of the test case the verdict should be displayed.
 
 === atc (abortTestCase)
-Will abort the currently running test case. The verdict for the test case should be inconclusive with the message “user aborted”. If a test schedule is running, the next test case will be executed. **Not implemented yet.**
+Will abort the currently running test case. The verdict for the test case should be inconclusive with the message “user aborted”. If a test badge is running, the next test case will be executed. **Not implemented yet.**
 
 === sll (setLogLevel) logLevel
 Sets the log level for filtering log messages created by the test case.
@@ -168,7 +168,7 @@ Sets the log level for filtering log messages created by the test case.
 List the verdicts of the current session. A chronologically ordered list of test case verdicts will be displayed. Duplicate test cases will appear in the sequence in the order they were run. Where a comment was assigned in a test case for the verdict, the comment will also be displayed.
 
 === s (status)
-Displays currently available information about the test session e.g. SUT name, test suite name, test schedule / case name.
+Displays currently available information about the test session e.g. SUT name, test suite name, test badge / case name.
 
 === q (quit)
 End the command line program. A force quit dialogue has been implemented to allow the UI to be exited when a test case crashes.
@@ -236,15 +236,15 @@ A command is shown in **shown in bold**, "-->" means the following value was ret
 
 `-->	ssut (setSUT) sut - set active SUT`
 
-`-->	lts (listTestSchedules) - list the available test schedules for the test suite`
+`-->	ltb (listTestBadges) - list the available test badges for the SUT`
 
-`-->	sts (startTestSchedule) testSchedule - start the named test schedule`
+`-->	stb (startTestBadge) testBadge - start the named test badge`
 
-`-->	ats (abortTestSchedule) - abort the running test schedule`
+`-->	atb (abortTestBadge) - abort the running test badge`
 
-`-->	ltc (listTestCases) - list the available test cases for the test suite`
+`-->	ltc (listTestCases) - list the available test cases for the SUT`
 
-`-->	stc (startTestCase) testSchedule testcase - start the named test case from the badge`
+`-->	stc (startTestCase) testBadge testcase - start the named test case from the badge`
 
 `-->	atc (abortTestCase) - abort the running test case`
 
@@ -311,6 +311,6 @@ An extract of an actual Test Session is shown below:
     The test case name is: TC0002
     The test case verdict is: PASSED
     The test case verdict text is: ok
-    Test schedule finished: Badge1
+    Test badge finished: Badge1
 
-The above expands the help command, lists the SUTs, sets the SUT fed2, and starts the test schedule Badge1.
+The above expands the help command, lists the SUTs, sets the SUT fed2, and starts the test Badge1.
