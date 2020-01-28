@@ -46,12 +46,12 @@ import org.json.simple.parser.ParseException;
  */
 public class CmdListBadges implements Command {
 
-    public Map<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
-    private Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
+    public Map<String, BadgeDescription> badgeMap = new HashMap<>();
+    private Map<String, InteroperabilityRequirement> irMap = new HashMap<>();
 
     @Override
     public void execute() {
-        Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID = " + Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
+        Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID = {}", Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
         File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
@@ -65,11 +65,11 @@ public class CmdListBadges implements Command {
         irMap.clear();
         
         if (dir.isDirectory()) {
-            Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
+            Factory.LOGGER.trace("Read Badge descriptions from {}", dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
             File[] filesList = dir.listFiles();
             for (File file : filesList) {
-                Factory.LOGGER.trace("reading badge description: " + file.getAbsolutePath());
+                Factory.LOGGER.trace("reading badge description: {}", file.getAbsolutePath());
                 Object obj;
                 if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
                     FileReader fr = null;
