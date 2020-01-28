@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
@@ -155,7 +154,7 @@ public class ServerSession extends AbstractServerSession {
                 LOG.info("report file not found: {}", reportFile);
             }
             catch (final IOException exc) {
-                exc.printStackTrace();
+                LOG.error("", exc);
             }
         }
 

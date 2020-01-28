@@ -94,7 +94,7 @@ public class SuTTcService implements ISuTTcService {
     @Override
     public SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData) {
         final TcExecutionHistoryTable tbl = formData.getTcExecutionHistoryTable();
-        // TODO make this smarter instead brute force
+
         ServerSession.get().updateSutResultMap(formData.getSutIdProperty().getValue(), formData.getTestsuiteIdProperty().getValue(), formData.getTestCaseIdProperty().getValue());
 
         tbl.clearRows();
@@ -124,10 +124,8 @@ public class SuTTcService implements ISuTTcService {
         final String tcName = fd.getTestCaseId().substring(fd.getTestCaseId().lastIndexOf('.') + 1);
 
         // load the (logfile,verdict) pairs
-        //		if (sutTcResults == null) {
         final IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
         sutTcResults = future1.awaitDoneAndGet();
-        //		}
 
         try {
             getLogFilesOrderedByCreationDate(tcName, folder).forEach(path -> {
@@ -143,7 +141,7 @@ public class SuTTcService implements ISuTTcService {
             LOG.info("log files not found: {}", folder + "\\" + tcName);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error(" ", exc);
         }
 
         return fd;
@@ -169,9 +167,6 @@ public class SuTTcService implements ISuTTcService {
         @Override
         public int compare(Path path1, Path path2) {
             try {
-                //				System.out.println(path1.toString() + " " + Files.readAttributes(path1, BasicFileAttributes.class).creationTime().toMillis());
-                //				System.out.println(path2.toString() + " " + Files.readAttributes(path2, BasicFileAttributes.class).creationTime().toMillis());
-                //				System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 return Long.compare(Files.readAttributes(path1, BasicFileAttributes.class).creationTime().to(TimeUnit.SECONDS), Files.readAttributes(path2, BasicFileAttributes.class).creationTime().to(TimeUnit.SECONDS));
             }
             catch (final IOException exc) {
@@ -185,9 +180,6 @@ public class SuTTcService implements ISuTTcService {
         @Override
         public int compare(Path path1, Path path2) {
             try {
-                //				System.out.println(path1.toString() + " " + Files.readAttributes(path1, BasicFileAttributes.class).lastModifiedTime().toMillis());
-                //				System.out.println(path2.toString() + " " + Files.readAttributes(path2, BasicFileAttributes.class).lastModifiedTime().toMillis());
-                //				System.out.println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
                 return Files.readAttributes(path1, BasicFileAttributes.class).lastModifiedTime().compareTo(Files.readAttributes(path2, BasicFileAttributes.class).lastModifiedTime());
             }
             catch (final IOException exc) {
@@ -225,7 +217,7 @@ public class SuTTcService implements ISuTTcService {
             LOG.info("log files not found: {}", folder + "\\" + tcName);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error(" ", exc);
         }
 
         return verdict;

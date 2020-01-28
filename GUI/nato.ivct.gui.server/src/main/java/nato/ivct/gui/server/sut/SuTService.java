@@ -79,7 +79,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTFormData load(SuTFormData formData) {
-        LOG.info(getClass().toString() + ".load");
+        LOG.info("load {}", getClass());
         if (!ACCESS.check(new ReadSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -127,7 +127,6 @@ public class SuTService implements ISuTService {
             }
             catch (final IOException exc) {
                 LOG.error("Error when attempting to read from file: {}", Factory.getSutPathsFiles().getReportPath(formData.getSutIdProperty().getValue()).concat("\\").concat(testReportFileName));
-                exc.printStackTrace();
             }
         });
 
@@ -149,7 +148,7 @@ public class SuTService implements ISuTService {
             LOG.error("report files not found in folder: {}", folder);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error(" ", exc);
         }
 
         return fd;
@@ -200,7 +199,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData load(final SuTEditFormData formData) {
-        LOG.info(getClass().toString() + ".load");
+        LOG.info("load {}", getClass());
         if (!ACCESS.check(new ReadSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -223,7 +222,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData prepareCreate(final SuTEditFormData formData) {
-        LOG.info(getClass().toString() + ".prepareCreate");
+        LOG.info("prepareCreate {}", getClass());
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -234,7 +233,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData create(SuTEditFormData formData) {
-        LOG.info(getClass().toString() + ".create");
+        LOG.info("create {}", getClass());
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -259,15 +258,14 @@ public class SuTService implements ISuTService {
             // set the SUT ID in the form
             formData.setSutId(sut.ID);
 
-            LOG.info("SuT description stored for: " + formData.getName().getValue());
+            LOG.info("SuT description stored for {}", formData.getName().getValue());
 
         }
         catch (final VetoException vetoExc) {
             throw vetoExc;
         }
-        catch (final Exception e) {
-            LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
-            e.printStackTrace();
+        catch (final Exception exe) {
+            LOG.error("Error when storing SuT description for {}", formData.getName().getValue(), exe);
         }
 
         // Update SuT map
@@ -301,12 +299,11 @@ public class SuTService implements ISuTService {
         // edit a existing SuT
         try {
             sut.ID = new CmdUpdateSUT(sut).execute();
-            LOG.info("SuT description stored for: " + formData.getName().getValue());
+            LOG.info("SuT description stored for {}", formData.getName().getValue());
         }
 
-        catch (final Exception e) {
-            LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
-            e.printStackTrace();
+        catch (final Exception exe) {
+            LOG.error("Error when storing SuT description for {}", formData.getName().getValue(), exe);
         }
 
         // update SuT map
