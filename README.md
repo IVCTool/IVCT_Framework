@@ -14,7 +14,7 @@ The simplest way to install and use the software is a docker deployment. Docker 
 
     docker-compose up
 
-The compose files are currently maintained in the [IVCT_Compositions](https://github.com/IVCTool/IVCT_Compositions) repository. Depending on your requirments, you might need additional components, like your own system under test (SuT) and a HLA-RTI.
+The compose files are currently maintained in the [IVCT_Operation](https://github.com/IVCTool/IVCT_Compositions) repository. Depending on your requirments, you might need additional components, like your own system under test (SuT) and a HLA-RTI.
 
 The user interface comes in two flavors, a [web based user interface](docs/src/4-5-GUI.adoc), and a [command line interface](docs/src/4-3-commandlinetool.adoc).
 
