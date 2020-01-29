@@ -28,6 +28,10 @@ compatibleVersions.properties
 /.sonarlint
 /TC.exec/src/main/resources/JMSTestRunner_logback.xml
 
+# HPROF
+# -----
+*.hprof
+
 #  brf
 *.org
 

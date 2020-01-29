@@ -1,3 +1,4 @@
+
 task writeVersion {
     group = "Build"
     description = "Creates a properties file with version information"

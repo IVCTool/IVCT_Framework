@@ -1,5 +1,3 @@
-apply plugin: 'application'
-
 // -----------------------------------------------------------------------------
 // Docker
 // -----------------------------------------------------------------------------
@@ -11,6 +9,11 @@ buildscript {
   dependencies {
 	classpath libraries.docker
   }
+}
+
+// Plugins used for TC.exec
+plugins {
+    id 'application'
 }
 
 // def runDockerBuild(String target) {

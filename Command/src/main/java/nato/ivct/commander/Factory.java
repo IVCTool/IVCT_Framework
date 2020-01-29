@@ -106,8 +106,7 @@ public class Factory {
      * read string environment variable if defined, otherwise return default
      */
     public static String getEnv(String key) {
-        String value = System.getenv(key);
-        return value;
+        return System.getenv(key);
     }
 
 
@@ -144,7 +143,7 @@ public class Factory {
             setBuild(versionProperties.getProperty("build"));
         }
         catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("readVersion", e);
         }
     }
 
@@ -156,7 +155,7 @@ public class Factory {
 
         if (props == null) {
             readVersion();
-            LOGGER.info("IVCT Version " + getVersion() + ", build " + getBuild());
+            LOGGER.info("IVCT Version {}, build {}", getVersion(), getBuild());
 
             Properties fallback = new Properties();
             fallback.put(IVCT_CONF, IVCT_CONF_DEFLT);
@@ -182,6 +181,7 @@ public class Factory {
             props = new Properties(fallback);
 
             String home = System.getenv(IVCT_CONF);
+        	String propertiesFileName = home + "/IVCT.properties";
 
             if (home == null) {
                 LOGGER.debug("using IVCT_CONF default (" + IVCT_CONF_DEFLT + ")");
@@ -191,18 +191,18 @@ public class Factory {
                 File f = new File(home);
                 // test if IVCT_CONF is already a filename
                 if (f.exists()) {
-                    LOGGER.debug(home + " exists");
+                    LOGGER.debug("{} exists", home);
                 }
                 if (f.isDirectory()) {
-                    LOGGER.debug(home + " is directory");
+                    LOGGER.debug("{} is directory", home);
                 }
                 if (f.exists() && !f.isDirectory()) {
                     props.load(new FileInputStream(f));
                 }
                 else {
                     // if not, just try to read the properties file with the default name
-                    props.load(new FileInputStream(home + "/IVCT.properties"));
-                    LOGGER.debug("Properties {} file loaded", home + "/IVCT.properties");
+                    props.load(new FileInputStream(propertiesFileName));
+                    LOGGER.debug("Properties {} file loaded", propertiesFileName);
                 }
             }
             catch (final Exception e) {
@@ -213,8 +213,8 @@ public class Factory {
                     LOGGER.warn(props.toString());
                 }
                 catch (IOException e1) {
-                    LOGGER.error("Unable to write " + home + "/IVCT.properties file.");
-                    e1.printStackTrace();
+                    LOGGER.error("Unable to write {}", propertiesFileName);
+                    LOGGER.error("initialize Factory", e1);
                 }
             }
 
@@ -258,7 +258,7 @@ public class Factory {
         String everything = null;
 
         File myFile = new File(filename);
-        if (myFile.isFile() == false) {
+        if (!myFile.isFile()) {
             return everything;
         }
 
@@ -275,10 +275,10 @@ public class Factory {
             everything = sb.toString();
         }
         catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("readWholeFile:FileNotFound", e);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("readWholeFile:IO", e);
         }
         finally {
             if (br != null) {
@@ -330,7 +330,7 @@ public class Factory {
                                 i = j;
                             }
                             else {
-                                LOGGER.error("LineUtil:replaceMacro: Environment variable not found: " + env.toString());
+                                LOGGER.error("LineUtil:replaceMacro: Environment variable not found: {}", env);
                                 String s = inString.subSequence(i, i + k + 3).toString();
                                 out.append(s);
                                 l += j - i;
