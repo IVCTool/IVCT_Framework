@@ -26,7 +26,7 @@ import org.json.simple.parser.ParseException;
 public class CmdStartTcListener implements MessageListener, Command {
 
 	private OnStartTestCaseListener listener;
-	
+
 	public class TcInfo {
 		public String sutName;
 		public String sutDir;
@@ -41,8 +41,8 @@ public class CmdStartTcListener implements MessageListener, Command {
 	public interface OnStartTestCaseListener {
 		public void onStartTestCase(TcInfo info);
 	}
-	
-	public CmdStartTcListener (OnStartTestCaseListener listener){
+
+	public CmdStartTcListener(OnStartTestCaseListener listener) {
 		this.listener = listener;
 	}
 
@@ -65,35 +65,42 @@ public class CmdStartTcListener implements MessageListener, Command {
 					String commandTypeName = (String) jsonObject.get(CmdStartTc.COMMAND_ID);
 
 					if (commandTypeName.equals(CmdStartTc.COMMAND)) {
-						Factory.LOGGER.trace("JMS Message received: " + content);
+						Factory.LOGGER.trace("JMS Message received: {}", content);
 						TcInfo info = new TcInfo();
 
 						info.sutName = (String) jsonObject.get(CmdStartTc.SUT_NAME);
 						info.sutDir = (String) jsonObject.get(CmdStartTc.SUT_DIR);
 						info.testSuiteId = (String) jsonObject.get(CmdStartTc.TS_ID);
-                        info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
-                        info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
-                        info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
-                        info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
+						info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
+						info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
+						info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
+						info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
 						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
 
-						Factory.LOGGER.info("StartTcListener Command received: " + jsonObject.toString());
+						Factory.LOGGER.info("StartTcListener Command received: {}", jsonObject);
 
 						// check for missing values
-                        if (info.sutName == null) Factory.LOGGER.error("sutName is missing");
-                        if (info.sutDir == null) Factory.LOGGER.error("sutDir is missing");
-                        if (info.testSuiteId == null) Factory.LOGGER.error("testSuiteId is missing");
-                        if (info.testCaseId == null) Factory.LOGGER.error("testCaseId is missing");
-                        if (info.settingsDesignator == null) Factory.LOGGER.error("settingsDesignator is missing");
-                        if (info.federationName == null) Factory.LOGGER.error("federationName is missing");
-                        if (info.sutFederateName == null) Factory.LOGGER.error("sutFederateName is missing");
-                        if (info.testCaseParam == null) Factory.LOGGER.error("testCaseParam is missing");
-						
+						if (info.sutName == null)
+							Factory.LOGGER.error("sutName is missing");
+						if (info.sutDir == null)
+							Factory.LOGGER.error("sutDir is missing");
+						if (info.testSuiteId == null)
+							Factory.LOGGER.error("testSuiteId is missing");
+						if (info.testCaseId == null)
+							Factory.LOGGER.error("testCaseId is missing");
+						if (info.settingsDesignator == null)
+							Factory.LOGGER.error("settingsDesignator is missing");
+						if (info.federationName == null)
+							Factory.LOGGER.error("federationName is missing");
+						if (info.sutFederateName == null)
+							Factory.LOGGER.error("sutFederateName is missing");
+						if (info.testCaseParam == null)
+							Factory.LOGGER.error("testCaseParam is missing");
+
 						listener.onStartTestCase(info);
 					}
 
 				} catch (ParseException e) {
-					e.printStackTrace();
 					Factory.LOGGER.error("onMessage: ", e);
 				}
 
