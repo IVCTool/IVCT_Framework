@@ -38,12 +38,6 @@ public class Desktop extends AbstractDesktop {
 
 
     @Override
-    protected String getConfiguredLogoId() {
-        return Icons.AppLogo;
-    }
-
-
-    @Override
     protected List<Class<? extends IOutline>> getConfiguredOutlines() {
         return CollectionUtility.<Class<? extends IOutline>> arrayList(BadgeOutline.class, TsOutline.class, SuTOutline.class);
     }
@@ -54,46 +48,18 @@ public class Desktop extends AbstractDesktop {
         setOutline(SuTOutline.class);
     }
 
-    //	@Order(90)
-    //	public class CmdHeartbeatSend extends AbstractFormMenu<HeartBeatInfoForm> {
-    //		
-    //		@Override
-    //		protected String getConfiguredText() {
-    //			return TEXTS.get("CmdHeartbeatSend");
-    //		}
-    //		
-    //		@Override
-    //		protected String getConfiguredIconId() {
-    //			return Icons.WhiteBullet_32x32;//AbstractIcons.CircleSolid;
-    //		}
-    //		
-    //	    @Override
-    //	    protected Class<HeartBeatInfoForm> getConfiguredForm() {
-    //	      return HeartBeatInfoForm.class;
-    //	    }
-    //	    
-    //	    @Override
-    //	    protected void execInitAction() {
-    //	    	setProperty("hbSender", "Use_CmdHeartbeatSend");
-    //	    }
-    //	    
-    //		@Override
-    //		protected void execInitForm(IForm form) {
-    //			form.setTitle(getProperty("hbSender").toString());
-    //		}
-    //	}
-
     @Order(91)
     public class TestEngineStatus extends AbstractFormMenu<HeartBeatInfoForm> {
+
         @Override
         protected String getConfiguredText() {
-            return TEXTS.get("TestEngineStatus");
+            return TEXTS.get("TestEngine");
         }
 
 
         @Override
         protected String getConfiguredIconId() {
-            return Icons.WhiteBullet_32x32;//AbstractIcons.CircleSolid;
+            return Icons.WhiteBullet_32x32;
         }
 
 
@@ -119,13 +85,13 @@ public class Desktop extends AbstractDesktop {
     public class LogSinkStatus extends AbstractFormMenu<HeartBeatInfoForm> {
         @Override
         protected String getConfiguredText() {
-            return TEXTS.get("LogSinkStatus");
+            return TEXTS.get("LogSink");
         }
 
 
         @Override
         protected String getConfiguredIconId() {
-            return Icons.WhiteBullet_32x32;//AbstractIcons.CircleSolid;
+            return Icons.WhiteBullet_32x32;
         }
 
 
@@ -145,13 +111,14 @@ public class Desktop extends AbstractDesktop {
         protected void execInitForm(IForm form) {
             form.setTitle(getProperty("hbSender").toString());
         }
+
     }
 
     @Order(100)
     public class AlterSuTMenu extends AbstractMenu {
         @Override
         protected String getConfiguredText() {
-            return TEXTS.get("AlterSutList");
+            return TEXTS.get("SuTSettings");
         }
 
 
@@ -185,7 +152,7 @@ public class Desktop extends AbstractDesktop {
         public class EditSutMenu extends AbstractMenu {
             @Override
             protected String getConfiguredText() {
-                return TEXTS.get("EditSUT");
+                return TEXTS.get("EditSuT");
             }
 
 
@@ -210,36 +177,12 @@ public class Desktop extends AbstractDesktop {
         }
     }
 
-    @Order(1000)
-    public class QuickAccessMenu extends AbstractMenu {
-
-        @Override
-        protected String getConfiguredText() {
-            return TEXTS.get("QuickAccess");
-        }
-
-        @Order(1000)
-        public class ExitMenu extends AbstractMenu {
-
-            @Override
-            protected String getConfiguredText() {
-                return TEXTS.get("Exit");
-            }
-
-
-            @Override
-            protected void execAction() {
-                ClientSessionProvider.currentSession(ClientSession.class).stop();
-            }
-        }
-    }
-
     @Order(1500)
     public class OptionsMenu extends AbstractFormMenu<OptionsForm> {
-        @Override
-        protected String getConfiguredText() {
-            return TEXTS.get("Options");
-        }
+        //        @Override
+        //        protected String getConfiguredText() {
+        //            return TEXTS.get("Options");
+        //        }
 
 
         @Override
@@ -258,11 +201,6 @@ public class Desktop extends AbstractDesktop {
         protected Class<OptionsForm> getConfiguredForm() {
             return OptionsForm.class;
         }
-
-        //		@Override
-        //		protected void execInitForm(IForm form) {
-        //			super.execInitForm(form);
-        //		}
     }
 
     @Order(2000)
@@ -270,7 +208,7 @@ public class Desktop extends AbstractDesktop {
 
         @Override
         protected String getConfiguredIconId() {
-            return AbstractIcons.PersonSolid;
+            return Icons.AppLogo;
         }
 
         @Order(1000)
@@ -284,9 +222,23 @@ public class Desktop extends AbstractDesktop {
 
             @Override
             protected void execAction() {
-                //				ScoutInfoForm form = new ScoutInfoForm();
                 final IvctInfoForm form = new IvctInfoForm();
                 form.startModify();
+            }
+        }
+
+        @Order(1200)
+        public class LogoutMenu extends AbstractMenu {
+
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("Logout");
+            }
+
+
+            @Override
+            protected void execAction() {
+                ClientSessionProvider.currentSession(ClientSession.class).stop();
             }
         }
     }
@@ -361,7 +313,6 @@ public class Desktop extends AbstractDesktop {
             return "ctrl-shift-s";
         }
     }
-
 
     @Override
     protected void execPageDetailFormChanged(IForm oldForm, IForm newForm) {

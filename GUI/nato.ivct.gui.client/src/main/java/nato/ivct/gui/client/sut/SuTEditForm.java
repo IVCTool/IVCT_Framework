@@ -50,7 +50,7 @@ public class SuTEditForm extends AbstractForm {
         if (title != null)
             return title;
         else
-            return TEXTS.get("EditSUT");
+            return TEXTS.get("EditSuT");
     }
 
 
