@@ -189,7 +189,7 @@ public class FactoryTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.name + "/" + "CS.json";
+		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.ID + "/" + "CS.json";
 		try {
 			// The parameters should be the same. Thus expected false.
 			assertFalse("CS.json values should be equal", cus.compareCSdata(csJsonFilename, sutDescription));
