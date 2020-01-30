@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -38,8 +37,7 @@ public class SuTCbService implements ISuTCbService {
             fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(fileName)));
         }
         catch (IOException | InvalidPathException exc) {
-            LOG.error("error to access fileName %", fileName);
-            exc.printStackTrace();
+            LOG.error("error to access fileName {}", fileName);
             fileContent = new BinaryResource(fileName, null);
         }
 
@@ -58,8 +56,7 @@ public class SuTCbService implements ISuTCbService {
             Files.copy(new ByteArrayInputStream(file.getContent()), filePath, StandardCopyOption.REPLACE_EXISTING);
         }
         catch (final IOException exc) {
-            LOG.error("error when copying file %", file.getFilename());
-            exc.printStackTrace();
+            LOG.error("error when copying file {}", file);
             return false;
         }
 
@@ -73,8 +70,7 @@ public class SuTCbService implements ISuTCbService {
             return Files.deleteIfExists(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()));
         }
         catch (final IOException exc) {
-            LOG.error("error when deleting file %", file.getFilename());
-            exc.printStackTrace();
+            LOG.error("error when deleting file {}", file);
             return false;
         }
     }
@@ -88,18 +84,16 @@ public class SuTCbService implements ISuTCbService {
         try {
             getExtraTcParamFilesOrderedByName(folder).sorted().forEachOrdered(path -> {
                 extraParamFileNames.add(path.getFileName().toString());
-                LOG.info("Extra parameter file found: {}", path.getFileName().toString());
+                LOG.info("Extra parameter file found: {}", path.getFileName());
             });
         }
         catch (final NoSuchFileException exc) {
             LOG.info("no extra TC parameter files found in folder: {}", folder);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error("", exc);
         }
-        finally {
-            return extraParamFileNames;
-        }
+        return extraParamFileNames;
     }
 
 
@@ -109,12 +103,7 @@ public class SuTCbService implements ISuTCbService {
                 final String filenameToCheck = path.getFileName().toString();
                 // ignore the regular parameter file and all potential report files
                 return fileAttributes.isRegularFile() && !filenameToCheck.equalsIgnoreCase("TcParam.json") && !Pattern.compile("report", Pattern.CASE_INSENSITIVE).matcher(filenameToCheck).find();
-            }).sorted(new Comparator<Path>() {
-                @Override
-                public int compare(Path p1, Path p2) {
-                    return p1.getFileName().toString().compareToIgnoreCase(p2.getFileName().toString());
-                }
-            });
+            }).sorted();
         }
         catch (final IllegalStateException exc) {
             throw new IOException(exc);
@@ -128,21 +117,19 @@ public class SuTCbService implements ISuTCbService {
         try {
             paramFile = getParamFile(sutId, tsId);
             if (paramFile == null) {
-                LOG.info("TC parameter file for SuT" + sutId + " and testsuite " + tsId + " does not exist");
+                LOG.info("TC parameter file for SuT {} and testsuite {} does not exist", sutId, tsId);
                 return null;
             }
-            LOG.debug("load TC parameters from file " + paramFile.toString());
+            LOG.debug("load TC parameters from file {}", paramFile);
             return new String(Files.readAllBytes(paramFile));
         }
         catch (final InvalidPathException e) {
-            LOG.error("invalid path for TC parameter file for SuT" + sutId + " and testsuite " + tsId);
-            return null;
+            LOG.error("invalid path for TC parameter file for SuT {} and testsuite {}", sutId, tsId);
         }
         catch (final Exception e) {
-            LOG.error("could not read TC parameters from file " + paramFile.toString());
-            e.printStackTrace();
-            return null;
+            LOG.error("could not read TC parameters from file {}", paramFile);
         }
+        return null;
     }
 
 
@@ -152,26 +139,25 @@ public class SuTCbService implements ISuTCbService {
         try {
             paramFile = getParamFile(sutId, tsId);
             if (paramFile == null) {
-                LOG.info("TC parameter file for SuT" + sutId + " and testsuite " + tsId + " does not exist");
+                LOG.info("TC parameter file for SuT {} and testsuite {} does not exist", sutId, tsId);
                 return false;
             }
-            LOG.debug("store TC parameters to file " + paramFile.toString());
+            LOG.debug("store TC parameters to file {}", paramFile);
             Files.write(paramFile, parameters.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         }
         catch (final InvalidPathException e) {
-            LOG.error("invalid path for TC parameter file for SuT" + sutId + " and testsuite " + tsId);
-            return false;
+            LOG.error("invalid path for TC parameter file for SuT {} and testsuite {}", sutId, tsId);
         }
         catch (final IOException e) {
-            LOG.error("could not write badge parameters to file " + paramFile.toString());
-            e.printStackTrace();
-            return false;
+            LOG.error("could not write badge parameters to file {}", paramFile);
         }
+        
+        return false;
     }
 
 
-    private Path getParamFile(String sutId, String tsId) throws InvalidPathException {
+    private Path getParamFile(String sutId, String tsId) {
         final List<String> tcParamFiles = Factory.getSutPathsFiles().getTcParamFileNames(sutId, tsId, true);
         if (!tcParamFiles.isEmpty())
             return Paths.get(tcParamFiles.get(0));

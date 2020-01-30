@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
@@ -38,7 +37,7 @@ import nato.ivct.commander.Factory;
  */
 public class ServerSession extends AbstractServerSession {
 
-    private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$"); // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
+    private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$");
     private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
     private static IFuture<CmdListSuT>             loadSuTJob;
@@ -133,6 +132,8 @@ public class ServerSession extends AbstractServerSession {
                 case "json":
                     parseJsonResultFile(sutId, reportFile, sutTcResults);
                     break;
+                default:
+                    break;
             }
 
         }
@@ -153,7 +154,7 @@ public class ServerSession extends AbstractServerSession {
                 LOG.info("report file not found: {}", reportFile);
             }
             catch (final IOException exc) {
-                exc.printStackTrace();
+                LOG.error("", exc);
             }
         }
 
@@ -171,7 +172,7 @@ public class ServerSession extends AbstractServerSession {
                 tcResults = (JSONObject) jparser.parse(new String(Files.readAllBytes(Paths.get(reportFile))));
             }
             catch (ParseException | IOException exc) {
-                LOG.error("Error reading//parsing the result file {}", reportFile.toString());
+                LOG.error("Error reading//parsing the result file {}", reportFile);
                 return;
             }
 
@@ -309,7 +310,6 @@ public class ServerSession extends AbstractServerSession {
     @Override
     protected void execLoadSession() {
         LOG.info("created a new session for {}", getUserId());
-        //        Factory.initialize();
 
         LOG.info("load SuT Information");
         loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());

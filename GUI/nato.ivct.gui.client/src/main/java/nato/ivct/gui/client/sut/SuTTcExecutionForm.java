@@ -33,6 +33,8 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
+import com.google.common.base.Optional;
+
 import nato.ivct.commander.CmdOperatorConfirmation;
 import nato.ivct.commander.Factory;
 import nato.ivct.gui.client.ClientSession;
@@ -371,7 +373,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                         setValue(operatorMessage);
                     }
 
-
+                    @Override
                     protected boolean getConfiguredMultilineText() {
                         return true;
                     }
@@ -716,6 +718,8 @@ public class SuTTcExecutionForm extends AbstractForm {
                                         case "WARN":
                                             row.setBackgroundColor("FFDB9D");
                                             break;
+                                        default:
+                                            break;
                                     }
                                 });
 
@@ -927,8 +931,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
 
-            getForm().setTitle(Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).get());
-
+            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result));
+            
             setEnabledPermission(new UpdateSuTPermission());
         }
     }
@@ -948,7 +952,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     cell.setCssClass("failed-text");
                     break;
                 default:
-                    ;
+                    break;
             }
         });
     }

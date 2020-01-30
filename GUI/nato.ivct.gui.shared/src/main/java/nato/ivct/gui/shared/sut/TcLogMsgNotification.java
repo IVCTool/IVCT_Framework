@@ -9,7 +9,7 @@ public class TcLogMsgNotification implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
     private String sutId;
     private String badgeId;
