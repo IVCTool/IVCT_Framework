@@ -1,6 +1,6 @@
 == The Graphical User Interface
 
-<<to be completed>>
+NOTE: to be completed
 
 ...tomcat webapp deployment
 
