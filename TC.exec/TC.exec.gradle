@@ -67,7 +67,7 @@ tasks.register ("dockerBuildImage") {
     description = 'Creates docker images for RTIs'
     dependsOn 'dockerBuildPitchImage'
     dependsOn 'dockerBuildPorticoImage'
-    // dependsOn 'dockerBuildMakImage'
+    dependsOn 'dockerBuildMakImage'
 }
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'

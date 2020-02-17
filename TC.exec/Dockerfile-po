@@ -1,12 +1,10 @@
-FROM app-docker136.hex.tno.nl/portico/lrc:nightly-20160528-alpine
+FROM hlacontainers/lrc:portico-nightly-2016.05.28-alpine
 
 ARG version
 
-ADD ./build/distributions/TC.exec-${version}.zip /root/application/
+ADD ./build/distributions/TC.exec-${version}.tar /root/application/
 
 ADD ./docker/start.sh /root/application/start.sh
-
-RUN unzip /root/application/TC.exec-${version}.zip -d /root/application/ && rm /root/application/TC.exec-${version}.zip
 
 RUN ln -s /root/application/TC.exec-${version} /root/application/TC.exec
 
