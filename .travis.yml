@@ -8,7 +8,7 @@ branches:
   - development
 
 before_install:
-    # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     # - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
     # - docker pull app-docker136.hex.tno.nl/vtmak/lrc:4.5f-alpine
     # - docker pull app-docker136.hex.tno.nl/pitch/lrc:5.4.3.0-alpine-nolib
