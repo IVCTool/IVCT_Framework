@@ -1,4 +1,4 @@
-FROM hlacontainers/lrc:vtmak-skeleton-centos7
+FROM hlacontainers/lrc:vtmak-4.5f-centos7
 
 ARG version
 
