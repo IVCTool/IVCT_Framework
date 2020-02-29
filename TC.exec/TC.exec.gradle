@@ -59,7 +59,7 @@ task dockerBuildMakImage(type: DockerBuildImage) {
     dockerFile = project.file('Dockerfile-ma')
     buildArgs.put('version', "${ivctVersion}")
 	inputDir = file('.')
-	tags.add ("ivct/tc-runner:ma-skeleton-${ivctVersion}")
+	tags.add ("ivct/tc-runner:ma-${ivctVersion}")
 }
 
 tasks.register ("dockerBuildImage") {
