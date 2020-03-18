@@ -49,7 +49,6 @@ reading log files and the available test suite.
 Finally there are some guidelines on writing test cases and considerations for
 guture enhancements.
 
-* <<5-3-Add-new-test-suites.adoc#,Add new test suites>>
 * <<5-4-TClogging.adoc#,Test case logging>>
 
 * <<6-1-futureenhancements.adoc#,Future enhancements>>
