@@ -1,3 +1,4 @@
 {
-  "growthRate" : "1.0003"
+  "growthRate" : "1.0003",
+  "SOMfile":"$(IVCT_SUT_HOME_ID)/$(IVCT_SUT_ID)/$(IVCT_TESTSUITE_ID)/HelloWorld.xml"
 }
