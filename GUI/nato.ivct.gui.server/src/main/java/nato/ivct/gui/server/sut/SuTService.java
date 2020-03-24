@@ -8,7 +8,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -28,8 +30,11 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
+import nato.ivct.gui.server.ts.TsService;
+import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
+import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
@@ -187,9 +192,53 @@ public class SuTService implements ISuTService {
             row.setCbBadgeID(badgeId);
             row.setCbBadgeName(BEANS.get(CbService.class).getBadgeDescription(badgeId).name);
             //TODO (just for testing)
-            row.setCbBadgeStatus("UNKNOWN");
+            //row.setCbBadgeStatus("UNKNOWN");
+            row.setCbBadgeStatus(getBadgeConformanceStatus(fd.getSutId(), badgeId));
         });
         return fd;
+    }
+
+
+    private String getBadgeConformanceStatus(final String sutId, final String badgeId) {
+        String bdVerdict = "PASSED";
+
+        //(tsId(tcSet)) 
+        HashMap<String, HashSet<String>> tcList = BEANS.get(ITsService.class).getTcListForBadge(badgeId);
+
+        for (Entry<String, HashSet<String>> entry: tcList.entrySet()) {
+            String tsId = entry.getKey();
+            HashSet<String> value = entry.getValue();
+            for (String tcId: value) {
+                final String tcVerdict = BEANS.get(ISuTTcService.class).getTcLastVerdict(sutId, tsId, tcId);
+                bdVerdict = evalVerdicts(bdVerdict, tcVerdict);
+            }
+        }
+        //        tcList.forEach((tsId, tcSet) -> {
+        //            tcSet.forEach(tcId -> {
+        //                final String tcVerdict = BEANS.get(ISuTTcService.class).getTcLastVerdict(sutId, tsId, tcId);
+        //                bdVerdict = evalVerdicts(bdVerdict, tcVerdict);
+        //            });
+        //        });
+
+        return bdVerdict;
+
+    }
+
+
+    private String evalVerdicts(final String bdVerdict, final String tcVerdict) {
+        //PASSED < UNKNOWN < INCONCLUSIVE < FAILED
+        String verdict = bdVerdict;
+        if (!"PASSED".equalsIgnoreCase(tcVerdict)) {
+            if ("FAILED".equalsIgnoreCase(tcVerdict) || "FAILED".equalsIgnoreCase(bdVerdict))
+                verdict = "FAILED";
+            else if ("INCONCLUSIVE".equalsIgnoreCase(tcVerdict) || "INCONCLUSIVE".equalsIgnoreCase(bdVerdict))
+                verdict = "INCONCLUSIVE";
+            else
+                verdict = "UNKNOWN";
+        }
+
+        return verdict;
+
     }
 
     /*
