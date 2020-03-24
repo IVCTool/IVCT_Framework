@@ -10,7 +10,7 @@ The IVCT_Framework is software to support the **Integration**, **Verification** 
 
 ## Installation and running the Software
 
-The simplest way to install and use the software is a docker deployment. Docker is a software deployment framework for containerized components - see https://www.docker.com/ for more information. To start the IVCT software you need a so called 'compose' file, and a running docker engine.
+The simplest way to install and use the software is a docker deployment. Docker is a software deployment framework for containerized components - see [Docker](https://www.docker.com/) for more information. To start the IVCT software you need a so called 'compose' file, and a running docker engine.
 
     docker-compose up
 
@@ -20,7 +20,7 @@ The user interface comes in two flavors, a [web based user interface](docs/src/4
 
 ## For Developers
 
-The IVCT tool is a open source projects that invites developers to share and contribute software and experience. The IVCT components and concepts are explained in some detail in the [document section](docs/src/Home.adoc). Other ways to contribute is to provide test case implementations for existing or possibly new interoperability requirement. 
+The IVCT tool is a open source projects that invites developers to share and contribute software and experience. The IVCT components and concepts are explained in some detail in the [document section](docs/src/Home.adoc). Other ways to contribute is to provide test case implementations for existing or possibly new interoperability requirement.
 
 There is a [tutorial to explain the concepts and the best practices for developing test cases](https://github.com/IVCTool/IVCT_TestSuiteDevelopment).
 
@@ -32,4 +32,4 @@ The general concepts of [HLA Certification is explained by the NATO Modelling & 
 
 Copyright 2019 NATO/OTAN
 
-Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the Apache License, [Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
