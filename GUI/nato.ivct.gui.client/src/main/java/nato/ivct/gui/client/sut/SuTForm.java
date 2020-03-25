@@ -1,6 +1,9 @@
 package nato.ivct.gui.client.sut;
 
+import java.util.Objects;
+
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -16,6 +19,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox.SutCapabilityStatusTableField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
@@ -29,6 +33,11 @@ public class SuTForm extends AbstractForm {
 
     private String sutId = null;
     private String title = null;
+    
+    // test result verdicts
+    public static final String PASSED_VERDICT       = "PASSED";
+    public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
+    public static final String FAILED_VERDICT       = "FAILED";
 
 
     public SuTForm(String formTitle) {
@@ -74,6 +83,9 @@ public class SuTForm extends AbstractForm {
         return getFieldByClass(CapabilityStatusBox.class);
     }
 
+    public SutCapabilityStatusTableField getSutCapabilityStatusTableField() {
+        return getFieldByClass(SutCapabilityStatusTableField.class);
+    }
 
     public NameField getNameField() {
         return getFieldByClass(NameField.class);
@@ -303,6 +315,11 @@ public class SuTForm extends AbstractForm {
                         }
 
                         public class SutCapabilityStatusTable extends AbstractTable {
+                            
+                            public CbBadgeStatusColumn getCbBadgeStatusColumn() {
+                                return getColumnSet().getColumnByClass(CbBadgeStatusColumn.class);
+                            }
+                            
                             @Order(1000)
                             public class CbBadgeIDColumn extends AbstractStringColumn {
                                 @Override
@@ -424,8 +441,31 @@ public class SuTForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
+            
+            // set result color in the capability table
+            setTestResultColor();
 
             //			setEnabledPermission(new UpdateSuTPermission());
         }
+    }
+    
+    public void setTestResultColor() {
+        // set the color of the test results in TC Execution History Table Field
+        getSutCapabilityStatusTableField().getTable().getRows().forEach(row -> {
+            Cell cell = row.getCellForUpdate(getSutCapabilityStatusTableField().getTable().getCbBadgeStatusColumn());
+            switch (Objects.toString(cell.getValue(), "")) {
+                case PASSED_VERDICT:
+                    cell.setCssClass("passed-text");
+                    break;
+                case INCONCLUSIVE_VERDICT:
+                    cell.setCssClass("inconclusive-text");
+                    break;
+                case FAILED_VERDICT:
+                    cell.setCssClass("failed-text");
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }
