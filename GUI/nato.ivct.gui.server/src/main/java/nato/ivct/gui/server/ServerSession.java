@@ -114,50 +114,14 @@ public class ServerSession extends AbstractServerSession {
                 final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
                 //parse each report file to get the verdict and the corresponding log file name
                 reportFiles.forEach(reportFile -> {
-                    parseResultFile(sutId, reportFile, sutTcResults);
+                    if ("json".equalsIgnoreCase(reportFile.substring(reportFile.lastIndexOf('.') + 1))) {
+                        parseJsonResultFile(sutId, reportFile, sutTcResults);    
+                    }
                 });
             });
 
             return sutTcResults;
         }
-
-
-        private void parseResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
-            LOG.info("parse report file: {}\n", reportFile);
-            final String fileExt = reportFile.substring(reportFile.lastIndexOf('.') + 1);
-            switch (fileExt.toLowerCase()) {
-                case "txt":
-                    parseTextResultFile(sutId, reportFile, sutTcResults);
-                    break;
-                case "json":
-                    parseJsonResultFile(sutId, reportFile, sutTcResults);
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-
-        private void parseTextResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
-            try {
-                Files.lines(Paths.get(reportFile)).filter(line -> VERDICT_LINE.matcher(line).matches()).forEach(verdictLine -> {
-                    LOG.info("\tparse verdict line: {}\n", verdictLine);
-                    // extract the required elements from the verdict line
-                    final String[] result = parseVerdictLine(verdictLine);
-                    if (result.length == 4) {
-                        sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
-                    }
-                });
-            }
-            catch (final NoSuchFileException exc) {
-                LOG.info("report file not found: {}", reportFile);
-            }
-            catch (final IOException exc) {
-                LOG.error("", exc);
-            }
-        }
-
 
         @SuppressWarnings("unchecked")
         private void parseJsonResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
