@@ -164,7 +164,7 @@ public class SuTService implements ISuTService {
         try {
             return Files.find(folder, 1, (path, fileAttributes) -> {
                 final String filenameToCheck = path.getFileName().toString();
-                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".txt");
+                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".json");
             }).sorted(new FileCreationTimeComparator().reversed());
         }
         catch (final IllegalStateException exc) {
@@ -213,12 +213,6 @@ public class SuTService implements ISuTService {
                 bdVerdict = evalVerdicts(bdVerdict, tcVerdict);
             }
         }
-        //        tcList.forEach((tsId, tcSet) -> {
-        //            tcSet.forEach(tcId -> {
-        //                final String tcVerdict = BEANS.get(ISuTTcService.class).getTcLastVerdict(sutId, tsId, tcId);
-        //                bdVerdict = evalVerdicts(bdVerdict, tcVerdict);
-        //            });
-        //        });
 
         return bdVerdict;
 
