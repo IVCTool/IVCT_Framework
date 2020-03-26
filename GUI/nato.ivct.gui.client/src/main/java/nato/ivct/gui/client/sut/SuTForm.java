@@ -439,15 +439,13 @@ public class SuTForm extends AbstractForm {
 
                                 @Override
                                 protected String getConfiguredText() {
-                                    return TEXTS.get("NewTestreport");
+                                    return TEXTS.get("CreateTestreport");
                                 }
 
                                 @Override
                                 protected void execAction() {
-                                    //TODO: Implement here code for create PDF report file!!
-                                    //final List<BinaryResource> files = fileChooser.startChooser();
                                     final ISuTService service = BEANS.get(ISuTService.class);
-                                    final String fileName = service.generateTestreport(getSutId());
+                                    final String fileName = service.createTestreport(getSutId());
                                     if (!fileName.isEmpty()) {
                                         final ITableRow row = getTable().addRow(getTable().createRow());
                                         getTable().getFileNameColumn().setValue(row, fileName);

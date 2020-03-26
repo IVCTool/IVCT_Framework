@@ -34,7 +34,7 @@ public interface ISuTService extends IService {
 
     BinaryResource getTestReportFileContent(String sutId, String fileName);
 
-    String generateTestreport(String sutId);
+    String createTestreport(String sutId);
 
 
 }

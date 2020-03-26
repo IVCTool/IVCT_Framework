@@ -120,9 +120,9 @@ public class SuTService implements ISuTService {
      * functions for TestReport
      */
     @Override
-    public String generateTestreport(String sutId) {
+    public String createTestreport(String sutId) {
         String fileName ="";
-        //TODO PDF generation
+        //TODO: Implement here code for create PDF report file!!
         return fileName;
     }
     
