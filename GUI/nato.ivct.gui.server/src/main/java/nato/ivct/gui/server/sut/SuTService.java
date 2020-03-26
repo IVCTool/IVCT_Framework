@@ -2,6 +2,7 @@ package nato.ivct.gui.server.sut;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
@@ -39,7 +41,6 @@ import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTFormData.SutCapabilityStatusTable.SutCapabilityStatusTableRowData;
-import nato.ivct.gui.shared.sut.TestReportFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 
@@ -118,26 +119,27 @@ public class SuTService implements ISuTService {
     /*
      * functions for TestReport
      */
-
-
     @Override
-    public TestReportFormData load(TestReportFormData formData) {
-        final String testReportFileName = formData.getReportFileName();
-
-        // get content of the requested report file
-        final List<String> testReportFiles = Factory.getSutPathsFiles().getSutReportFileNames(formData.getSutIdProperty().getValue(), true);
-        testReportFiles.stream().filter(value -> value.contains(testReportFileName)).map(Paths::get).findAny().ifPresent(path -> {
-            try {
-                formData.getTestReport().setValue(java.nio.file.Files.lines(path).collect(Collectors.joining("\n")));
-            }
-            catch (final IOException exc) {
-                LOG.error("Error when attempting to read from file: {}", Factory.getSutPathsFiles().getReportPath(formData.getSutIdProperty().getValue()).concat("\\").concat(testReportFileName));
-            }
-        });
-
-        return formData;
+    public String generateTestreport(String sutId) {
+        String fileName ="";
+        //TODO PDF generation
+        return fileName;
     }
+    
+    @Override
+    public BinaryResource getTestReportFileContent(String sutId, String fileName) {
+        BinaryResource fileContent = null;
 
+        try {
+            fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getReportPath(sutId)).resolve(fileName)));
+        }
+        catch (IOException | InvalidPathException exc) {
+            LOG.error("error to access fileName {}", fileName);
+            fileContent = new BinaryResource(fileName, null);
+        }
+
+        return fileContent;
+    }
 
     private SuTFormData loadReportFiles(final SuTFormData fd) {
         final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(fd.getSutId()));

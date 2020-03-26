@@ -1,5 +1,6 @@
 package nato.ivct.gui.client.sut;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -8,9 +9,11 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
+import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -18,18 +21,23 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox.SutCapabilityStatusTableField;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField.SutTcExtraParameterTable.FileDeleteMenu;
+import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField.SutTcExtraParameterTable.FileDownloadMenu;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcParameterTableField.SuTTcParameterTable.SaveMenu;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
+import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
 
@@ -437,19 +445,28 @@ public class SuTForm extends AbstractForm {
                                 @Override
                                 protected void execAction() {
                                     //TODO: Implement here code for create PDF report file!!
+                                    //final List<BinaryResource> files = fileChooser.startChooser();
+                                    final ISuTService service = BEANS.get(ISuTService.class);
+                                    final String fileName = service.generateTestreport(getSutId());
+                                    if (!fileName.isEmpty()) {
+                                        final ITableRow row = getTable().addRow(getTable().createRow());
+                                        getTable().getFileNameColumn().setValue(row, fileName);
+                                        getTable().sort();
+                                    } else {
+                                        MessageBoxes.createOk().withHeader(TEXTS.get("reportMsgBoxHeader")).show();
+                                    }
+                                        
                                 }
                             }
-                            
-                            
+                                                       
                             // called on double-click on a row
                             @Override
                             protected void execRowAction(ITableRow row) {
-                                final TestReportForm form = new TestReportForm();
-                                // set SUT Id and requested report file name
-                                form.setSutId(getSutId());
-                                form.setReportFileName(getTable().getFileNameColumn().getValue(getSelectedRow()));
-                                //load and open the form
-                                form.startView();
+                                // get the content of the selected file
+                                final BinaryResource downloadFileResource = BEANS.get(ISuTService.class).getTestReportFileContent(getSutId(), getTable().getFileNameColumn().getValue(row));
+                                if (downloadFileResource.getContentLength() != -1) {
+                                    getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+                                }
                             }
                         }
                     }

@@ -2,6 +2,7 @@ package nato.ivct.gui.shared.sut;
 
 import java.util.Set;
 
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -28,9 +29,12 @@ public interface ISuTService extends IService {
     SuTEditFormData create(SuTEditFormData formData);
     
     /*
-     * TestReportFormData
+     * TestReport
      */
 
-	TestReportFormData load(TestReportFormData formData);
+    BinaryResource getTestReportFileContent(String sutId, String fileName);
+
+    String generateTestreport(String sutId);
+
 
 }
