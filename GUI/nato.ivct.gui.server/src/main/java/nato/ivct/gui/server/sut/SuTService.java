@@ -164,7 +164,7 @@ public class SuTService implements ISuTService {
         try {
             return Files.find(folder, 1, (path, fileAttributes) -> {
                 final String filenameToCheck = path.getFileName().toString();
-                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".json");
+                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".pdf");
             }).sorted(new FileCreationTimeComparator().reversed());
         }
         catch (final IllegalStateException exc) {
