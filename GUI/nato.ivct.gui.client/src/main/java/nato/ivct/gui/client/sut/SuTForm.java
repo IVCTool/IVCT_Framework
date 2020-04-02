@@ -1,6 +1,5 @@
 package nato.ivct.gui.client.sut;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,7 +8,6 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
-import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -30,14 +28,10 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox.SutCapabilityStatusTableField;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField.SutTcExtraParameterTable.FileDeleteMenu;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField.SutTcExtraParameterTable.FileDownloadMenu;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcParameterTableField.SuTTcParameterTable.SaveMenu;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.SutVendorField;
-import nato.ivct.gui.shared.sut.ISuTCbService;
 import nato.ivct.gui.shared.sut.ISuTService;
 import nato.ivct.gui.shared.sut.SuTFormData;
 
@@ -446,7 +440,7 @@ public class SuTForm extends AbstractForm {
                                 protected void execAction() {
                                     final ISuTService service = BEANS.get(ISuTService.class);
                                     final String fileName = service.createTestreport(getSutId());
-                                    if (!fileName.isEmpty()) {
+                                    if (fileName != null) {
                                         final ITableRow row = getTable().addRow(getTable().createRow());
                                         getTable().getFileNameColumn().setValue(row, fileName);
                                         getTable().sort();

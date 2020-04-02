@@ -23,6 +23,7 @@ ext {
 		javaxServletVersion = '3.0.1'
 		geronimoJmsVersion = '1.1.1'
 		jsonIoVersion = '4.10.1'
+		jasperReportsVersion = '6.12.2'
 		javaxannotationVersion = '1.3.2'
 
 		gradleDockerPluginVersion = '4.9.0'
@@ -52,6 +53,7 @@ ext {
 				gson:							"com.google.code.gson:gson:${gsonVersion}",
 
 				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
+				jasperReports:                  "net.sf.jasperreports:jasperreports:${jasperReportsVersion}",
 
 				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
 

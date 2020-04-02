@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -7,14 +8,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -32,7 +33,6 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
-import nato.ivct.gui.server.ts.TsService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.CreateSuTPermission;
 import nato.ivct.gui.shared.sut.ISuTService;
@@ -42,6 +42,14 @@ import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTFormData.SutCapabilityStatusTable.SutCapabilityStatusTableRowData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JsonDataSource;
 
 
 public class SuTService implements ISuTService {
@@ -116,16 +124,37 @@ public class SuTService implements ISuTService {
         return formData;
     }
 
+
     /*
      * functions for TestReport
      */
     @Override
     public String createTestreport(String sutId) {
-        String fileName ="";
-        //TODO: Implement here code for create PDF report file!!
-        return fileName;
+
+        try {
+            String pathToReports = "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\PDFReport\\";
+            JRDataSource jrDataSource = new JsonDataSource(new File(pathToReports + "PDFReport.json"));
+            JasperReport jasperReport = JasperCompileManager.compileReport(pathToReports + "Report.jrxml");
+            JasperCompileManager.compileReportToFile(pathToReports + "subreport_SuT.jrxml", "subreport_SuT.jasper");
+            JasperCompileManager.compileReportToFile(pathToReports + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
+            JasperCompileManager.compileReportToFile(pathToReports + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), jrDataSource);
+
+            Date time = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("_yyyyMMdd-HHmmss");
+            String fileName = "Report" + simpleDateFormat.format(time) + ".pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\" + fileName);
+            return fileName;
+        }
+        catch (JRException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
-    
+
+
     @Override
     public BinaryResource getTestReportFileContent(String sutId, String fileName) {
         BinaryResource fileContent = null;
@@ -140,6 +169,7 @@ public class SuTService implements ISuTService {
 
         return fileContent;
     }
+
 
     private SuTFormData loadReportFiles(final SuTFormData fd) {
         final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(fd.getSutId()));
