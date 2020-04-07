@@ -27,11 +27,14 @@
 		<encoder>
 			<!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern -->
 			<!--pattern>%d{HH:mm:ss.SSS} %-5level %logger{10} - %msg%n</pattern -->
-			<pattern>%date %X{testcase}: %msg%n</pattern>
+			<pattern>%date %X{testcase} %class{0}: %msg%n</pattern>
 		</encoder>
 	</appender>
 	<appender name="reporter" class="de.fraunhofer.iosb.testrunner.ReportAppender">
         <prefix>test</prefix>
+        <encoder>
+            <pattern>%date %X{testcase} %class{0}: %msg%n</pattern>
+        </encoder>
 	</appender>
 
 
