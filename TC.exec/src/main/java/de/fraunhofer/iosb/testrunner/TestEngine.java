@@ -36,15 +36,14 @@ import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.TcLoggerData;
 
-
-
 /**
  * Testrunner that listens for certain commands to start and stop test cases.
  *
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
-public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend, OnOperatorConfirmationListener {
+public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener,
+		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
@@ -84,7 +83,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		try {
 			(new CmdHeartbeatSend(this)).execute();
 		} catch (Exception e1) {
-			Set<Logger>loggers = TcLoggerData.getLoggers();
+			Set<Logger> loggers = TcLoggerData.getLoggers();
 			for (Logger entry : loggers) {
 				entry.error("Could not start HeartbeatSend: " + e1.toString());
 			}
@@ -154,7 +153,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				File dir = new File(lib_path);
 				File[] filesList = dir.listFiles();
 				if (filesList == null) {
-					Set<Logger>loggers = TcLoggerData.getLoggers();
+					Set<Logger> loggers = TcLoggerData.getLoggers();
 					for (Logger entry : loggers) {
 						entry.info("No files found in folder {}", dir.getPath());
 					}
@@ -227,40 +226,36 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
-				
-				
-        /**
-         * Check the compability of IVCT-Version which had this testCase at
-         * building-time against the IVCT-Version at Runtime
-         */
 
-        try {
-        	tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: " + testCase.getIVCTVersion()); // Debug
-          
-          new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
-          
-        } catch (IVCTVersionCheckException cf) {
-        	tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
-          verdicts[i] = new IVCT_Verdict();
-          verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-          verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
-          i++;
-          cf.printStackTrace();
-          continue;
-        }		
+				/**
+				 * Check the compability of IVCT-Version which had this testCase at
+				 * building-time against the IVCT-Version at Runtime
+				 */
 
-				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), tcLogger);
-			}
+				try {
+					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: "
+							+ testCase.getIVCTVersion()); // Debug
 
-			// The JMSLogSink waits on this message!
-			// The following pair of lines will cause the JMSLogSink to close the log file!
-			tcLogger.info("Test Case Ended");
-			TcLoggerData.removeLogger(tcLogger.getName());
+					new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
 
-			for (i = 0; i < testcases.length; i++) {
+				} catch (IVCTVersionCheckException cf) {
+					tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
+					verdicts[i] = new IVCT_Verdict();
+					verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+					verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+					i++;
+					cf.printStackTrace();
+					continue;
+				}
+
+				verdicts[i] = testCase.execute(info.testCaseParam, tcLogger);
+				tcLogger.info("Test Case Ended");
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
 						verdicts[i].verdict.name(), verdicts[i].text).execute();
+				i++;
 			}
+
+			TcLoggerData.removeLogger(tcLogger.getName());
 		}
 
 	}
@@ -281,31 +276,28 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		Thread th1 = new Thread(new TestScheduleRunner(info, this));
 		th1.start();
 	}
-	
+
 	@Override
 	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
 		testCase.onOperatorConfirmation(operatorConfirmationInfo);
 	}
-	
-	
-	/*  implement a heartbeat ,  brf 05.07.2019 (Fraunhofer IOSB)
-     *  CmdHeartbeatSend will fetch all 5 Seconds the health state from  'here'
-     *  and send all 5 Seconds a message to ActiveMQ
-     *  So if the value for health is changed here, this will change the tenor 
-     *  of the message  CmdHeartbeatSend  sends to ActiveMQ
-     *  if this thread is stopped, CmdHeardbeatListen will give out an Alert-Status
-     */
-    
-    
-	@Override
-	public String getMyClassName() {
-        return myClassName;
-    }
-    
+
+	/*
+	 * implement a heartbeat , brf 05.07.2019 (Fraunhofer IOSB) CmdHeartbeatSend
+	 * will fetch all 5 Seconds the health state from 'here' and send all 5 Seconds
+	 * a message to ActiveMQ So if the value for health is changed here, this will
+	 * change the tenor of the message CmdHeartbeatSend sends to ActiveMQ if this
+	 * thread is stopped, CmdHeardbeatListen will give out an Alert-Status
+	 */
 
 	@Override
-    public boolean getMyHealth() {
-        return health;
-    }
-	
+	public String getMyClassName() {
+		return myClassName;
+	}
+
+	@Override
+	public boolean getMyHealth() {
+		return health;
+	}
+
 }
