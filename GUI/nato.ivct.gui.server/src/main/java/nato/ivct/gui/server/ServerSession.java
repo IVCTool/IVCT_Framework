@@ -115,7 +115,7 @@ public class ServerSession extends AbstractServerSession {
             final List<String> sutList = Factory.getSutPathsFiles().getSuts();
             // iterate over all SuTs to get its report files
             sutList.forEach(sutId -> {
-                final List<String> resultFiles = Factory.getSutPathsFiles().getSutResultFileNames(sutId, true);
+                final List<String> resultFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
                 //parse each report file to get the verdict and the corresponding log file name
                 resultFiles.forEach(resultFile -> {
                     if ((RESULTS_FILE_NAME + "." + RESULTS_FILE_EXT).equalsIgnoreCase(Paths.get(resultFile).getFileName().toString())) {
