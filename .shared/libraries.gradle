@@ -16,6 +16,7 @@ ext {
     logbackVersion = '1.2.3'
     slf4jVersion = '1.7.10'
 		activemqVersion = '5.14.5'
+		antlrVersion = '2.7.7'
 		hamcrestVersion = '1.1'
 		scoutVersion = '9.0.0.025_Simrel_2019_09'
 		jsonSimpleVersion = '1.1.1'
@@ -48,6 +49,8 @@ ext {
 
 				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
 				activemqEmbedded: 				"org.apache.activemq:activemq-broker:${activemqVersion}",
+
+				antlr:							"antlr:antlr:${antlrVersion}",
 
 				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
 				gson:							"com.google.code.gson:gson:${gsonVersion}",

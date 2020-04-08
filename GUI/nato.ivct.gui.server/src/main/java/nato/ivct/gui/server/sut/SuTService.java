@@ -50,6 +50,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JsonDataSource;
+import net.sf.jasperreports.engine.data.JsonQLDataSource;
 
 
 public class SuTService implements ISuTService {
@@ -133,11 +134,12 @@ public class SuTService implements ISuTService {
 
         try {
             String pathToReports = "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\PDFReport\\";
-            JRDataSource jrDataSource = new JsonDataSource(new File(pathToReports + "PDFReport.json"));
+            JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "PDFReport.json"));
             JasperReport jasperReport = JasperCompileManager.compileReport(pathToReports + "Report.jrxml");
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_SuT.jrxml", "subreport_SuT.jasper");
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
+            JasperCompileManager.compileReportToFile(pathToReports + "subreport_TS.jrxml", "subreport_TS.jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), jrDataSource);
 
@@ -147,7 +149,7 @@ public class SuTService implements ISuTService {
             JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\" + fileName);
             return fileName;
         }
-        catch (JRException | IOException e) {
+        catch (JRException e) {
             e.printStackTrace();
         }
 
