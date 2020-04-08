@@ -46,7 +46,7 @@ public class ReportEngine {
     private int          numPassed       = 0;
     private Path         resultFile      = null;
     private String       knownSut        = new String();
-    private final String baseFileName    = "Report";
+    private final String baseFileName    = "Results";
     private final String failedStr       = "FAILED";
     private final String inconclusiveStr = "INCONCLUSIVE";
     private final String passedStr       = "PASSED";
