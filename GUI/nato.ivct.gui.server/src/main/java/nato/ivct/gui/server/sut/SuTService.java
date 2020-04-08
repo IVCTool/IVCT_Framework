@@ -120,7 +120,7 @@ public class SuTService implements ISuTService {
         loadCapabilityStatus(formData);
 
         // fill the form data: SuTReports table
-        loadReportFiles(formData);
+        loadResultFiles(formData);
 
         return formData;
     }
@@ -173,14 +173,14 @@ public class SuTService implements ISuTService {
     }
 
 
-    private SuTFormData loadReportFiles(final SuTFormData fd) {
+    private SuTFormData loadResultFiles(final SuTFormData fd) {
         final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(fd.getSutId()));
 
         try {
             getReportFilesOrderedByCreationDate(folder).forEach(path -> {
-                final String reportFileName = path.getFileName().toString();
-                LOG.info("report file found: {}", reportFileName);
-                fd.getTestReportTable().addRow().setFileName(reportFileName);
+                final String resultFileName = path.getFileName().toString();
+                LOG.info("report file found: {}", resultFileName);
+                fd.getTestReportTable().addRow().setFileName(resultFileName);
             });
         }
         catch (final NoSuchFileException exc) {
