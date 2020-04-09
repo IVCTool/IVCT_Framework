@@ -129,26 +129,62 @@ public class SuTService implements ISuTService {
     /*
      * functions for TestReport
      */
+      
+
     @Override
-    public String createTestreport(String sutId) {
+    public String createTestreport(final String sutId){
+        Path reportFolder = Paths.get("C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\"+sutId+"\\Reports\\");
+        Path templateFolder = Paths.get("C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\"+sutId+"\\Reports\\Template\\");
+        
+        if (createReportJsonFile(sutId, reportFolder.toString() +"\\" + "Result.json").isEmpty()) {
+            return null;
+        }
+        
+        
+        return createPDFTestreport(templateFolder, reportFolder);
+    }
+    
+    private final String createReportJsonFile(final String sutId, final String resultFile) {
+        String reportFile = "";
+        
+        /*
+         * Result.json to JSON Object: Einlesen von Result.json
+         * SuT Informationen einlesen: Aus SuTForm einlesen
+         * Badge Informationen für SuT einlesen: Aus SuTForm einlesen
+         * Badge Verdict einlesen: Aus SuTForm einlesen
+         * Alle relevanten TS von einer Badge: Aus SuTCbForm einlesen
+         * Alle relevanten TC von einer TS: Aus SuTCbForm einlesen
+         * Alle TcResults von einem TC: Aus Results.json einlesen
+         * Finaler Verdict für SuT: Analog wie für Badge Verdict
+         * 
+         */
+        
+        
+        return reportFile;
+    }
+    
+    
+    
+    private String createPDFTestreport(final Path templateFolder, final Path reportFolder) {
 
         try {
-            String pathToReports = "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\PDFReport\\";
-            JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "PDFReport.json"));
-            JasperReport jasperReport = JasperCompileManager.compileReport(pathToReports + "Report.jrxml");
-            JasperCompileManager.compileReportToFile(pathToReports + "subreport_SuT.jrxml", "subreport_SuT.jasper");
-            JasperCompileManager.compileReportToFile(pathToReports + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
-            JasperCompileManager.compileReportToFile(pathToReports + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
-            JasperCompileManager.compileReportToFile(pathToReports + "subreport_TestCases.jrxml", "subreport_TestCases.jasper");
-            JasperCompileManager.compileReportToFile(pathToReports + "subreport_TS.jrxml", "subreport_TS.jasper");
-            JasperCompileManager.compileReportToFile(pathToReports + "subreport_Badge.jrxml", "subreport_Badge.jasper");
+            final String pathToReports = reportFolder.toString() +"\\";
+            final String pathToTemplates = templateFolder.toString() +"\\";
+            JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "Report.json"));
+            JasperReport jasperReport = JasperCompileManager.compileReport(pathToTemplates + "Report.jrxml");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_SuT.jrxml", "subreport_SuT.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestCases.jrxml", "subreport_TestCases.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TS.jrxml", "subreport_TS.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Badge.jrxml", "subreport_Badge.jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), jrDataSource);
 
             Date time = new Date();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("_yyyyMMdd-HHmmss");
-            String fileName = "Report" + simpleDateFormat.format(time) + ".pdf";
-            JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\" + fileName);
+            final String fileName = "Report" + simpleDateFormat.format(time) + ".pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, pathToReports + fileName);
             return fileName;
         }
         catch (JRException e) {
