@@ -139,7 +139,9 @@ public class SuTService implements ISuTService {
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_SuT.jrxml", "subreport_SuT.jasper");
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
+            JasperCompileManager.compileReportToFile(pathToReports + "subreport_TestCases.jrxml", "subreport_TestCases.jasper");
             JasperCompileManager.compileReportToFile(pathToReports + "subreport_TS.jrxml", "subreport_TS.jasper");
+            JasperCompileManager.compileReportToFile(pathToReports + "subreport_Badge.jrxml", "subreport_Badge.jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), jrDataSource);
 
