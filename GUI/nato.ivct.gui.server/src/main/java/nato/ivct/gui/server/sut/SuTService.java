@@ -157,9 +157,8 @@ public class SuTService implements ISuTService {
 
     @Override
     public String createTestreport(final String sutId){
-        //TODO
-        Path reportFolder = Paths.get("C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\"+sutId+"\\Reports\\");
-        Path templateFolder = Paths.get("C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\"+sutId+"\\Reports\\Template\\");
+        final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
+        final Path templateFolder = Paths.get(reportFolder.toString(), "Template");
         
         if (createReportJsonFile(sutId, reportFolder.toString() +"\\" + "Results.json").isEmpty()) {
             return null;
@@ -169,7 +168,9 @@ public class SuTService implements ISuTService {
     }
     
     private final String createReportJsonFile(final String sutId, final String resultFile) {
-
+        final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
+        final String reportFile = Paths.get(reportFolder.toString(), "Report.json").toString();
+        
         final JsonObject jReport = new JsonObject();
         
         //Result.json to JSON Object       
@@ -201,15 +202,11 @@ public class SuTService implements ISuTService {
         //Fill with calculated SuT Verdict
         addSutVerdict(jReport);
  
-        return reportJSONFile(jReport);
+        return reportJSONFile(jReport, reportFile);
     }
  
-    private String reportJSONFile(JsonElement jReport) {           
-        String reportFile = "";  
-        
+    private String reportJSONFile(final JsonElement jReport, final String reportFile) {           
         try {
-            //TODO
-            reportFile = "C:\\Entwicklung\\IVCT\\IVCT_Runtime\\IVCTsut\\hw_iosb\\Reports\\Report.json";
             LOG.debug("store report json object to file {}", reportFile);
             Files.write(Paths.get(reportFile), jReport.toString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         }
