@@ -2,6 +2,7 @@ package nato.ivct.gui.server.sut;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
@@ -158,7 +159,7 @@ public class SuTService implements ISuTService {
     @Override
     public String createTestreport(final String sutId){
         final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
-        final Path templateFolder = Paths.get(reportFolder.toString(), "Template");
+        final String templateFolder = this.getClass().getClassLoader().getResource("Report-Template").getPath();
         
         if (createReportJsonFile(sutId, reportFolder.toString() +"\\" + "Results.json").isEmpty()) {
             return null;
@@ -354,7 +355,7 @@ public class SuTService implements ISuTService {
         }
     }   
     
-    private String createPDFTestreport(final Path templateFolder, final Path reportFolder) {
+    private String createPDFTestreport(final String templateFolder, final Path reportFolder) {
 
         try {
             final String pathToReports = reportFolder.toString() +"\\";
