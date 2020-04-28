@@ -33,3 +33,7 @@ The general concepts of [HLA Certification is explained by the NATO Modelling & 
 Copyright 2019 NATO/OTAN
 
 Licensed under the Apache License, [Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+### List of 3rd party libraries
+
+[List of 3rd party libraries used in the IVCT project](docs/src/7-3rdparty-libraries.adoc)
