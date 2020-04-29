@@ -45,8 +45,10 @@ public class ReportEngine {
     private int          numInconclusive = 0;
     private int          numPassed       = 0;
     private Path         resultFile      = null;
+    private Path         reportFile      = null;
     private String       knownSut        = new String();
     private final String baseFileName    = "Results";
+    private final String reportFileName  = "Report";
     private final String failedStr       = "FAILED";
     private final String inconclusiveStr = "INCONCLUSIVE";
     private final String passedStr       = "PASSED";
@@ -203,6 +205,12 @@ public class ReportEngine {
             Files.createFile(resultFile);
             initializeResults(sut);
             writeResultsToFile(resultFile);
+        }
+        
+        final String reportName = reportFileName + ".json";
+        reportFile = Paths.get(reportPath, reportName);
+        if (Files.notExists(reportFile)) {
+            Files.createFile(reportFile);
         }
 
         // fill the internal JSON result object
