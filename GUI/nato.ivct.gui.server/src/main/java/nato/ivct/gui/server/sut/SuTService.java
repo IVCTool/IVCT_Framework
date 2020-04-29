@@ -315,8 +315,8 @@ public class SuTService implements ISuTService {
             tcArray.add(tcObj);
             
             JsonObject results = (JsonObject) jResults.get(TCRESULTS_KW);
-            JsonObject tsSection = (JsonObject) results.get(tsId);
-            JsonArray tcSection = (JsonArray) tsSection.get(tcId);
+            JsonObject tsSection = Optional.ofNullable((JsonObject) results.get(tsId)).orElseGet(JsonObject::new);
+            JsonArray tcSection = Optional.ofNullable((JsonArray) tsSection.get(tcId)).orElseGet(JsonArray::new);
             
             //TcResult section
             transformTcResults(tcSection, tcObj);
@@ -330,6 +330,9 @@ public class SuTService implements ISuTService {
         //TcResult information
         JsonArray tcResultArray = new JsonArray();
         tcObj.add(TCRESULTS_KW, tcResultArray);
+        
+        if (tcSection == null)
+            return;
         
         tcSection.forEach(result ->{
             tcResultArray.add(result);
