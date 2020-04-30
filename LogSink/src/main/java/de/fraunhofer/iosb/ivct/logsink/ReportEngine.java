@@ -145,7 +145,6 @@ public class ReportEngine {
         // add result
         final HashMap<String, String> resElement = new HashMap<>();
         resElement.put(TIMESTAMP_KW, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").format(new Date()).toString());
-        resElement.put(TESTSUITE_KW, "");
         resElement.put(VERDICT_KW, verdict);
         resElement.put(COMMENT_KW, verdictText);
         resElement.put(LOGFILEPATH_KW, tcLogName);
