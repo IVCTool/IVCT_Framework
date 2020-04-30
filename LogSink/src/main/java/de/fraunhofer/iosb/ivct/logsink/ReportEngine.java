@@ -54,8 +54,6 @@ public class ReportEngine {
     private final String passedStr       = "PASSED";
 
     // keys for the results json structure
-    private final String TESTSYSTEM_KW        = "Testsystem";
-    private final String TESTSYSTEMREV_KW     = "TestSystemRev";
     private final String SUT_KW               = "SuT";
     private final String SUTID_KW             = "SutId";
     private final String SUTNAME_KW           = "SutName";
@@ -67,7 +65,6 @@ public class ReportEngine {
     private final String NUMOFINCONCLUSIVE_KW = "NumOfInconclusive";
     private final String TCRESULTS_KW         = "TcResults";
     private final String TIMESTAMP_KW         = "TimeStamp";
-    private final String TESTSUITE_KW         = "TestSuite";
     private final String VERDICT_KW           = "Verdict";
     private final String COMMENT_KW           = "Comment";
     private final String LOGFILEPATH_KW       = "LogFilePath";
@@ -77,12 +74,7 @@ public class ReportEngine {
 
     public Map<String, String> status = new HashMap<>();
 
-
-    /**
-     *
-     */
     public ReportEngine() {}
-
 
     private void closeFile() {
         try {
@@ -150,6 +142,20 @@ public class ReportEngine {
         resElement.put(LOGFILEPATH_KW, tcLogName);
         testcaseResults.add(resElement);
 
+        // update SuT header
+        final CmdListSuT sutList = Factory.createCmdListSut();
+        sutList.execute();
+        final SutDescription sutDesc = sutList.sutMap.get(result.sutName);
+        if (sutDesc == null) {
+            LOGGER.error("SuT not found: " + result.sutName);
+            return;
+        }
+        final JSONObject sutHeader = (JSONObject) tcResults.get(SUT_KW);
+        sutHeader.put(SUTID_KW, sutDesc.ID);
+        sutHeader.put(SUTNAME_KW, sutDesc.name);
+        sutHeader.put(SUTREV_KW, sutDesc.version);
+        sutHeader.put(SUTVENDOR_KW, sutDesc.vendor);
+        
         // update result summary
         final JSONObject resSummary = (JSONObject) tcResults.get(VERDICTSUMMARY_KW);
 
@@ -239,15 +245,11 @@ public class ReportEngine {
             return;
         }
 
-        setTestSystemHeader();
         setSutHeader(sutDesc);
         initializeVerdictSummary();
 
         tcResults.put(TCRESULTS_KW, new JSONObject());
     }
-
-
-    private void setTestSystemHeader() {}
 
 
     @SuppressWarnings("unchecked")
