@@ -2,7 +2,6 @@ package nato.ivct.gui.server.sut;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
@@ -28,12 +27,7 @@ import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.shared.data.tile.TileColorScheme;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +35,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
@@ -52,7 +45,6 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.gui.server.ServerSession;
-import nato.ivct.gui.server.ServerSession.SutTcResultDescription;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.server.ts.TsService;
 import nato.ivct.gui.shared.cb.ICbService;
@@ -64,8 +56,6 @@ import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTFormData.SutCapabilityStatusTable.SutCapabilityStatusTableRowData;
-import nato.ivct.gui.shared.ts.TsFormData;
-import nato.ivct.gui.shared.ts.TsFormData.TcTable.TcTableRowData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -74,7 +64,6 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JsonDataSource;
 import net.sf.jasperreports.engine.data.JsonQLDataSource;
 
 
@@ -192,7 +181,7 @@ public class SuTService implements ISuTService {
          */
            
         //SuT section
-        transformSuTDesc(jResults.get(), jReport);
+        transformSuTDesc(jReport, sutId);
         
         //VerdictSummary section
         transformVerdictSummary(jResults.get(), jReport);
@@ -220,16 +209,29 @@ public class SuTService implements ISuTService {
         return reportFile;
     }
     
-    private void transformSuTDesc(final JsonObject jResults, final JsonObject jReport) {
-        final String SUT_KW = "SuT";
+    private void transformSuTDesc(final JsonObject jReport, final String sutId) {
+        final String SUT_KW         = "SuT";
+        final String SUTID_KW       = "SutId";
+        final String SUTNAME_KW     = "SutName";
+        final String SUTREV_KW      = "SutRev";
+        final String SUTVENDOR_KW   = "SutVendor";
         
-        JsonObject sutSection = (JsonObject) jResults.get(SUT_KW);
+        // SuT information
+        final SutDescription sutDesc = BEANS.get(SuTService.class).getSutDescription(sutId);
+        
+        // Insert the SuT section
+        JsonObject sutSection = new JsonObject();
+        
+        sutSection.addProperty(SUTID_KW, sutDesc.ID);
+        sutSection.addProperty(SUTNAME_KW, sutDesc.name);
+        sutSection.addProperty(SUTREV_KW, sutDesc.version);
+        sutSection.addProperty(SUTVENDOR_KW, sutDesc.vendor);
+
         jReport.add(SUT_KW, sutSection);  
     }
     
     private void transformVerdictSummary(final JsonObject jResults, final JsonObject jReport) {
         final String VERDICTSUMMARY_KW = "VerdictSummary";
-        final String SUTVERDICT_KW = "SutVerdict";
         
         JsonObject verdictSection = (JsonObject) jResults.get(VERDICTSUMMARY_KW);
         
@@ -362,7 +364,7 @@ public class SuTService implements ISuTService {
 
         try {
             final String pathToReports = reportFolder.toString() +"\\";
-            final String pathToTemplates = templateFolder.toString() +"\\";
+            final String pathToTemplates = templateFolder +"\\";
             JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "Report.json"));
             JasperReport jasperReport = JasperCompileManager.compileReport(pathToTemplates + "Report.jrxml");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_SuT.jrxml", "subreport_SuT.jasper");
