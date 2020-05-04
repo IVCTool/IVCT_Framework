@@ -72,43 +72,43 @@ The table shows all 3rd party libraries used in the IVCT project.
 
 |junit
 |4.+
-|EPL 1.0
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0]
 |https://mvnrepository.com/artifact/junit/junit
 |Testing Framework
 
 |logback_classic
 |1.2.3
-|EPL 1.0, LGPL 2.1
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], LGPL 2.1
 |https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
 |Logging Framework
 
 |logback_core
 |1.2.3
-|EPL 1.0, LGPL 2.1
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], LGPL 2.1
 |https://mvnrepository.com/artifact/ch.qos.logback/logback-core
 |Logging Framework
 
 |logback_contrib
 |0.1.5
-|EPL 1.0, LGPL 2.1
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], LGPL 2.1
 |https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
 |Logging / JSON
 
 |logback_json_classic
 |0.1.5
-|EPL 1.0, LGPL 2.1
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], LGPL 2.1
 |https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
 |Logging / JSON
 
 |scout_rt_client
 |9.0.0.025_Simrel_2019_09
-|EPL 1.0
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0]
 |https://mvnrepository.com/artifact/org.eclipse.scout.rt/org.eclipse.scout.rt.client
 |Eclipse Scout RT Client
 
 |scout_rt_client_test
 |9.0.0.025_Simrel_2019_09
-|EPL 1.0
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0]
 |https://mvnrepository.com/artifact/org.eclipse.scout.rt/org.eclipse.scout.rt.client.test
 |Eclipse Scout RT Client Test
 
