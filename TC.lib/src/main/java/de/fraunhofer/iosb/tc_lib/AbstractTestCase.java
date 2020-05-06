@@ -56,6 +56,12 @@ public abstract class AbstractTestCase {
     private boolean confirmationBool = false;
     private String cnfText;
     private String testCaseId;
+    
+	private boolean skipOperatorMsg;
+	public void setSkipOperatorMsg (boolean value) {
+		skipOperatorMsg = value;
+	}
+
 
 
     /**
@@ -99,6 +105,7 @@ public abstract class AbstractTestCase {
     }
 
     public void sendOperatorRequest(String text) throws InterruptedException, TcInconclusive {
+		if (skipOperatorMsg) return;
     	if (text == null) {
     		// Make an empty string
     		text = new String();
