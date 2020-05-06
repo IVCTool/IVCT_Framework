@@ -1,6 +1,7 @@
 package de.fraunhofer.iosb.messaginghelpers;
 
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Properties;
 
@@ -8,7 +9,6 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 
-import org.junit.Test;
 
 public class MhTest {
 

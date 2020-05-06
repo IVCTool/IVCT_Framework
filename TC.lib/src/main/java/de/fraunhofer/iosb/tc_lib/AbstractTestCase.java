@@ -359,6 +359,8 @@ public abstract class AbstractTestCase {
      * Returns the IVCT-Version which has this TestCase at building-time for
      * checking against the IVCT-Version of at Runtime
      *  
+     * @throws IVCTVersionCheckException of version id can not be resolved
+     * @return IVCT version id
      */
     public String getIVCTVersion()  throws IVCTVersionCheckException {
       
