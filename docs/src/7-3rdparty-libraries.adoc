@@ -54,9 +54,9 @@ The table shows all 3rd party libraries used in the IVCT project.
 
 |javaxannotation
 |1.3.2
-|CDDL, GPL 2.0 with CLASSPATH EXCEPTION
+|https://github.com/javaee/javax.annotation/blob/master/LICENSE[CDDL], https://github.com/javaee/javax.annotation/blob/master/LICENSE[GPL 2.0 with CLASSPATH EXCEPTION]
 |https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
-|Common Annotations for the JavaTM Platform API - https://github.com/javaee/javax.annotation/blob/master/LICENSE
+|Common Annotations for the JavaTM Platform API
 
 |jsonIo
 |4.10.1
