@@ -49,7 +49,7 @@ public class CmdSendLogMsg implements Command {
         startCmd.put(LOG_MSG_SUT, sut);
         startCmd.put(LOG_MSG_BADGE, badge);
         startCmd.put(LOG_MSG_TIME, ts);
-        startCmd.put(LOG_MSG_EVENT, logMessage.getMessage());
+        startCmd.put(LOG_MSG_EVENT, logMessage.getFormattedMessage());
 
         Message message = Factory.jmsHelper.createTextMessage(startCmd.toString());
         logProducer.send(message);
