@@ -1,18 +1,43 @@
 package nato.ivct.commander;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.activemq.broker.BrokerService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
-import org.junit.Before;
-import org.junit.Test;
 
 public class TestCmdListTestsuites {
+	private static BrokerService broker = new BrokerService();
 
-    @Before
+	@BeforeAll
+	public static void startBroker() throws Exception {
+		// configure the broker
+		broker.addConnector("tcp://localhost:61616"); 
+		broker.setPersistent(false);
+
+		broker.start();
+	}
+
+	@AfterAll
+	public static void stopBroker() throws Exception {
+		try {
+			broker.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+    @BeforeEach
     public void setUp() throws Exception {
         Factory.initialize();
     }

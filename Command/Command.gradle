@@ -26,6 +26,11 @@ dependencies {
 	testImplementation	libraries.activemqEmbedded
 }
 
+test {
+    // Enable JUnit 5 (Gradle 4.6+).
+    useJUnitPlatform()
+}
+
 javadoc {
 			options.addStringOption('XDoclint:none', '-quiet')
 			failOnError = false

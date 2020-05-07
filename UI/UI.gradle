@@ -37,7 +37,9 @@ sourceSets {
 }
 
 test {
-classpath = sourceSets.test.runtimeClasspath + files('src/conf')
+	classpath = sourceSets.test.runtimeClasspath + files('src/conf')
+    // Enable JUnit 5 (Gradle 4.6+).
+    useJUnitPlatform()
 }
 
 tasks.withType(CreateStartScripts) {

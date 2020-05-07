@@ -22,9 +22,9 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import org.apache.activemq.broker.BrokerService;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
@@ -33,21 +33,20 @@ import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 public class FactoryTest {
 	private static BrokerService broker = new BrokerService();
 
-	@BeforeClass
+	@BeforeAll
 	public static void startBroker() throws Exception {
 		// configure the broker
-		broker.addConnector("tcp://localhost:61616");
+		broker.addConnector("tcp://localhost:61616"); 
 		broker.setPersistent(false);
 
 		broker.start();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void stopBroker() throws Exception {
 		try {
 			broker.stop();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -57,13 +56,9 @@ public class FactoryTest {
 		CmdListBadges lb = Factory.createCmdListBadges();
 		assertTrue("Factory Test createCmdListBadges should return CmdListBadges", lb != null);
 		lb.execute();
-		if (lb.badgeMap.size() == 0) {
-//			throw new AssumptionViolatedException("Inconclusive");
-			return;
-		}
 		assertTrue("Some Badges should be found", lb.badgeMap.size() > 0);
 	}
-	
+
 	@Test
 	public void testReadVersion() {
 	    Factory.readVersion();
@@ -74,10 +69,6 @@ public class FactoryTest {
 		CmdListSuT cl = Factory.createCmdListSut();
 		assertTrue("Factory Test createCmdListSut should return CmdListSut", cl != null);
 		cl.execute();
-		if (cl.sutMap.size() == 0) {
-//			throw new AssumptionViolatedException("Inconclusive");
-			return;
-		}
 		assertTrue("Some SuT's should be found", cl.sutMap.size() > 0);
 	}
 
@@ -154,7 +145,7 @@ public class FactoryTest {
 		assertTrue("Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener",
 				resultListener != null);
 		resultListener.execute();
-		
+
 		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2017", "some.test.case", "verdict", "verdictText");
         assertTrue("Factory Test CmdSendTcVerdict should return some value", stc != null);
         stc.execute();
@@ -224,7 +215,7 @@ public class FactoryTest {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void copySUT(SutDescription tmpSutDescription, SutDescription sutDescription) {
 		tmpSutDescription.ID = sutDescription.ID;
 		tmpSutDescription.name = sutDescription.name;
