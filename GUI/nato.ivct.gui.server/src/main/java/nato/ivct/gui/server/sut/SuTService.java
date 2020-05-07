@@ -118,7 +118,7 @@ public class SuTService implements ISuTService {
     @Override
     public String createTestreport(final String sutId){
         final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
-        final String templateFolder = this.getClass().getClassLoader().getResource("Report-Template").getPath();
+        final String templateFolder = this.getClass().getClassLoader().getResource("reportTemplate").getPath();
         
         if (TestReport.createReportJsonFile(sutId, reportFolder.toString() +"\\" + "Results.json").isEmpty()) {
             return null;
