@@ -313,6 +313,7 @@ class TestReport {
             JasperReport jasperReport = JasperCompileManager.compileReport(pathToTemplates + "Report.jrxml");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_SuT.jrxml", "subreport_SuT.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_BadgeSummary.jrxml", "subreport_BadgeSummary.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestCases.jrxml", "subreport_TestCases.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TS.jrxml", "subreport_TS.jasper");
