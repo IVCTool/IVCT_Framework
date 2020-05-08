@@ -206,11 +206,13 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 			int i = 0;
 			for (final String classname : testcases) {
+				testCase = null;
 				try {
 					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
 					tcLogger.error("Could not instantiate " + classname + " !", ex);
+					continue;
 				}
 				if (testCase == null) {
 					verdicts[i] = new IVCT_Verdict();
