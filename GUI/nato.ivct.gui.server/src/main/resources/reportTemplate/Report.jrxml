@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FinalReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="80743af3-6e00-435a-9379-f763ca9410c0">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<parameter name="IVCT_BADGE_ICONS" class="java.lang.String"/>
+	<queryString language="jsonql">
+		<![CDATA[]]>
+	</queryString>
+	<field name="SuT" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="SuT"/>
+		<fieldDescription><![CDATA[SuT]]></fieldDescription>
+	</field>
+	<field name="TcResults" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TcResults"/>
+		<fieldDescription><![CDATA[TcResults]]></fieldDescription>
+	</field>
+	<field name="VerdictSummary" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="VerdictSummary"/>
+		<fieldDescription><![CDATA[VerdictSummary]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="170">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="190" backcolor="#006699" uuid="c6cabdb4-19f4-4ed1-b875-ee945e4fd89c"/>
+				<image>
+					<reportElement x="20" y="10" width="89" height="90" uuid="69e83dee-16ce-487e-8d3b-5c9f653efe8b"/>
+					<imageExpression><![CDATA["C:/Entwicklung/IVCT/Doku/Report/IVCT_Logo.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="20" y="110" width="554" height="70" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
+					<textElement textAlignment="Center">
+						<font size="22" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NATO Simulation Interoperability Test and Certification Service]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="90">
+			<subreport>
+				<reportElement x="-20" y="10" width="595" height="80" uuid="57e25eab-9309-4a1d-90e2-0f55c1949c15"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("SuT")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_SuT.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="70">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="70" uuid="afa119cc-ca28-449c-a0e1-f28f9e977108"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("VerdictSummary")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_Verdict.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="100">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="100" uuid="fdfd138c-2049-47e2-a0cc-c04b6eb90690"/>
+				<subreportParameter name="IVCT_BADGE_ICONS">
+					<subreportParameterExpression><![CDATA[$P{IVCT_BADGE_ICONS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("..Badges.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_BadgeSummary.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="121">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="14" width="554" height="80" uuid="4638cbcd-2c89-4af5-9d1a-e1b6ea346d6d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<text><![CDATA[Signature/Date]]></text>
+			</staticText>
+			<break>
+				<reportElement x="0" y="110" width="555" height="1" uuid="27784908-0937-4403-a55a-3e028092f76b"/>
+			</break>
+		</band>
+		<band height="120">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="120" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<subreportParameter name="IVCT_BADGE_ICONS">
+					<subreportParameterExpression><![CDATA[$P{IVCT_BADGE_ICONS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("..Badges.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_Badge.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="98f4b961-f6da-41ea-97fc-4990704ade6f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="f8466ec5-17c8-40d1-afdc-6c8a1e6417dc"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM d, yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="d4ce14a8-e571-4846-8aa9-3afd0df30eb6"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

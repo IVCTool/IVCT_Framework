@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_Badge" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c8e6f3c9-0d16-43b4-b84f-df0663fffe91">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<parameter name="IVCT_BADGE_ICONS" class="java.lang.String"/>
+	<queryString language="jsonql">
+		<![CDATA[..Badges.*]]>
+	</queryString>
+	<field name="BadgeId" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="BadgeId"/>
+		<fieldDescription><![CDATA[BadgeId]]></fieldDescription>
+	</field>
+	<field name="BadgeName" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="BadgeName"/>
+		<fieldDescription><![CDATA[BadgeName]]></fieldDescription>
+	</field>
+	<field name="BadgeVerdict" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="BadgeVerdict"/>
+		<fieldDescription><![CDATA[BadgeVerdict]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="160">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="90" backcolor="#006699" uuid="5efa434d-9c35-47a0-bd91-0f4aee0e8237">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="220" height="90" forecolor="#FFFFFF" uuid="a6026480-a0b3-4bba-a900-46adb0ea2658"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="22" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Badge:]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight">
+					<reportElement mode="Transparent" x="220" y="0" width="374" height="90" forecolor="#FFFFFF" backcolor="#E6E6E6" uuid="f073037e-93a0-4863-a34c-36eabae3c755">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="20"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BadgeId}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement mode="Opaque" x="90" y="126" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="649a5338-be74-491e-a5f8-537a43bc2291">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Verdict]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="180" y="126" width="375" height="20" backcolor="#E6E6E6" uuid="9a0bbcca-7be4-412c-b7c6-89c0b4556cdd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BadgeVerdict}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="90" y="101" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="303e7f31-648c-43eb-8b4a-088e36472c39">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="180" y="101" width="375" height="20" backcolor="#E6E6E6" uuid="186c3dc5-be8a-44a1-adf0-a492b6426fce">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BadgeName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="90" y="76" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="061ebcb3-f0e4-4565-8589-2f73bbe1749e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Id]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="180" y="76" width="375" height="20" backcolor="#E6E6E6" uuid="8495f612-687f-4ddb-9000-f55ad694b98f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BadgeId}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="76" width="79" height="80" uuid="bf1361c5-0659-4f02-a105-4f5fd561f284"/>
+				<imageExpression><![CDATA[$P{IVCT_BADGE_ICONS} + "/" + $F{BadgeId} + ".png"]]></imageExpression>
+			</image>
+		</band>
+		<band height="200">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="200" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".TestSuites.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_TS.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>
