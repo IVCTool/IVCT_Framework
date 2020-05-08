@@ -22,6 +22,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
@@ -307,8 +308,8 @@ class TestReport {
     static String createPDFTestreport(final String templateFolder, final Path reportFolder) {
 
         try {
-            final String pathToReports = reportFolder.toString() +"\\";
-            final String pathToTemplates = templateFolder +"\\";
+            final String pathToReports = reportFolder.toString() + File.separatorChar;
+            final String pathToTemplates = templateFolder + File.separatorChar;
             JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "Report.json"));
             JasperReport jasperReport = JasperCompileManager.compileReport(pathToTemplates + "Report.jrxml");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_SuT.jrxml", "subreport_SuT.jasper");
@@ -319,7 +320,9 @@ class TestReport {
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TS.jrxml", "subreport_TS.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Badge.jrxml", "subreport_Badge.jasper");
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap(), jrDataSource);
+            final Map<String,Object> parameters = new HashMap<>();
+            parameters.put("IVCT_BADGE_ICONS", "file:///" + Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID) + "/");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jrDataSource);
 
             Date time = new Date();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("_yyyyMMdd-HHmmss");
