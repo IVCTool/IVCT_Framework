@@ -1,5 +1,6 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -120,7 +121,7 @@ public class SuTService implements ISuTService {
         final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
         final String templateFolder = this.getClass().getClassLoader().getResource("reportTemplate").getPath();
         
-        if (TestReport.createReportJsonFile(sutId, reportFolder.toString() +"\\" + "Results.json").isEmpty()) {
+        if (TestReport.createReportJsonFile(sutId, reportFolder.toString() + File.separatorChar + "Results.json").isEmpty()) {
             return null;
         }  
         
