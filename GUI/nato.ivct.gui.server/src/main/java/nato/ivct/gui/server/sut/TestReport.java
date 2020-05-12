@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,28 +19,32 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
 import nato.ivct.commander.BadgeDescription;
+import nato.ivct.commander.CmdSendLogMsg;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.InteroperabilityRequirement;
 import nato.ivct.commander.SutDescription;
+import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.server.ts.TsService;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
+import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -70,18 +76,24 @@ class TestReport {
         //Create JSON Report Structure
         /*
          * 1.SuT
-         * 2.VerdictSummary
-         * 3.Badges
-         * 3.1. TestSuites
-         * 3.1.1. TestCases
-         * 3.1.1.1. TcResults
+         * 2.TestSystem
+         * 3.TestConfiguration
+         * 4.Badges
+         * 4.1. TestSuites
+         * 4.1.1. TestCases
+         * 4.1.1.1. TcResult
+         * 4.1.1.1.1 LoggingData
+         * 5.SuTVerdict
          */
            
         //SuT section
         transformSuTDesc(jReport, sutId);
         
-        //VerdictSummary section
-        transformVerdictSummary(jResults.get(), jReport);
+        //Test System section
+        addTestSystemDesc(jReport);
+        
+        //Test Configuration section
+        addTestConfigurationDesc(jReport, sutId);
         
         //Badges section
         transformBadges(jResults.get(), jReport, sutId);
@@ -112,6 +124,7 @@ class TestReport {
         final String SUTNAME_KW     = "SutName";
         final String SUTREV_KW      = "SutRev";
         final String SUTVENDOR_KW   = "SutVendor";
+        final String SUTDESC_KW     = "SutDescription";
         
         // SuT information
         final SutDescription sutDesc = BEANS.get(SuTService.class).getSutDescription(sutId);
@@ -123,23 +136,53 @@ class TestReport {
         sutSection.addProperty(SUTNAME_KW, sutDesc.name);
         sutSection.addProperty(SUTREV_KW, sutDesc.version);
         sutSection.addProperty(SUTVENDOR_KW, sutDesc.vendor);
+        sutSection.addProperty(SUTDESC_KW, sutDesc.description);
 
         jReport.add(SUT_KW, sutSection);  
     }
     
-    private static void transformVerdictSummary(final JsonObject jResults, final JsonObject jReport) {
-        final String VERDICTSUMMARY_KW = "VerdictSummary";
+    private static void addTestSystemDesc(final JsonObject jReport) {
+        final String TestSystem_KW  = "TestSystem";
+        final String Version_KW     = "Version";
+        final String Build_KW       = "Build";
         
-        JsonObject verdictSection = (JsonObject) jResults.get(VERDICTSUMMARY_KW);
+        // Insert the TestSystem section
+        JsonObject testSystemSection = new JsonObject();
         
-        jReport.add(VERDICTSUMMARY_KW, verdictSection);
+        testSystemSection.addProperty(Version_KW, Factory.getVersion());
+        testSystemSection.addProperty(Build_KW,  Factory.getBuild());
+        
+        jReport.add(TestSystem_KW, testSystemSection);
+    }
+    
+    private static void addTestConfigurationDesc(final JsonObject jReport, final String sutId) {
+        final String TESTCONFIGURATION_KW   = "TestConfiguration";
+        final String FEDERATION_KW          = "Federation";
+        final String SUTFEDERATE_KW         = "SutFederate";
+        final String RTI_KW                 = "Rti";
+        final String SETTINGSDESIGNATOR_KW  = "SettingsDesignator";
+        
+        // SuT information
+        final SutDescription sutDesc = BEANS.get(SuTService.class).getSutDescription(sutId);
+        
+        // Insert the test configuration section
+        JsonObject testConfigurationSection = new JsonObject();
+        
+        testConfigurationSection.addProperty(FEDERATION_KW, sutDesc.federation);
+        testConfigurationSection.addProperty(SUTFEDERATE_KW, sutDesc.sutFederateName);
+        testConfigurationSection.addProperty(RTI_KW, Factory.props.getProperty(Factory.RTI_ID));
+        testConfigurationSection.addProperty(SETTINGSDESIGNATOR_KW, Factory.props.getProperty(Factory.SETTINGS_DESIGNATOR));
+        
+        jReport.add(TESTCONFIGURATION_KW, testConfigurationSection);
     }
     
     private static void transformBadges(final JsonObject jResults, final JsonObject jReport, final String sutId) {
-        final String BADGES_KW = "Badges";
-        final String BADGEID_KW = "BadgeId";
-        final String BADGENAME_KW = "BadgeName";
-        final String BADGEVERDICT_KW = "BadgeVerdict";
+        final String BADGES_KW          = "Badges";
+        final String BADGEID_KW         = "BadgeId";
+        final String BADGENAME_KW       = "BadgeName";
+        final String BADGEVERDICT_KW    = "BadgeVerdict";
+        final String BADGEVERSION_KW    = "BadgeVersion";
+        final String BADGEDESC_KW       = "BadgeDescription";
         
         //SuT information
         final SutDescription sutDesc = BEANS.get(SuTService.class).getSutDescription(sutId);
@@ -156,13 +199,37 @@ class TestReport {
             
             badgeObj.addProperty(BADGEID_KW, badgeDesc.ID);
             badgeObj.addProperty(BADGENAME_KW, badgeDesc.name);
+            badgeObj.addProperty(BADGEVERSION_KW, badgeDesc.version);
+            badgeObj.addProperty(BADGEDESC_KW, badgeDesc.description);
             badgeObj.addProperty(BADGEVERDICT_KW, getBadgeConformanceStatus(sutId, badgeId));
   
             badgeArray.add(badgeObj);
             
+            //Interoperability requirement section
+            addInteroperabilityRequirementForBadge(badgeObj, badgeDesc.requirements);
+            
             //TestSuite section
-            transformTestSuites(jResults, badgeObj, badgeId);
+            transformTestSuites(jResults, badgeObj, sutId, badgeId);
         }); 
+    }
+    
+    private static void addInteroperabilityRequirementForBadge(final JsonObject badgeObj, final Map<String, InteroperabilityRequirement> requirements) {
+        final String IRFORBADGE_KW  = "IrForBadge";
+        final String IRID_KW        = "IrId";
+        final String IRDESC_KW      = "IrDescription";
+        
+        JsonArray irArray = new JsonArray();
+        
+        requirements.keySet().stream().sorted().forEachOrdered(irId -> {
+            JsonObject irObj = new JsonObject();
+            
+            irObj.addProperty(IRID_KW, requirements.get(irId).ID);
+            irObj.addProperty(IRDESC_KW, requirements.get(irId).description);
+            
+            irArray.add(irObj);
+        });
+       
+        badgeObj.add(IRFORBADGE_KW, irArray);
     }
     
     static String getBadgeConformanceStatus(final String sutId, final String badgeId) {
@@ -184,10 +251,12 @@ class TestReport {
 
     }
     
-    private static void transformTestSuites(final JsonObject jResults, final JsonObject badgeObj, final String badgeId) {
-        final String TESTSUITES_KW = "TestSuites";
-        final String TSID_KW = "TsId";
-        final String TSNAME_KW = "TsName";
+    private static void transformTestSuites(final JsonObject jResults, final JsonObject badgeObj, final String sutId, final String badgeId) {
+        final String TESTSUITES_KW  = "TestSuites";
+        final String TSID_KW        = "TsId";
+        final String TSNAME_KW      = "TsName";
+        final String TSVERSION_KW   = "TsVersion";
+        final String TSDESC_KW      = "TsDescription";
         
         //TestSuite information
         final Set<String> tsList = BEANS.get(ITsService.class).getTsForIr(BEANS.get(ICbService.class).getIrForCb(badgeId));
@@ -201,22 +270,28 @@ class TestReport {
             
             tsObj.addProperty(TSID_KW, tsDesc.id);
             tsObj.addProperty(TSNAME_KW, tsDesc.name);
+            tsObj.addProperty(TSVERSION_KW, tsDesc.version);
+            tsObj.addProperty(TSDESC_KW, tsDesc.description);
   
             tsArray.add(tsObj);
             
             //TestCase section
-            transformTestCases(jResults, tsObj, badgeId, tsId);
+            transformTestCases(jResults, tsObj, sutId, badgeId, tsId);
         });       
     }
     
-    private static void transformTestCases(final JsonObject jResults, final JsonObject tsObj, final String bdId, final String tsId) {
-        final String TESTCASES_KW = "TestCases";
-        final String TCID_KW = "TcId";
-        final String TCNAME_KW = "TcName";
-        final String TCRESULTS_KW = "TcResults";
+    private static void transformTestCases(final JsonObject jResults, final JsonObject tsObj, final String sutId, final String bdId, final String tsId) {
+        final String TESTCASES_KW   = "TestCases";
+        final String TCID_KW        = "TcId";
+        final String TCNAME_KW      = "TcName";
+        final String TCRESULTS_KW   = "TcResults";
+        final String TCDESC_KW      = "TcDescription";
         
         //TestCase information
         final Map<String, HashSet<String>> tcList = BEANS.get(ITsService.class).getTcListForBadge(bdId);
+        
+        //TestCase Description
+        final Map<String, TestCaseDesc> tcDesc = BEANS.get(TsService.class).getTsDescription(tsId).testcases;
         
         JsonArray tcArray = new JsonArray();
         tsObj.add(TESTCASES_KW, tcArray);
@@ -229,6 +304,7 @@ class TestReport {
             
             tcObj.addProperty(TCID_KW, tcId);
             tcObj.addProperty(TCNAME_KW, tcName);
+            tcObj.addProperty(TCDESC_KW, tcDesc.get(tcId).description);
 
             tcArray.add(tcObj);
             
@@ -236,33 +312,104 @@ class TestReport {
             JsonObject tsSection = Optional.ofNullable((JsonObject) results.get(tsId)).orElseGet(JsonObject::new);
             JsonArray tcSection = Optional.ofNullable((JsonArray) tsSection.get(tcId)).orElseGet(JsonArray::new);
             
+            //Interoperability requirement section
+            final Set<String> irIDs = BEANS.get(TsService.class).getIrForTc(tcId).keySet();
+            addInteroperabilityRequirementForTc(tcObj, irIDs);
+            
             //TcResult section
-            transformTcResults(tcSection, tcObj);
+            transformTcResult(tcSection, tcObj, sutId, tsId);
         });  
+    }
+    
+    private static void addInteroperabilityRequirementForTc(final JsonObject tcObj, final Set<String> irIDs) {
+        final String IRFORTC_KW = "IrForTc";
+        final String IRID_KW    = "IrId";
+        
+        JsonArray irArray = new JsonArray();
+
+        irIDs.stream().sorted().forEachOrdered(irId -> {
+            JsonObject irObj = new JsonObject();
+            irObj.addProperty(IRID_KW, irId);
+            irArray.add(irObj);
+        });
+       
+        tcObj.add(IRFORTC_KW, irArray);
     }
 
 
-    private static void transformTcResults(JsonArray tcSection, JsonObject tcObj) {
-        final String TCRESULTS_KW = "TcResults";
+    private static void transformTcResult(final JsonArray tcSection, final JsonObject tcObj, final String sutId, final String tsId) {
+        final String TCRESULT_KW = "TcResult";
+        final String LOGFILEPATH_KW = "LogFilePath";
 
         //TcResult information
         JsonArray tcResultArray = new JsonArray();
-        tcObj.add(TCRESULTS_KW, tcResultArray);
+        tcObj.add(TCRESULT_KW, tcResultArray);
         
         if (tcSection == null)
             return;
         
-        tcSection.forEach(result ->{
-            tcResultArray.add(result);
-        });
+        StreamSupport.stream(tcSection.spliterator(), false).sorted(Comparator.comparing(TestReport::getTimeStamp).reversed()).findFirst()
+            .ifPresent(tcResult -> {
+                //Logging data section
+                transformLoggingData(tcResult.getAsJsonObject(), sutId, tsId, tcResult.getAsJsonObject().get(LOGFILEPATH_KW).getAsString());
+                tcResultArray.add(tcResult);
+            });
+    }
+    
+    //TODO Java 8 Date time object
+    private static String getTimeStamp(JsonElement element) {
+        final String TIMESTAMP_KW = "TimeStamp";
+        return element.getAsJsonObject().get(TIMESTAMP_KW).getAsString();
+    }
+    
+    private static void transformLoggingData(final JsonObject tcResult, final String sutId, final String tsId, final String logFileName) {
+        final String LOGGINGDATA_KW = "LoggingData";
+        final String LEVEL_KW       = "level";
+        final String TIME_KW        = "time";
+        final String EVENT_KW       = "event";
+        
+        JsonArray loggingDataArray = new JsonArray();
+        tcResult.add(LOGGINGDATA_KW, loggingDataArray);
+        
+        // Open logfile and read content
+        final Path logFilePath = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, tsId), logFileName);
+        try {
+            java.nio.file.Files.lines(logFilePath).map(line -> {
+                TcLogMsgNotification logMsgNotification = null;
+                try {
+                    final JsonObject jObj = new Gson().fromJson(line, JsonObject.class);
+                    logMsgNotification = new TcLogMsgNotification();
+                    logMsgNotification.setLogLevel(jObj.get(CmdSendLogMsg.LOG_MSG_LEVEL).getAsString());
+                    logMsgNotification.setTimeStamp(jObj.get(CmdSendLogMsg.LOG_MSG_TIME).getAsLong());
+                    logMsgNotification.setLogMsg(jObj.get(CmdSendLogMsg.LOG_MSG_EVENT).getAsString());
+                }
+                catch (JsonSyntaxException exc) {
+                    LOG.info("incorrect log format " + logFilePath, exc);
+                }
+                return Optional.ofNullable(logMsgNotification);
+            }).filter(Optional::isPresent).forEach(optionalLogMsgNotification -> {
+                    final TcLogMsgNotification logMsgNotification = optionalLogMsgNotification.get();
+                    JsonObject loggingDataElement = new JsonObject();
+                    loggingDataElement.addProperty(LEVEL_KW, logMsgNotification.getLogLevel());
+                    loggingDataElement.addProperty(TIME_KW, logMsgNotification.getTimeStamp());
+                    loggingDataElement.addProperty(EVENT_KW, logMsgNotification.getLogMsg());
+                    loggingDataArray.add(loggingDataElement);
+            });
+        }
+        catch (final NoSuchFileException exc) {
+            LOG.info("log files not found: " + logFilePath, exc);
+        }
+        catch (final IOException exc) {
+            LOG.error("", exc);
+        }
     }
     
     private static void addSutVerdict(final JsonObject jReport) {
-        final String VERDICTSUMMARY_KW = "VerdictSummary";
+        final String SUT_KW = "SuT";
         final String SUTVERDICT_KW = "SutVerdict";
         
         String sutConformanceStatus = getSutConformanceStatus(jReport);
-        jReport.getAsJsonObject(VERDICTSUMMARY_KW).addProperty(SUTVERDICT_KW, sutConformanceStatus);
+        jReport.getAsJsonObject(SUT_KW).addProperty(SUTVERDICT_KW, sutConformanceStatus);
         
     }
     
