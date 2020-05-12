@@ -13,11 +13,19 @@
 		<property name="net.sf.jasperreports.json.field.expression" value="TsName"/>
 		<fieldDescription><![CDATA[..TsName]]></fieldDescription>
 	</field>
+	<field name="TsVersion" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TsVersion"/>
+		<fieldDescription><![CDATA[TsVersion]]></fieldDescription>
+	</field>
+	<field name="TsDescription" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TsDescription"/>
+		<fieldDescription><![CDATA[TsDescription]]></fieldDescription>
+	</field>
 	<background>
 		<band/>
 	</background>
 	<detail>
-		<band height="129">
+		<band height="153">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="70" backcolor="#006699" uuid="adc12900-1bd8-4d06-b333-bba9876f87dc">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -40,7 +48,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="17"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{TsId}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{TsName}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<staticText>
@@ -50,7 +58,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Name]]></text>
+				<text><![CDATA[Version]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
 				<reportElement mode="Opaque" x="91" y="100" width="464" height="20" backcolor="#E6E6E6" uuid="087280f3-ca3f-43b1-801d-7f958c9363fd">
@@ -59,7 +67,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TsName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TsVersion}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="76" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="01c20f7d-9a52-4269-bc73-f3b7a4fff3a4">
@@ -78,6 +86,24 @@
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TsId}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="125" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="5b6b0aa0-a889-4200-a346-92d5415f4ac4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="91" y="125" width="464" height="20" backcolor="#E6E6E6" uuid="5705ca07-6a27-4a97-97a1-cad169bd78cf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TsDescription}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="260">

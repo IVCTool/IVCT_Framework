@@ -460,12 +460,17 @@ class TestReport {
             JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "Report.json"));
             JasperReport jasperReport = JasperCompileManager.compileReport(pathToTemplates + "Report.jrxml");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_SuT.jrxml", "subreport_SuT.jasper");
-            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Verdict.jrxml", "subreport_Verdict.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestSystem.jrxml", "subreport_TestSystem.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestConfiguration.jrxml", "subreport_TestConfiguration.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_BadgeSummary.jrxml", "subreport_BadgeSummary.jasper");
-            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TcResults.jrxml", "subreport_TcResults.jasper");
-            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestCases.jrxml", "subreport_TestCases.jasper");
-            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TS.jrxml", "subreport_TS.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Badge.jrxml", "subreport_Badge.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_IrForBadge.jrxml", "subreport_IrForBadge.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TS.jrxml", "subreport_TS.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestCases.jrxml", "subreport_TestCases.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_IrForTc.jrxml", "subreport_IrForTc.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TcResult.jrxml", "subreport_TcResult.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_Logfile.jrxml", "subreport_Logfile.jasper");
+            
 
             final Map<String,Object> parameters = new HashMap<>();
             parameters.put("IVCT_BADGE_ICONS", "file:///" + Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID) + "/");

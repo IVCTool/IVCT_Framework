@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TcResults" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c7fd2ac3-0bb4-4d10-8e32-8a7b559171fb">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TcResult" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c7fd2ac3-0bb4-4d10-8e32-8a7b559171fb">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -12,7 +12,7 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<queryString language="jsonql">
-		<![CDATA[..Badges.TestSuites.TestCases.TcResults.*]]>
+		<![CDATA[..Badges.TestSuites.TestCases.TcResult.*]]>
 	</queryString>
 	<field name="Comment" class="java.lang.String">
 		<propertyExpression name="net.sf.jasperreports.jsonql.field.expression"><![CDATA["Comment"]]></propertyExpression>
@@ -46,7 +46,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[TC Results]]></text>
+					<text><![CDATA[TC Result]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -137,6 +137,13 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 			</frame>
+		</band>
+		<band height="80">
+			<subreport>
+				<reportElement x="0" y="0" width="595" height="80" uuid="d0851186-4e7b-40d6-8da6-c7ceca06b233"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".LoggingData.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_Logfile.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 </jasperReport>

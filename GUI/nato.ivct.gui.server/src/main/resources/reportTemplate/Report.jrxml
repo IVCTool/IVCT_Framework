@@ -10,31 +10,31 @@
 		<property name="net.sf.jasperreports.json.field.expression" value="SuT"/>
 		<fieldDescription><![CDATA[SuT]]></fieldDescription>
 	</field>
-	<field name="TcResults" class="java.lang.String">
-		<property name="net.sf.jasperreports.json.field.expression" value="TcResults"/>
-		<fieldDescription><![CDATA[TcResults]]></fieldDescription>
+	<field name="TestSystem" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TestSystem"/>
+		<fieldDescription><![CDATA[TestSystem]]></fieldDescription>
 	</field>
-	<field name="VerdictSummary" class="java.lang.String">
-		<property name="net.sf.jasperreports.json.field.expression" value="VerdictSummary"/>
-		<fieldDescription><![CDATA[VerdictSummary]]></fieldDescription>
+	<field name="TestConfiguration" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TestConfiguration"/>
+		<fieldDescription><![CDATA[TestConfiguration]]></fieldDescription>
 	</field>
 	<background>
 		<band/>
 	</background>
 	<title>
-		<band height="170">
+		<band height="100">
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="190" backcolor="#006699" uuid="c6cabdb4-19f4-4ed1-b875-ee945e4fd89c"/>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="120" backcolor="#006699" uuid="c6cabdb4-19f4-4ed1-b875-ee945e4fd89c"/>
 				<image>
-					<reportElement x="20" y="10" width="89" height="90" uuid="69e83dee-16ce-487e-8d3b-5c9f653efe8b"/>
+					<reportElement x="20" y="15" width="89" height="90" uuid="69e83dee-16ce-487e-8d3b-5c9f653efe8b"/>
 					<imageExpression><![CDATA["C:/Entwicklung/IVCT/Doku/Report/IVCT_Logo.png"]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement x="20" y="110" width="554" height="70" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
+					<reportElement x="120" y="25" width="454" height="70" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
 					<textElement textAlignment="Center">
 						<font size="22" isBold="true"/>
 					</textElement>
-					<text><![CDATA[NATO Simulation Interoperability Test and Certification Service]]></text>
+					<text><![CDATA[NATO Simulation Interoperability Test and Certification Report]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -47,11 +47,18 @@
 				<subreportExpression><![CDATA["subreport_SuT.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="70">
+		<band height="50">
 			<subreport>
-				<reportElement x="-20" y="0" width="595" height="70" uuid="afa119cc-ca28-449c-a0e1-f28f9e977108"/>
-				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("VerdictSummary")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_Verdict.jasper"]]></subreportExpression>
+				<reportElement x="-20" y="0" width="595" height="50" uuid="3de09117-c18b-43ca-a06f-cecc22491008"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("TestSystem")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_TestSystem.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="50" uuid="94440d26-cb7a-4937-821e-b18640e3bfe7"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("TestConfiguration")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_TestConfiguration.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="100">
@@ -64,9 +71,12 @@
 				<subreportExpression><![CDATA["subreport_BadgeSummary.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="121">
+		<band height="111">
+			<break>
+				<reportElement x="0" y="101" width="554" height="1" uuid="27784908-0937-4403-a55a-3e028092f76b"/>
+			</break>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="14" width="554" height="80" uuid="4638cbcd-2c89-4af5-9d1a-e1b6ea346d6d"/>
+				<reportElement mode="Opaque" x="0" y="9" width="554" height="80" uuid="4638cbcd-2c89-4af5-9d1a-e1b6ea346d6d"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="1.0"/>
@@ -77,9 +87,6 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
 				<text><![CDATA[Signature/Date]]></text>
 			</staticText>
-			<break>
-				<reportElement x="0" y="110" width="555" height="1" uuid="27784908-0937-4403-a55a-3e028092f76b"/>
-			</break>
 		</band>
 		<band height="120">
 			<subreport>
@@ -95,21 +102,4 @@
 	<columnFooter>
 		<band/>
 	</columnFooter>
-	<pageFooter>
-		<band height="17">
-			<textField>
-				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="98f4b961-f6da-41ea-97fc-4990704ade6f"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="f8466ec5-17c8-40d1-afdc-6c8a1e6417dc"/>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField pattern="MMMM d, yyyy">
-				<reportElement x="0" y="4" width="100" height="13" uuid="d4ce14a8-e571-4846-8aa9-3afd0df30eb6"/>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageFooter>
 </jasperReport>

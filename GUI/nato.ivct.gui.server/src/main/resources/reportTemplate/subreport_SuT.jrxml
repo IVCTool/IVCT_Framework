@@ -30,6 +30,14 @@
 		<property name="net.sf.jasperreports.json.field.expression" value="SutName"/>
 		<fieldDescription><![CDATA[SutName]]></fieldDescription>
 	</field>
+	<field name="SutDescription" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="SutDescription"/>
+		<fieldDescription><![CDATA[SutDescription]]></fieldDescription>
+	</field>
+	<field name="SutVerdict" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="SutVerdict"/>
+		<fieldDescription><![CDATA[SutVerdict]]></fieldDescription>
+	</field>
 	<background>
 		<band/>
 	</background>
@@ -54,7 +62,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="59">
+		<band height="175">
 			<line>
 				<reportElement positionType="FixRelativeToBottom" x="20" y="47" width="555" height="1" uuid="3ad8733c-18cf-492b-94ff-4907399158a6"/>
 			</line>
@@ -141,6 +149,51 @@
 			<line>
 				<reportElement x="20" y="26" width="555" height="1" forecolor="#666666" uuid="4ce8400d-1474-4dd0-8745-346ed0c7cf35"/>
 			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="20" y="52" width="129" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="3ec928de-fd84-4812-833c-d7b3ab7c5356">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="163" y="52" width="412" height="20" backcolor="#E6E6E6" uuid="136d7d3a-405b-4ee0-af24-c40c03a97f30">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SutDescription}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement mode="Opaque" x="20" y="78" width="555" height="38" backcolor="#006699" uuid="a014f9c9-7947-457b-91f4-60934ad52517">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="554" height="38" forecolor="#FFFFFF" uuid="ebe0450b-ae33-4ad5-9c85-5f6e233db6a9">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conformance Status]]></text>
+				</staticText>
+			</frame>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="20" y="121" width="555" height="40" backcolor="#E6E6E6" uuid="e97ab156-cdc5-4ae2-a0b0-d6f7b908492d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ed259cc1-3b5b-48c0-8ecb-36b1b54a212c"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SutVerdict}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

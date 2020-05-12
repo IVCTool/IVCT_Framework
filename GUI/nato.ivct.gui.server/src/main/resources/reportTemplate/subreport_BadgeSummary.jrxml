@@ -67,7 +67,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Id]]></text>
+				<text><![CDATA[Name]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -81,7 +81,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{BadgeId}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{BadgeName}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
 				<reportElement x="340" y="10" width="214" height="80" uuid="3e8f3609-c7d9-4689-a97f-4f5886250228">
