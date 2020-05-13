@@ -9,6 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -313,23 +318,27 @@ class TestReport {
             JsonArray tcSection = Optional.ofNullable((JsonArray) tsSection.get(tcId)).orElseGet(JsonArray::new);
             
             //Interoperability requirement section
-            final Set<String> irIDs = BEANS.get(TsService.class).getIrForTc(tcId).keySet();
-            addInteroperabilityRequirementForTc(tcObj, irIDs);
+            final HashMap<String, String> irDesc = BEANS.get(TsService.class).getIrForTc(tcId);
+            addInteroperabilityRequirementForTc(tcObj, irDesc);
             
             //TcResult section
             transformTcResult(tcSection, tcObj, sutId, tsId);
         });  
     }
     
-    private static void addInteroperabilityRequirementForTc(final JsonObject tcObj, final Set<String> irIDs) {
+    private static void addInteroperabilityRequirementForTc(final JsonObject tcObj, final HashMap<String, String> irDesc) {
         final String IRFORTC_KW = "IrForTc";
         final String IRID_KW    = "IrId";
+        final String IRDESC_KW  = "IrDescription";
         
         JsonArray irArray = new JsonArray();
-
-        irIDs.stream().sorted().forEachOrdered(irId -> {
+        
+        irDesc.keySet().stream().sorted().forEachOrdered(irId -> {
             JsonObject irObj = new JsonObject();
+            
             irObj.addProperty(IRID_KW, irId);
+            irObj.addProperty(IRDESC_KW, irDesc.get(irId));
+            
             irArray.add(irObj);
         });
        
@@ -356,10 +365,14 @@ class TestReport {
             });
     }
     
-    //TODO Java 8 Date time object
-    private static String getTimeStamp(JsonElement element) {
+    private static ZonedDateTime getTimeStamp(JsonElement element) {
         final String TIMESTAMP_KW = "TimeStamp";
-        return element.getAsJsonObject().get(TIMESTAMP_KW).getAsString();
+        try {
+            return ZonedDateTime.parse(element.getAsJsonObject().get(TIMESTAMP_KW).getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"));
+        } catch (IllegalArgumentException | DateTimeParseException exc) {
+            LOG.warn("incorrect time format ", exc);
+            return ZonedDateTime.of(0, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());
+        }
     }
     
     private static void transformLoggingData(final JsonObject tcResult, final String sutId, final String tsId, final String logFileName) {
