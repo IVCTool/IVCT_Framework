@@ -22,15 +22,15 @@
 		<band/>
 	</background>
 	<title>
-		<band height="100">
+		<band height="90">
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="120" backcolor="#006699" uuid="c6cabdb4-19f4-4ed1-b875-ee945e4fd89c"/>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="110" backcolor="#006699" uuid="c6cabdb4-19f4-4ed1-b875-ee945e4fd89c"/>
 				<image>
 					<reportElement x="20" y="15" width="89" height="90" uuid="69e83dee-16ce-487e-8d3b-5c9f653efe8b"/>
 					<imageExpression><![CDATA["C:/Entwicklung/IVCT/Doku/Report/IVCT_Logo.png"]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement x="120" y="25" width="454" height="70" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
+					<reportElement x="136" y="25" width="380" height="70" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
 					<textElement textAlignment="Center">
 						<font size="22" isBold="true"/>
 					</textElement>
@@ -47,6 +47,13 @@
 				<subreportExpression><![CDATA["subreport_SuT.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
+		<band height="40">
+			<subreport>
+				<reportElement x="-20" y="0" width="594" height="40" uuid="f5d39713-1b41-4eca-ad8e-cf297cd6a257"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("SuT")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_ConformanceStatus.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
 		<band height="50">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="50" uuid="3de09117-c18b-43ca-a06f-cecc22491008"/>
@@ -61,9 +68,9 @@
 				<subreportExpression><![CDATA["subreport_TestConfiguration.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="100">
+		<band height="60">
 			<subreport>
-				<reportElement x="-20" y="0" width="595" height="100" uuid="fdfd138c-2049-47e2-a0cc-c04b6eb90690"/>
+				<reportElement x="-20" y="0" width="595" height="60" uuid="fdfd138c-2049-47e2-a0cc-c04b6eb90690"/>
 				<subreportParameter name="IVCT_BADGE_ICONS">
 					<subreportParameterExpression><![CDATA[$P{IVCT_BADGE_ICONS}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -71,12 +78,12 @@
 				<subreportExpression><![CDATA["subreport_BadgeSummary.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="111">
+		<band height="79">
 			<break>
-				<reportElement x="0" y="101" width="554" height="1" uuid="27784908-0937-4403-a55a-3e028092f76b"/>
+				<reportElement x="0" y="75" width="553" height="1" uuid="27784908-0937-4403-a55a-3e028092f76b"/>
 			</break>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="9" width="554" height="80" uuid="4638cbcd-2c89-4af5-9d1a-e1b6ea346d6d"/>
+				<reportElement mode="Opaque" x="0" y="3" width="554" height="68" uuid="4638cbcd-2c89-4af5-9d1a-e1b6ea346d6d"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="1.0"/>
@@ -88,15 +95,18 @@
 				<text><![CDATA[Signature/Date]]></text>
 			</staticText>
 		</band>
-		<band height="120">
+		<band height="80">
 			<subreport>
-				<reportElement x="-20" y="0" width="595" height="120" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<reportElement x="-21" y="10" width="595" height="70" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
 				<subreportParameter name="IVCT_BADGE_ICONS">
 					<subreportParameterExpression><![CDATA[$P{IVCT_BADGE_ICONS}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("..Badges.*")]]></dataSourceExpression>
 				<subreportExpression><![CDATA["subreport_Badge.jasper"]]></subreportExpression>
 			</subreport>
+			<break>
+				<reportElement x="0" y="5" width="554" height="1" uuid="46ce6120-42e4-4717-b370-a50d8f9d9aab"/>
+			</break>
 		</band>
 	</detail>
 	<columnFooter>

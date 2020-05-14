@@ -473,6 +473,7 @@ class TestReport {
             JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "Report.json"));
             JasperReport jasperReport = JasperCompileManager.compileReport(pathToTemplates + "Report.jrxml");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_SuT.jrxml", "subreport_SuT.jasper");
+            JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_ConformanceStatus.jrxml", "subreport_ConformanceStatus.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestSystem.jrxml", "subreport_TestSystem.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_TestConfiguration.jrxml", "subreport_TestConfiguration.jasper");
             JasperCompileManager.compileReportToFile(pathToTemplates + "subreport_BadgeSummary.jrxml", "subreport_BadgeSummary.jasper");

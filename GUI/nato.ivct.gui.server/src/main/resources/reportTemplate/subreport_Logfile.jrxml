@@ -21,76 +21,94 @@
 		<band/>
 	</background>
 	<title>
-		<band height="42">
+		<band height="24">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="554" height="20" backcolor="#006699" uuid="6738c6d4-48ea-4d83-b67c-fc8ce65314a2"/>
+				<reportElement mode="Opaque" x="0" y="-20" width="554" height="23" backcolor="#006699" uuid="6738c6d4-48ea-4d83-b67c-fc8ce65314a2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<staticText>
-					<reportElement x="0" y="0" width="554" height="20" forecolor="#FFFFFF" uuid="29810a67-717b-4c04-892a-bd738436f048"/>
-					<textElement textAlignment="Center">
+					<reportElement x="0" y="0" width="554" height="23" forecolor="#FFFFFF" uuid="29810a67-717b-4c04-892a-bd738436f048"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="14" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Logfile]]></text>
 				</staticText>
 			</frame>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="27" width="60" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="98f977f4-c702-4d4b-a1ec-ce7ebce141a4">
+				<reportElement mode="Opaque" x="0" y="9" width="50" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="98f977f4-c702-4d4b-a1ec-ce7ebce141a4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
 				</textElement>
 				<text><![CDATA[Level]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="65" y="27" width="155" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="2f0ac6ce-b023-448c-9a21-97a56b98cff7">
+				<reportElement mode="Opaque" x="60" y="9" width="150" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="2f0ac6ce-b023-448c-9a21-97a56b98cff7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
 				</textElement>
 				<text><![CDATA[Time]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="230" y="27" width="322" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="f8cf466d-6750-4fc4-a0d2-1ae80786abd7">
+				<reportElement mode="Opaque" x="220" y="9" width="334" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="f8cf466d-6750-4fc4-a0d2-1ae80786abd7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="5"/>
 				</textElement>
 				<text><![CDATA[Event]]></text>
 			</staticText>
 		</band>
 	</title>
 	<detail>
-		<band height="20">
+		<band height="18">
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="0" y="5" width="60" height="15" backcolor="#E6E6E6" uuid="b6a68906-9ed7-47f9-8b3d-f5a06e5f69f8">
+				<reportElement mode="Opaque" x="0" y="3" width="50" height="15" backcolor="#E6E6E6" uuid="b6a68906-9ed7-47f9-8b3d-f5a06e5f69f8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10"/>
+					<paragraph firstLineIndent="0" leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{level}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="65" y="5" width="155" height="15" backcolor="#E6E6E6" uuid="0c046bfa-0e0a-4d45-9fbe-6ff72d54a2d9">
+				<reportElement mode="Opaque" x="60" y="3" width="150" height="15" backcolor="#E6E6E6" uuid="0c046bfa-0e0a-4d45-9fbe-6ff72d54a2d9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10"/>
+					<paragraph firstLineIndent="0" leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{time}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="230" y="5" width="322" height="15" backcolor="#E6E6E6" uuid="e5b75ee8-b9d2-4b03-b5ff-c6d6461e1105">
+				<reportElement mode="Opaque" x="220" y="3" width="334" height="15" backcolor="#E6E6E6" uuid="e5b75ee8-b9d2-4b03-b5ff-c6d6461e1105">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="5" rightIndent="0"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event}]]></textFieldExpression>
 			</textField>
