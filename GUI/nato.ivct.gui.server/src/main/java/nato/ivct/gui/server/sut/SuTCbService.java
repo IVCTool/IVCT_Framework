@@ -102,7 +102,7 @@ public class SuTCbService implements ISuTCbService {
             return Files.find(folder, 1, (path, fileAttributes) -> {
                 final String filenameToCheck = path.getFileName().toString();
                 // ignore the regular parameter file and all potential report files
-                return fileAttributes.isRegularFile() && !filenameToCheck.equalsIgnoreCase("TcParam.json") && !Pattern.compile("report", Pattern.CASE_INSENSITIVE).matcher(filenameToCheck).find();
+                return fileAttributes.isRegularFile() && !filenameToCheck.equalsIgnoreCase("TcParam.json");
             }).sorted();
         }
         catch (final IllegalStateException exc) {

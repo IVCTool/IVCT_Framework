@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TcResult" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c7fd2ac3-0bb4-4d10-8e32-8a7b559171fb">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString language="jsonql">
+		<![CDATA[..Badges.TestSuites.TestCases.TcResult.*]]>
+	</queryString>
+	<field name="Comment" class="java.lang.String">
+		<propertyExpression name="net.sf.jasperreports.jsonql.field.expression"><![CDATA["Comment"]]></propertyExpression>
+		<fieldDescription><![CDATA[Comment]]></fieldDescription>
+	</field>
+	<field name="LogFilePath" class="java.lang.String">
+		<propertyExpression name="net.sf.jasperreports.jsonql.field.expression"><![CDATA["LogFilePath"]]></propertyExpression>
+		<fieldDescription><![CDATA[LogFilePath]]></fieldDescription>
+	</field>
+	<field name="TimeStamp" class="java.lang.String">
+		<propertyExpression name="net.sf.jasperreports.jsonql.field.expression"><![CDATA["TimeStamp"]]></propertyExpression>
+		<fieldDescription><![CDATA[TimeStamp]]></fieldDescription>
+	</field>
+	<field name="Verdict" class="java.lang.String">
+		<propertyExpression name="net.sf.jasperreports.jsonql.field.expression"><![CDATA["Verdict"]]></propertyExpression>
+		<fieldDescription><![CDATA[Verdict]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="33">
+			<frame>
+				<reportElement mode="Opaque" x="20" y="10" width="555" height="23" backcolor="#006699" uuid="4adc5f0c-d965-48f0-96ab-7f8cac7f96d5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="555" height="23" forecolor="#FFFFFF" uuid="c2ebe67f-c04c-4d16-8a16-a53e0b010ff6">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TC Result]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="85">
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="109" y="63" width="466" height="15" backcolor="#E6E6E6" uuid="1e3a051a-8b3e-4b98-8e53-f22e0d1afe77">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph firstLineIndent="0" leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Comment}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="109" y="44" width="466" height="15" backcolor="#E6E6E6" uuid="bbbda959-90d3-49b3-a506-4f0aced01db1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph firstLineIndent="0" leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LogFilePath}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="109" y="25" width="466" height="15" backcolor="#E6E6E6" uuid="a8226268-ba1a-4d5f-9c3b-70b9cdeeb31d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TimeStamp}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="109" y="6" width="466" height="15" backcolor="#E6E6E6" uuid="a8226268-ba1a-4d5f-9c3b-70b9cdeeb31d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Verdict}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="20" y="63" width="80" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="b7fa3b85-4803-471f-b2e5-181d3b1d1458">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Comment]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="20" y="44" width="80" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="d5ace128-85e0-4324-8a98-5328b1a411fa">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Logfile]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="20" y="25" width="80" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="020bb80f-108c-4955-8080-9dcddd02ffec">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Timestamp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="20" y="6" width="80" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="020bb80f-108c-4955-8080-9dcddd02ffec">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Verdict]]></text>
+			</staticText>
+		</band>
+		<band height="80">
+			<subreport>
+				<reportElement x="0" y="0" width="595" height="80" uuid="d0851186-4e7b-40d6-8da6-c7ceca06b233"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".LoggingData.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_Logfile.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

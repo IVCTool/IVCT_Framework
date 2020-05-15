@@ -133,7 +133,7 @@ public class SuTTcService implements ISuTTcService {
                 LOG.info("Log file found: {}", logFileName);
                 final TcExecutionHistoryTableRowData row = fd.getTcExecutionHistoryTable().addRow();
                 row.setFileName(logFileName);
-                final String verdict = sutTcResults.sutResultMap.getOrDefault(fd.getSutId(), new HashMap<>()).getOrDefault(fd.getTestsuiteId(), new HashMap<>()).getOrDefault(logFileName, "");
+                final String verdict = sutTcResults.sutResultMap.getOrDefault(fd.getSutId(), new HashMap<>()).getOrDefault(fd.getTestsuiteId(), new HashMap<>()).getOrDefault(logFileName, "UNKNOWN");
                 row.setTcVerdict(verdict);
             });
         }

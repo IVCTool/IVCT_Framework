@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TS" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2e23808a-9318-4f92-b74f-d5fffb4247fa">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<queryString language="jsonql">
+		<![CDATA[..Badges.TestSuites.*]]>
+	</queryString>
+	<field name="TsId" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TsId"/>
+		<fieldDescription><![CDATA[TsId]]></fieldDescription>
+	</field>
+	<field name="TsName" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TsName"/>
+		<fieldDescription><![CDATA[..TsName]]></fieldDescription>
+	</field>
+	<field name="TsVersion" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TsVersion"/>
+		<fieldDescription><![CDATA[TsVersion]]></fieldDescription>
+	</field>
+	<field name="TsDescription" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TsDescription"/>
+		<fieldDescription><![CDATA[TsDescription]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="153">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="-10" width="555" height="80" backcolor="#006699" uuid="adc12900-1bd8-4d06-b333-bba9876f87dc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="555" height="40" forecolor="#FFFFFF" uuid="1286f173-69f7-4d31-98c5-d943ed7abb30">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="19" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ Testsuite (TS): ]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight">
+					<reportElement mode="Transparent" x="0" y="40" width="555" height="40" forecolor="#FFFFFF" backcolor="#E6E6E6" uuid="a982c40d-e09f-4888-b2e9-eb58f0280827">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="17"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TsName}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="100" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="3a7aef82-8dda-4cf3-9427-bbb6e441b9dd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Version]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="90" y="100" width="465" height="20" backcolor="#E6E6E6" uuid="087280f3-ca3f-43b1-801d-7f958c9363fd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TsVersion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="76" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="01c20f7d-9a52-4269-bc73-f3b7a4fff3a4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Id]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="90" y="76" width="465" height="20" backcolor="#E6E6E6" uuid="a5ccaa21-6d08-4d7f-bbc3-f721e6bd97fe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TsId}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="125" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="5b6b0aa0-a889-4200-a346-92d5415f4ac4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="90" y="125" width="465" height="20" backcolor="#E6E6E6" uuid="5705ca07-6a27-4a97-97a1-cad169bd78cf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph firstLineIndent="0" leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TsDescription}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="86">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="86" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".TestCases.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_TestCases.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

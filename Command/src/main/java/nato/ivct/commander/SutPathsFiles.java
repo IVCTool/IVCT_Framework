@@ -110,7 +110,7 @@ public class SutPathsFiles {
             if (fileEntry.isFile()) {
                 final String s = fileEntry.getName();
                 final int len = s.length();
-                if (s.endsWith(".txt") || s.endsWith(".json")) {
+                if (s.endsWith(".json")) {
                     if (withPath) {
                         reportFileNames.add(path + "/" + fileEntry.getName());
                     }

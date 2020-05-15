@@ -12,47 +12,51 @@ ext {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
     logbackVersion = '1.2.3'
     slf4jVersion = '1.7.10'
-	activemqVersion = '5.14.5'
-	hamcrestVersion = '2.2'
-	scoutVersion = '9.0.0.025_Simrel_2019_09'
-	jsonSimpleVersion = '1.1.1'
-	gsonVersion = '2.8.6'
-	javaxServletVersion = '3.0.1'
-	geronimoJmsVersion = '1.1.1'
-	jsonIoVersion = '4.10.1'
-	javaxannotationVersion = '1.3.2'
-    jupiterVersion = '5.6.2'
-	gradleDockerPluginVersion = '4.9.0'
+		activemqVersion = '5.14.5'
+		antlrVersion = '2.7.7'
+		hamcrestVersion = '1.1'
+		scoutVersion = '9.0.0.025_Simrel_2019_09'
+		jsonSimpleVersion = '1.1.1'
+		gsonVersion = '2.8.6'
+		javaxServletVersion = '3.0.1'
+		geronimoJmsVersion = '1.1.1'
+		jsonIoVersion = '4.10.1'
+		jasperReportsVersion = '6.12.2'
+		javaxannotationVersion = '1.3.2'
+		jupiterVersion = '5.6.2'
 
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
-    libraries = [
-        // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-        logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
-        // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-        logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
-        // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
-        logback_contrib:                "ch.qos.logback.contrib:logback-json-classic:0.1.5",
-        // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
-        logback_json_classic:            "ch.qos.logback.contrib:logback-json-classic:0.1.5",
-        slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
-        slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
-        slf4j_jul_to_slf4j:             "org.slf4j:jul-to-slf4j:${slf4jVersion}",
-        slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
-		actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
-		activemqEmbedded: 				"org.apache.activemq:activemq-broker:${activemqVersion}",
-		jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
-		gson:							"com.google.code.gson:gson:${gsonVersion}",
-		javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
-		jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
-        // https://www.eclipse.org/scout/  GUI framework
-		scout_rt_client:				"org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}",
-		scout_rt_client_test:			"org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}",
-        // Junit test framework
-        junit_jupiter_engine:           "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}",
-        // http://hamcrest.org/JavaHamcrest/  Framework for matcher objects
-		hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}",
-        // docker image build support
-		docker:	                        "com.bmuschko:gradle-docker-plugin:${gradleDockerPluginVersion}"
-    ]
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
+        libraries = [
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
+                // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+                logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
+                // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+                logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
+                // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+                logback_contrib:                "ch.qos.logback.contrib:logback-json-classic:0.1.5",
+                // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+                logback_json_classic:            "ch.qos.logback.contrib:logback-json-classic:0.1.5",
+                slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
+                slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
+                slf4j_jul_to_slf4j:             "org.slf4j:jul-to-slf4j:${slf4jVersion}",
+                slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
+				actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
+				activemqEmbedded: 				"org.apache.activemq:activemq-broker:${activemqVersion}",
+				antlr:							"antlr:antlr:${antlrVersion}",
+				jsonSimple:						"com.googlecode.json-simple:json-simple:${jsonSimpleVersion}",
+				gson:							"com.google.code.gson:gson:${gsonVersion}",
+				javaxannotation:				"javax.annotation:javax.annotation-api:${javaxannotationVersion}",
+				jasperReports:                  "net.sf.jasperreports:jasperreports:${jasperReportsVersion}",
+				jsonIo:						    "com.cedarsoftware:json-io:${jsonIoVersion}",
+				// https://www.eclipse.org/scout/  GUI framework
+				scout_rt_client:				"org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}",
+				scout_rt_client_test:			"org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}",
+        		// Junit test framework
+        		junit_jupiter_engine:           "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}",
+        		// http://hamcrest.org/JavaHamcrest/  Framework for matcher objects
+				hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}",
+        		// docker image build support
+				docker:	                        "com.bmuschko:gradle-docker-plugin:${gradleDockerPluginVersion}
+        ]
 }

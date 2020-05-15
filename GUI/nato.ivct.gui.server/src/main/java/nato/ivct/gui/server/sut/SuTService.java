@@ -1,22 +1,23 @@
 package nato.ivct.gui.server.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
@@ -34,7 +35,6 @@ import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTFormData.SutCapabilityStatusTable.SutCapabilityStatusTableRowData;
-import nato.ivct.gui.shared.sut.TestReportFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 
@@ -105,43 +105,55 @@ public class SuTService implements ISuTService {
         loadCapabilityStatus(formData);
 
         // fill the form data: SuTReports table
-        loadReportFiles(formData);
+        loadResultFiles(formData);
 
         return formData;
     }
+
 
     /*
      * functions for TestReport
      */
+      
+
+    @Override
+    public String createTestreport(final String sutId){
+        final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
+        final String templateFolder = this.getClass().getClassLoader().getResource("reportTemplate").getPath();
+        
+        if (TestReport.createReportJsonFile(sutId, reportFolder.toString() + File.separatorChar + "Results.json").isEmpty()) {
+            return null;
+        }  
+        
+        return TestReport.createPDFTestreport(templateFolder, reportFolder);
+    }
+    
 
 
     @Override
-    public TestReportFormData load(TestReportFormData formData) {
-        final String testReportFileName = formData.getReportFileName();
+    public BinaryResource getTestReportFileContent(String sutId, String fileName) {
+        BinaryResource fileContent = null;
 
-        // get content of the requested report file
-        final List<String> testReportFiles = Factory.getSutPathsFiles().getSutReportFileNames(formData.getSutIdProperty().getValue(), true);
-        testReportFiles.stream().filter(value -> value.contains(testReportFileName)).map(Paths::get).findAny().ifPresent(path -> {
-            try {
-                formData.getTestReport().setValue(java.nio.file.Files.lines(path).collect(Collectors.joining("\n")));
-            }
-            catch (final IOException exc) {
-                LOG.error("Error when attempting to read from file: {}", Factory.getSutPathsFiles().getReportPath(formData.getSutIdProperty().getValue()).concat("\\").concat(testReportFileName));
-            }
-        });
+        try {
+            fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getReportPath(sutId)).resolve(fileName)));
+        }
+        catch (IOException | InvalidPathException exc) {
+            LOG.error("error to access fileName {}", fileName);
+            fileContent = new BinaryResource(fileName, null);
+        }
 
-        return formData;
+        return fileContent;
     }
 
 
-    private SuTFormData loadReportFiles(final SuTFormData fd) {
+    private static SuTFormData loadResultFiles(final SuTFormData fd) {
         final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(fd.getSutId()));
 
         try {
             getReportFilesOrderedByCreationDate(folder).forEach(path -> {
-                final String reportFileName = path.getFileName().toString();
-                LOG.info("report file found: {}", reportFileName);
-                fd.getTestReportTable().addRow().setFileName(reportFileName);
+                final String resultFileName = path.getFileName().toString();
+                LOG.info("report file found: {}", resultFileName);
+                fd.getTestReportTable().addRow().setFileName(resultFileName);
             });
         }
         catch (final NoSuchFileException exc) {
@@ -155,11 +167,11 @@ public class SuTService implements ISuTService {
     }
 
 
-    private Stream<Path> getReportFilesOrderedByCreationDate(final Path folder) throws IOException {
+    private static Stream<Path> getReportFilesOrderedByCreationDate(final Path folder) throws IOException {
         try {
             return Files.find(folder, 1, (path, fileAttributes) -> {
                 final String filenameToCheck = path.getFileName().toString();
-                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".txt");
+                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".pdf");
             }).sorted(new FileCreationTimeComparator().reversed());
         }
         catch (final IllegalStateException exc) {
@@ -186,11 +198,12 @@ public class SuTService implements ISuTService {
             final SutCapabilityStatusTableRowData row = fd.getSutCapabilityStatusTable().addRow();
             row.setCbBadgeID(badgeId);
             row.setCbBadgeName(BEANS.get(CbService.class).getBadgeDescription(badgeId).name);
-            //TODO (just for testing)
-            row.setCbBadgeStatus("UNKNOWN");
+
+            row.setCbBadgeStatus(TestReport.getBadgeConformanceStatus(fd.getSutId(), badgeId));
         });
         return fd;
     }
+
 
     /*
      * functions for SuTEditFormData

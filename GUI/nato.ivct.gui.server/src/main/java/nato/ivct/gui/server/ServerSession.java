@@ -3,6 +3,7 @@ package nato.ivct.gui.server;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,9 @@ public class ServerSession extends AbstractServerSession {
 
     private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$");
     private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
+
+    private static final String RESULTS_FILE_NAME = "Results";
+    private static final String RESULTS_FILE_EXT = "json";
 
     private static IFuture<CmdListSuT>             loadSuTJob;
     private static IFuture<SutTcResultDescription> loadTcResultsJob;
@@ -111,10 +115,12 @@ public class ServerSession extends AbstractServerSession {
             final List<String> sutList = Factory.getSutPathsFiles().getSuts();
             // iterate over all SuTs to get its report files
             sutList.forEach(sutId -> {
-                final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
+                final List<String> resultFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
                 //parse each report file to get the verdict and the corresponding log file name
-                reportFiles.forEach(reportFile -> {
-                    parseResultFile(sutId, reportFile, sutTcResults);
+                resultFiles.forEach(resultFile -> {
+                    if ((RESULTS_FILE_NAME + "." + RESULTS_FILE_EXT).equalsIgnoreCase(Paths.get(resultFile).getFileName().toString())) {
+                        parseJsonResultFile(sutId, resultFile, sutTcResults);
+                    }
                 });
             });
 
@@ -122,45 +128,8 @@ public class ServerSession extends AbstractServerSession {
         }
 
 
-        private void parseResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
-            LOG.info("parse report file: {}\n", reportFile);
-            final String fileExt = reportFile.substring(reportFile.lastIndexOf('.') + 1);
-            switch (fileExt.toLowerCase()) {
-                case "txt":
-                    parseTextResultFile(sutId, reportFile, sutTcResults);
-                    break;
-                case "json":
-                    parseJsonResultFile(sutId, reportFile, sutTcResults);
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-
-        private void parseTextResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
-            try {
-                Files.lines(Paths.get(reportFile)).filter(line -> VERDICT_LINE.matcher(line).matches()).forEach(verdictLine -> {
-                    LOG.info("\tparse verdict line: {}\n", verdictLine);
-                    // extract the required elements from the verdict line
-                    final String[] result = parseVerdictLine(verdictLine);
-                    if (result.length == 4) {
-                        sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
-                    }
-                });
-            }
-            catch (final NoSuchFileException exc) {
-                LOG.info("report file not found: {}", reportFile);
-            }
-            catch (final IOException exc) {
-                LOG.error("", exc);
-            }
-        }
-
-
         @SuppressWarnings("unchecked")
-        private void parseJsonResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
+        private void parseJsonResultFile(final String sutId, final String resultFile, final SutTcResultDescription sutTcResults) {
             final String TCRESULTS_KW = "TcResults";
             final String TESTSUITE_KW = "TestSuite";
             final String VERDICT_KW = "Verdict";
@@ -169,10 +138,10 @@ public class ServerSession extends AbstractServerSession {
             final JSONParser jparser = new JSONParser();
             JSONObject tcResults = null;
             try {
-                tcResults = (JSONObject) jparser.parse(new String(Files.readAllBytes(Paths.get(reportFile))));
+                tcResults = (JSONObject) jparser.parse(new String(Files.readAllBytes(Paths.get(resultFile))));
             }
             catch (ParseException | IOException exc) {
-                LOG.error("Error reading//parsing the result file {}", reportFile);
+                LOG.error("Error reading//parsing the result file {}", resultFile);
                 return;
             }
 
@@ -216,7 +185,6 @@ public class ServerSession extends AbstractServerSession {
         }
     }
 
-
     public void updateSutResultMap(final String sutId, final String tsId, final String tcFullName) {
         LOG.info("reload test results for all SuTs");
         loadTcResultsJob = Jobs.schedule(new LoadTcResults(), Jobs.newInput());
@@ -232,7 +200,6 @@ public class ServerSession extends AbstractServerSession {
         private final String settingsDesignator;
         private final String federationName;
         private final String federateName;
-
 
         public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
             sut = _sut;
@@ -256,7 +223,6 @@ public class ServerSession extends AbstractServerSession {
     public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
 
         private LogLevel logLevel;
-
 
         public ExecuteSetLogLevel(String level) {
             switch (level == null ? "" : level) {
@@ -291,7 +257,6 @@ public class ServerSession extends AbstractServerSession {
 
     private static final long   serialVersionUID = 1L;
     private static final Logger LOG              = LoggerFactory.getLogger(ServerSession.class);
-
 
     public ServerSession() {
         super(true);
