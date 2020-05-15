@@ -11,6 +11,20 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="tcVerdict" mode="Opaque" backcolor="#E6E6E6">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{Verdict}.matches("PASSED")]]></conditionExpression>
+			<style mode="Opaque" backcolor="#4FC484"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{Verdict}.matches("FAILED")]]></conditionExpression>
+			<style mode="Opaque" backcolor="#FF8A70"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{Verdict}.matches("INCONCLUSIVE")]]></conditionExpression>
+			<style mode="Opaque" backcolor="#9FADCE"/>
+		</conditionalStyle>
+	</style>
 	<queryString language="jsonql">
 		<![CDATA[..Badges.TestSuites.TestCases.TcResult.*]]>
 	</queryString>
@@ -93,7 +107,7 @@
 				<textFieldExpression><![CDATA[$F{TimeStamp}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="109" y="6" width="466" height="15" backcolor="#E6E6E6" uuid="a8226268-ba1a-4d5f-9c3b-70b9cdeeb31d">
+				<reportElement style="tcVerdict" x="109" y="6" width="466" height="15" uuid="a8226268-ba1a-4d5f-9c3b-70b9cdeeb31d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>

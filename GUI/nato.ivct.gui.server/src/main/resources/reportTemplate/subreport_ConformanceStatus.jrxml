@@ -22,7 +22,7 @@
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{SutVerdict}.matches("INCONCLUSIVE")]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F6EBBB"/>
+			<style mode="Opaque" backcolor="#9FADCE"/>
 		</conditionalStyle>
 	</style>
 	<queryString language="jsonql">
