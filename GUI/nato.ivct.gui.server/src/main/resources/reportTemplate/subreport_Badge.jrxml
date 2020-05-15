@@ -13,7 +13,7 @@
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{BadgeVerdict}.matches("INCONCLUSIVE")]]></conditionExpression>
-			<style mode="Opaque" backcolor="#F6EBBB"/>
+			<style mode="Opaque" backcolor="#9FADCE"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="IVCT_BADGE_ICONS" class="java.lang.String"/>
