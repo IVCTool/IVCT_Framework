@@ -11,7 +11,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<style name="sutVerdict" mode="Opaque" backcolor="#FFFFFF">
+	<style name="sutVerdict" mode="Opaque" backcolor="#F6EBBB">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{SutVerdict}.matches("PASSED")]]></conditionExpression>
 			<style mode="Opaque" backcolor="#4FC484"/>

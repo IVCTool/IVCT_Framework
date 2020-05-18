@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_Badge" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c8e6f3c9-0d16-43b4-b84f-df0663fffe91">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
-	<style name="badgeVerdict" mode="Opaque" backcolor="#FFFFFF">
+	<style name="badgeVerdict" mode="Opaque" backcolor="#F6EBBB">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{BadgeVerdict}.matches("PASSED")]]></conditionExpression>
 			<style mode="Opaque" backcolor="#4FC484"/>

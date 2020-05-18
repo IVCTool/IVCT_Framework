@@ -95,7 +95,7 @@
 				<text><![CDATA[Signature/Date]]></text>
 			</staticText>
 		</band>
-		<band height="80">
+		<band height="90">
 			<subreport>
 				<reportElement x="-21" y="10" width="595" height="70" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
 				<subreportParameter name="IVCT_BADGE_ICONS">
@@ -106,6 +106,9 @@
 			</subreport>
 			<break>
 				<reportElement x="0" y="5" width="554" height="1" uuid="46ce6120-42e4-4717-b370-a50d8f9d9aab"/>
+			</break>
+			<break>
+				<reportElement x="0" y="85" width="554" height="1" uuid="da604b30-d2f1-4147-a233-a81650d865c4"/>
 			</break>
 		</band>
 	</detail>
