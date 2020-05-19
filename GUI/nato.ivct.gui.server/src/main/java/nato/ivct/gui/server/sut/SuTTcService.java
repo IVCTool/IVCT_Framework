@@ -214,7 +214,8 @@ public class SuTTcService implements ISuTTcService {
             verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
         }
         catch (final NoSuchFileException exc) {
-            LOG.info("log files not found: {}", folder + "\\" + tcName);
+            LOG.info("log files not found: {}", exc.getMessage());
+            LOG.trace("", exc);
         }
         catch (final IOException exc) {
             LOG.error(" ", exc);
