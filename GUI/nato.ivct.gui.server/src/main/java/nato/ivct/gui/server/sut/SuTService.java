@@ -138,7 +138,7 @@ public class SuTService implements ISuTService {
             fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getReportPath(sutId)).resolve(fileName)));
         }
         catch (IOException | InvalidPathException exc) {
-            LOG.error("error to access fileName {}", fileName);
+            LOG.error("error to access fileName " + fileName, exc);
             fileContent = new BinaryResource(fileName, null);
         }
 
@@ -157,7 +157,7 @@ public class SuTService implements ISuTService {
             });
         }
         catch (final NoSuchFileException exc) {
-            LOG.error("report files not found in folder: {}", folder);
+            LOG.error("report files not found in folder: " + folder, exc);
         }
         catch (final IOException exc) {
             LOG.error(" ", exc);
@@ -278,7 +278,7 @@ public class SuTService implements ISuTService {
             throw vetoExc;
         }
         catch (final Exception exe) {
-            LOG.error("Error when storing SuT description for {}", formData.getName().getValue(), exe);
+            LOG.error("Error when storing SuT description for " + formData.getName().getValue(), exe);
         }
 
         // Update SuT map
@@ -316,7 +316,7 @@ public class SuTService implements ISuTService {
         }
 
         catch (final Exception exe) {
-            LOG.error("Error when storing SuT description for {}", formData.getName().getValue(), exe);
+            LOG.error("Error when storing SuT description for " + formData.getName().getValue(), exe);
         }
 
         // update SuT map

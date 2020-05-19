@@ -113,11 +113,11 @@ class TestReport {
             LOG.debug("store report json object to file {}", reportFile);
             Files.write(Paths.get(reportFile), jReport.toString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         }
-        catch (final InvalidPathException e) {
-            LOG.error("invalid path for report json file", reportFile);
+        catch (final InvalidPathException exc) {
+            LOG.error("invalid path for report json file: " + reportFile, exc);
         }
-        catch (final IOException e) {
-            LOG.error("could not write report json object to file {}", reportFile);
+        catch (final IOException exc) {
+            LOG.error("could not write report json object to file " + reportFile, exc);
         }
         return reportFile;
     }
@@ -459,7 +459,7 @@ class TestReport {
             return Optional.ofNullable(JsonParser.parseReader((Files.newBufferedReader(Paths.get(resultFile)))).getAsJsonObject());
         }
         catch (IOException | JsonIOException | JsonSyntaxException exc) {
-            LOG.error("Result file does not exist", resultFile);
+            LOG.error("Result file does not exist: "  + resultFile, exc);
             return Optional.empty();
         }
     }   
@@ -495,8 +495,8 @@ class TestReport {
             JasperExportManager.exportReportToPdfFile(jasperPrint, pathToReports + fileName);
             return fileName;
         }
-        catch (JRException e) {
-            e.printStackTrace();
+        catch (JRException exc) {
+            LOG.error("Report creation failed", exc);
         }
 
         return null;
