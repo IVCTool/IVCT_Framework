@@ -22,6 +22,12 @@ The table shows all 3rd party libraries used in the IVCT project.
 |https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker
 |Message Broker
 
+|apacheCommonsIO
+|2.6
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/commons-io/commons-io/2.6
+|I/O Utilities
+
 |antlr
 |2.7.7
 |https://de.wikipedia.org/wiki/BSD-Lizenz[BSD]
@@ -70,10 +76,10 @@ The table shows all 3rd party libraries used in the IVCT project.
 |https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
 |JSON Library - A simple Java toolkit for JSON
 
-|junit
-|4.+
-|https://opensource.org/licenses/EPL-1.0[EPL 1.0]
-|https://mvnrepository.com/artifact/junit/junit
+|junit_jupiter_engine
+|5.6.2
+|https://opensource.org/licenses/EPL-2.0[EPL 2.0]
+|https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine/5.6.2
 |Testing Framework
 
 |logback_classic
