@@ -389,11 +389,9 @@ public class Desktop extends AbstractDesktop {
     protected void execOutlineChanged(IOutline oldOutline, IOutline newOutline) {
         if (newOutline instanceof SuTOutline) {
             this.getMenuByClass(AlterSuTMenu.class).setVisible(true);
-            this.getMenuByClass(DeleteSutMenu.class).setVisible(true);
         }
         else {
             this.getMenuByClass(AlterSuTMenu.class).setVisible(false);
-            this.getMenuByClass(DeleteSutMenu.class).setVisible(false);
         }
     }
 
