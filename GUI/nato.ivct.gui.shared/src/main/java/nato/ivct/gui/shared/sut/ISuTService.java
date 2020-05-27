@@ -16,6 +16,8 @@ public interface ISuTService extends IService {
 	
 	SuTFormData load(SuTFormData formData);
 	
+	boolean deleteSut(String sutId);
+	
 	/*
 	 * SuTEditFormData
 	 */

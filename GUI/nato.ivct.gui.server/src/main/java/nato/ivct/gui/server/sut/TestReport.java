@@ -455,8 +455,12 @@ class TestReport {
     }
     
     private static Optional<JsonObject> readJsonResultFile(final String sutId, final String resultFile) {
+        final Path jsonPath = Paths.get(resultFile);
+        if (!jsonPath.toFile().exists())
+            return Optional.empty();
+        
         try {
-            return Optional.ofNullable(JsonParser.parseReader((Files.newBufferedReader(Paths.get(resultFile)))).getAsJsonObject());
+            return Optional.ofNullable(JsonParser.parseReader((Files.newBufferedReader(jsonPath))).getAsJsonObject());
         }
         catch (IOException | JsonIOException | JsonSyntaxException exc) {
             LOG.error("Result file does not exist: "  + resultFile, exc);

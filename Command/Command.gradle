@@ -19,6 +19,8 @@ dependencies {
 	compile	libraries.slf4j_api
 	compile	libraries.jsonSimple
 	compile	project(':MessagingHelpers')
+	
+	implementation libraries.apacheCommonsIO
 
 	// testImplementation	libraries.junit
 	testImplementation	libraries.junit_jupiter_engine

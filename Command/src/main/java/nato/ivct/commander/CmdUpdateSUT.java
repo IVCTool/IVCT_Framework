@@ -15,7 +15,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -30,6 +29,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -101,170 +101,145 @@ public class CmdUpdateSUT {
      * @throws Exception in case of major error
      * @return true if new value is different
      */
-    public boolean compareCSdata(String csJsonFileName, SutDescription tmpSutDescription) throws Exception {
+    public boolean compareCSdata(String csJsonFileName, SutDescription tmpSutDescription) throws IOException, org.json.simple.parser.ParseException {
         StringBuilder sb = new StringBuilder();
         File cs = new File(csJsonFileName);
         if (cs.exists() && cs.isFile()) {
-            FileReader fr = null;
-            try {
-                fr = new FileReader(csJsonFileName);
-                BufferedReader br = new BufferedReader(fr);
+            try (BufferedReader fr = Files.newBufferedReader(cs.toPath())) {
                 String s;
-                while ((s = br.readLine()) != null) {
+                while ((s = fr.readLine()) != null) {
                     sb.append(s);
                 }
-                fr.close();
             }
-            catch (IOException e) {
-                e.printStackTrace();
-                throw new Exception("execute: IOException" + csJsonFileName);
-            }
-            finally {
-                if (fr != null) {
-                    try {
-                        fr.close();
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                        throw new Exception("execute: file close: IOException");
-                    }
-                }
-            }
+
             JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObject;
-            try {
-                jsonObject = (JSONObject) jsonParser.parse(sb.toString());
-                // get a String from the JSON object
-                String oldSUTid = (String) jsonObject.get(CmdListSuT.ID);
-                if (oldSUTid != null) {
-                    if (oldSUTid.equals(tmpSutDescription.ID) == false) {
-                        return true;
-                    }
-                }
-                else {
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(sb.toString());
+            // get a String from the JSON object
+            String oldSUTid = (String) jsonObject.get(CmdListSuT.ID);
+            if (oldSUTid != null) {
+                if (oldSUTid.equals(tmpSutDescription.ID) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldSUTname = (String) jsonObject.get(CmdListSuT.NAME);
-                if (oldSUTname != null) {
-                    if (oldSUTname.equals(tmpSutDescription.name) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldSUTname = (String) jsonObject.get(CmdListSuT.NAME);
+            if (oldSUTname != null) {
+                if (oldSUTname.equals(tmpSutDescription.name) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldSUTversion = (String) jsonObject.get(CmdListSuT.VERSION);
-                if (oldSUTversion != null) {
-                    if (oldSUTversion.equals(tmpSutDescription.version) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldSUTversion = (String) jsonObject.get(CmdListSuT.VERSION);
+            if (oldSUTversion != null) {
+                if (oldSUTversion.equals(tmpSutDescription.version) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldDescription = (String) jsonObject.get(CmdListSuT.DESCRIPTION);
-                if (oldDescription != null) {
-                    if (oldDescription.equals(tmpSutDescription.description) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldDescription = (String) jsonObject.get(CmdListSuT.DESCRIPTION);
+            if (oldDescription != null) {
+                if (oldDescription.equals(tmpSutDescription.description) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldVendor = (String) jsonObject.get(CmdListSuT.VENDOR);
-                if (oldVendor != null) {
-                    if (oldVendor.equals(tmpSutDescription.vendor) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldVendor = (String) jsonObject.get(CmdListSuT.VENDOR);
+            if (oldVendor != null) {
+                if (oldVendor.equals(tmpSutDescription.vendor) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldSettingsDesignator = (String) jsonObject.get(CmdListSuT.SETTINGS_DESIGNATOR);
-                if (oldSettingsDesignator != null) {
-                    if (oldSettingsDesignator.equals(tmpSutDescription.settingsDesignator) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldSettingsDesignator = (String) jsonObject.get(CmdListSuT.SETTINGS_DESIGNATOR);
+            if (oldSettingsDesignator != null) {
+                if (oldSettingsDesignator.equals(tmpSutDescription.settingsDesignator) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldFederationName = (String) jsonObject.get(CmdListSuT.FEDERATION_NAME);
-                if (oldFederationName != null) {
-                    if (oldFederationName.equals(tmpSutDescription.federation) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldFederationName = (String) jsonObject.get(CmdListSuT.FEDERATION_NAME);
+            if (oldFederationName != null) {
+                if (oldFederationName.equals(tmpSutDescription.federation) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get a String from the JSON object
-                String oldFederateName = (String) jsonObject.get(CmdListSuT.FEDERATE_NAME);
-                if (oldFederateName != null) {
-                    if (oldFederateName.equals(tmpSutDescription.sutFederateName) == false) {
-                        return true;
-                    }
-                }
-                else {
+            // get a String from the JSON object
+            String oldFederateName = (String) jsonObject.get(CmdListSuT.FEDERATE_NAME);
+            if (oldFederateName != null) {
+                if (oldFederateName.equals(tmpSutDescription.sutFederateName) == false) {
                     return true;
                 }
+            }
+            else {
+                return true;
+            }
 
-                // get badge files list from the JSON object
-                JSONArray badgeArray = (JSONArray) jsonObject.get(CmdListSuT.BADGE);
-                if (tmpSutDescription.badges != null) {
-                    if (badgeArray != null) {
-                        if (tmpSutDescription.badges.size() == badgeArray.size()) {
-                            if (tmpSutDescription.badges.size() > 0) {
-                                for (String entry: this.sutDescription.badges) {
-                                    if (badgeArray.contains(entry)) {
-                                        continue;
-                                    }
-                                    return true;
+            // get badge files list from the JSON object
+            JSONArray badgeArray = (JSONArray) jsonObject.get(CmdListSuT.BADGE);
+            if (tmpSutDescription.badges != null) {
+                if (badgeArray != null) {
+                    if (tmpSutDescription.badges.size() == badgeArray.size()) {
+                        if (tmpSutDescription.badges.size() > 0) {
+                            for (String entry: this.sutDescription.badges) {
+                                if (badgeArray.contains(entry)) {
+                                    continue;
                                 }
+                                return true;
                             }
-                        }
-                        else {
-                            return true;
                         }
                     }
                     else {
-                        badgeArray = new JSONArray();
-                    }
-                    boolean dataFound = false;
-                    for (int i = 0; i < badgeArray.size(); i++) {
-                        for (String entry: this.sutDescription.badges) {
-                            if (entry.equals(badgeArray.get(i))) {
-                                dataFound = true;
-                                break;
-                            }
-                        }
-                        if (dataFound == false) {
-                            return true;
-                        }
+                        return true;
                     }
                 }
                 else {
-                    if (badgeArray.size() > 0) {
+                    badgeArray = new JSONArray();
+                }
+                boolean dataFound = false;
+                for (int i = 0; i < badgeArray.size(); i++) {
+                    for (String entry: this.sutDescription.badges) {
+                        if (entry.equals(badgeArray.get(i))) {
+                            dataFound = true;
+                            break;
+                        }
+                    }
+                    if (dataFound == false) {
                         return true;
                     }
                 }
             }
-            catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception("execute: Exception");
+            else {
+                if (badgeArray.size() > 0) {
+                    return true;
+                }
             }
         }
         else {
@@ -502,61 +477,52 @@ public class CmdUpdateSUT {
         String sutDir = sutsDir + "/" + this.sutDescription.ID;
         File f = new File(sutDir);
 
-        if (f.exists() == false) {
-            if (f.mkdir() == false) {
-                logger.error("Failed to create directory: " + sutDir);
-            }
+        if (!f.exists() && !f.mkdir()) {
+            logger.error("Failed to create directory: {}", sutDir);
         }
 
-        Set<String> badges_list = new HashSet<>();
         // Check if no badges
         if (!this.sutDescription.badges.isEmpty()) {
 
-            Set<String> ir_set = new HashSet<String>();
+            Set<String> irSet = new HashSet<>();
 
             // Get IRs for badges
-            badges.collectIrForCs(ir_set, this.sutDescription.badges);
+            badges.collectIrForCs(irSet, this.sutDescription.badges);
 
             // For each badge, check if there is a testsuite with TcParams
-            Set<TestSuiteDescription> tss = new HashSet<TestSuiteDescription>();
-            for (String ir: ir_set) {
+            Set<TestSuiteDescription> tss = new HashSet<>();
+            for (String ir: irSet) {
                 TestSuiteDescription ts;
-                ts = this.cmdListTestSuites.getTestSuiteforIr(ir);
+                ts = cmdListTestSuites.getTestSuiteforIr(ir);
                 if (ts != null) {
                     tss.add(ts);
                 }
             }
 
-            Set<String> csTs = new HashSet<String>();
+            Set<String> csTs = new HashSet<>();
             for (TestSuiteDescription entry: tss) {
-                if (csTs.contains(entry)) {
-                    continue;
-                }
                 csTs.add(entry.id);
             }
 
             // For each test suite copy or modify the TcParam.json file
             for (String testsuite: csTs) {
                 // Add badge folder
-                String sutBadge = sutDir + "/" + testsuite;
-                f = new File(sutBadge);
-                if (f.exists() == false) {
-                    if (f.mkdir() == false) {
-                        logger.trace("Failed to create directory!");
-                    }
+                f = Paths.get(sutDir, testsuite).toFile();
+                if (!f.exists() && !f.mkdir()) {
+                    logger.trace("Failed to create directory!");
                 }
 
                 // This is the file to copy
-                extractResource(testsuite, sutBadge, "TcParam.json", "ExtraParamTemplates");
+                extractResource(testsuite, f.getPath(), "TcParam.json", "ExtraParamTemplates");
             }
         }
 
         // If CS.json exists, only change what is different
         boolean dataChanged = false;
-        String csJsonFileName = new String(sutDir + "/" + "CS.json");
+        String csJsonFileName = sutDir + '/' + "CS.json";
         dataChanged = compareCSdata(csJsonFileName, this.sutDescription);
 
-        if (dataChanged == false) {
+        if (!dataChanged) {
             return this.sutDescription.ID;
         }
 
@@ -602,7 +568,7 @@ public class CmdUpdateSUT {
         obj.put(CmdListSuT.FEDERATE_NAME, this.sutDescription.sutFederateName);
 
         JSONArray list = new JSONArray();
-        if (this.sutDescription.badges.size() != 0) {
+        if (!this.sutDescription.badges.isEmpty()) {
             for (String entry: this.sutDescription.badges) {
                 list.add(entry);
             }
@@ -610,27 +576,36 @@ public class CmdUpdateSUT {
 
         obj.put("badge", list);
 
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(sutDir + "/" + "CS.json");
+        try (FileWriter fw = new FileWriter(sutDir + "/" + "CS.json")) {
             fw.write(obj.toJSONString());
             fw.flush();
 
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (fw != null) {
-                try {
-                    fw.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        catch (IOException exc) {
+            logger.error("", exc);
         }
 
         return this.sutDescription.ID;
+    }
+
+
+    public static boolean deleteSut(final String sutId) {
+
+        String sutHome = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID);
+        File file = Paths.get(sutHome, sutId).toFile();
+
+        if (!file.exists() || !file.isDirectory()) {
+            return false;
+        }
+
+        try {
+            FileUtils.deleteDirectory(file);
+            logger.info("SuT successfully deleted {}", sutId);
+            return true;
+        }
+        catch (IOException exc) {
+            logger.error("Error when deleting SuT " + sutId, exc);
+        }
+        return false;
     }
 }

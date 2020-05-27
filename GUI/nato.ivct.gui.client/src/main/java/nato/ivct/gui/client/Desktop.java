@@ -6,16 +6,22 @@ import java.util.Set;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.desktop.AbstractDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
+import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormMenu;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.AbstractIcons;
-
+import nato.ivct.gui.client.Desktop.AlterSuTMenu.DeleteSutMenu;
 import nato.ivct.gui.client.Desktop.AlterSuTMenu.EditSutMenu;
 import nato.ivct.gui.client.outlines.BadgeOutline;
 import nato.ivct.gui.client.outlines.SuTOutline;
@@ -23,6 +29,7 @@ import nato.ivct.gui.client.outlines.TsOutline;
 import nato.ivct.gui.client.sut.SuTEditForm;
 import nato.ivct.gui.client.sut.SuTForm;
 import nato.ivct.gui.shared.Icons;
+import nato.ivct.gui.shared.sut.ISuTService;
 
 
 /**
@@ -175,6 +182,58 @@ public class Desktop extends AbstractDesktop {
                 form.startModify();
             }
         }
+
+        @Order(130)
+        public class DeleteSutMenu extends AbstractMenu {
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("DeleteSuT");
+            }
+
+
+            @Override
+            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                return CollectionUtility.hashSet();
+            }
+
+
+            @Override
+            protected boolean getConfiguredVisible() {
+                // set to invisible by default until a SUT is selected
+                return false;
+            }
+
+
+            @Override
+            protected void execAction() {
+                final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
+                final IOutline outline = desktop.getOutline();
+                if (outline instanceof SuTOutline) {
+                    final IForm form = desktop.getPageDetailForm();
+                    if (form instanceof SuTForm) {
+                        int result = MessageBoxes.createYesNo().withHeader(TEXTS.get("DeleteSuTMsgBoxHeader")).withBody("SuT: "+((SuTForm) form).getSutId()).show();
+                        if (result == IMessageBox.YES_OPTION) {
+                            if (BEANS.get(ISuTService.class).deleteSut(((SuTForm) form).getSutId())) {
+                                //Success message
+                                MessageBoxes.createOk().withHeader(TEXTS.get("DeleteSuTSuccessMsgBoxHeader")).show();
+
+                                final AbstractPageWithNodes pageWithNode = (AbstractPageWithNodes) outline.getRootNode();
+                                final ITreeNode sutNode = pageWithNode.getTree().findNode(((SuTForm) form).getSutId());
+
+                                if (sutNode != null) {
+                                    pageWithNode.getTree().removeNode(sutNode);
+                                    // close form
+                                    form.doClose();
+                                    return;
+                                }
+                            }
+                            //Error message
+                            MessageBoxes.createOk().withHeader(TEXTS.get("DeleteSuTErrorMsgBoxHeader")).show();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Order(1500)
@@ -183,7 +242,6 @@ public class Desktop extends AbstractDesktop {
         //        protected String getConfiguredText() {
         //            return TEXTS.get("Options");
         //        }
-
 
         @Override
         protected Set<? extends IMenuType> getConfiguredMenuTypes() {
@@ -316,19 +374,27 @@ public class Desktop extends AbstractDesktop {
 
     @Override
     protected void execPageDetailFormChanged(IForm oldForm, IForm newForm) {
-        if (newForm instanceof SuTForm)
+        if (newForm instanceof SuTForm) {
             this.getMenuByClass(EditSutMenu.class).setVisible(true);
-        else
+            this.getMenuByClass(DeleteSutMenu.class).setVisible(true);
+        }
+        else {
             this.getMenuByClass(EditSutMenu.class).setVisible(false);
+            this.getMenuByClass(DeleteSutMenu.class).setVisible(false);
+        }
     }
 
 
     @Override
     protected void execOutlineChanged(IOutline oldOutline, IOutline newOutline) {
-        if (newOutline instanceof SuTOutline)
+        if (newOutline instanceof SuTOutline) {
             this.getMenuByClass(AlterSuTMenu.class).setVisible(true);
-        else
+            this.getMenuByClass(DeleteSutMenu.class).setVisible(true);
+        }
+        else {
             this.getMenuByClass(AlterSuTMenu.class).setVisible(false);
+            this.getMenuByClass(DeleteSutMenu.class).setVisible(false);
+        }
     }
 
 }

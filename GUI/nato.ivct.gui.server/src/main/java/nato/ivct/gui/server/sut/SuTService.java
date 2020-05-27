@@ -110,24 +110,22 @@ public class SuTService implements ISuTService {
         return formData;
     }
 
-
     /*
      * functions for TestReport
      */
-      
+
 
     @Override
-    public String createTestreport(final String sutId){
+    public String createTestreport(final String sutId) {
         final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
         final String templateFolder = this.getClass().getClassLoader().getResource("reportTemplate").getPath();
-        
+
         if (TestReport.createReportJsonFile(sutId, reportFolder.toString() + File.separatorChar + "Results.json").isEmpty()) {
             return null;
-        }  
-        
+        }
+
         return TestReport.createPDFTestreport(templateFolder, reportFolder);
     }
-    
 
 
     @Override
@@ -148,6 +146,8 @@ public class SuTService implements ISuTService {
 
     private static SuTFormData loadResultFiles(final SuTFormData fd) {
         final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(fd.getSutId()));
+        if (!folder.toFile().exists())
+            return fd;
 
         try {
             getReportFilesOrderedByCreationDate(folder).forEach(path -> {
@@ -203,7 +203,6 @@ public class SuTService implements ISuTService {
         });
         return fd;
     }
-
 
     /*
      * functions for SuTEditFormData
@@ -323,6 +322,25 @@ public class SuTService implements ISuTService {
         updateSutMap(sut);
 
         return formData;
+    }
+
+
+    public boolean deleteSut(final String sutId) {
+
+        if (!CmdUpdateSUT.deleteSut(sutId)) {
+            LOG.error("Error when deleting SuT {}", sutId);
+            return false;
+        }
+
+        // Delete from sutMap
+        removeFromSutMap(sutId);
+
+        return true;
+    }
+
+
+    private void removeFromSutMap(final String sutId) {
+        sutMap.remove(sutId);
     }
 
 
