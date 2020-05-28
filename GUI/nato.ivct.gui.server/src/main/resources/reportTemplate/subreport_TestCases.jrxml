@@ -2,6 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TestCases" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7d3db6-282a-494e-956f-fb5e9774b1ab">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="jsonql">
 		<![CDATA[..Badges.TestSuites.TestCases.*]]>
 	</queryString>
@@ -96,15 +97,21 @@
 		<band height="80">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="80" uuid="a43f5a88-8a69-426a-ab94-e8a90bcf92c1"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".IrForTc.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_IrForTc.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_IrForTc.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="70">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="70" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".TcResult.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_TcResult.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_TcResult.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

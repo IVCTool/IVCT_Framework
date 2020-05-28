@@ -3,6 +3,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FinalReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="80743af3-6e00-435a-9379-f763ca9410c0">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
 	<parameter name="IVCT_BADGE_ICONS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="jsonql">
 		<![CDATA[]]>
 	</queryString>
@@ -43,29 +44,41 @@
 		<band height="90">
 			<subreport>
 				<reportElement x="-20" y="10" width="595" height="80" uuid="57e25eab-9309-4a1d-90e2-0f55c1949c15"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("SuT")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_SuT.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_SuT.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="40">
 			<subreport>
 				<reportElement x="-20" y="0" width="594" height="40" uuid="f5d39713-1b41-4eca-ad8e-cf297cd6a257"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("SuT")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_ConformanceStatus.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_ConformanceStatus.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="50">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="50" uuid="3de09117-c18b-43ca-a06f-cecc22491008"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("TestSystem")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_TestSystem.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_TestSystem.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="50">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="50" uuid="94440d26-cb7a-4937-821e-b18640e3bfe7"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("TestConfiguration")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_TestConfiguration.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_TestConfiguration.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="60">
@@ -74,8 +87,11 @@
 				<subreportParameter name="IVCT_BADGE_ICONS">
 					<subreportParameterExpression><![CDATA[$P{IVCT_BADGE_ICONS}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("..Badges.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_BadgeSummary.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_BadgeSummary.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="79">
@@ -101,8 +117,11 @@
 				<subreportParameter name="IVCT_BADGE_ICONS">
 					<subreportParameterExpression><![CDATA[$P{IVCT_BADGE_ICONS}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("..Badges.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_Badge.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_Badge.jasper"]]></subreportExpression>
 			</subreport>
 			<break>
 				<reportElement x="0" y="5" width="554" height="1" uuid="46ce6120-42e4-4717-b370-a50d8f9d9aab"/>

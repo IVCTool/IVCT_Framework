@@ -25,6 +25,7 @@
 			<style mode="Opaque" backcolor="#9FADCE"/>
 		</conditionalStyle>
 	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="jsonql">
 		<![CDATA[..Badges.TestSuites.TestCases.TcResult.*]]>
 	</queryString>
@@ -169,8 +170,11 @@
 		<band height="80">
 			<subreport>
 				<reportElement x="0" y="0" width="595" height="80" uuid="d0851186-4e7b-40d6-8da6-c7ceca06b233"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".LoggingData.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_Logfile.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_Logfile.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

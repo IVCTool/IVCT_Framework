@@ -17,6 +17,7 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="IVCT_BADGE_ICONS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="jsonql">
 		<![CDATA[..Badges.*]]>
 	</queryString>
@@ -173,15 +174,21 @@
 		<band height="90">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="90" uuid="489e08da-7646-48a2-999f-35fa03640aac"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".IrForBadge.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_IrForBadge.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_IrForBadge.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="119">
 			<subreport>
 				<reportElement x="-20" y="0" width="595" height="110" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".TestSuites.*")]]></dataSourceExpression>
-				<subreportExpression><![CDATA["subreport_TS.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_TS.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
