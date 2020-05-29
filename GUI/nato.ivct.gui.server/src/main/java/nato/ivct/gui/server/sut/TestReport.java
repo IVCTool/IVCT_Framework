@@ -483,53 +483,18 @@ class TestReport {
     }
 
 
-    private static void compileReport(String dstDir, String srcDir, String reportName) throws IOException, JRException {
-        try (OutputStream toJasper = getResourceOutputStreamFor(dstDir, reportName + ".jasper"); InputStream fromJrxml = getResourceInputStreamFor(srcDir, reportName + ".jrxml")) {
-            JasperCompileManager.compileReportToStream(fromJrxml, toJasper);
-        }
-    }
-
-
-    private static InputStream getResourceInputStreamFor(String folderName, String fileName) {
-        return TestReport.class.getClassLoader().getResourceAsStream(folderName + '/' + fileName);
-    }
-
-
-    private static OutputStream getResourceOutputStreamFor(String folderName, String fileName) throws IOException {
-        return Files.newOutputStream(Paths.get(folderName, fileName));
-    }
-
-
-    static String createPDFTestreport(final String templateFolder, final Path reportFolder) {
+    static String createPDFTestreport(final Path reportFolder) {
 
         try {
 
-            String[] reportNames = new String[] {
-                    "Report",
-                    "subreport_SuT",
-                    "subreport_ConformanceStatus",
-                    "subreport_TestSystem",
-                    "subreport_TestConfiguration",
-                    "subreport_BadgeSummary",
-                    "subreport_Badge",
-                    "subreport_IrForBadge",
-                    "subreport_TS",
-                    "subreport_TestCases",
-                    "subreport_IrForTc",
-                    "subreport_TcResult",
-                    "subreport_Logfile"
-            };
-
             final String pathToReports = reportFolder.toString() + File.separatorChar;
             JRDataSource jrDataSource = new JsonQLDataSource(new File(pathToReports + "Report.json"));
-            String jasperFolder = System.getProperty("java.io.tmpdir");
-            for (String reportName: reportNames)
-                compileReport(jasperFolder, templateFolder, reportName);
 
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("IVCT_BADGE_ICONS", "file:///" + Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID) + "/");
-            parameters.put("SUBREPORT_DIR", jasperFolder + File.separatorChar);
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(Paths.get(jasperFolder, "Report.jasper").toFile());
+            parameters.put("SUBREPORT_DIR", JasperTestReport.getJasperDir() + File.separatorChar);
+
+            JasperReport jasperReport = JasperTestReport.getInstance().getJasperReport();
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jrDataSource);
 
             Date time = new Date();
@@ -544,4 +509,76 @@ class TestReport {
 
         return null;
     }
+
+    private static final class JasperTestReport {
+        private static final JasperTestReport INSTANCE = new JasperTestReport();
+
+        private static final String[] REPORT_NAMES = new String[] {
+                "Report",
+                "subreport_SuT",
+                "subreport_ConformanceStatus",
+                "subreport_TestSystem",
+                "subreport_TestConfiguration",
+                "subreport_BadgeSummary",
+                "subreport_Badge",
+                "subreport_IrForBadge",
+                "subreport_TS",
+                "subreport_TestCases",
+                "subreport_IrForTc",
+                "subreport_TcResult",
+                "subreport_Logfile"
+        };
+
+        private static final Path JASPER_DIR   = Paths.get(System.getProperty("java.io.tmpdir"), "ReportTemplates", "TestReport");
+        private static final String TEMPLATE_DIR = "reportTemplate";
+
+        private boolean isCompiled;
+
+        private JasperTestReport() {}
+
+
+        public static JasperTestReport getInstance() {
+            return INSTANCE;
+        }
+
+
+        private synchronized void compileReports() throws IOException, JRException {
+            if (isCompiled)
+                return;
+
+            for (String reportName: REPORT_NAMES)
+                compileReport(reportName);
+
+            isCompiled = true;
+        }
+
+
+        private static void compileReport(String reportName) throws IOException, JRException {
+            try (OutputStream toJasper = getResourceOutputStreamFor( reportName + ".jasper"); InputStream fromJrxml = getResourceInputStreamFor( reportName + ".jrxml")) {
+                JasperCompileManager.compileReportToStream(fromJrxml, toJasper);
+            }
+        }
+
+
+        private static InputStream getResourceInputStreamFor( String fileName) {
+            return TestReport.class.getClassLoader().getResourceAsStream(TEMPLATE_DIR + '/' + fileName);
+        }
+
+
+        private static OutputStream getResourceOutputStreamFor( String fileName) throws IOException {
+            Files.createDirectories(JASPER_DIR);
+            return Files.newOutputStream(JASPER_DIR.resolve(fileName));
+        }
+
+
+        public JasperReport getJasperReport() throws JRException, IOException {
+            compileReports();
+            return (JasperReport) JRLoader.loadObject(JASPER_DIR.resolve("Report.jasper").toFile());
+        }
+        
+        public static String getJasperDir() {
+            return JASPER_DIR.toString();
+        }
+    }
+
 }

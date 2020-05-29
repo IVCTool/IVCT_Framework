@@ -123,7 +123,7 @@ public class SuTService implements ISuTService {
             return null;
         }
 
-        return TestReport.createPDFTestreport("reportTemplate", reportFolder);
+        return TestReport.createPDFTestreport(reportFolder);
     }
 
 
