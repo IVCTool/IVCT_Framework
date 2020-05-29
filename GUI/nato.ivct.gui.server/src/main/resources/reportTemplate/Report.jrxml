@@ -31,8 +31,8 @@
 					<imageExpression><![CDATA["/reportTemplate/IVCT_Logo.png"]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement x="136" y="25" width="380" height="70" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
-					<textElement textAlignment="Center">
+					<reportElement x="130" y="20" width="420" height="80" forecolor="#FFFFFF" uuid="9da09af9-f9ae-4f73-a101-c8848c43e936"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
 						<font size="22" isBold="true"/>
 					</textElement>
 					<text><![CDATA[NATO Simulation Interoperability Test and Certification Report]]></text>

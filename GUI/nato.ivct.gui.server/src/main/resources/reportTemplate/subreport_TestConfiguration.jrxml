@@ -57,11 +57,11 @@
 				<textFieldExpression><![CDATA[$F{Federation}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="429" y="27" width="126" height="20" uuid="27ad295f-e287-4058-a7ac-9e4500c58981">
+				<reportElement x="429" y="30" width="126" height="17" uuid="27ad295f-e287-4058-a7ac-9e4500c58981">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{SettingsDesignator}]]></textFieldExpression>
