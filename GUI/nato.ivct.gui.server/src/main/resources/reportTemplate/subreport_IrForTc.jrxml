@@ -35,7 +35,7 @@
 				</staticText>
 			</frame>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="9" width="70" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="a3943fab-9755-41a2-bb73-46f7cbe8a224">
+				<reportElement mode="Opaque" x="0" y="9" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="a3943fab-9755-41a2-bb73-46f7cbe8a224">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
 				</reportElement>
@@ -46,7 +46,7 @@
 				<text><![CDATA[Id]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="80" y="9" width="474" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="b4268b71-db0c-44e6-b24e-10a5b892dd7a">
+				<reportElement mode="Opaque" x="90" y="9" width="464" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="b4268b71-db0c-44e6-b24e-10a5b892dd7a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
 				</reportElement>
@@ -61,7 +61,7 @@
 	<detail>
 		<band height="19">
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="0" y="4" width="70" height="15" backcolor="#E6E6E6" uuid="e065c216-6cf8-438a-acb6-a82a3e9c9592">
+				<reportElement mode="Opaque" x="0" y="4" width="80" height="15" backcolor="#E6E6E6" uuid="e065c216-6cf8-438a-acb6-a82a3e9c9592">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -74,7 +74,7 @@
 				<textFieldExpression><![CDATA[$F{IrId}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="80" y="4" width="474" height="15" backcolor="#E6E6E6" uuid="6cc95faa-50ed-4f9a-823f-2b9e20b49be4">
+				<reportElement mode="Opaque" x="90" y="4" width="464" height="15" backcolor="#E6E6E6" uuid="6cc95faa-50ed-4f9a-823f-2b9e20b49be4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>

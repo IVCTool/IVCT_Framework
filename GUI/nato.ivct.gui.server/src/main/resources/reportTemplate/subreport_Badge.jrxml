@@ -78,7 +78,7 @@
 				</textField>
 			</frame>
 			<staticText>
-				<reportElement mode="Opaque" x="90" y="156" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="649a5338-be74-491e-a5f8-537a43bc2291">
+				<reportElement mode="Opaque" x="90" y="156" width="90" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="649a5338-be74-491e-a5f8-537a43bc2291">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
 				</reportElement>
@@ -89,7 +89,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="180" y="156" width="375" height="20" backcolor="#E6E6E6" uuid="9a0bbcca-7be4-412c-b7c6-89c0b4556cdd">
+				<reportElement mode="Opaque" x="190" y="156" width="365" height="20" backcolor="#E6E6E6" uuid="9a0bbcca-7be4-412c-b7c6-89c0b4556cdd">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -102,7 +102,7 @@
 				<textFieldExpression><![CDATA[$F{BadgeDescription}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="90" y="130" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="303e7f31-648c-43eb-8b4a-088e36472c39">
+				<reportElement mode="Opaque" x="90" y="130" width="90" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="303e7f31-648c-43eb-8b4a-088e36472c39">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -114,7 +114,7 @@
 				<text><![CDATA[Version]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="180" y="130" width="375" height="20" backcolor="#E6E6E6" uuid="186c3dc5-be8a-44a1-adf0-a492b6426fce">
+				<reportElement mode="Opaque" x="190" y="130" width="365" height="20" backcolor="#E6E6E6" uuid="186c3dc5-be8a-44a1-adf0-a492b6426fce">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -126,7 +126,7 @@
 				<textFieldExpression><![CDATA[$F{BadgeVersion}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="90" y="105" width="80" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="061ebcb3-f0e4-4565-8589-2f73bbe1749e">
+				<reportElement mode="Opaque" x="90" y="105" width="90" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="061ebcb3-f0e4-4565-8589-2f73bbe1749e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -138,7 +138,7 @@
 				<text><![CDATA[Id]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
-				<reportElement mode="Opaque" x="180" y="105" width="375" height="20" backcolor="#E6E6E6" uuid="8495f612-687f-4ddb-9000-f55ad694b98f">
+				<reportElement mode="Opaque" x="190" y="105" width="365" height="20" backcolor="#E6E6E6" uuid="8495f612-687f-4ddb-9000-f55ad694b98f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
