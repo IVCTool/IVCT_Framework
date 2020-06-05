@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.sut;
 
 import java.io.File;
@@ -40,7 +54,7 @@ import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 public class SuTService implements ISuTService {
 
-    private static final Logger             LOG    = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger             LOG    = LoggerFactory.getLogger(SuTService.class);
     private HashMap<String, SutDescription> sutMap = null;
 
     @Override
@@ -345,7 +359,6 @@ public class SuTService implements ISuTService {
 
     private void updateSutMap(final SutDescription sut) {
         LOG.info("update sutMap attribute");
-        // TODO must be better re-written!
         CmdListSuT sutCmd = new CmdListSuT();
         sutCmd.execute();
         sutMap = sutCmd.sutMap;

@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.sut;
 
 import java.io.ByteArrayInputStream;
@@ -10,9 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
@@ -20,15 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.Factory;
-import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.ISuTCbService;
-import nato.ivct.gui.shared.sut.SuTCbNodePageData;
 
 
 public class SuTCbService implements ISuTCbService {
-    private static final Logger                       LOG    = LoggerFactory.getLogger(ServerSession.class);
-    private static HashMap<String, SuTCbNodePageData> cap_hm = new HashMap<>();
-
+    private static final Logger                       LOG    = LoggerFactory.getLogger(SuTCbService.class);
+    
     @Override
     public BinaryResource getFileContent(final String sutId, final String tsId, final String fileName) {
         BinaryResource fileContent = null;

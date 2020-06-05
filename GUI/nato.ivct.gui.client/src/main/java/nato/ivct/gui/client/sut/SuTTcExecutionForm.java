@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client.sut;
 
 import java.util.List;
@@ -32,8 +46,6 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
-
-import com.google.common.base.Optional;
 
 import nato.ivct.commander.CmdOperatorConfirmation;
 import nato.ivct.commander.Factory;
@@ -84,8 +96,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
     @FormData
-    public void setSutId(final String _sutId) {
-        sutId = _sutId;
+    public void setSutId(final String sutId) {
+        this.sutId = sutId;
     }
 
 
@@ -96,8 +108,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
     @FormData
-    public void setBadgeId(final String _badgeId) {
-        badgeId = _badgeId;
+    public void setBadgeId(final String badgeId) {
+        this.badgeId = badgeId;
     }
 
 
@@ -108,8 +120,8 @@ public class SuTTcExecutionForm extends AbstractForm {
 
 
     @FormData
-    public void setTestsuiteId(final String _testsuiteId) {
-        testsuiteId = _testsuiteId;
+    public void setTestsuiteId(final String testsuiteId) {
+        this.testsuiteId = testsuiteId;
     }
 
 
@@ -873,7 +885,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     return;
                 }
 
-                // hide TC execute button if the same testcase is already executed
+                // hide TC execute button if the same test case is already executed
                 final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
                 List<SuTTcExecutionForm> forms = desktop.findForms(SuTTcExecutionForm.class);
                 if (forms.stream().filter(form -> form.getSutId().equalsIgnoreCase(getSutId()) && form.getTestCaseId().equalsIgnoreCase(getTestCaseId())).anyMatch(form -> !form.getTcExecutionButton().isVisible())) {

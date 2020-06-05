@@ -16,7 +16,6 @@ public class SuTBadgeTablePageData extends AbstractTablePageData {
 
     private static final long serialVersionUID = 1L;
 
-
     @Override
     public SuTBadgeTableRowData addRow() {
         return (SuTBadgeTableRowData) super.addRow();
@@ -68,7 +67,6 @@ public class SuTBadgeTablePageData extends AbstractTablePageData {
         private String             m_badgeName;
         private String             m_badgeDesc;
         private String             m_suTBadgeResult;
-
 
         public String getBadgeId() {
             return m_badgeId;

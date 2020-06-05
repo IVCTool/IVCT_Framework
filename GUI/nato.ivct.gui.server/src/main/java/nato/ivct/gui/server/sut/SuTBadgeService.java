@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.sut;
 
 import java.util.Comparator;
@@ -12,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.BadgeDescription;
 import nato.ivct.commander.SutDescription;
-import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.server.cb.CbService;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.sut.ISuTBadgeService;
@@ -22,10 +35,10 @@ import nato.ivct.gui.shared.sut.SuTBadgeTablePageData.SuTBadgeTableRowData;
 
 public class SuTBadgeService implements ISuTBadgeService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
-	private static HashMap<String, SuTBadgeTablePageData> badge_hm = new HashMap<String, SuTBadgeTablePageData>();
+	private static final Logger LOG = LoggerFactory.getLogger(SuTBadgeService.class);
+	private static HashMap<String, SuTBadgeTablePageData> badgeHm = new HashMap<>();
 	
-	private static Set<BadgeDescription> m_collectedBadges = new TreeSet<>(Comparator.comparing(bdDesc -> bdDesc.name));
+	private static Set<BadgeDescription> mCollectedBadges = new TreeSet<>(Comparator.comparing(bdDesc -> bdDesc.name));
 
 	
 	/*
@@ -34,17 +47,17 @@ public class SuTBadgeService implements ISuTBadgeService {
 	@Override
 	public SuTBadgeTablePageData getSuTBadgeTableData(SearchFilter filter) {
 		String[] searchText = filter.getDisplayTexts();
-		SuTBadgeTablePageData pageData = badge_hm.get (searchText);
+		SuTBadgeTablePageData pageData = badgeHm.get (searchText);
 		if (pageData == null) {
 			pageData = new SuTBadgeTablePageData();
 		}
 
 		LOG.info("getBadgeTableData");
 		SutDescription sutDesc = ((SuTService) BEANS.get(ISuTService.class)).getSutDescription(searchText[0]);
-		m_collectedBadges.clear();
+		mCollectedBadges.clear();
 		collectBadgesForSut (sutDesc);
 		
-		for (BadgeDescription bd:m_collectedBadges) {
+		for (BadgeDescription bd:mCollectedBadges) {
 			SuTBadgeTableRowData row = pageData.addRow();
 			row.setBadgeId(bd.ID);
 			row.setBadgeName(bd.name);
@@ -52,14 +65,14 @@ public class SuTBadgeService implements ISuTBadgeService {
 			row.setSuTBadgeResult("no result");
 		}
 		
-		badge_hm.put(sutDesc.ID, pageData);
+		badgeHm.put(sutDesc.ID, pageData);
 		return pageData;
 	}
 	
 	private void collectBadgesForSut(final SutDescription sut) {
-		CbService cbService = (CbService) BEANS.get(CbService.class);
+		CbService cbService = BEANS.get(CbService.class);
 		
-		sut.badges.stream().map(cbService::getBadgeDescription).forEach(badgeDescription -> addBadgeToCollection (badgeDescription, m_collectedBadges));
+		sut.badges.stream().map(cbService::getBadgeDescription).forEach(badgeDescription -> addBadgeToCollection (badgeDescription, mCollectedBadges));
 		
 	}
 	

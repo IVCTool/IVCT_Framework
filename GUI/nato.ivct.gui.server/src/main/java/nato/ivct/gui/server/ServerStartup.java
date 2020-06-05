@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -164,8 +178,7 @@ public class ServerStartup implements IPlatformListener {
             (tcOperatorListener = Factory.createCmdStartOperatorRequestListener(new OperatorRequestListener())).execute();
 
             LOG.info("start heartbeat Listener");
-            //      new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
-            //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+
             new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
             new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
         }

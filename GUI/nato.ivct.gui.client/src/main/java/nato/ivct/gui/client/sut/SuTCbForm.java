@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client.sut;
 
 import java.util.ArrayList;
@@ -95,7 +109,7 @@ public class SuTCbForm extends AbstractForm {
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
     // unique table row ID generator
-    private final AtomicLong m_nextRowId = new AtomicLong();
+    private final AtomicLong mNextRowId = new AtomicLong();
 
     @Override
     protected String getConfiguredTitle() {
@@ -163,8 +177,8 @@ public class SuTCbForm extends AbstractForm {
 
 
     @FormData
-    public void setCbId(final String _cbId) {
-        cbId = _cbId;
+    public void setCbId(final String cbId) {
+        this.cbId = cbId;
     }
 
 
@@ -175,8 +189,8 @@ public class SuTCbForm extends AbstractForm {
 
 
     @FormData
-    public void setSutId(final String _sutId) {
-        sutId = _sutId;
+    public void setSutId(final String sutId) {
+        this.sutId = sutId;
     }
 
 
@@ -187,8 +201,8 @@ public class SuTCbForm extends AbstractForm {
 
 
     @FormData
-    public void setActiveTsId(String _activeTsId) {
-        activeTsId = _activeTsId;
+    public void setActiveTsId(String activeTsId) {
+        this.activeTsId = activeTsId;
     }
 
     @Order(1000)
@@ -220,7 +234,7 @@ public class SuTCbForm extends AbstractForm {
                 return 0.45;
             }
 
-            // Box for testsuites and their fulfilled requirements
+            // Box for test suites and their fulfilled requirements
             @Order(1000)
             public class TestsuiteBox extends AbstractGroupBox {
                 @Override
@@ -599,7 +613,7 @@ public class SuTCbForm extends AbstractForm {
                         private ITableRow addElementToTable(final ITableRow parentRow, final String key, final String value) {
                             final SuTTcParameterTable table = getTable();
                             final ITableRow row = table.createRow();
-                            table.getIdColumn().setValue(row, m_nextRowId.getAndIncrement());
+                            table.getIdColumn().setValue(row, mNextRowId.getAndIncrement());
                             table.getParentIdColumn().setValue(row, Optional.ofNullable(parentRow).map(r -> table.getIdColumn().getValue(parentRow)).orElse(null));
                             table.getParameterNameColumn().setValue(row, key);
                             table.getParameterValueColumn().setValue(row, value);
@@ -616,7 +630,7 @@ public class SuTCbForm extends AbstractForm {
                             final ColumnSet cols = table.getColumnSet();
                             final ITableRow row = new TableRow(cols);
 
-                            row.getCellForUpdate(table.getIdColumn()).setValue(m_nextRowId.getAndIncrement());
+                            row.getCellForUpdate(table.getIdColumn()).setValue(mNextRowId.getAndIncrement());
                             row.getCellForUpdate(table.getParentIdColumn()).setValue(Optional.ofNullable(table.getIdColumn().getValue(parent)).orElse(null));
 
                             table.addRow(row, true);
@@ -812,7 +826,6 @@ public class SuTCbForm extends AbstractForm {
 
                                     @Override
                                     protected void execAction() {
-                                        // TODO Auto-generated method stub
                                         super.execAction();
                                     }
                                 }
@@ -833,7 +846,6 @@ public class SuTCbForm extends AbstractForm {
 
                                     @Override
                                     protected void execAction() {
-                                        // TODO Auto-generated method stub
                                         super.execAction();
                                     }
                                 }
@@ -854,7 +866,6 @@ public class SuTCbForm extends AbstractForm {
 
                                     @Override
                                     protected void execAction() {
-                                        // TODO Auto-generated method stub
                                         super.execAction();
                                     }
                                 }
@@ -875,7 +886,6 @@ public class SuTCbForm extends AbstractForm {
 
                                     @Override
                                     protected void execAction() {
-                                        // TODO Auto-generated method stub
                                         super.execAction();
                                     }
                                 }
@@ -1042,7 +1052,7 @@ public class SuTCbForm extends AbstractForm {
                             @Override
                             protected void execRowsSelected(List<? extends ITableRow> rows) {
                                 if (rows.size() == 1) {
-                                    // set downlowad menu visible
+                                    // set download menu visible
                                     getMenuByClass(FileDownloadMenu.class).setVisible(true);
                                     getMenuByClass(FileDeleteMenu.class).setVisible(true);
                                 }

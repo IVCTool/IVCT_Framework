@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.ts;
 
 import java.util.HashMap;
@@ -28,7 +42,7 @@ import nato.ivct.gui.shared.ts.TsFormData.TsRequirementsTable.TsRequirementsTabl
 
 public class TsService implements ITsService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TsService.class);
 
     private CmdListTestSuites tsCmd = null;
 
@@ -66,7 +80,7 @@ public class TsService implements ITsService {
         formData.getTsVersion().setValue(ts.version);
         formData.getTsDescription().setValue(ts.description);
 
-        // load test case list of this testsuite
+        // load test case list of this test suite
         final TcTable tcTable = formData.getTcTable();
         ts.testcases.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEachOrdered(tc -> {
             final TcTableRowData row = tcTable.addRow();
@@ -120,7 +134,7 @@ public class TsService implements ITsService {
 
     @Override
     public HashMap<String, String> getIrForTc(String tcId) {
-        final HashMap<String, String> irList = new HashMap<String, String>();
+        final HashMap<String, String> irList = new HashMap<>();
         final Set<String> irs = tsCmd.getIrForTc(tcId);
 
         irs.stream().sorted().forEach(irId -> irList.put(irId, BEANS.get(CbService.class).getIrDescription(irId).description));

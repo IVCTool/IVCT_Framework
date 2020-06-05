@@ -1,9 +1,21 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +51,6 @@ import nato.ivct.commander.Factory;
 public class ServerSession extends AbstractServerSession {
 
     private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$");
-    private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
 
     private static final String RESULTS_FILE_NAME = "Results";
     private static final String RESULTS_FILE_EXT = "json";
@@ -88,7 +99,7 @@ public class ServerSession extends AbstractServerSession {
     }
 
     /*
-     * Load Testsuite descriptions job
+     * Load Test suite descriptions job
      */
     public class LoadTestSuiteDescriptions implements Callable<CmdListTestSuites> {
 
@@ -131,7 +142,6 @@ public class ServerSession extends AbstractServerSession {
         @SuppressWarnings("unchecked")
         private void parseJsonResultFile(final String sutId, final String resultFile, final SutTcResultDescription sutTcResults) {
             final String TCRESULTS_KW = "TcResults";
-            final String TESTSUITE_KW = "TestSuite";
             final String VERDICT_KW = "Verdict";
             final String LOGFILEPATH_KW = "LogFilePath";
 
@@ -176,7 +186,7 @@ public class ServerSession extends AbstractServerSession {
          * Parse the verdict string of a report file
          * @param line the line to parse
          * @return a String array with 4 element with: [0]: extended test case name [1]:
-         * verdict [2]: testsuite (or badge) id [3]: log file name
+         * verdict [2]: test suite (or badge) id [3]: log file name
          */
         private String[] parseVerdictLine(final String line) {
             final Matcher matcher = RESULT_EXP.matcher(line);
@@ -201,13 +211,13 @@ public class ServerSession extends AbstractServerSession {
         private final String federationName;
         private final String federateName;
 
-        public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
-            sut = _sut;
-            tc = _tc;
-            badge = _badge;
-            settingsDesignator = _settingsDesignator;
-            federationName = _federationName;
-            federateName = _federateName;
+        public ExecuteTestCase(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
+            this.sut = sut;
+            this.tc = tc;
+            this.badge = badge;
+            this.settingsDesignator = settingsDesignator;
+            this.federationName = federationName;
+            this.federateName = federateName;
         }
 
 

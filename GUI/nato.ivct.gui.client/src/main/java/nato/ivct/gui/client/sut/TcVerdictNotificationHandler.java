@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis, Felix Schöppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client.sut;
 
 import java.util.Objects;
@@ -43,7 +57,7 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                 final IOutline outline = desktop.getOutline();
                 if (outline instanceof SuTOutline) {
                     desktop.findForms(SuTTcExecutionForm.class).stream().filter(form -> form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())).forEach(form -> {
-                        logger.trace("Test Case Notification " + notification.getVerdict() + " received for TC " + notification.getTcId() + "and SuT " + notification.getSutId());
+                        logger.trace("Test Case Notification {}", notification.getVerdict() + " received for TC " + notification.getTcId() + "and SuT " + notification.getSutId());
 
                         // set verdict
                         form.setTestCaseVerdict(notification.getVerdict());
@@ -80,10 +94,6 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
 
                         // set execution status color of the tc tile
                         setTcVerdictColor(form.getSutId(), form.getBadgeId(), form.getTestsuiteId(), form.getTestCaseId(), notification.getVerdict());
-
-                        // remove filter to show all log files
-                        //	                    final TcExecutionHistoryTable tbl = form.getTcExecutionHistoryTableField().getTable();
-                        //	                    tbl.getUserFilterManager().removeFilterByKey(tbl.getTcVerdictColumn().getColumnId());
 
                         // show TC Execution History Table after TC execution
                         form.getTcExecutionHistoryTableField().setVisible(true);

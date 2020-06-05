@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.ui.html;
 
 import java.io.IOException;
@@ -28,17 +42,17 @@ import org.eclipse.scout.rt.server.commons.authentication.TrivialAccessControlle
  */
 public class UiServletFilter implements Filter {
 
-	private TrivialAccessController m_trivialAccessController;
-	private FormBasedAccessController m_formBasedAccessController;
-	private DevelopmentAccessController m_developmentAccessController;
+	private TrivialAccessController mTrivialAccessController;
+	private FormBasedAccessController mFormBasedAccessController;
+	private DevelopmentAccessController mDevelopmentAccessController;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		m_trivialAccessController = BEANS.get(TrivialAccessController.class).init(new TrivialAuthConfig()
+		mTrivialAccessController = BEANS.get(TrivialAccessController.class).init(new TrivialAuthConfig()
 				.withExclusionFilter(filterConfig.getInitParameter("filter-exclude")).withLoginPageInstalled(true));
-		m_formBasedAccessController = BEANS.get(FormBasedAccessController.class)
+		mFormBasedAccessController = BEANS.get(FormBasedAccessController.class)
 				.init(new FormBasedAuthConfig().withCredentialVerifier(BEANS.get(ConfigFileCredentialVerifier.class)));
-		m_developmentAccessController = BEANS.get(DevelopmentAccessController.class).init();
+		mDevelopmentAccessController = BEANS.get(DevelopmentAccessController.class).init();
 	}
 
 	@Override
@@ -47,15 +61,15 @@ public class UiServletFilter implements Filter {
 		final HttpServletRequest req = (HttpServletRequest) request;
 		final HttpServletResponse resp = (HttpServletResponse) response;
 
-		if (m_trivialAccessController.handle(req, resp, chain)) {
+		if (mTrivialAccessController.handle(req, resp, chain)) {
 			return;
 		}
 
-		if (m_formBasedAccessController.handle(req, resp, chain)) {
+		if (mFormBasedAccessController.handle(req, resp, chain)) {
 			return;
 		}
 
-		if (m_developmentAccessController.handle(req, resp, chain)) {
+		if (mDevelopmentAccessController.handle(req, resp, chain)) {
 			return;
 		}
 
@@ -64,8 +78,8 @@ public class UiServletFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		m_developmentAccessController.destroy();
-		m_formBasedAccessController.destroy();
-		m_trivialAccessController.destroy();
+		mDevelopmentAccessController.destroy();
+		mFormBasedAccessController.destroy();
+		mTrivialAccessController.destroy();
 	}
 }
