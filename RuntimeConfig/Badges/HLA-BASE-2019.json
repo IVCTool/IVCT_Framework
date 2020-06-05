@@ -3,7 +3,7 @@
     "version": "2.0.0",
     "name": "HLA Basic Test 2019",
     "description": "Basic CS/SOM and Best Practices compliance",
-    "graphics": "HLA-Base-2019.png",
+    "graphics": "HLA-BASE-2019.png",
     "dependency": [],
     "requirements": [{
             "id": "IR-DOC-0001",
