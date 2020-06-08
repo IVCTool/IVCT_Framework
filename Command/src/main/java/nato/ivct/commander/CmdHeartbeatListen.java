@@ -1,6 +1,4 @@
-/*
-Copyright 2019, brf (Fraunhofer IOSB)
-(v  26.11.2019) 
+/* Copyright 2020, brf (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -12,10 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-
+limitations under the License. */
 
 package nato.ivct.commander;
 
@@ -50,7 +45,6 @@ public class CmdHeartbeatListen implements MessageListener, Command {
 
   // Organize return mechanism (the client has to implement this interface.)
   public interface OnCmdHeartbeatListen {
-    // public void hearHeartbeat(String backInfo);
     public void hearHeartbeat(JSONObject backJson);
   }
 
@@ -68,10 +62,10 @@ public class CmdHeartbeatListen implements MessageListener, Command {
   // for this we use 2 maps :  lastTimestampsMap and jsonObjectsMap
 
   // a data structure to insert different timestamps
-  HashMap<String, Timestamp> lastTimestampsMap = new HashMap<String, Timestamp>();
+  HashMap<String, Timestamp> lastTimestampsMap = new HashMap<>();
 
   // a data structure to insert different JsonObjects
-  HashMap<String, JSONObject> jsonObjectsMap = new HashMap<String, JSONObject>();
+  HashMap<String, JSONObject> jsonObjectsMap = new HashMap<>();
 
   // the referenz to the caller
   private OnCmdHeartbeatListen querryClient;
@@ -81,9 +75,9 @@ public class CmdHeartbeatListen implements MessageListener, Command {
   }
 
   // the client can use this with a special HeartbeatSender to observe
-  public CmdHeartbeatListen(OnCmdHeartbeatListen caller, String _desiredHeartBeatSenderClass) {
+  public CmdHeartbeatListen(OnCmdHeartbeatListen caller, String desiredHeartBeatSenderClass) {
     this.querryClient = caller;
-    this.desiredHeartBeatSenderClass = _desiredHeartBeatSenderClass;
+    this.desiredHeartBeatSenderClass = desiredHeartBeatSenderClass;
   }
     
   @Override
@@ -160,13 +154,13 @@ public class CmdHeartbeatListen implements MessageListener, Command {
             //logger.debug("in Monitor HB_Sender is now : " + timestampEintrag.getKey()); // Debug
 
             // get the HB_Sender for this message
-            String tempHB_Sender = timestampEntry.getKey();
+            String tempHBSender = timestampEntry.getKey();
 
             // get the incomming timestamp of this message
             Timestamp myLast = timestampEntry.getValue();
 
             // get the JsonObject with the message for this HB_Sender from the jsonObjectsMap
-            JSONObject myJsonObject = getJsonObjectsMap().get(tempHB_Sender);
+            JSONObject myJsonObject = getJsonObjectsMap().get(tempHBSender);
 
             // get the intended Sending-Period of the Message-Sender
             long mySendingPeriod = (long) myJsonObject.get(CmdHeartbeatSend.HB_LASTSENDINGPERIOD);          
@@ -210,11 +204,11 @@ public class CmdHeartbeatListen implements MessageListener, Command {
     
     
   // give the enhanced json-object back to the caller
-  public void sendbackToQuerryClient(JSONObject _myJsonObject) {
+  public void sendbackToQuerryClient(JSONObject myJsonObject) {
     if (querryClient != null) {
       // querryClient.hearHeartbeat(content);                  // the simple Text Message
       // querryClient.hearHeartbeat(myJsonObject.toString());  // the json object as a String
-      querryClient.hearHeartbeat(_myJsonObject);               // giving back a jsonObject
+      querryClient.hearHeartbeat(myJsonObject);               // giving back a jsonObject
 
       } else {
         logger.warn("In CmdHeartbeatListener Monitor  client is null !!!!");

@@ -1,6 +1,4 @@
-/*
-Copyright 2019, brf (Fraunhofer IOSB)
-(v  07.01.2020)
+/* Copyright 2020, brf (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -12,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
-*/
+limitations under the License. */
 
 package nato.ivct.commander;
 
@@ -62,10 +59,10 @@ public class CmdHeartbeatSend  implements Command {
     private OnCmdHeartbeatSend sender;
     
       
-    public CmdHeartbeatSend(OnCmdHeartbeatSend _sender) {
+    public CmdHeartbeatSend(OnCmdHeartbeatSend sender) {
         Factory.initialize();
         logProducer = Factory.createTopicProducer(HB_MSG_TOPIC);
-        this.sender=_sender;
+        this.sender=sender;
     }
         
     
@@ -115,8 +112,8 @@ public class CmdHeartbeatSend  implements Command {
                     
                     //logger.info("### CmdHeartbeatSend.execute is sending: "+heartbeatjson.toString()); // Debug                    
                     
-                } catch (Exception ex) {
-                    logger.error("could not send command: " + ex);
+                } catch (Exception exc) {
+                    logger.error("could not send command: ", exc);
                 }
             }
         }, 0, 5000);

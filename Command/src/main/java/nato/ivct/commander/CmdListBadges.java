@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public class CmdListBadges implements Command {
         }
     }
 
-    public void collectIrForCs(Set<String> ir_set, Set<String> cs) {
+    public void collectIrForCs(Set<String> irSet, Set<String> cs) {
         if (this.badgeMap == null) {
             return;
         }
@@ -144,10 +144,10 @@ public class CmdListBadges implements Command {
             }
             // collect badge requirements
             for (Map.Entry<String, InteroperabilityRequirement> entry : b.requirements.entrySet()) {
-                ir_set.add(entry.getKey());
+                irSet.add(entry.getKey());
             }
             // collect recursively from dependend badges
-            collectIrForCs(ir_set, b.dependency);
+            collectIrForCs(irSet, b.dependency);
         }
     }
     

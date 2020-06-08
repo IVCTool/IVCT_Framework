@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.commander;
 
 import javax.jms.JMSException;
@@ -45,7 +59,7 @@ public class CmdLogMsgListener implements Command, MessageListener {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				Factory.LOGGER.trace("JMS Message received: " + content);
+				Factory.LOGGER.trace("JMS Message received: {}", content);
 				try {
 					final JSONParser jsonParser = new JSONParser();
 					final LogMsg msg = new LogMsg();
@@ -62,12 +76,11 @@ public class CmdLogMsgListener implements Command, MessageListener {
 						msg.txt = (String) jsonObject.get(CmdSendLogMsg.LOG_MSG_EVENT);
 						listener.onLogMsg(msg);
 					}
-				} catch (final ParseException e) {
-					e.printStackTrace();
-					Factory.LOGGER.error("onMessage: ", e);
+				} catch (final ParseException exc) {
+					Factory.LOGGER.error("onMessage: ", exc);
 				}
-			} catch (final JMSException e) {
-				Factory.LOGGER.error("onMessage: problems with getText", e);
+			} catch (final JMSException exc) {
+				Factory.LOGGER.error("onMessage: problems with getText", exc);
 			}
 		}
 

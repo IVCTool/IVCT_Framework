@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.commander;
 
 import static org.junit.Assert.assertTrue;
@@ -50,12 +64,12 @@ public class TestCmdListBadges {
     @Test
     public void testCollectIrForCs() {
 
-        Set<String> ir_set = new HashSet<String>();
-        Set<String> cs = new HashSet<String>();
+        Set<String> irSet = new HashSet<>();
+        Set<String> cs = new HashSet<>();
         cs.add("HelloWorld-2019");
         cs.add("HLA-BASE-2019");
-        this.lb.collectIrForCs(ir_set, cs);
-        assertTrue("interoperability set should not be empty", ir_set.size() > 0);
+        this.lb.collectIrForCs(irSet, cs);
+        assertTrue("interoperability set should not be empty", irSet.size() > 0);
     }
 
 

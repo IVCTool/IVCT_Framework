@@ -1,4 +1,4 @@
-/* Copyright 2019, Johannes Mulder (Fraunhofer IOSB)
+/* Copyright 2020, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public class CmdOperatorConfirmation implements Command {
 		}
 		operatorConfirmationCmd.put(TEXT, text);
 		
-		LOGGER.info("operatorConfirmation Command: " + operatorConfirmationCmd.toString());
+		LOGGER.info("operatorConfirmation Command: {}", operatorConfirmationCmd);
 
 		// send the OperatorConfirmation message
 		Factory.sendToJms(operatorConfirmationCmd.toString());

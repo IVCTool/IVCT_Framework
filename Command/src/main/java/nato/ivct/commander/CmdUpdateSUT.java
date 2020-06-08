@@ -1,13 +1,17 @@
-/*
- * Copyright 2018, Johannes Mulder (Fraunhofer IOSB) Licensed under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.commander;
 
 import java.io.BufferedInputStream;
@@ -69,8 +73,8 @@ public class CmdUpdateSUT {
         try {
             cmdListTestSuites.execute();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception exc) {
+            logger.error("", exc);
         }
     }
 
@@ -265,23 +269,23 @@ public class CmdUpdateSUT {
         if (myTestsuiteURLs == null) {
             TestSuiteDescription tsd = cmdListTestSuites.testsuites.get(ts);
             if (tsd != null) {
-                String ts_path = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID);
-                logger.trace(ts_path);
+                String tsPath = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID);
+                logger.trace(tsPath);
                 if (tsd.tsLibTimeFolder != null) {
-                    String lib_path = ts_path + "/" + tsd.tsLibTimeFolder;
-                    logger.trace(lib_path);
-                    File dir = new File(lib_path);
+                    String libPath = tsPath + "/" + tsd.tsLibTimeFolder;
+                    logger.trace(libPath);
+                    File dir = new File(libPath);
                     File[] filesList = dir.listFiles();
                     if (filesList == null) {
-                        throw new Exception("getTestsuiteUrls: no testsuites found in: " + lib_path);
+                        throw new Exception("getTestsuiteUrls: no testsuites found in: " + libPath);
                     }
                     URL[] urls = new URL[filesList.length];
                     for (int i = 0; i < filesList.length; i++) {
                         try {
                             urls[i] = filesList[i].toURI().toURL();
                         }
-                        catch (MalformedURLException e) {
-                            e.printStackTrace();
+                        catch (MalformedURLException exc) {
+                            logger.error("", exc);
                         }
                     }
                     testsuiteURLs.put(ts, urls);
@@ -365,8 +369,8 @@ public class CmdUpdateSUT {
                     }
                 }
             }
-            catch (IOException e) {
-                e.printStackTrace();
+            catch (IOException exc) {
+                logger.error("", exc);
                 throw new Exception("extractResource: IOException");
             }
         }

@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class FactoryTest {
 	@Test
 	public void testCreateCmdQuitMethod() {
 		CmdQuit qc = Factory.createCmdQuit();
-		assertTrue("Factory Test createCmdQuit should return CmdQuit", qc != null);
+		assertTrue("Factory Test createCmdQuit should return CmdQuit {}", qc != null);
 		qc.execute();
 	}
 

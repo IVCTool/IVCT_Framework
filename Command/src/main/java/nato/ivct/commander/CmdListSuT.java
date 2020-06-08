@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -59,11 +59,11 @@ public class CmdListSuT implements Command {
     @Override
     public void execute() {
         File dir = new File(Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID));
-        Factory.LOGGER.debug("searching in " + dir.getAbsolutePath());
+        Factory.LOGGER.debug("searching in {}", dir.getAbsolutePath());
         File[] filesList = dir.listFiles();
         for (File file : filesList) {
             if (file.isDirectory()) {
-                Factory.LOGGER.debug("entering directory " + file.getAbsolutePath());
+                Factory.LOGGER.debug("entering directory {}", file.getAbsolutePath());
                 FileReader fReader = null;
                 Object obj;
                 JSONParser parser = new JSONParser();
@@ -117,15 +117,15 @@ public class CmdListSuT implements Command {
                         sut.badges.add(cs.get(i).toString());
                     }
                     this.sutMap.put(sut.ID, sut);
-                    Factory.LOGGER.debug("found SuT description: " + sut.toString());
-                } catch (IOException | ParseException e) {
-                    e.printStackTrace();
+                    Factory.LOGGER.debug("found SuT description: {}", sut);
+                } catch (IOException | ParseException exc) {
+                    Factory.LOGGER.error("", exc);
                 } finally {
                     if (fReader != null) {
                         try {
                             fReader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } catch (IOException exc) {
+                            Factory.LOGGER.error("", exc);
                         }
                     }
                     SutDescription sut = readSUTdescription(file);
@@ -134,7 +134,7 @@ public class CmdListSuT implements Command {
                     }
                 }
             } else {
-                Factory.LOGGER.error(file.getName() + " should be a folder");
+                Factory.LOGGER.error("Should be a folder {}", file.getName());
             }
         }
     }
@@ -199,14 +199,14 @@ public class CmdListSuT implements Command {
                 sut.badges.add(cs.get(i).toString());
             }
             this.sutMap.put(sut.ID, sut);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
+        } catch (IOException | ParseException exc) {
+            Factory.LOGGER.error("", exc);
         } finally {
             if (fReader != null) {
                 try {
                     fReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exc) {
+                    Factory.LOGGER.error("", exc);
                     return null;
                 }
             }

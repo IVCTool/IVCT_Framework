@@ -1,4 +1,4 @@
-/* Copyright 2017, Johannes Mulder (Fraunhofer IOSB)
+/* Copyright 2020, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class CmdOperatorRequestListener implements MessageListener, Command {
 					String commandTypeName = (String) jsonObject.get(CmdOperatorRequest.COMMAND_ID);
 
 					if (commandTypeName.equals(CmdOperatorRequest.COMMAND)) {
-						Factory.LOGGER.trace("JMS Message received: " + content);
+						Factory.LOGGER.trace("JMS Message received: {}", content);
 						OperatorRequestInfo info = new OperatorRequestInfo();
 
                         info.sutName = (String) jsonObject.get(CmdOperatorRequest.SUT_NAME);
@@ -69,7 +69,7 @@ public class CmdOperatorRequestListener implements MessageListener, Command {
                         info.testCaseId = (String) jsonObject.get(CmdOperatorRequest.TC_ID);
                         info.text = (String) jsonObject.get(CmdOperatorRequest.TEXT);
 
-						Factory.LOGGER.info("CmdOperatorRequestListener Command received: " + jsonObject.toString());
+						Factory.LOGGER.info("CmdOperatorRequestListener Command received: {}", jsonObject);
 
 						// check for missing values
                         if (info.testCaseId == null) Factory.LOGGER.error("testCaseId is missing");
@@ -78,13 +78,12 @@ public class CmdOperatorRequestListener implements MessageListener, Command {
 						listener.onOperatorRequest(info);
 					}
 
-				} catch (ParseException e) {
-					e.printStackTrace();
-					Factory.LOGGER.error("onMessage: ", e);
+				} catch (ParseException exc) {
+					Factory.LOGGER.error("onMessage: ", exc);
 				}
 
-			} catch (final JMSException e) {
-				Factory.LOGGER.error("onMessage: problems with getText", e);
+			} catch (final JMSException exc) {
+				Factory.LOGGER.error("onMessage: problems with getText ", exc);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-/* Copyright 2019, Johannes Mulder (Fraunhofer IOSB)
+/* Copyright 2020, Johannes Mulder (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class CmdOperatorRequest implements Command {
 		operatorRequestCmd.put(TC_ID, tc);
 		operatorRequestCmd.put(TEXT, text);
 		
-		LOGGER.info("Operatorrequest Command: " + operatorRequestCmd.toString());
+		LOGGER.info("Operatorrequest Command: {}", operatorRequestCmd);
 
 		// send the operatorRequest message
 		Factory.sendToJms(operatorRequestCmd.toString());
