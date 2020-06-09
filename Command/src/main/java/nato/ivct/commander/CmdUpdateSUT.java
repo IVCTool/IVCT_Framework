@@ -34,6 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -122,7 +123,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldSUTid = (String) jsonObject.get(CmdListSuT.ID);
             if (oldSUTid != null) {
-                if (oldSUTid.equals(tmpSutDescription.ID) == false) {
+                if (!oldSUTid.equals(tmpSutDescription.ID)) {
                     return true;
                 }
             }
@@ -133,7 +134,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldSUTname = (String) jsonObject.get(CmdListSuT.NAME);
             if (oldSUTname != null) {
-                if (oldSUTname.equals(tmpSutDescription.name) == false) {
+                if (!oldSUTname.equals(tmpSutDescription.name)) {
                     return true;
                 }
             }
@@ -144,7 +145,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldSUTversion = (String) jsonObject.get(CmdListSuT.VERSION);
             if (oldSUTversion != null) {
-                if (oldSUTversion.equals(tmpSutDescription.version) == false) {
+                if (!oldSUTversion.equals(tmpSutDescription.version)) {
                     return true;
                 }
             }
@@ -155,7 +156,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldDescription = (String) jsonObject.get(CmdListSuT.DESCRIPTION);
             if (oldDescription != null) {
-                if (oldDescription.equals(tmpSutDescription.description) == false) {
+                if (!oldDescription.equals(tmpSutDescription.description)) {
                     return true;
                 }
             }
@@ -166,7 +167,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldVendor = (String) jsonObject.get(CmdListSuT.VENDOR);
             if (oldVendor != null) {
-                if (oldVendor.equals(tmpSutDescription.vendor) == false) {
+                if (!oldVendor.equals(tmpSutDescription.vendor)) {
                     return true;
                 }
             }
@@ -177,7 +178,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldSettingsDesignator = (String) jsonObject.get(CmdListSuT.SETTINGS_DESIGNATOR);
             if (oldSettingsDesignator != null) {
-                if (oldSettingsDesignator.equals(tmpSutDescription.settingsDesignator) == false) {
+                if (!oldSettingsDesignator.equals(tmpSutDescription.settingsDesignator)) {
                     return true;
                 }
             }
@@ -188,7 +189,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldFederationName = (String) jsonObject.get(CmdListSuT.FEDERATION_NAME);
             if (oldFederationName != null) {
-                if (oldFederationName.equals(tmpSutDescription.federation) == false) {
+                if (!oldFederationName.equals(tmpSutDescription.federation)) {
                     return true;
                 }
             }
@@ -199,7 +200,7 @@ public class CmdUpdateSUT {
             // get a String from the JSON object
             String oldFederateName = (String) jsonObject.get(CmdListSuT.FEDERATE_NAME);
             if (oldFederateName != null) {
-                if (oldFederateName.equals(tmpSutDescription.sutFederateName) == false) {
+                if (!oldFederateName.equals(tmpSutDescription.sutFederateName)) {
                     return true;
                 }
             }
@@ -212,7 +213,7 @@ public class CmdUpdateSUT {
             if (tmpSutDescription.badges != null) {
                 if (badgeArray != null) {
                     if (tmpSutDescription.badges.size() == badgeArray.size()) {
-                        if (tmpSutDescription.badges.size() > 0) {
+                        if (!tmpSutDescription.badges.isEmpty()) {
                             for (String entry: this.sutDescription.badges) {
                                 if (badgeArray.contains(entry)) {
                                     continue;
@@ -236,13 +237,13 @@ public class CmdUpdateSUT {
                             break;
                         }
                     }
-                    if (dataFound == false) {
+                    if (!dataFound) {
                         return true;
                     }
                 }
             }
             else {
-                if (badgeArray.size() > 0) {
+                if (!badgeArray.isEmpty()) {
                     return true;
                 }
             }
@@ -263,7 +264,7 @@ public class CmdUpdateSUT {
     /**
      * @param ts the required testsuite
      */
-    private static URL[] getTestsuiteUrls(final String ts) throws Exception {
+    private static URL[] getTestsuiteUrls(final String ts) throws IOException {
         logger.trace(ts);
         URL[] myTestsuiteURLs = testsuiteURLs.get(ts);
         if (myTestsuiteURLs == null) {
@@ -277,7 +278,7 @@ public class CmdUpdateSUT {
                     File dir = new File(libPath);
                     File[] filesList = dir.listFiles();
                     if (filesList == null) {
-                        throw new Exception("getTestsuiteUrls: no testsuites found in: " + libPath);
+                        throw new IOException("getTestsuiteUrls: no testsuites found in: " + libPath);
                     }
                     URL[] urls = new URL[filesList.length];
                     for (int i = 0; i < filesList.length; i++) {
@@ -293,22 +294,18 @@ public class CmdUpdateSUT {
                 }
             }
             else {
-                throw new Exception("getTestsuiteUrls: unknown testsuite: " + ts);
+                throw new IOException("getTestsuiteUrls: unknown testsuite: " + ts);
             }
         }
         return myTestsuiteURLs;
     }
 
-
-    /**
-     * @throws Exception
-     */
-    private static boolean checkFileExists(String testFileName) throws Exception {
+    private static boolean checkFileExists(String testFileName) throws IOException {
         // If the desired file exists, do not overwrite
         File f = new File(testFileName);
         if (f.exists()) {
             if (f.isDirectory()) {
-                throw new Exception("Target resource is a directory: " + testFileName);
+                throw new IOException("Target resource is a directory: " + testFileName);
             }
             return true;
         }
@@ -318,16 +315,16 @@ public class CmdUpdateSUT {
 
     /**
      * This method will extract a resource from a known testsuite resource location
-     * to a specified directory
+     * to a specified directory.
      *
      * @param ts the name of the testsuite of the resource required
      * @param dirName the name of the directory where the resource should be copied
      *            to
      * @param resourceName the name of the resource
-     * @return false means file already exists or was extracted - NO overwrite true
+     * @return {@code false} means file already exists or was extracted - NO overwrite {@code true}
      *         means error
      */
-    private static boolean extractResource(String ts, String dirName, String resourceName, String extraParamTemplates) throws Exception {
+    private static boolean extractResource(final String ts, final String dirName, final String resourceName, final String extraParamTemplates) throws Exception {
 
         // Check if dirName exists and is a directory
         File d = new File(dirName);
@@ -335,7 +332,7 @@ public class CmdUpdateSUT {
             throw new Exception("Target directory does not exist or is not a directory: " + dirName);
         }
 
-        String testFileName = new String(dirName + "/" + resourceName);
+        String testFileName = dirName + "/" + resourceName;
         if (checkFileExists(testFileName))
             return true;
 
@@ -345,33 +342,21 @@ public class CmdUpdateSUT {
             throw new Exception("Unknown badge: " + ts);
         }
         for (int i = 0; i < myTestsuiteURLs.length; i++) {
-            try {
-                int pos = myTestsuiteURLs[i].getFile().lastIndexOf('/');
-                if (resourceName.equals(myTestsuiteURLs[i].getFile().substring(pos + 1))) {
-                    java.io.InputStream is = new java.io.FileInputStream(myTestsuiteURLs[i].getFile());
-                    String outputFileString = new String(dirName + "/" + resourceName);
-                    java.io.FileOutputStream fo = new java.io.FileOutputStream(outputFileString);
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = is.read(buffer)) > 0) {
-                        fo.write(buffer, 0, length);
-                    }
-                    fo.close();
-                    is.close();
+            int pos = myTestsuiteURLs[i].getFile().lastIndexOf('/');
+            if (resourceName.equals(myTestsuiteURLs[i].getFile().substring(pos + 1))) {
+                String outputFileString = dirName + "/" + resourceName;
+                try (java.io.InputStream is = new java.io.FileInputStream(myTestsuiteURLs[i].getFile()); java.io.FileOutputStream fo = new java.io.FileOutputStream(outputFileString);) {
+                    IOUtils.copy(is, fo);
                     break;
                 }
-                else {
-                    pos = myTestsuiteURLs[i].getFile().lastIndexOf('.');
-                    if (".jar".equals(myTestsuiteURLs[i].getFile().substring(pos))) {
-                        if (extractFromJar(dirName, resourceName, myTestsuiteURLs[i].getFile(), extraParamTemplates)) {
-                            break;
-                        }
+            }
+            else {
+                pos = myTestsuiteURLs[i].getFile().lastIndexOf('.');
+                if (".jar".equals(myTestsuiteURLs[i].getFile().substring(pos))) {
+                    if (extractFromJar(dirName, resourceName, myTestsuiteURLs[i].getFile(), extraParamTemplates)) {
+                        break;
                     }
                 }
-            }
-            catch (IOException exc) {
-                logger.error("", exc);
-                throw new Exception("extractResource: IOException");
             }
         }
 
@@ -390,45 +375,42 @@ public class CmdUpdateSUT {
      * @return true if file found, false if file found
      * @throws java.io.IOException if problem with the file.
      */
-    private static boolean extractFromJar(final String destdir, final String extractFileName, final String jarFileName, String extraParamTemplates) throws java.io.IOException {
+    private static boolean extractFromJar(final String destdir, final String extractFileName, final String jarFileName, String extraParamTemplates) throws IOException {
         boolean found = false;
-        FileInputStream fis = new FileInputStream(jarFileName);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        ZipInputStream stream = new ZipInputStream(bis);
-        ZipEntry entry;
-        while ((entry = stream.getNextEntry()) != null) {
-            if (!entry.isDirectory()) {
-                if (entry.getName().startsWith(extraParamTemplates)) {
-                    String s = entry.getName();
-                    int pos = s.lastIndexOf('/');
-                    if (pos > 0) {
-                        s = entry.getName().substring(pos + 1);
+
+        try (ZipInputStream stream = new ZipInputStream(new BufferedInputStream(new FileInputStream(jarFileName)))) {
+            ZipEntry entry;
+            while ((entry = stream.getNextEntry()) != null) {
+                if (!entry.isDirectory()) {
+                    if (entry.getName().startsWith(extraParamTemplates)) {
+                        String s = entry.getName();
+                        int pos = s.lastIndexOf('/');
+                        if (pos > 0) {
+                            s = entry.getName().substring(pos + 1);
+                        }
+                        getFileContents(destdir, stream, s);
+                        continue;
                     }
-                    getFileContents(destdir, stream, s);
+                }
+
+                if (!entry.getName().equals(extractFileName)) {
                     continue;
                 }
-            }
+                found = true;
 
-            if (entry.getName().equals(extractFileName) == false) {
-                continue;
+                final File fl = new File(destdir, entry.getName());
+                if (fl.exists()) {
+                    break;
+                }
+                if (!fl.exists()) {
+                    fl.getParentFile().mkdirs();
+                }
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                getFileContents(destdir, stream, entry.getName());
             }
-            found = true;
-
-            java.io.File fl = new java.io.File(destdir, entry.getName());
-            if (fl.exists()) {
-                break;
-            }
-            if (!fl.exists()) {
-                fl.getParentFile().mkdirs();
-                fl = new java.io.File(destdir, entry.getName());
-            }
-            if (entry.isDirectory()) {
-                continue;
-            }
-            getFileContents(destdir, stream, entry.getName());
         }
-        bis.close();
-        fis.close();
         return found;
 
     }
@@ -441,15 +423,13 @@ public class CmdUpdateSUT {
         }
         Path outDir = Paths.get(destdir);
         Path filePath = outDir.resolve(entry);
-        java.io.FileOutputStream fos = new java.io.FileOutputStream(filePath.toFile());
         byte[] buffer = new byte[1024];
-        BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
-        int length;
-        while ((length = stream.read(buffer)) > 0) {
-            bos.write(buffer, 0, length);
+        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(filePath), buffer.length)) {
+            int length;
+            while ((length = stream.read(buffer)) > 0) {
+                bos.write(buffer, 0, length);
+            }
         }
-        bos.close();
-        fos.close();
     }
 
 
