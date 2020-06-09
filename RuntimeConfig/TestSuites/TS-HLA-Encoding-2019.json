@@ -7,14 +7,14 @@
 	"tsLibTimeFolder":	"TS_HLA_EncodingRulesTester-2.1.0/lib",
 	"testcases"	:	[
 		{
-			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0001"
+			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0001",
 			"IR"			:	["IR-SOM-0017", "IR-SOM-0018"],
-			"description"	:	"Test if SuT encodes all updated attribute values according to CS/SOM. Test if SuT encode all sent interaction class parameters according to CS/SOM",
+			"description"	:	"Test if SuT encodes all updated attribute values according to CS/SOM. Test if SuT encode all sent interaction class parameters according to CS/SOM"
 		},
 		{
-			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0002"
+			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0002",
 			"IR"			:	["IP-EN-0002"],
-			"description"	:	"Test if SuT encodes all updated attribute values according to CS/SOM. Test if SuT encode all sent interaction class parameters according to CS/SOM. In addition to basic HLA endoing, extended RPR encoding rules will be accepted",
+			"description"	:	"Test if SuT encodes all updated attribute values according to CS/SOM. Test if SuT encode all sent interaction class parameters according to CS/SOM. In addition to basic HLA endoing, extended RPR encoding rules will be accepted"
 		}
 	]
 }

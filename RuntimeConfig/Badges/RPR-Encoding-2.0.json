@@ -8,7 +8,7 @@
 	"requirements"	:	[
 		{
 			"id"			:	"IP-EN-0002",
-			"description"	:	"HLA Encoding Rules Tester",
+			"description"	:	"HLA Encoding Rules Tester"
 		}
 	]
 }
