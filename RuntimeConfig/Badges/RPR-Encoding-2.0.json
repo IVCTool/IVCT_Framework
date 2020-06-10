@@ -1,7 +1,7 @@
 {
 	"id" 			: 	"RPR-Encoding-2.0",
 	"version"		:	"2.0.0",
-	"name" 			: 	"TS_HLA_EncodingRulesTester Test 2019",
+	"name" 			: 	"HLA EncodingRulesTester Test 2019",
 	"description"	:	"This is a test to verify whether the HLA encoding rules are being used correctly.",
 	"graphics"		:	"RPR-Encoding-2.0.png",
 	"dependency"	:	[],
