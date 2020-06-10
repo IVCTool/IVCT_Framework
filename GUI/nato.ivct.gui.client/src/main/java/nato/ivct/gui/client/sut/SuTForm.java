@@ -226,7 +226,7 @@ public class SuTForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridH() {
-                        return 2;
+                        return 7;
                     }
 
 
