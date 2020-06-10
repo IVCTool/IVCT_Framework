@@ -4,7 +4,7 @@ ARG version
 
 ADD ./build/distributions/TC.exec-${version}.tar /root/application/
 
-ADD ./docker/start.sh /root/application/start.sh
+COPY ./docker/start.sh /root/application/start.sh
 
 RUN ln -s /root/application/TC.exec-${version} /root/application/TC.exec
 
