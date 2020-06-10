@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.cb;
 
 import java.io.IOException;
@@ -27,7 +41,7 @@ import nato.ivct.gui.shared.cb.ReadCbPermission;
 
 public class CbService implements ICbService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CbService.class);
 
     CmdListBadges badgeCmd = null;
 
@@ -84,7 +98,7 @@ public class CbService implements ICbService {
         final BadgeDescription cb = badgeCmd.badgeMap.get(badgeId);
 
         if (cb.cbVisual == null) {
-            LOG.error("No icon file for badge ID " + cb.ID);
+            LOG.error("No icon file for badge ID {}", cb.ID);
             return null;
         }
 
@@ -92,7 +106,7 @@ public class CbService implements ICbService {
             return Files.readAllBytes(Paths.get(cb.cbVisual));
         }
         catch (final IOException exc) {
-            LOG.error("Could not open icon file " + cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
+            LOG.error("Could not open icon file {}", cb.cbVisual == null ? ": Icon File not available" : cb.cbVisual);
             return null;
         }
     }

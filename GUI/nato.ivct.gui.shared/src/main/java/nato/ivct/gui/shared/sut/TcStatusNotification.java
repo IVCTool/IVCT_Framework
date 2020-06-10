@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog, Michael Theis (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,26 +27,26 @@ public class TcStatusNotification implements Serializable {
 	public String getSutId() {
 		return sutId;
 	}
-	public void setSutId(final String _sutId) {
-		this.sutId = _sutId;
+	public void setSutId(final String sutId) {
+		this.sutId = sutId;
 	}
 	public String getTcId() {
 		return tcId;
 	}
-	public void setTcId(final String _tcId) {
-		this.tcId = _tcId;
+	public void setTcId(final String tcId) {
+		this.tcId = tcId;
 	}
 	public int getPercent() {
 		return percent;
 	}
-	public void setPercent(final int _percent) {
-		this.percent = _percent;
+	public void setPercent(final int percent) {
+		this.percent = percent;
 	}
 	public String getStatus() {
 		return status;
 	}
-	public void setStatus(final String _status) {
-		this.status = _status;
+	public void setStatus(final String status) {
+		this.status = status;
 	}
 
 

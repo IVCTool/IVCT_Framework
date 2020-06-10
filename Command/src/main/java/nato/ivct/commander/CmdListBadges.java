@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -46,12 +46,12 @@ import org.json.simple.parser.ParseException;
  */
 public class CmdListBadges implements Command {
 
-    public Map<String, BadgeDescription> badgeMap = new HashMap<String, BadgeDescription>();
-    private Map<String, InteroperabilityRequirement> irMap = new HashMap<String, InteroperabilityRequirement>();
+    public Map<String, BadgeDescription> badgeMap = new HashMap<>();
+    private Map<String, InteroperabilityRequirement> irMap = new HashMap<>();
 
     @Override
     public void execute() {
-        Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID = " + Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
+        Factory.LOGGER.trace("Factory.IVCT_BADGE_HOME_ID = {}", Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
         File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
@@ -65,11 +65,11 @@ public class CmdListBadges implements Command {
         irMap.clear();
         
         if (dir.isDirectory()) {
-            Factory.LOGGER.trace("Read Badge descriptions from " + dir.getAbsolutePath());
+            Factory.LOGGER.trace("Read Badge descriptions from {}", dir.getAbsolutePath());
             JSONParser parser = new JSONParser();
             File[] filesList = dir.listFiles();
             for (File file : filesList) {
-                Factory.LOGGER.trace("reading badge description: " + file.getAbsolutePath());
+                Factory.LOGGER.trace("reading badge description: {}", file.getAbsolutePath());
                 Object obj;
                 if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
                     FileReader fr = null;
@@ -121,8 +121,7 @@ public class CmdListBadges implements Command {
                         fr.close();
                         fr = null;
                     } catch (IOException | ParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                    	Factory.LOGGER.error("Error while reading badge description", e);
                     }
 
                 }
@@ -133,7 +132,7 @@ public class CmdListBadges implements Command {
         }
     }
 
-    public void collectIrForCs(Set<String> ir_set, Set<String> cs) {
+    public void collectIrForCs(Set<String> irSet, Set<String> cs) {
         if (this.badgeMap == null) {
             return;
         }
@@ -145,10 +144,10 @@ public class CmdListBadges implements Command {
             }
             // collect badge requirements
             for (Map.Entry<String, InteroperabilityRequirement> entry : b.requirements.entrySet()) {
-                ir_set.add(entry.getKey());
+                irSet.add(entry.getKey());
             }
             // collect recursively from dependend badges
-            collectIrForCs(ir_set, b.dependency);
+            collectIrForCs(irSet, b.dependency);
         }
     }
     

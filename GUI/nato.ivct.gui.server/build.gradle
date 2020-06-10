@@ -5,6 +5,10 @@ description = """IVCT Server"""
 dependencies {
 	compile     project(':Command')
 	compile     project(':GUI:nato.ivct.gui.shared')
+	
+	implementation	libraries.gson
+	implementation  libraries.jasperReports
+	implementation  libraries.antlr //Optional Library for jasperReports
 
     compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server', version:"${scoutVersion}"
     compile group: 'org.apache.geronimo.specs', name: 'geronimo-jms_1.1_spec', version:"${geronimoJmsVersion}"

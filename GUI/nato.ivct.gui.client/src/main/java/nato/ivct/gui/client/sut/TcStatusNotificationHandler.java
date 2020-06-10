@@ -1,13 +1,16 @@
-/*
- * Copyright 2017, Reinhard Herzog (Fraunhofer IOSB) Licensed under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
@@ -36,7 +39,7 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
         ModelJobs.schedule(new IRunnable() {
             @Override
             public void run() throws Exception {
-                logger.trace("Test Case Status Notification " + notification.getTcId() + " is at " + notification.getPercent() + "%");
+                logger.trace("Test Case Status Notification {}", notification.getTcId() + " is at " + notification.getPercent() + "%");
                 final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
                 final IOutline outline = desktop.getOutline();
                 if (outline instanceof SuTOutline) {

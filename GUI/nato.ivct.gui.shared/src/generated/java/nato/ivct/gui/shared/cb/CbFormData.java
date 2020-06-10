@@ -21,7 +21,6 @@ public class CbFormData extends AbstractFormData {
 
     private static final long serialVersionUID = 1L;
 
-
     public CbDependenciesTreeBox getCbDependenciesTreeBox() {
         return getFieldByClass(CbDependenciesTreeBox.class);
     }
@@ -91,7 +90,6 @@ public class CbFormData extends AbstractFormData {
 
         private static final long serialVersionUID = 1L;
 
-
         @Override
         public CbRequirementsTableRowData addRow() {
             return (CbRequirementsTableRowData) super.addRow();
@@ -139,7 +137,6 @@ public class CbFormData extends AbstractFormData {
             public static final String requirementDesc  = "requirementDesc";
             private String             m_requirementId;
             private String             m_requirementDesc;
-
 
             public String getRequirementId() {
                 return m_requirementId;

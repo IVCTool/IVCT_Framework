@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis, Felix Schoeppenthau, Johannes Mulder (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.sut;
 
 import java.io.IOException;
@@ -10,7 +24,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -21,6 +34,11 @@ import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import nato.ivct.commander.CmdSendLogMsg;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.gui.server.ServerSession;
@@ -31,13 +49,14 @@ import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcExecutionHistoryTable;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcExecutionHistoryTable.TcExecutionHistoryTableRowData;
+import nato.ivct.gui.shared.sut.SuTTcExecutionFormData.TcLog.TcLogRowData;
 import nato.ivct.gui.shared.sut.SuTTcRequirementFormData;
+import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 
 
 public class SuTTcService implements ISuTTcService {
-    private static final Logger    LOG          = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger    LOG          = LoggerFactory.getLogger(SuTTcService.class);
     private SutTcResultDescription sutTcResults = null;
-
 
     @Override
     public SuTTcRequirementFormData prepareCreate(SuTTcRequirementFormData formData) {
@@ -51,83 +70,45 @@ public class SuTTcService implements ISuTTcService {
     }
 
 
-    //    @Override
-    //    public SuTTcRequirementFormData load(SuTTcRequirementFormData formData) {
-    //        LOG.info("load requirement form");
-    //        if (!ACCESS.check(new ReadCbPermission())) {
-    //            throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //        }
-    //
-    //        final CbService cbService = BEANS.get(CbService.class);
-    //
-    //        // get requirement description and test case
-    //        final BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
-    //        if (bd != null) {
-    //            // get the requirements for this badge
-    //            final Optional<Entry<String, InteroperabilityRequirement>> first = bd.requirements.entrySet().stream().filter(requirement -> formData.getRequirementId().equals(requirement.getValue().ID)).findFirst();
-    //            first.ifPresent(requirement -> {
-    //                formData.getReqDescr().setValue(requirement.getValue().description);
-    //                //				formData.getTestCaseName().setValue(requirement.TC);
-    //
-    //                // get log files for this test case
-    //                //				if (bd.ID != null && requirement.TC != null)
-    //                //					// work-around if the requirement has no test case associated
-    //                //					loadLogFiles(formData, bd.ID, requirement.TC);
-    //            });
-    //        }
-    //
-    //        return formData;
-    //    }
-    //
-    //
-    //    @Override
-    //    public SuTTcRequirementFormData store(SuTTcRequirementFormData formData) {
-    //        return formData;
-    //    }
-
     @Override
-    public String loadLogFileContent(final String sutId, final String tsId, final String fileName) {
-        // get content of the requested log file
-        String logFileContent = null;
-        final Path tcLogFile = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, tsId), fileName);
+    public SuTTcExecutionFormData loadJSONLogFileContent(String sutId, String testsuiteId, String fileName, SuTTcExecutionFormData formData) {
+        final Path logFilePath = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId), fileName);
         try {
-            logFileContent = java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n"));
+            java.nio.file.Files.lines(logFilePath).map(line -> {
+                TcLogMsgNotification logMsgNotification = null;
+                try {
+                    final JsonObject jObj = new Gson().fromJson(line, JsonObject.class);
+                    logMsgNotification = new TcLogMsgNotification();
+                    logMsgNotification.setLogLevel(jObj.get(CmdSendLogMsg.LOG_MSG_LEVEL).getAsString());
+                    logMsgNotification.setTimeStamp(jObj.get(CmdSendLogMsg.LOG_MSG_TIME).getAsLong());
+                    logMsgNotification.setLogMsg(jObj.get(CmdSendLogMsg.LOG_MSG_EVENT).getAsString());
+                }
+                catch (JsonSyntaxException exc) {
+                    LOG.info("incorrect log format " + logFilePath, exc);
+                }
+                return Optional.ofNullable(logMsgNotification);
+            }).filter(Optional::isPresent).forEach(optionalLogMsgNotification -> {
+                final TcLogRowData row = formData.getTcLog().addRow();
+                final TcLogMsgNotification logMsgNotification = optionalLogMsgNotification.get();
+                row.setLogLevel(logMsgNotification.getLogLevel());
+                row.setTimeStamp(logMsgNotification.getTimeStamp());
+                row.setLogMsg(logMsgNotification.getLogMsg());
+            });
         }
-        catch (final NoSuchFileException e) {
-            LOG.info("log files not found: {}", tcLogFile.toString());
+        catch (final NoSuchFileException exc) {
+            LOG.info("log files not found: " + logFilePath, exc);
         }
-        catch (final IOException e) {
-            e.printStackTrace();
+        catch (final IOException exc) {
+            LOG.error("", exc);
         }
-
-        return logFileContent;
+        return formData;
     }
-    //
-    //
-    //    @Override
-    //    public SuTTcExecutionFormData loadLogFileContent(SuTTcExecutionFormData formData, String fileName) {
-    //        // get content of the requested log file
-    //        String logFileContent = null;
-    //        final Path tcLogFile = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(formData.getSutId(), formData.getTestsuiteId()), fileName);
-    //        try {
-    //            logFileContent = java.nio.file.Files.lines(tcLogFile).collect(Collectors.joining("\n"));
-    //            formData.getTcExecutionLog().setValue(logFileContent);
-    //        }
-    //        catch (final NoSuchFileException e) {
-    //            LOG.info("log files not found: {}", tcLogFile.toString());
-    //        }
-    //        catch (final IOException e) {
-    //            e.printStackTrace();
-    //        }
-    //
-    //        return formData;
-    //    }
 
 
     @Override
     public SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData) {
         final TcExecutionHistoryTable tbl = formData.getTcExecutionHistoryTable();
-        // TODO make this smarter instead brute force
+
         ServerSession.get().updateSutResultMap(formData.getSutIdProperty().getValue(), formData.getTestsuiteIdProperty().getValue(), formData.getTestCaseIdProperty().getValue());
 
         tbl.clearRows();
@@ -135,33 +116,6 @@ public class SuTTcService implements ISuTTcService {
         return formData;
     }
 
-
-    //    @Override
-    //    public SuTTcExecutionFormData loadLogFileContent(SuTTcExecutionFormData formData, String tcFullName) {
-    //        // get requirement description and test case
-    //        final CbService cbService = BEANS.get(CbService.class);
-    //        final BadgeDescription bd = cbService.getBadgeDescription(formData.getBadgeId());
-    //
-    //        if (bd != null) {
-    //            // load content of the newest log file for this test case
-    //            try {
-    //                final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(formData.getSutId(), bd.ID));
-    //                final String tcName = tcFullName.substring(tcFullName.lastIndexOf('.') + 1);
-    //
-    //                final Optional<Path> optionalTcLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
-    //
-    //                if (optionalTcLogFile.isPresent())
-    //                    formData.getTcExecutionLog().setValue(Files.lines(optionalTcLogFile.get()).collect(Collectors.joining("\n")));
-    //                else
-    //                    LOG.info("log files not found: {}*.log", folder + "\\" + tcName);
-    //            }
-    //            catch (IOException | IllegalStateException exc) {
-    //                LOG.error("", exc);
-    //            }
-    //        }
-    //
-    //        return formData;
-    //    }
 
     @Override
     public SuTTcExecutionFormData load(SuTTcExecutionFormData formData) {
@@ -184,10 +138,8 @@ public class SuTTcService implements ISuTTcService {
         final String tcName = fd.getTestCaseId().substring(fd.getTestCaseId().lastIndexOf('.') + 1);
 
         // load the (logfile,verdict) pairs
-        //		if (sutTcResults == null) {
         final IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
         sutTcResults = future1.awaitDoneAndGet();
-        //		}
 
         try {
             getLogFilesOrderedByCreationDate(tcName, folder).forEach(path -> {
@@ -195,7 +147,7 @@ public class SuTTcService implements ISuTTcService {
                 LOG.info("Log file found: {}", logFileName);
                 final TcExecutionHistoryTableRowData row = fd.getTcExecutionHistoryTable().addRow();
                 row.setFileName(logFileName);
-                final String verdict = sutTcResults.sutResultMap.getOrDefault(fd.getSutId(), new HashMap<>()).getOrDefault(fd.getTestsuiteId(), new HashMap<>()).getOrDefault(logFileName, "");
+                final String verdict = sutTcResults.sutResultMap.getOrDefault(fd.getSutId(), new HashMap<>()).getOrDefault(fd.getTestsuiteId(), new HashMap<>()).getOrDefault(logFileName, "UNKNOWN");
                 row.setTcVerdict(verdict);
             });
         }
@@ -203,7 +155,7 @@ public class SuTTcService implements ISuTTcService {
             LOG.info("log files not found: {}", folder + "\\" + tcName);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error(" ", exc);
         }
 
         return fd;
@@ -229,9 +181,6 @@ public class SuTTcService implements ISuTTcService {
         @Override
         public int compare(Path path1, Path path2) {
             try {
-                //				System.out.println(path1.toString() + " " + Files.readAttributes(path1, BasicFileAttributes.class).creationTime().toMillis());
-                //				System.out.println(path2.toString() + " " + Files.readAttributes(path2, BasicFileAttributes.class).creationTime().toMillis());
-                //				System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 return Long.compare(Files.readAttributes(path1, BasicFileAttributes.class).creationTime().to(TimeUnit.SECONDS), Files.readAttributes(path2, BasicFileAttributes.class).creationTime().to(TimeUnit.SECONDS));
             }
             catch (final IOException exc) {
@@ -245,9 +194,6 @@ public class SuTTcService implements ISuTTcService {
         @Override
         public int compare(Path path1, Path path2) {
             try {
-                //				System.out.println(path1.toString() + " " + Files.readAttributes(path1, BasicFileAttributes.class).lastModifiedTime().toMillis());
-                //				System.out.println(path2.toString() + " " + Files.readAttributes(path2, BasicFileAttributes.class).lastModifiedTime().toMillis());
-                //				System.out.println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
                 return Files.readAttributes(path1, BasicFileAttributes.class).lastModifiedTime().compareTo(Files.readAttributes(path2, BasicFileAttributes.class).lastModifiedTime());
             }
             catch (final IOException exc) {
@@ -256,54 +202,40 @@ public class SuTTcService implements ISuTTcService {
         }
     }
 
-
     @Override
     public void executeTestCase(String sutId, String tc, String tsId) {
         // execute the CmdStartTc commands
         final SutDescription sut = BEANS.get(SuTService.class).getSutDescription(sutId);
         ServerSession.get().execStartTc(sutId, tc, tsId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
-        // mark test cases as being started
-        // TODO:
-        //        final SuTCbTablePageData capPage = cap_hm.get(badgeId);
-        //        if (capPage == null) {
-        //            LOG.error("no capability map found for badge: " + badgeId);
-        //        }
-        //        else {
-        //            for (int i = 0; i < capPage.getRowCount(); i++) {
-        //                final SuTCbTableRowData row = capPage.rowAt(i);
-        //                if (row.getAbstractTC().equals(tc)) {
-        //                    row.setTCstatus("starting");
-        //                }
-        //            }
-        //        }
     }
 
 
-	@Override
-	public String getTcLastVerdict(String sutId, String testsuiteId, String tcId) {
-        
+    @Override
+    public String getTcLastVerdict(String sutId, String testsuiteId, String tcId) {
+
         final Path folder = Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId));
         final String tcName = tcId.substring(tcId.lastIndexOf('.') + 1);
 
         // load the (logfile,verdict) pairs
         final IFuture<SutTcResultDescription> future1 = ServerSession.get().getLoadTcResultsJob();
         sutTcResults = future1.awaitDoneAndGet();
- 
+
         String verdict = "";
         try {
-        	final Optional<Path> optionalLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
+            final Optional<Path> optionalLogFile = getLogFilesOrderedByCreationDate(tcName, folder).findFirst();
             final String logFileName = optionalLogFile.isPresent() ? optionalLogFile.get().getFileName().toString() : "";
-                LOG.info("Log file found: {}", logFileName);
-                verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
+            LOG.info("Log file found: {}", logFileName);
+            verdict = sutTcResults.sutResultMap.getOrDefault(sutId, new HashMap<>()).getOrDefault(testsuiteId, new HashMap<>()).getOrDefault(logFileName, "");
         }
         catch (final NoSuchFileException exc) {
-            LOG.info("log files not found: {}", folder + "\\" + tcName);
+            LOG.info("log files not found: {}", exc.getMessage());
+            LOG.trace("", exc);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error(" ", exc);
         }
-     
+
         return verdict;
-	}
+    }
 
 }

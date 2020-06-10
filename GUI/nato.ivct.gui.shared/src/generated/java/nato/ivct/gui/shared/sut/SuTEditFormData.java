@@ -19,7 +19,6 @@ public class SuTEditFormData extends AbstractFormData {
 
     private static final long serialVersionUID = 1L;
 
-
     public Descr getDescr() {
         return getFieldByClass(Descr.class);
     }

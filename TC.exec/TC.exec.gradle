@@ -1,5 +1,3 @@
-apply plugin: 'application'
-
 // -----------------------------------------------------------------------------
 // Docker
 // -----------------------------------------------------------------------------
@@ -11,6 +9,11 @@ buildscript {
   dependencies {
 	classpath libraries.docker
   }
+}
+
+// Plugins used for TC.exec
+plugins {
+    id 'application'
 }
 
 // def runDockerBuild(String target) {
@@ -36,7 +39,7 @@ task dockerBuildPitchImage(type: DockerBuildImage) {
     dockerFile = project.file('Dockerfile-pi')
     buildArgs.put('version', "${ivctVersion}")
 	inputDir = file('.')
-	tags.add ("ivct/tc-runner:pi-bare-${ivctVersion}")
+	tags.add ("ivct/tc-runner:pi-skeleton-${ivctVersion}")
 }
 
 task dockerBuildPorticoImage(type: DockerBuildImage) {
@@ -64,7 +67,7 @@ tasks.register ("dockerBuildImage") {
     description = 'Creates docker images for RTIs'
     dependsOn 'dockerBuildPitchImage'
     dependsOn 'dockerBuildPorticoImage'
-    // dependsOn 'dockerBuildMakImage'
+    dependsOn 'dockerBuildMakImage'
 }
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
@@ -109,3 +112,18 @@ doLast {
         unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/lib', '$APP_HOME/lib:$LRC_CLASSPATH')
     }
 }
+
+// write Information about compatible Versions from libraries.gradle to a file
+task writeCompatibleVersions {
+  group = "Build"
+  description = "Creates a file with information of compability"
+
+  doLast {
+    def prop = new Properties()
+    compatibleVersions.each { key, value -> prop."$key" = "$value".toString() }
+    mkdir "src/main/resources"
+    File compFile = file('src/main/resources/compatibleVersions.properties')
+    prop.store(compFile.newWriter(), null)
+  }
+}
+processResources.dependsOn  writeCompatibleVersions

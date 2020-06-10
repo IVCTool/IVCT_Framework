@@ -7,9 +7,7 @@ dependencies {
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
 
-	testCompile libraries.junit
-	testCompile libraries.hamcrest_core
-
-	testRuntime libraries.junit
-	testRuntime libraries.hamcrest_core
+	testImplementation	libraries.junit_jupiter_engine
+	// testRuntime libraries.junit
+	// testRuntime libraries.hamcrest_core
 }

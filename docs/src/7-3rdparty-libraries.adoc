@@ -1,0 +1,145 @@
+== List of 3rd party libraries
+
+The table shows all 3rd party libraries used in the IVCT project.
+
+[%header, cols=5*]
+|===
+|Library
+|Version
+|License
+|URL
+|Note
+
+|actimemqClient
+|5.14.5
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/org.apache.activemq/activemq-client
+|Message Queue Clients
+
+|activemqEmbedded
+|5.14.5
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker
+|Message Broker
+
+|apacheCommonsIO
+|2.6
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/commons-io/commons-io/2.6
+|I/O Utilities
+
+|antlr
+|2.7.7
+|https://de.wikipedia.org/wiki/BSD-Lizenz[BSD]
+|https://mvnrepository.com/artifact/antlr/antlr/2.7.7
+|ANTLR - Optional Library for jasperReports
+
+|docker
+|4.9.0
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/com.bmuschko/gradle-docker-plugin
+|Gradle plugin for managing Docker images and containers
+
+|gson
+|2.8.6
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/com.google.code.gson/gson
+|JSON Library
+
+|hamcrest_core
+|1.1
+|https://opensource.org/licenses/BSD-3-Clause[BSD 3-clause]
+|https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core
+|Testing Framework
+
+|jasperReports
+|6.12.2
+|https://www.gnu.org/licenses/gpl-3.0.html[LGPL 3]
+|https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports
+|Free Java Reporting Library
+
+|javaxannotation
+|1.3.2
+|https://github.com/javaee/javax.annotation/blob/master/LICENSE[CDDL], https://github.com/javaee/javax.annotation/blob/master/LICENSE[GPL 2.0 with CLASSPATH EXCEPTION]
+|https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
+|Common Annotations for the JavaTM Platform API
+
+|jsonIo
+|4.10.1
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/com.cedarsoftware/json-io
+|Java JSON serialization
+
+|jsonSimple
+|1.1.1
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+|JSON Library - A simple Java toolkit for JSON
+
+|junit_jupiter_engine
+|5.6.2
+|https://opensource.org/licenses/EPL-2.0[EPL 2.0]
+|https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine/5.6.2
+|Testing Framework
+
+|logback_classic
+|1.2.3
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html[LGPL 2.1]
+|https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+|Logging Framework
+
+|logback_core
+|1.2.3
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html[LGPL 2.1]
+|https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+|Logging Framework
+
+|logback_contrib
+|0.1.5
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html[LGPL 2.1]
+|https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+|Logging / JSON
+
+|logback_json_classic
+|0.1.5
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0], https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html[LGPL 2.1]
+|https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+|Logging / JSON
+
+|scout_rt_client
+|9.0.0.025_Simrel_2019_09
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0]
+|https://mvnrepository.com/artifact/org.eclipse.scout.rt/org.eclipse.scout.rt.client
+|Eclipse Scout RT Client
+
+|scout_rt_client_test
+|9.0.0.025_Simrel_2019_09
+|https://opensource.org/licenses/EPL-1.0[EPL 1.0]
+|https://mvnrepository.com/artifact/org.eclipse.scout.rt/org.eclipse.scout.rt.client.test
+|Eclipse Scout RT Client Test
+
+|slf4j_api
+|1.7.10
+|https://opensource.org/licenses/mit-license.php[MIT]
+|https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+|Logging Framework
+
+|slf4j_jcl_over_slf4j
+|1.7.10
+|https://opensource.org/licenses/mit-license.php[MIT]
+|https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j
+|Logging Bridge
+
+|slf4j_jul_to_slf4j
+|1.7.10
+|https://opensource.org/licenses/mit-license.php[MIT]
+|https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j
+|Logging Bridge
+
+|slf4j_log4j_over_slf4j
+|1.7.10
+|https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+|https://mvnrepository.com/artifact/org.slf4j/log4j-over-slf4j
+|Logging Bridge
+
+|===

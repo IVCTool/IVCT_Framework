@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TestSystem" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e42f5795-bded-411c-b08d-5e07d6dba6c5">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<queryString language="jsonql">
+		<![CDATA[TestSystem]]>
+	</queryString>
+	<field name="Version" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="Version"/>
+		<fieldDescription><![CDATA[Version]]></fieldDescription>
+	</field>
+	<field name="Build" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="Build"/>
+		<fieldDescription><![CDATA[Build]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="8">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="-20" width="555" height="28" backcolor="#006699" uuid="70a345d1-3631-4b7a-addc-e03280a0dfa5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="554" height="28" forecolor="#FFFFFF" uuid="503058a3-7477-4dfa-bfd6-5e62a1b4085b">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[IVCT Testsystem]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="51">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="6" width="60" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="b50958ad-9583-498a-a284-6e06940f310f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font size="12" isBold="true"/>
+					<paragraph lineSpacingSize="1.0" firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Version]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="71" y="6" width="484" height="20" backcolor="#E6E6E6" uuid="4908ebec-a91a-4918-a8eb-20a53a521f34">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Version}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="31" width="60" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="f779826a-6b49-4d99-87ca-6a79fc4017a0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Build]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="71" y="31" width="484" height="20" backcolor="#E6E6E6" uuid="09dcf273-341a-4768-955b-26d019ebc01b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Build}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

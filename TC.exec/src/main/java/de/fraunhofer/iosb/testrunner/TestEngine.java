@@ -5,19 +5,25 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
 import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+import nato.ivct.commander.CmdOperatorConfirmationListener;
+import nato.ivct.commander.CmdOperatorConfirmationListener.OnOperatorConfirmationListener;
+import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -28,6 +34,7 @@ import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.Factory;
+import nato.ivct.commander.TcLoggerData;
 
 /**
  * Testrunner that listens for certain commands to start and stop test cases.
@@ -35,15 +42,15 @@ import nato.ivct.commander.Factory;
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
-public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnCmdHeartbeatSend {
-
-	private static Logger logger = LoggerFactory.getLogger(TestEngine.class);
+public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener,
+		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
 	public String logLevelId = Level.INFO.toString();
 	public String testCaseId = "no test case is running";
+	private AbstractTestCase testCase = null;
 
 	private CmdListTestSuites testSuites;
-	private HashMap<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
+	private Map<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
 
 	/**
 	 * Main entry point from the command line.
@@ -76,15 +83,21 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		try {
 			(new CmdHeartbeatSend(this)).execute();
 		} catch (Exception e1) {
-			logger.error("Could not start HeartbeatSend: " + e1.toString());
+			Set<Logger> loggers = TcLoggerData.getLoggers();
+			for (Logger entry : loggers) {
+				entry.error("Could not start HeartbeatSend: " + e1.toString());
+			}
+			if (loggers.size() == 0) {
+				System.out.println("Could not start HeartbeatSend: " + e1.toString());
+			}
 		}
+		(new CmdOperatorConfirmationListener(this)).execute();
 
 		// get the test suite descriptions
 		testSuites = new CmdListTestSuites();
 		try {
 			testSuites.execute();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -140,7 +153,13 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				File dir = new File(lib_path);
 				File[] filesList = dir.listFiles();
 				if (filesList == null) {
-					logger.info("No files found in folder {}", dir.getPath());
+					Set<Logger> loggers = TcLoggerData.getLoggers();
+					for (Logger entry : loggers) {
+						entry.info("No files found in folder {}", dir.getPath());
+					}
+					if (loggers.size() == 0) {
+						System.out.println("No files found in folder {}" + dir.getPath());
+					}
 					return;
 				}
 
@@ -159,29 +178,27 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		}
 
 		public void run() {
-			logger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
-			MDC.put("sutName", info.sutName);
-			MDC.put("sutDir", info.sutDir);
-			MDC.put("badge", info.testSuiteId);
-			MDC.put("testcase", info.testCaseId);
+			Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+			TcLoggerData.addLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
 			if (tsd == null) {
-				logger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
+				tcLogger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
 				return;
 			}
 			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID) + '/' + tsd.tsRunTimeFolder;
 
-			logger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
+			tcLogger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
 			if (setCurrentDirectory(runFolder)) {
-				logger.info("TestEngine:onMessageConsumer:run: setCurrentDirectory true");
+				tcLogger.info("TestEngine:onMessageConsumer:run: setCurrentDirectory true");
 			}
 
 			File f = getCwd();
 			String tcDir = f.getAbsolutePath();
-			logger.info("TestEngine:onMessageConsumer:run: TC DIR is " + tcDir);
+			tcLogger.info("TestEngine:onMessageConsumer:run: TC DIR is " + tcDir);
 
-			logger.info("TestEngine:onMessageConsumer:run: The test case class is: " + testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: The test case class is: " + testCaseId);
 			String[] testcases = info.testCaseId.split("\\s");
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
@@ -189,12 +206,13 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 			int i = 0;
 			for (final String classname : testcases) {
-				AbstractTestCase testCase = null;
+				testCase = null;
 				try {
 					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-					logger.error("Could not instantiate " + classname + " !", ex);
+					tcLogger.error("Could not instantiate " + classname + " !", ex);
+					continue;
 				}
 				if (testCase == null) {
 					verdicts[i] = new IVCT_Verdict();
@@ -203,58 +221,50 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					i++;
 					continue;
 				}
+				testCase.setDefaultLogger(tcLogger);
 				testCase.setSutName(info.sutName);
+				testCase.setTsName(info.testSuiteId);
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
 
-				verdicts[i++] = testCase.execute(info.testCaseParam.toString(), logger);
-			}
+				/**
+				 * Check the compability of IVCT-Version which had this testCase at
+				 * building-time against the IVCT-Version at Runtime
+				 */
 
-			// The JMSLogSink waits on this message!
-			// The following pair of lines will cause the JMSLogSink to close the log file!
-			MDC.put("tcStatus", "ended");
-			logger.info("Test Case Ended");
+				try {
+					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: "
+							+ testCase.getIVCTVersion()); // Debug
 
-			for (i = 0; i < testcases.length; i++) {
+					new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
+
+				} catch (IVCTVersionCheckException cf) {
+					tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
+					verdicts[i] = new IVCT_Verdict();
+					verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+					verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
+					i++;
+					cf.printStackTrace();
+					continue;
+				}
+
+				verdicts[i] = testCase.execute(info.testCaseParam, tcLogger);
+				tcLogger.info("Test Case Ended");
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
 						verdicts[i].verdict.name(), verdicts[i].text).execute();
+				i++;
 			}
-			MDC.put("tcStatus", "inactive");
+
+			TcLoggerData.removeLogger(tcLogger.getName());
 		}
 
 	}
 
 	@Override
 	public void onSetLogLevel(LogLevel level) {
-		this.logLevelId = level.name();
-		if (logger instanceof ch.qos.logback.classic.Logger) {
-			ch.qos.logback.classic.Logger lo = (ch.qos.logback.classic.Logger) logger;
-			switch (level) {
-			case ERROR:
-				logger.trace("TestEngine:onMessageConsumer:run: error");
-				lo.setLevel(Level.ERROR);
-				break;
-			case WARNING:
-				logger.trace("TestEngine:onMessageConsumer:run: warning");
-				lo.setLevel(Level.WARN);
-				break;
-			case INFO:
-				logger.trace("TestEngine:onMessageConsumer:run: info");
-				lo.setLevel(Level.INFO);
-				break;
-			case DEBUG:
-				logger.trace("TestEngine:onMessageConsumer:run: debug");
-				lo.setLevel(Level.DEBUG);
-				break;
-			case TRACE:
-				logger.trace("TestEngine:onMessageConsumer:run: trace");
-				lo.setLevel(Level.TRACE);
-				break;
-			}
-		}
-
+		TcLoggerData.setLogLevel(level.name());
 	}
 
 	@Override
@@ -268,26 +278,28 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		Thread th1 = new Thread(new TestScheduleRunner(info, this));
 		th1.start();
 	}
-	
-	
-	/*  implement a heartbeat ,  brf 05.07.2019 (Fraunhofer IOSB)
-     *  CmdHeartbeatSend will fetch all 5 Seconds the health state from  'here'
-     *  and send all 5 Seconds a message to ActiveMQ
-     *  So if the value for health is changed here, this will change the tenor 
-     *  of the message  CmdHeartbeatSend  sends to ActiveMQ
-     *  if this thread is stopped, CmdHeardbeatListen will give out an Alert-Status
-     */
-    
-    
-	@Override
-	public String getMyClassName() {
-        return myClassName;
-    }
-    
 
 	@Override
-    public boolean getMyHealth() {
-        return health;
-    }
-	
+	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+		testCase.onOperatorConfirmation(operatorConfirmationInfo);
+	}
+
+	/*
+	 * implement a heartbeat , brf 05.07.2019 (Fraunhofer IOSB) CmdHeartbeatSend
+	 * will fetch all 5 Seconds the health state from 'here' and send all 5 Seconds
+	 * a message to ActiveMQ So if the value for health is changed here, this will
+	 * change the tenor of the message CmdHeartbeatSend sends to ActiveMQ if this
+	 * thread is stopped, CmdHeardbeatListen will give out an Alert-Status
+	 */
+
+	@Override
+	public String getMyClassName() {
+		return myClassName;
+	}
+
+	@Override
+	public boolean getMyHealth() {
+		return health;
+	}
+
 }

@@ -45,15 +45,15 @@ public class ReportEngine {
     private int          numInconclusive = 0;
     private int          numPassed       = 0;
     private Path         resultFile      = null;
+    private Path         reportFile      = null;
     private String       knownSut        = new String();
-    private final String baseFileName    = "Report";
+    private final String baseFileName    = "Results";
+    private final String reportFileName  = "Report";
     private final String failedStr       = "FAILED";
     private final String inconclusiveStr = "INCONCLUSIVE";
     private final String passedStr       = "PASSED";
 
     // keys for the results json structure
-    private final String TESTSYSTEM_KW        = "Testsystem";
-    private final String TESTSYSTEMREV_KW     = "TestSystemRev";
     private final String SUT_KW               = "SuT";
     private final String SUTID_KW             = "SutId";
     private final String SUTNAME_KW           = "SutName";
@@ -65,7 +65,6 @@ public class ReportEngine {
     private final String NUMOFINCONCLUSIVE_KW = "NumOfInconclusive";
     private final String TCRESULTS_KW         = "TcResults";
     private final String TIMESTAMP_KW         = "TimeStamp";
-    private final String TESTSUITE_KW         = "TestSuite";
     private final String VERDICT_KW           = "Verdict";
     private final String COMMENT_KW           = "Comment";
     private final String LOGFILEPATH_KW       = "LogFilePath";
@@ -75,12 +74,7 @@ public class ReportEngine {
 
     public Map<String, String> status = new HashMap<>();
 
-
-    /**
-     *
-     */
     public ReportEngine() {}
-
 
     private void closeFile() {
         try {
@@ -123,7 +117,6 @@ public class ReportEngine {
                 doSutChanged(result.sutName);
             }
             catch (final IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             knownSut = result.sutName;
@@ -144,12 +137,25 @@ public class ReportEngine {
         // add result
         final HashMap<String, String> resElement = new HashMap<>();
         resElement.put(TIMESTAMP_KW, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").format(new Date()).toString());
-        resElement.put(TESTSUITE_KW, "");
         resElement.put(VERDICT_KW, verdict);
         resElement.put(COMMENT_KW, verdictText);
         resElement.put(LOGFILEPATH_KW, tcLogName);
         testcaseResults.add(resElement);
 
+        // update SuT header
+        final CmdListSuT sutList = Factory.createCmdListSut();
+        sutList.execute();
+        final SutDescription sutDesc = sutList.sutMap.get(result.sutName);
+        if (sutDesc == null) {
+            LOGGER.error("SuT not found: " + result.sutName);
+            return;
+        }
+        final JSONObject sutHeader = (JSONObject) tcResults.get(SUT_KW);
+        sutHeader.put(SUTID_KW, sutDesc.ID);
+        sutHeader.put(SUTNAME_KW, sutDesc.name);
+        sutHeader.put(SUTREV_KW, sutDesc.version);
+        sutHeader.put(SUTVENDOR_KW, sutDesc.vendor);
+        
         // update result summary
         final JSONObject resSummary = (JSONObject) tcResults.get(VERDICTSUMMARY_KW);
 
@@ -205,6 +211,12 @@ public class ReportEngine {
             initializeResults(sut);
             writeResultsToFile(resultFile);
         }
+        
+        final String reportName = reportFileName + ".json";
+        reportFile = Paths.get(reportPath, reportName);
+        if (Files.notExists(reportFile)) {
+            Files.createFile(reportFile);
+        }
 
         // fill the internal JSON result object
         final JSONParser jparser = new JSONParser();
@@ -233,15 +245,11 @@ public class ReportEngine {
             return;
         }
 
-        setTestSystemHeader();
         setSutHeader(sutDesc);
         initializeVerdictSummary();
 
         tcResults.put(TCRESULTS_KW, new JSONObject());
     }
-
-
-    private void setTestSystemHeader() {}
 
 
     @SuppressWarnings("unchecked")

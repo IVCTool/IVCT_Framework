@@ -8,11 +8,11 @@
 	"requirements"	:	[
 		{
 			"id"			:	"IR-HW-0001",
-			"description"	:	"Test population growing rate",
+			"description"	:	"Test population growing rate"
 		},
 		{
 			"id"			:	"IP-HW-0002",
-			"description"	:	"Test inter-country communication",
+			"description"	:	"Test inter-country communication"
 		}
 	]
 }

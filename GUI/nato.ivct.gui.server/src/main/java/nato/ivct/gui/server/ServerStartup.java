@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server;
 
 import org.eclipse.scout.rt.platform.BEANS;
@@ -15,6 +29,9 @@ import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdLogMsgListener.LogMsg;
 import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
+import nato.ivct.commander.CmdOperatorRequestListener;
+import nato.ivct.commander.CmdOperatorRequestListener.OnOperatorRequestListener;
+import nato.ivct.commander.CmdOperatorRequestListener.OperatorRequestInfo;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
@@ -26,6 +43,7 @@ import nato.ivct.commander.HeartBeatMsgStatus.HbMsgState;
 import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.sut.TcLogMsgNotification;
+import nato.ivct.gui.shared.sut.TcOperatorRequestNotification;
 import nato.ivct.gui.shared.sut.TcStatusNotification;
 import nato.ivct.gui.shared.sut.TcVerdictNotification;
 
@@ -36,6 +54,7 @@ public class ServerStartup implements IPlatformListener {
     private CmdStartTestResultListener tcResultListener;
     private CmdTcStatusListener        tcStatusListener;
     private CmdLogMsgListener          logMsgListener;
+    private CmdOperatorRequestListener tcOperatorListener;
 
     public class ResultListener implements OnResultListener {
 
@@ -81,6 +100,20 @@ public class ServerStartup implements IPlatformListener {
         }
     }
 
+    public class OperatorRequestListener implements OnOperatorRequestListener {
+
+        @Override
+        public void onOperatorRequest(OperatorRequestInfo operatorRequestInfo) {
+            final TcOperatorRequestNotification notification = new TcOperatorRequestNotification();
+            notification.setSutName(operatorRequestInfo.sutName);
+            notification.setTestSuiteId(operatorRequestInfo.testSuiteId);
+            notification.setTestCaseId(operatorRequestInfo.testCaseId);
+            notification.setOperatorMessage(operatorRequestInfo.text);
+
+            BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
+        }
+    }
+
     public class IvctHeartBeatListener implements OnCmdHeartbeatListen {
 
         @Override
@@ -89,23 +122,23 @@ public class ServerStartup implements IPlatformListener {
             LOG.trace("heartbeat received: {}", heartBeat.toJSONString());
 
             try {
-                final HbMsgState hbMsgState = (HbMsgState) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
+                final String hbMsgState = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_MESSAGESTATE, HbMsgState.UNKNOWN);
                 switch (hbMsgState) {
-                    case INTIME:
+                    case "intime":
                         hbn.notifyState = HbNotificationState.OK;
                         break;
-                    case TIMEOUT:
-                    case WAITING:
-                    case ALERT:
+                    case "time-out":
+                    case "waiting":
+                    case "alert":
                         hbn.notifyState = HbNotificationState.WARNING;
                         break;
-                    case FAIL:
+                    case "fail":
                         hbn.notifyState = HbNotificationState.CRITICAL;
                         break;
-                    case DEAD:
+                    case "dead":
                         hbn.notifyState = HbNotificationState.DEAD;
                         break;
-                    case UNKNOWN:
+                    case "unknown":
                     default:
                         hbn.notifyState = HbNotificationState.UNKNOWN;
                 }
@@ -127,7 +160,6 @@ public class ServerStartup implements IPlatformListener {
         }
     }
 
-
     @Override
     public void stateChanged(PlatformEvent event) {
         if (event.getState() == State.PlatformStarted) {
@@ -142,9 +174,11 @@ public class ServerStartup implements IPlatformListener {
             LOG.info("start Log Message Listener");
             (logMsgListener = Factory.createCmdLogMsgListener(new LogMsgListener())).execute();
 
+            LOG.info("start Operator Request Listener");
+            (tcOperatorListener = Factory.createCmdStartOperatorRequestListener(new OperatorRequestListener())).execute();
+
             LOG.info("start heartbeat Listener");
-            //      new CmdHeartbeatListen(new IvctHeartBeatListener(), "Use_CmdHeartbeatSend").execute(); // for testing purpose
-            //        new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestRunner").execute();
+
             new CmdHeartbeatListen(new IvctHeartBeatListener(), "TestEngine").execute();
             new CmdHeartbeatListen(new IvctHeartBeatListener(), "LogSink").execute();
         }

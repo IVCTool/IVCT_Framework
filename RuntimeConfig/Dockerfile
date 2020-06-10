@@ -1,19 +1,9 @@
 FROM busybox
-ENTRYPOINT [ "sh", "-c", " \
-   if [ -n \"$VOLUME\" -a -n \"$1\" ]; then \
-      if [ -n \"$OPTS\" ]; then \
-         cp $OPTS $VOLUME $1; \
-      else \
-         cp -a $VOLUME $1; \
-      fi; \
-      echo \"Copied $VOLUME to $1\"; \
-   fi" , \
-"--" ]
 
-ADD IVCT.properties /root/conf/IVCT.properties
-ADD IVCTsut /root/conf/IVCTsut
-ADD Badges /root/conf/Badges
-ADD TestSuites /root/conf/TestSuites
+COPY IVCT.properties /root/conf/IVCT.properties
+COPY IVCTsut /root/conf/IVCTsut
+COPY Badges /root/conf/Badges
+COPY TestSuites /root/conf/TestSuites
 
 ENV VOLUMEDIR /root/conf/
 ENV VOLUME ${VOLUMEDIR}/.

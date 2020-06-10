@@ -1,3 +1,4 @@
+
 task writeVersion {
     group = "Build"
     description = "Creates a properties file with version information"
@@ -18,10 +19,18 @@ dependencies {
 	compile	libraries.slf4j_api
 	compile	libraries.jsonSimple
 	compile	project(':MessagingHelpers')
+	
+	implementation libraries.apacheCommonsIO
 
-	testImplementation	libraries.junit
-	testImplementation	libraries.hamcrest_core
+	// testImplementation	libraries.junit
+	testImplementation	libraries.junit_jupiter_engine
+    // testImplementation  libraries.junit_vintage_engine
 	testImplementation	libraries.activemqEmbedded
+}
+
+test {
+    // Enable JUnit 5 (Gradle 4.6+).
+    useJUnitPlatform()
 }
 
 javadoc {

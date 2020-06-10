@@ -1,14 +1,24 @@
 {
     "id": "TS-HLA-Declaration-2019",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "name": "HLA Declaration Test Suite 2019",
     "description": "This test suite verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM.",
-    "tsRunTimeFolder": "TS_HLA_Declaration-2.0.0/bin",
-    "tsLibTimeFolder": "TS_HLA_Declaration-2.0.0/lib",
-    "testcases": [{
-            "TC": "nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check"
-            "description": "Container test for declaration..",
-            "IR": ["IR-SOM-0003", "IR-SOM-0004", "IR-SOM-0005", "IR-SOM-0006", "IR-SOM-0007", "IR-SOM-0008", "IR-SOM-0009", "IR-SOM-0010"],
+    "tsRunTimeFolder": "TS_HLA_Declaration-2.1.0/bin",
+    "tsLibTimeFolder": "TS_HLA_Declaration-2.1.0/lib",
+    "testcases": [
+        {
+            "TC": "nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check",
+            "description": "Container test for declaration service.",
+            "IR": [
+                "IR-SOM-0003",
+                "IR-SOM-0004",
+                "IR-SOM-0005",
+                "IR-SOM-0006",
+                "IR-SOM-0007",
+                "IR-SOM-0008",
+                "IR-SOM-0009",
+                "IR-SOM-0010"
+            ]
         }
     ]
 }

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TestCases" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7d3db6-282a-494e-956f-fb5e9774b1ab">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString language="jsonql">
+		<![CDATA[..Badges.TestSuites.TestCases.*]]>
+	</queryString>
+	<field name="TcId" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TcId"/>
+		<fieldDescription><![CDATA[TcId]]></fieldDescription>
+	</field>
+	<field name="TcName" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TcName"/>
+		<fieldDescription><![CDATA[TcName]]></fieldDescription>
+	</field>
+	<field name="TcDescription" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="TcDescription"/>
+		<fieldDescription><![CDATA[TcDescription]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="109">
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="100" y="81" width="455" height="20" backcolor="#E6E6E6" uuid="bc2b0c58-cca3-4788-b191-14dc90be395c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7bd7e932-3ca6-42ae-ac23-5e23538fa969"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph firstLineIndent="0" leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TcDescription}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="81" width="90" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="983254a7-a36c-402f-bc32-090e517444d9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="-10" width="555" height="60" backcolor="#006699" uuid="cb6cecfb-5cf2-498b-b04b-b4bce68c2e5f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="555" height="30" forecolor="#FFFFFF" uuid="26068a01-2d0b-44b2-925e-96ebd061b10b">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ Testcase (TC): ]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight">
+					<reportElement mode="Transparent" x="0" y="30" width="555" height="30" forecolor="#FFFFFF" backcolor="#E6E6E6" uuid="19222a34-479f-43bc-bffe-d55babfbdf3e">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7bd7e932-3ca6-42ae-ac23-5e23538fa969"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TcName}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="56" width="90" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="6251a2c6-39a1-4d3b-86e7-3dbcba586fa3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<text><![CDATA[Id]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Opaque" x="100" y="56" width="455" height="20" backcolor="#E6E6E6" uuid="a90f9b6a-ceec-4013-b77b-b420832baa1c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7bd7e932-3ca6-42ae-ac23-5e23538fa969"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph firstLineIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TcId}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="80">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="80" uuid="a43f5a88-8a69-426a-ab94-e8a90bcf92c1"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".IrForTc.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_IrForTc.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="70">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="70" uuid="b28b6232-41aa-4757-ada8-cc84ec0bce57"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonQLDataSource)$P{REPORT_DATA_SOURCE}).subDataSource(".TcResult.*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreport_TcResult.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client.sut;
 
 import java.util.List;
@@ -40,7 +54,6 @@ public class SuTEditForm extends AbstractForm {
     private String sutId = null;
     private String title = null;
 
-
     public SuTEditForm(String formTitle) {
         title = formTitle;
     }
@@ -51,7 +64,7 @@ public class SuTEditForm extends AbstractForm {
         if (title != null)
             return title;
         else
-            return TEXTS.get("NewSuT");
+            return TEXTS.get("EditSuT");
     }
 
 
@@ -112,8 +125,8 @@ public class SuTEditForm extends AbstractForm {
 
 
     @FormData
-    public void setSutId(final String _sutId) {
-        sutId = _sutId;
+    public void setSutId(final String sutId) {
+        this.sutId = sutId;
     }
 
 
@@ -356,7 +369,6 @@ public class SuTEditForm extends AbstractForm {
         }
     }
 
-
     @Override
     protected boolean execIsSaveNeeded() {
         // show save button if save is required
@@ -379,19 +391,19 @@ public class SuTEditForm extends AbstractForm {
 
         final AbstractPageWithNodes pageWithNode = (AbstractPageWithNodes) sutOutline.getRootNode();
         // add only a newly created node
+        SuTBadgeTablePage page = null;
         if (pageWithNode.getTree().findNode(getSutId()) == null) {
             final SuTBadgeTablePage newPage = sutOutline.createChildPage(getSutId());
             pageWithNode.getTree().addChildNode(pageWithNode, newPage);
-            //			List<ITreeNode> notesToAdd = new ArrayList<>();
-            //			notesToAdd.add(newPage);
-            //			pageWithNode.getTree().updateChildNodeOrder(pageWithNode, pageWithNode.getChildPages());
             sutOutline.selectNode(newPage);
+            page = newPage;
         }
         else {
             // toggle selection to reload to form content
             final SuTBadgeTablePage selNode = (SuTBadgeTablePage) sutOutline.getSelectedNode();
             sutOutline.deselectNode(selNode);
             sutOutline.selectNode(selNode);
+            page = selNode;
 
             // reload capabilities
             if (getFieldByClass(SuTCapabilityBox.class).getTable().getUpdatedRowCount() > 0)
@@ -411,7 +423,6 @@ public class SuTEditForm extends AbstractForm {
             exportFormData(formData);
             formData = service.prepareCreate(formData);
             importFormData(formData);
-            //          setEnabledPermission(new CreateSuTPermission());
         }
 
 
@@ -449,8 +460,6 @@ public class SuTEditForm extends AbstractForm {
                 keys.add(((SuTCbNodePage) node).getBadgeId());
                 getSuTCapabilityBox().getTable().checkRow(getSuTCapabilityBox().getTable().getRowByKey(keys), true);
             });
-
-            //            setEnabledPermission(new CreateSuTPermission());
         }
 
 

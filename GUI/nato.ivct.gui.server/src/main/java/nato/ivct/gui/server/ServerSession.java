@@ -1,8 +1,21 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +23,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.scout.rt.platform.job.IFuture;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.server.AbstractServerSession;
@@ -38,8 +50,10 @@ import nato.ivct.commander.Factory;
  */
 public class ServerSession extends AbstractServerSession {
 
-    private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$"); // (".*?:\\s+(.*?)\\s+(.*?)\\s.*\\(([^(]*?)\\)\\s*");
-    private static final Pattern VERDICT_LINE = Pattern.compile("^\\s*?VERDICT:\\s.*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RESULT_EXP   = Pattern.compile("^.*?:\\s+(.*?)\\s+(.*?)\\s.*?([^()\\s]*?/[^()\\s]*?\\.log)?\\)?\\s*$");
+
+    private static final String RESULTS_FILE_NAME = "Results";
+    private static final String RESULTS_FILE_EXT = "json";
 
     private static IFuture<CmdListSuT>             loadSuTJob;
     private static IFuture<SutTcResultDescription> loadTcResultsJob;
@@ -85,7 +99,7 @@ public class ServerSession extends AbstractServerSession {
     }
 
     /*
-     * Load Testsuite descriptions job
+     * Load Test suite descriptions job
      */
     public class LoadTestSuiteDescriptions implements Callable<CmdListTestSuites> {
 
@@ -112,10 +126,12 @@ public class ServerSession extends AbstractServerSession {
             final List<String> sutList = Factory.getSutPathsFiles().getSuts();
             // iterate over all SuTs to get its report files
             sutList.forEach(sutId -> {
-                final List<String> reportFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
+                final List<String> resultFiles = Factory.getSutPathsFiles().getSutReportFileNames(sutId, true);
                 //parse each report file to get the verdict and the corresponding log file name
-                reportFiles.forEach(reportFile -> {
-                    parseResultFile(sutId, reportFile, sutTcResults);
+                resultFiles.forEach(resultFile -> {
+                    if ((RESULTS_FILE_NAME + "." + RESULTS_FILE_EXT).equalsIgnoreCase(Paths.get(resultFile).getFileName().toString())) {
+                        parseJsonResultFile(sutId, resultFile, sutTcResults);
+                    }
                 });
             });
 
@@ -123,63 +139,19 @@ public class ServerSession extends AbstractServerSession {
         }
 
 
-        private void parseResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
-            LOG.info("parse report file: {}\n", reportFile);
-            final String fileExt = reportFile.substring(reportFile.lastIndexOf('.') + 1);
-            switch (fileExt.toLowerCase()) {
-                case "txt":
-                    parseTextResultFile(sutId, reportFile, sutTcResults);
-                    break;
-                case "json":
-                    parseJsonResultFile(sutId, reportFile, sutTcResults);
-                    break;
-            }
-
-        }
-
-
-        private void parseTextResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
-            try {
-                Files.lines(Paths.get(reportFile)).filter(line -> VERDICT_LINE.matcher(line).matches()).forEach(verdictLine -> {
-                    LOG.info("\tparse verdict line: {}\n", verdictLine);
-                    // extract the required elements from the verdict line
-                    final String[] result = parseVerdictLine(verdictLine);
-                    if (result.length == 4) {
-                        //                                final List<String> logFiles = Factory.getSutPathsFiles().getSutLogFileNames(sutId, result[2]);
-                        //                                //TODO: Get list for pairs (logfile,verdict) for each SUT
-                        //                                // get the matching log file from the list
-                        //                                final Optional<String> matchingFileName = logFiles.stream().filter(fileName -> fileName.contains(result[3])).findFirst();
-                        //                                if (matchingFileName.isPresent()) {
-                        //                                    // add the match to the result map
-                        //                                    sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(matchingFileName.get(), result[1]);
-                        //                                }
-                        sutTcResults.sutResultMap.computeIfAbsent(sutId, k -> new HashMap<>()).computeIfAbsent(result[2], k -> new HashMap<>()).put(result[3], result[1]);
-                    }
-                });
-            }
-            catch (final NoSuchFileException exc) {
-                LOG.info("report file not found: {}", reportFile);
-            }
-            catch (final IOException exc) {
-                exc.printStackTrace();
-            }
-        }
-
-
         @SuppressWarnings("unchecked")
-        private void parseJsonResultFile(final String sutId, final String reportFile, final SutTcResultDescription sutTcResults) {
+        private void parseJsonResultFile(final String sutId, final String resultFile, final SutTcResultDescription sutTcResults) {
             final String TCRESULTS_KW = "TcResults";
-            final String TESTSUITE_KW = "TestSuite";
             final String VERDICT_KW = "Verdict";
             final String LOGFILEPATH_KW = "LogFilePath";
 
             final JSONParser jparser = new JSONParser();
             JSONObject tcResults = null;
             try {
-                tcResults = (JSONObject) jparser.parse(new String(Files.readAllBytes(Paths.get(reportFile))));
+                tcResults = (JSONObject) jparser.parse(new String(Files.readAllBytes(Paths.get(resultFile))));
             }
             catch (ParseException | IOException exc) {
-                LOG.error("Error reading//parsing the result file {}", reportFile.toString());
+                LOG.error("Error reading//parsing the result file {}", resultFile);
                 return;
             }
 
@@ -214,7 +186,7 @@ public class ServerSession extends AbstractServerSession {
          * Parse the verdict string of a report file
          * @param line the line to parse
          * @return a String array with 4 element with: [0]: extended test case name [1]:
-         * verdict [2]: testsuite (or badge) id [3]: log file name
+         * verdict [2]: test suite (or badge) id [3]: log file name
          */
         private String[] parseVerdictLine(final String line) {
             final Matcher matcher = RESULT_EXP.matcher(line);
@@ -222,7 +194,6 @@ public class ServerSession extends AbstractServerSession {
             return matcher.matches() ? matcher.replaceAll("$1 $2 $3").replace('/', ' ').split(" ") : new String[0];
         }
     }
-
 
     public void updateSutResultMap(final String sutId, final String tsId, final String tcFullName) {
         LOG.info("reload test results for all SuTs");
@@ -240,14 +211,13 @@ public class ServerSession extends AbstractServerSession {
         private final String federationName;
         private final String federateName;
 
-
-        public ExecuteTestCase(String _sut, String _tc, String _badge, String _settingsDesignator, String _federationName, String _federateName) {
-            sut = _sut;
-            tc = _tc;
-            badge = _badge;
-            settingsDesignator = _settingsDesignator;
-            federationName = _federationName;
-            federateName = _federateName;
+        public ExecuteTestCase(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
+            this.sut = sut;
+            this.tc = tc;
+            this.badge = badge;
+            this.settingsDesignator = settingsDesignator;
+            this.federationName = federationName;
+            this.federateName = federateName;
         }
 
 
@@ -263,7 +233,6 @@ public class ServerSession extends AbstractServerSession {
     public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
 
         private LogLevel logLevel;
-
 
         public ExecuteSetLogLevel(String level) {
             switch (level == null ? "" : level) {
@@ -299,7 +268,6 @@ public class ServerSession extends AbstractServerSession {
     private static final long   serialVersionUID = 1L;
     private static final Logger LOG              = LoggerFactory.getLogger(ServerSession.class);
 
-
     public ServerSession() {
         super(true);
     }
@@ -317,7 +285,6 @@ public class ServerSession extends AbstractServerSession {
     @Override
     protected void execLoadSession() {
         LOG.info("created a new session for {}", getUserId());
-        //        Factory.initialize();
 
         LOG.info("load SuT Information");
         loadSuTJob = Jobs.schedule(new LoadSuTdescriptions(), Jobs.newInput());

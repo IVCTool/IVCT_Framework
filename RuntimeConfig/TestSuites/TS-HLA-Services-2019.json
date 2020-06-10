@@ -1,15 +1,15 @@
 {
 	"id" 			: 	"TS-HLA-Services-2019",
-	"version"		:	"2.0.0",
+	"version"		:	"2.1.0",
 	"name" 			: 	"HLA Services Test Suite 2019",
 	"description"	:	"This test suite verifies that the federate uses only the services specified in its SOM.",
-	"tsRunTimeFolder":	"TS_HLA_Services-2.0.0/bin",
-	"tsLibTimeFolder":	"TS_HLA_Services-2.0.0/lib",
+	"tsRunTimeFolder":	"TS_HLA_Services-2.1.0/bin",
+	"tsLibTimeFolder":	"TS_HLA_Services-2.1.0/lib",
 	"testcases"	:	[
 		{
-			"TC"			:	"nato.ivct.etc.fr.tc_hla_services.TC_001_Services_Check"
+			"TC"			:	"nato.ivct.etc.fr.tc_hla_services.TC_001_Services_Check",
 			"IR"			:	["IR-SOM-0019", "IR-SOM-0020"],
-			"description"	:	"Tests if SuT implements/uses all HLA services as described as implemented/used in CS/SOM. Tests if SuT does not implement/use any HLA service that is not described as implemented/used in CS/SOM",
+			"description"	:	"Tests if SuT implements/uses all HLA services as described as implemented/used in CS/SOM. Tests if SuT does not implement/use any HLA service that is not described as implemented/used in CS/SOM"
 		}
 	]
 }

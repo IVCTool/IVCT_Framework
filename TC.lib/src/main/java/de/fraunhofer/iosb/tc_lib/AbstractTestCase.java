@@ -11,12 +11,17 @@
 
 package de.fraunhofer.iosb.tc_lib;
 
-import org.slf4j.Logger;
-import org.slf4j.MDC;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.concurrent.Semaphore;
 
+import org.slf4j.Logger;
+
+import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
+import nato.ivct.commander.CmdOperatorRequest;
 import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
-
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the three
@@ -30,7 +35,6 @@ public abstract class AbstractTestCase {
 
     private final CmdSendTcStatus statusCmd = Factory.createCmdSendTcStatus();
 
-
     public void sendTcStatus(String status, int percent) {
         statusCmd.setStatus(status);
         statusCmd.setPercentFinshed(percent);
@@ -38,12 +42,26 @@ public abstract class AbstractTestCase {
         statusCmd.setSutName(sutName);
         statusCmd.execute();
     }
+    
+    private Logger defaultLogger = null;
 
+    private String testSuiteId = null;
     private String tcName  = null;
     private String sutName = null;
     private String settingsDesignator;
     private String federationName;
     private String sutFederateName;
+    
+    private Semaphore semOperatorRequest = new Semaphore(0);
+    private boolean confirmationBool = false;
+    private String cnfText;
+    private String testCaseId;
+    
+	private boolean skipOperatorMsg;
+	public void setSkipOperatorMsg (boolean value) {
+		skipOperatorMsg = value;
+	}
+
 
 
     /**
@@ -81,8 +99,44 @@ public abstract class AbstractTestCase {
      * @throws TcInconclusive if test is inconclusive
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
+    
+    public void setDefaultLogger(final Logger logger) {
+    	this.defaultLogger = logger;
+    }
 
+    public void sendOperatorRequest(String text) throws InterruptedException, TcInconclusive {
+		if (skipOperatorMsg) return;
+    	if (text == null) {
+    		// Make an empty string
+    		text = new String();
+    	}
+    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(sutName, testSuiteId, tcName, text);
+    	operatorRequestCmd.execute();
+    	semOperatorRequest.acquire();
+    	if (confirmationBool == false) {
+    		if (cnfText != null) {
+                throw new TcInconclusive("Operator reject message: " + cnfText);
+    		} else {
+                throw new TcInconclusive("Operator reject message: - no reject text -");
+    		}
+    	}
+    }
 
+    public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+    	testCaseId = operatorConfirmationInfo.testCaseId;
+    	confirmationBool = operatorConfirmationInfo.confirmationBool;
+    	cnfText = operatorConfirmationInfo.text;
+		String boolText;
+		if (operatorConfirmationInfo.confirmationBool) {
+			boolText = "true";
+		} else {
+			boolText = "false";
+		}
+		if (defaultLogger != null) {
+		    defaultLogger.info("OperatorConfirmation: " + boolText + " Text: " + operatorConfirmationInfo.text);
+		}
+    	semOperatorRequest.release();
+    }
     /**
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
@@ -92,13 +146,9 @@ public abstract class AbstractTestCase {
 
         IVCT_BaseModel ivct_BaseModel = null;
         final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
-        MDC.put("testcase", this.getClass().getName());
 
         // A one-time start message
-        MDC.put("tcStatus", "started");
         logger.info("Test Case Started");
-
-        MDC.put("tcStatus", "running");
 
         final StringBuilder tcGlobalVariables = new StringBuilder();
         tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- BEGIN");
@@ -224,6 +274,21 @@ public abstract class AbstractTestCase {
 
 
     /**
+     * Returns the name test suite
+     *
+     * @return Test Suite Name
+     */
+    public String getTsName() {
+        return testSuiteId;
+    }
+
+
+    public void setTsName(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
+
+
+    /**
      * Returns the name of the fully qualified class name of the test case
      *
      * @return Test Case Name
@@ -294,4 +359,44 @@ public abstract class AbstractTestCase {
     public String getSutFederateName() {
         return sutFederateName;
     }
+    
+    
+    
+    /**
+     * Returns the IVCT-Version which has this TestCase at building-time for
+     * checking against the IVCT-Version of at Runtime
+     *  
+     * @throws IVCTVersionCheckException of version id can not be resolved
+     * @return IVCT version id
+     */
+    public String getIVCTVersion()  throws IVCTVersionCheckException {
+      
+      String infoIVCTVersion = "not defined yet";  
+      InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
+      
+      
+      if (in == null) {
+        throw new IVCTVersionCheckException("/testCaseBuild.properties could not be read ");
+      }   
+      
+      Properties versionProperties = new Properties();
+      
+      try {
+        versionProperties.load(in);
+        infoIVCTVersion = versionProperties.getProperty("ivctVersion");
+      } catch (IOException ex) {      
+        infoIVCTVersion = "undefined";      
+        throw new IVCTVersionCheckException("/testCaseBuild.properties could not be load ", ex );
+      }
+      return infoIVCTVersion;
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
 }

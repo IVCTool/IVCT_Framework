@@ -1,4 +1,4 @@
-/* Copyright 2019, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -66,12 +66,11 @@ public class CmdListTestSuites implements Command {
 		public Map<String, TestCaseDesc> testcases;
 	};
 
-	// public Map<String, TestCaseDesc> testcases = new HashMap<>();
 	public Map<String, TestSuiteDescription> testsuites = new HashMap<>();
 
 	@Override
 	public void execute() throws Exception {
-		Factory.LOGGER.trace("Factory.IVCT_TS_HOME_ID = " + Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID));
+		Factory.LOGGER.trace("Factory.IVCT_TS_HOME_ID = {}", Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID));
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID));
 		if (dir.exists() == false) {
 			Factory.LOGGER.error("test suite folder: {} does not exist",
@@ -83,13 +82,13 @@ public class CmdListTestSuites implements Command {
 		testsuites.clear();
 
 		if (dir.isDirectory()) {
-			Factory.LOGGER.trace("Read Testsuite descriptions from " + dir.getAbsolutePath());
+			Factory.LOGGER.trace("Read Testsuite descriptions from {}", dir.getAbsolutePath());
 			JSONParser parser = new JSONParser();
 			File[] filesList = dir.listFiles();
 			for (File file : filesList) {
 				Object obj;
 				if (file.isFile() && file.getName().toLowerCase().endsWith(".json")) {
-					Factory.LOGGER.trace("reading testsuite description: " + file.getAbsolutePath());
+					Factory.LOGGER.trace("reading testsuite description: {}", file.getAbsolutePath());
 					FileReader fr = null;
 					try {
 						TestSuiteDescription testSuite = new TestSuiteDescription();
@@ -125,9 +124,8 @@ public class CmdListTestSuites implements Command {
 						this.testsuites.put(testSuite.id, testSuite);
 						fr.close();
 						fr = null;
-					} catch (IOException | ParseException e) {
-						Factory.LOGGER.error("error reading file");
-						e.printStackTrace();
+					} catch (IOException | ParseException exc) {
+						Factory.LOGGER.error("error reading file", exc);
 					}
 
 				}
@@ -138,10 +136,10 @@ public class CmdListTestSuites implements Command {
 		}
 	};
 
-	public TestSuiteDescription getTestSuiteForTc(String tc_id) {
+	public TestSuiteDescription getTestSuiteForTc(String tcId) {
 		for (TestSuiteDescription value : this.testsuites.values()) {
 			for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
-				if (tc.getValue().tc.equalsIgnoreCase(tc_id)) {
+				if (tc.getValue().tc.equalsIgnoreCase(tcId)) {
 					return value;
 				}
 			}
@@ -149,12 +147,12 @@ public class CmdListTestSuites implements Command {
 		return null;
 	}
 
-	public TestSuiteDescription getTestSuiteforIr(String ir_id) {
+	public TestSuiteDescription getTestSuiteforIr(String irId) {
 		for (TestSuiteDescription value : this.testsuites.values()) {
 			// for (TestCaseDesc tc : value.testcases)
 			for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
 				for (String ir : tc.getValue().IR) {
-					if (ir.equalsIgnoreCase(ir_id)) {
+					if (ir.equalsIgnoreCase(irId)) {
 						return value;
 					}
 				}
@@ -163,11 +161,11 @@ public class CmdListTestSuites implements Command {
 		return null;
 	}
 
-	public TestCaseDesc getTestCaseDescrforIr(String ir_id) {
+	public TestCaseDesc getTestCaseDescrforIr(String irId) {
 		for (TestSuiteDescription value : this.testsuites.values()) {
 			for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
 				for (String ir : tc.getValue().IR) {
-					if (ir.equalsIgnoreCase(ir_id)) {
+					if (ir.equalsIgnoreCase(irId)) {
 						return tc.getValue();
 					}
 				}
@@ -176,10 +174,10 @@ public class CmdListTestSuites implements Command {
 		return null;
 	}
 
-	public Set<String> getIrForTc(String tc_id) {
+	public Set<String> getIrForTc(String tcId) {
 		for (TestSuiteDescription value : this.testsuites.values()) {
 			for (Map.Entry<String, TestCaseDesc> tc : value.testcases.entrySet()) {
-				if (tc.getValue().tc.equalsIgnoreCase(tc_id)) {
+				if (tc.getValue().tc.equalsIgnoreCase(tcId)) {
 					return tc.getValue().IR;
 				}
 			}
@@ -187,21 +185,21 @@ public class CmdListTestSuites implements Command {
 		return null;
 	}
 
-	public Set<String> getTsForIr(Set<String> ir_list) {
-		Set<String> ts_set = new HashSet<>();
+	public Set<String> getTsForIr(Set<String> irList) {
+		Set<String> tsSet = new HashSet<>();
 
-		for (String ir : ir_list) {
+		for (String ir : irList) {
 			TestSuiteDescription ts = getTestSuiteforIr(ir);
-			ts_set.add(ts.id);
+			tsSet.add(ts.id);
 		}
-		return ts_set;
+		return tsSet;
 	}
 
 	
-	public Map<String, TestSuiteDescription> filterForIr (Set<String> ir_set) {
+	public Map<String, TestSuiteDescription> filterForIr (Set<String> irSet) {
     	Map<String, TestSuiteDescription> filteredTestsuites = new HashMap<>();    	
     	
-    	for (String ir: ir_set) {
+    	for (String ir: irSet) {
     		TestSuiteDescription ts = getTestSuiteforIr(ir);
     		TestSuiteDescription fts = filteredTestsuites.get(ts.id);
     		if (fts == null) {

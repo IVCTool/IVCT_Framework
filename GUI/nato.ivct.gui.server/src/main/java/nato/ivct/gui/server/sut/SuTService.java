@@ -1,22 +1,37 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
@@ -34,15 +49,13 @@ import nato.ivct.gui.shared.sut.ReadSuTPermission;
 import nato.ivct.gui.shared.sut.SuTEditFormData;
 import nato.ivct.gui.shared.sut.SuTFormData;
 import nato.ivct.gui.shared.sut.SuTFormData.SutCapabilityStatusTable.SutCapabilityStatusTableRowData;
-import nato.ivct.gui.shared.sut.TestReportFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
 
 
 public class SuTService implements ISuTService {
 
-    private static final Logger             LOG    = LoggerFactory.getLogger(ServerSession.class);
+    private static final Logger             LOG    = LoggerFactory.getLogger(SuTService.class);
     private HashMap<String, SutDescription> sutMap = null;
-
 
     @Override
     public Set<String> loadSuts() {
@@ -68,25 +81,26 @@ public class SuTService implements ISuTService {
 
     private void waitForSutLoading() {
         final IFuture<CmdListSuT> future1 = ServerSession.get().getLoadSuTJob();
-        // ServerSession.get().getLoadBadgesJob().awaitDone();
         final CmdListSuT sutCmd = future1.awaitDoneAndGet();
         // copy sut descriptions into table rows
         sutMap = sutCmd.sutMap;
     }
 
-
     /*
      * functions for SuTFormData
      */
 
+
     @Override
     public SuTFormData load(SuTFormData formData) {
-        LOG.info(getClass().toString() + ".load");
+        LOG.info("load {}", getClass());
         if (!ACCESS.check(new ReadSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
+
         // find the SuT description by selected SuTid.
         final SutDescription sut = sutMap.get(formData.getSutId());
+
         if (sut != null) {
             formData.setSutId(sut.ID);
 
@@ -98,68 +112,79 @@ public class SuTService implements ISuTService {
             formData.getRtiSettingDesignator().setValue(sut.settingsDesignator);
             formData.getFederationName().setValue(sut.federation);
             formData.getFederateName().setValue(sut.sutFederateName);
+
         }
 
         // fill the form data: SuTCapabilities table with conformance status
         loadCapabilityStatus(formData);
 
         // fill the form data: SuTReports table
-        loadReportFiles(formData);
+        loadResultFiles(formData);
 
         return formData;
     }
-
 
     /*
      * functions for TestReport
      */
 
+
     @Override
-    public TestReportFormData load(TestReportFormData formData) {
-        final String testReportFileName = formData.getReportFileName();
+    public String createTestreport(final String sutId) {
+        final Path reportFolder = Paths.get(Factory.getSutPathsFiles().getReportPath(sutId));
 
-        // get content of the requested report file
-        final List<String> testReportFiles = Factory.getSutPathsFiles().getSutReportFileNames(formData.getSutIdProperty().getValue(), true);
-        testReportFiles.stream().filter(value -> value.contains(testReportFileName)).map(Paths::get).findAny().ifPresent(path -> {
-            try {
-                formData.getTestReport().setValue(java.nio.file.Files.lines(path).collect(Collectors.joining("\n")));
-            }
-            catch (final IOException exc) {
-                LOG.error("Error when attempting to read from file: {}", Factory.getSutPathsFiles().getReportPath(formData.getSutIdProperty().getValue()).concat("\\").concat(testReportFileName));
-                exc.printStackTrace();
-            }
-        });
+        if (TestReport.createReportJsonFile(sutId, reportFolder.toString() + File.separatorChar + "Results.json").isEmpty()) {
+            return null;
+        }
 
-        return formData;
+        return TestReport.createPDFTestreport(reportFolder);
     }
 
 
-    private SuTFormData loadReportFiles(final SuTFormData fd) {
+    @Override
+    public BinaryResource getTestReportFileContent(String sutId, String fileName) {
+        BinaryResource fileContent = null;
+
+        try {
+            fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getReportPath(sutId)).resolve(fileName)));
+        }
+        catch (IOException | InvalidPathException exc) {
+            LOG.error("error to access fileName " + fileName, exc);
+            fileContent = new BinaryResource(fileName, null);
+        }
+
+        return fileContent;
+    }
+
+
+    private static SuTFormData loadResultFiles(final SuTFormData fd) {
         final Path folder = Paths.get(Factory.getSutPathsFiles().getReportPath(fd.getSutId()));
+        if (!folder.toFile().exists())
+            return fd;
 
         try {
             getReportFilesOrderedByCreationDate(folder).forEach(path -> {
-                final String reportFileName = path.getFileName().toString();
-                LOG.info("report file found: {}", reportFileName);
-                fd.getTestReportTable().addRow().setFileName(reportFileName);
+                final String resultFileName = path.getFileName().toString();
+                LOG.info("report file found: {}", resultFileName);
+                fd.getTestReportTable().addRow().setFileName(resultFileName);
             });
         }
         catch (final NoSuchFileException exc) {
-            LOG.error("report files not found in folder: {}", folder);
+            LOG.error("report files not found in folder: " + folder, exc);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error(" ", exc);
         }
 
         return fd;
     }
 
 
-    private Stream<Path> getReportFilesOrderedByCreationDate(final Path folder) throws IOException {
+    private static Stream<Path> getReportFilesOrderedByCreationDate(final Path folder) throws IOException {
         try {
             return Files.find(folder, 1, (path, fileAttributes) -> {
                 final String filenameToCheck = path.getFileName().toString();
-                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".txt");
+                return fileAttributes.isRegularFile() && filenameToCheck.endsWith(".pdf");
             }).sorted(new FileCreationTimeComparator().reversed());
         }
         catch (final IllegalStateException exc) {
@@ -180,26 +205,26 @@ public class SuTService implements ISuTService {
         }
     }
 
-
     private SuTFormData loadCapabilityStatus(final SuTFormData fd) {
+
         sutMap.get(fd.getSutId()).badges.stream().sorted().forEachOrdered(badgeId -> {
             final SutCapabilityStatusTableRowData row = fd.getSutCapabilityStatusTable().addRow();
             row.setCbBadgeID(badgeId);
             row.setCbBadgeName(BEANS.get(CbService.class).getBadgeDescription(badgeId).name);
-            //TODO (just for testing
-            row.setCbBadgeStatus("UNKNOWN");
+
+            row.setCbBadgeStatus(TestReport.getBadgeConformanceStatus(fd.getSutId(), badgeId));
         });
         return fd;
     }
-
 
     /*
      * functions for SuTEditFormData
      */
 
+
     @Override
     public SuTEditFormData load(final SuTEditFormData formData) {
-        LOG.info(getClass().toString() + ".load");
+        LOG.info("load {}", getClass());
         if (!ACCESS.check(new ReadSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -222,7 +247,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData prepareCreate(final SuTEditFormData formData) {
-        LOG.info(getClass().toString() + ".prepareCreate");
+        LOG.info("prepareCreate {}", getClass());
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -233,7 +258,7 @@ public class SuTService implements ISuTService {
 
     @Override
     public SuTEditFormData create(SuTEditFormData formData) {
-        LOG.info(getClass().toString() + ".create");
+        LOG.info("create {}", getClass());
         if (!ACCESS.check(new CreateSuTPermission())) {
             throw new VetoException(TEXTS.get("AuthorizationFailed"));
         }
@@ -252,18 +277,21 @@ public class SuTService implements ISuTService {
         // get the selected capabilities
         sut.badges = formData.getSuTCapabilityBox().getValue();
 
-        // save SuT
+        // create new SuT
         try {
-            LOG.info("SuT description stored for: " + formData.getName().getValue());
             sut.ID = new CmdUpdateSUT(sut).execute();
-        }
-        catch (final Exception e) {
-            LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
-            e.printStackTrace();
-        }
+            // set the SUT ID in the form
+            formData.setSutId(sut.ID);
 
-        // set the SUT ID in the form
-        formData.setSutId(sut.ID);
+            LOG.info("SuT description stored for {}", formData.getName().getValue());
+
+        }
+        catch (final VetoException vetoExc) {
+            throw vetoExc;
+        }
+        catch (final Exception exe) {
+            LOG.error("Error when storing SuT description for " + formData.getName().getValue(), exe);
+        }
 
         // Update SuT map
         updateSutMap(sut);
@@ -281,6 +309,7 @@ public class SuTService implements ISuTService {
         // fill the SUT description with the from values
         final SutDescription sut = new SutDescription();
         // set the attributes; the ID is provided by the execute() method
+        sut.ID = formData.getSutId();
         sut.name = formData.getName().getValue();
         sut.version = formData.getVersion().getValue();
         sut.description = formData.getDescr().getValue();
@@ -292,14 +321,14 @@ public class SuTService implements ISuTService {
         // get the selected capabilities
         sut.badges = formData.getSuTCapabilityBox().getValue();
 
-        // save SuT
+        // edit a existing SuT
         try {
-            LOG.info("SuT description stored for: " + formData.getName().getValue());
             sut.ID = new CmdUpdateSUT(sut).execute();
+            LOG.info("SuT description stored for {}", formData.getName().getValue());
         }
-        catch (final Exception e) {
-            LOG.error("Error when storing SuT description for: " + formData.getName().getValue());
-            e.printStackTrace();
+
+        catch (final Exception exe) {
+            LOG.error("Error when storing SuT description for " + formData.getName().getValue(), exe);
         }
 
         // update SuT map
@@ -309,10 +338,28 @@ public class SuTService implements ISuTService {
     }
 
 
+    public boolean deleteSut(final String sutId) {
+
+        if (!CmdUpdateSUT.deleteSut(sutId)) {
+            LOG.error("Error when deleting SuT {}", sutId);
+            return false;
+        }
+
+        // Delete from sutMap
+        removeFromSutMap(sutId);
+
+        return true;
+    }
+
+
+    private void removeFromSutMap(final String sutId) {
+        sutMap.remove(sutId);
+    }
+
+
     private void updateSutMap(final SutDescription sut) {
         LOG.info("update sutMap attribute");
-        // TODO must be better re-written!
-        final CmdListSuT sutCmd = new CmdListSuT();
+        CmdListSuT sutCmd = new CmdListSuT();
         sutCmd.execute();
         sutMap = sutCmd.sutMap;
     }

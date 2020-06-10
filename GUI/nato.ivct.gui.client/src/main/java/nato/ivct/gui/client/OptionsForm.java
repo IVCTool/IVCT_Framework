@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client;
 
 import java.util.Locale;
@@ -138,13 +152,16 @@ public class OptionsForm extends AbstractForm {
             @Override
             protected void execClickAction() {
                 // publish log level
-                final IOptionsService service = BEANS.get(IOptionsService.class);
                 final String level = getLogLevelField().getValue();
-                service.setLogLevel(level);
-                // store log level
-                storeLogLevel(level);
-                // store gui language
-                storeLanguageOptions();
+                final Locale language = getLocaleField().getValue();
+
+                if (level != null) {
+                    storeLogLevel(level);
+                }
+
+                if (language != null) {
+                    storeLanguageOptions();
+                }
             }
         }
 
@@ -152,11 +169,11 @@ public class OptionsForm extends AbstractForm {
         public class CancelButton extends AbstractCancelButton {}
     }
 
-
     protected void storeLogLevel(String logLevel) {
-        final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue().toString());
+        final boolean logLevelChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_LOG_LEVEL, getLogLevelField().getValue());
         if (logLevelChanged) {
-            ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+            //Required for multiuser support: ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
+            BEANS.get(IOptionsService.class).setLogLevel(logLevel);
         }
     }
 
@@ -166,53 +183,7 @@ public class OptionsForm extends AbstractForm {
         final boolean localeChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.PREF_USER_LOCALE, getLocaleField().getValue().toString());
         if (localeChanged) {
             ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
-
             MessageBoxes.createOk().withBody(TEXTS.get("ChangeOfLanguageApplicationOnNextLogin")).show();
         }
     }
-
-    // Not used by this form
-    //	public class ModifyHandler extends AbstractFormHandler {
-    //
-    //		@Override
-    //		protected void execLoad() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			formData = service.load(formData);
-    //			importFormData(formData);
-    //
-    //			setEnabledPermission(new UpdateOptionsPermission());
-    //		}
-    //
-    //		@Override
-    //		protected void execStore() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			service.store(formData);
-    //		}
-    //	}
-    //
-    //	public class NewHandler extends AbstractFormHandler {
-    //
-    //		@Override
-    //		protected void execLoad() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			formData = service.prepareCreate(formData);
-    //			importFormData(formData);
-    //
-    //			setEnabledPermission(new CreateOptionsPermission());
-    //		}
-    //
-    //		@Override
-    //		protected void execStore() {
-    //			IOptionsService service = BEANS.get(IOptionsService.class);
-    //			OptionsFormData formData = new OptionsFormData();
-    //			exportFormData(formData);
-    //			service.create(formData);
-    //		}
-    //	}
 }

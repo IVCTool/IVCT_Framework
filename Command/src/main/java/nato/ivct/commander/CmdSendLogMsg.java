@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.commander;
 
 import javax.jms.Message;
@@ -6,6 +20,7 @@ import javax.jms.MessageProducer;
 import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class CmdSendLogMsg implements Command {
@@ -30,9 +45,17 @@ public class CmdSendLogMsg implements Command {
     @Override
     public void execute() throws Exception {
         JSONObject startCmd = new JSONObject();
-        String tc = logMessage.getMDCPropertyMap().get("testcase");
-        String sut = logMessage.getMDCPropertyMap().get("sutName");
-        String badge = logMessage.getMDCPropertyMap().get("badge");
+        String loggerName = logMessage.getLoggerName();
+        LoggerData loggerData = TcLoggerData.getLoggerData(loggerName);
+        if (loggerData == null) {
+        	return;
+        }
+        Level levelUser = TcLoggerData.getLogLevel();
+        Level levelMsg = logMessage.getLevel();
+        if (levelMsg.isGreaterOrEqual(levelUser)) {
+        String tc = loggerData.tcName;
+        String sut = loggerData.sutName;
+        String badge = loggerData.badgeName;
         String level = logMessage.getLevel().toString();
         long ts = logMessage.getTimeStamp();
         startCmd.put(LOG_MSG_LEVEL, level);
@@ -40,10 +63,11 @@ public class CmdSendLogMsg implements Command {
         startCmd.put(LOG_MSG_SUT, sut);
         startCmd.put(LOG_MSG_BADGE, badge);
         startCmd.put(LOG_MSG_TIME, ts);
-        startCmd.put(LOG_MSG_EVENT, logMessage.getMessage());
+        startCmd.put(LOG_MSG_EVENT, logMessage.getFormattedMessage());
 
         Message message = Factory.jmsHelper.createTextMessage(startCmd.toString());
         logProducer.send(message);
+        }
     }
 
     public void send(ILoggingEvent newMsg) {
@@ -51,7 +75,7 @@ public class CmdSendLogMsg implements Command {
         try {
             execute();
         } catch (Exception ex) {
-            LOGGER.error("could not send command: " + newMsg);
+            LOGGER.error("could not send command: {}", newMsg);
         }
     }
 }

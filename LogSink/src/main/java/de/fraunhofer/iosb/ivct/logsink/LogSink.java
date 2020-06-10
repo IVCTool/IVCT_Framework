@@ -6,15 +6,13 @@ import java.io.InputStreamReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
+import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
-
-import nato.ivct.commander.CmdHeartbeatSend;
 
 
 /**
@@ -25,8 +23,8 @@ import nato.ivct.commander.CmdHeartbeatSend;
  */
 public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
 
-    private static Logger LOGGER     = LoggerFactory.getLogger(LogSink.class);
-    //private JMSTopicSink  jmsTopicSink;
+    private static Logger log     = LoggerFactory.getLogger(LogSink.class);
+    //private JMSTopicSink  jmsTopicSink;0
     private static JMSLogSink  jmsLogSink;
     private static ReportEngine reportEngine = new ReportEngine();
         
@@ -41,16 +39,15 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
      * @param args command line arguments
      */
     public static void main(final String[] args) {
-        MDC.put("testcase", "LogSink");
 		Factory.initialize();
         final LogSink instance = new LogSink();
         instance.init();
         
      // for CmdHeartbeatSend
         try {
-             instance.sendHeartbeat(LOGGER);
+             instance.sendHeartbeat(log);
              } catch (Exception ex) {
-                 LOGGER.error("could not start  sendHeartbeat " + ex);
+                 log.error("could not start sendHeartbeat", ex);
              }        
         
         instance.execute();
@@ -78,10 +75,10 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
      * execute = do wait for termination.
      */
     protected void execute() {
-        LOGGER.debug("successfully initialized for topic {} .", Factory.props.getProperty("java.naming.provider.url"));
+        log.debug("successfully initialized for topic {} .", Factory.props.getProperty("java.naming.provider.url"));
         final BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // Loop until "exit", "quit" or "q" is typed
-        LOGGER.info("Type \"quit\" to exit JMSTopicSink.");
+        log.info("Type \"quit\" to exit JMSTopicSink.");
         while (true) {
             String s;
             try {
@@ -96,18 +93,17 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
                         try {
 							lock.wait();
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							log.error("got interrupted",e);
 						}
                     }
                 }
                 else if (s.equalsIgnoreCase("exit") || s.equalsIgnoreCase("q") || s.equalsIgnoreCase("quit")) {
-                	LOGGER.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
+                	log.info("Exiting. Kill the application if it does not exit " + "due to daemon threads.");
                     return;
                 }
             }
             catch (final IOException ex) {
-                LOGGER.error("Error in input.", ex);
+                log.error("Error in input.", ex);
             }
         }
     }

@@ -4,10 +4,10 @@ description = """IVCT Client"""
 
 dependencies {
     compile     project(':GUI:nato.ivct.gui.shared')
-	compile		libraries.jsonSimple
+    compile     project(':Command')
 	
-	implementation 	libraries.jsonIo
+	implementation	libraries.gson
 
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.client', version:"${scoutVersion}"
-    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.client.test', version:"${scoutVersion}"
+    compile libraries.scout_rt_client
+    testCompile libraries.scout_rt_client_test
 }

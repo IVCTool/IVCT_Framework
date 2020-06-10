@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_TestConfiguration" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f8834df3-cfbf-4b34-bb8a-922bfd1d89cb">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JsonFileDataAdapter"/>
+	<queryString language="jsonql">
+		<![CDATA[TestConfiguration]]>
+	</queryString>
+	<field name="Federation" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="Federation"/>
+		<fieldDescription><![CDATA[Federation]]></fieldDescription>
+	</field>
+	<field name="SutFederate" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="SutFederate"/>
+		<fieldDescription><![CDATA[SutFederate]]></fieldDescription>
+	</field>
+	<field name="Rti" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="Rti"/>
+		<fieldDescription><![CDATA[Rti]]></fieldDescription>
+	</field>
+	<field name="SettingsDesignator" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="SettingsDesignator"/>
+		<fieldDescription><![CDATA[SettingsDesignator]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="8">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="-20" width="555" height="28" backcolor="#006699" uuid="26a58c9f-c77f-4b5c-a3a6-2e7696b713e2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="555" height="28" forecolor="#FFFFFF" uuid="0b949941-8189-46ca-b025-71f00b133c58">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Configuration]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="48">
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="27" width="129" height="20" uuid="cfcedb5b-7a5e-4fa4-8050-fd809351be7e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Federation}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="429" y="30" width="126" height="17" uuid="27ad295f-e287-4058-a7ac-9e4500c58981">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SettingsDesignator}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="286" y="27" width="129" height="20" uuid="22764b56-5db2-4b40-8d39-7ea0f31decaa">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Rti}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="143" y="27" width="129" height="20" uuid="a15c9fc1-c525-44c8-9b55-ff0c08aa1db6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SutFederate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="6" width="129" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="cdf39419-8b1f-4567-8c21-c11e07f5c835">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2bcedf5-ff8b-41a3-b40f-69a30c6dd96d"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Federation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="143" y="6" width="129" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="d22d7c8d-76a9-4d44-84d1-f0b316e8e6e4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de4f3136-994a-426d-9449-4b57532f4898"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SuT Federate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="286" y="6" width="129" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="39a6e507-57b5-4dcf-a36b-7303ab763564">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c41bb4c9-ed71-41b9-846d-4defdc698243"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RTI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="429" y="6" width="126" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="16226c04-b8f3-48e3-856e-3fdcb07ee2db">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c779da64-ac6a-4dfb-9807-e9cfd841d9e2"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RTI Settings]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="26" width="555" height="1" forecolor="#666666" uuid="09f4b5dc-dc97-40b6-a669-2dd753025afc"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="47" width="555" height="1" uuid="8460d38c-0ed8-4cc8-94e5-a548945bd77f"/>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

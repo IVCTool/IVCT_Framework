@@ -1,3 +1,17 @@
+/* Copyright 2020, Michael Theis (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.dto.Data;
@@ -19,23 +33,23 @@ import nato.ivct.gui.shared.sut.SuTBadgeTablePageData;
 @Data(SuTBadgeTablePageData.class)
 public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.Table> {
 
-    private String m_sutId     = null;
-    private String m_pageTitle = null;
+    private String mSutId     = null;
+    private String mPageTitle = null;
 
 
     public SuTBadgeTablePage() {
-        m_pageTitle = TEXTS.get("SuTBadgeTablePage");
+        mPageTitle = TEXTS.get("SuTBadgeTablePage");
     }
 
 
     public SuTBadgeTablePage(final String sutId) {
-        m_pageTitle = m_sutId = sutId;
+        mPageTitle = mSutId = sutId;
     }
 
 
     @Override
     protected String getConfiguredTitle() {
-        return m_pageTitle;
+        return mPageTitle;
     }
 
 
@@ -162,12 +176,12 @@ public class SuTBadgeTablePage extends AbstractPageWithTable<SuTBadgeTablePage.T
     }
 
 
-    public void setSutId(String _sutId) {
-        m_sutId = _sutId;
+    public void setSutId(String sutId) {
+        mSutId = sutId;
     }
 
 
     public String getSutId() {
-        return m_sutId;
+        return mSutId;
     }
 }

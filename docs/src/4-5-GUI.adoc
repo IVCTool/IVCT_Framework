@@ -1,0 +1,10 @@
+== The Graphical User Interface
+
+NOTE: to be completed
+
+...tomcat webapp deployment
+
+...scout application, see https://www.eclipse.org/scout
+
+
+see also 'Explore the Grapical User Interface' in the Operations repository: https://github.com/IVCTool/IVCT_Operation/blob/develop/docs/src/IVCT-GettingStarted-Graphical-User-Interface.adoc

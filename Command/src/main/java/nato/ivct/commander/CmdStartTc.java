@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,35 +21,35 @@ import org.slf4j.LoggerFactory;
 
 public class CmdStartTc implements Command {
     
-        public static final String COMMAND_ID          = "commandType";
-        public static final String COMMAND             = "startTestCase";
-        public static final String SEQ                 = "sequence";
-        public static final String SUT_NAME            = "sutName";
-        public static final String SUT_DIR             = "sutDir";
-        public static final String TS_ID               = "testSuiteId";
-        public static final String TC_ID               = "testCaseId";
-        public static final String TC_PARAM            = "tcParam";
-        public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
-        public static final String FEDERATION          = "federationName";
-	public static final String FEDERATE = "sutFederateName";
+    public static final String COMMAND_ID          = "commandType";
+    public static final String COMMAND             = "startTestCase";
+    public static final String SEQ                 = "sequence";
+    public static final String SUT_NAME            = "sutName";
+    public static final String SUT_DIR             = "sutDir";
+    public static final String TS_ID               = "testSuiteId";
+    public static final String TC_ID               = "testCaseId";
+    public static final String TC_PARAM            = "tcParam";
+    public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
+    public static final String FEDERATION          = "federationName";
+	public static final String FEDERATE            = "sutFederateName";
             
 	// private MessageProducer producer;
 	private String sut;
 	private String testSuiteName;
-        private String tc;
-        private String settingsDesignator;
-        private String federationName;
+    private String tc;
+    private String settingsDesignator;
+    private String federationName;
 	private String sutFederateName;
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	public CmdStartTc(String _sut, String _testSuiteName, String _tc, String _settingsDesignator, String _federationName, String _sutFederateName) {
-		sut = _sut;
-		tc = _tc;
-		testSuiteName = _testSuiteName;
-		settingsDesignator = _settingsDesignator;
-		federationName = _federationName;
-		sutFederateName = _sutFederateName;
+	public CmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
+		this.sut = sut;
+		this.tc = tc;
+		this.testSuiteName = testSuiteName;
+		this.settingsDesignator = settingsDesignator;
+		this.federationName = federationName;
+		this.sutFederateName = sutFederateName;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,7 +92,7 @@ public class CmdStartTc implements Command {
                         startCmd.put(FEDERATION, federationName);
 			startCmd.put(FEDERATE, sutFederateName);
 			
-			LOGGER.info("StartTc Command: " + startCmd.toString());
+			LOGGER.info("StartTc Command: {}", startCmd);
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
@@ -102,16 +102,14 @@ public class CmdStartTc implements Command {
 				JSONObject jsonParam = (JSONObject) parser.parse(tmpString);
 				startCmd.put(TC_PARAM, jsonParam);
 			} else {
-				LOGGER.error("File not found: " + paramFileName);
+				LOGGER.error("File not found: {}", paramFileName);
 				return;
 			}
 
 			// send the start message
 			Factory.sendToJms(startCmd.toString());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			LOGGER.error("error in starting test case <" + testSuiteName + '/' + tc + ">");
-			e.printStackTrace();
+		} catch (ParseException exc) {
+			LOGGER.error("error in starting test case <" + testSuiteName + '/' + tc + ">", exc);
 		}
 
 	}
@@ -136,8 +134,8 @@ public class CmdStartTc implements Command {
 		return testSuiteName;
 	}
 
-	public void setSuiteName(String _testSuiteName) {
-		this.testSuiteName = _testSuiteName;
+	public void setSuiteName(String testSuiteName) {
+		this.testSuiteName = testSuiteName;
 	}
 
 	public String getSettingsDesignator() {

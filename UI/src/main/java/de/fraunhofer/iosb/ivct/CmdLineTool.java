@@ -35,6 +35,7 @@ import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestCaseDesc;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
+import nato.ivct.commander.CmdOperatorRequestListener;
 import nato.ivct.commander.CmdQuit;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdStartTestResultListener;
@@ -43,9 +44,13 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutDescription;
 import nato.ivct.commander.SutPathsFiles;
 
+
 class NamePosition {
 	String string;
 	int position;
+	NamePosition() {
+		string = new String();
+	}
 }
 /*
  * Dialog program using keyboard input.
@@ -98,6 +103,7 @@ public class CmdLineTool {
     		return;
     	}
 		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
+		(new CmdOperatorRequestListener(CmdLineTool.ivctCommander)).execute();
     }
 
     class commandRunnable implements Runnable {
@@ -118,10 +124,8 @@ public class CmdLineTool {
     					command = null;
     				}
     			} catch (InterruptedException e) {
-    				// TODO Auto-generated catch block
     				e.printStackTrace();
     			} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -173,7 +177,6 @@ class TcRunnable implements Runnable {
 //	    		System.out.println(s);
 	    	}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -439,7 +442,6 @@ class Writer extends Thread {
     	try {
 			cmdListTestSuites.execute();
 		} catch (Exception e3) {
-			// TODO Auto-generated catch block
 			e3.printStackTrace();
 		}
 		cmdListBadges = Factory.createCmdListBadges();
@@ -877,25 +879,25 @@ class Writer extends Thread {
                 	sutDescription = getSutDescription(sutID);
                     ivctCommander.resetSUT();
                 	break;
-                case "listTestSchedules":
-                case "lts":
+                case "listTestBadges":
+                case "ltb":
             	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
                 	// Warn for extra parameter
                 	if (split.length > 1) {
-                		out.println("listTestSchedules: Warning extra parameter: " + split[1]);
+                		out.println("listTestBadges: Warning extra parameter: " + split[1]);
                 	}
                 	List<String> ls2 = getSutBadges(sutID, true);
                 	for (String temp : ls2) {
                 		System.out.println(temp);
                 	}
                 	break;
-                case "startTestSchedule":
-                case "sts":
+                case "startTestBadge":
+                case "stb":
                 	// Check any critical tasks are running
-                    if (ivctCommander.rtp.checkCtTcTsRunning("startTestSchedule")) {
+                    if (ivctCommander.rtp.checkCtTcTsRunning("startTestBadge")) {
                 		break;
                 	}
             	    if (sutID == null) {
@@ -904,19 +906,19 @@ class Writer extends Thread {
             	    }
                 	// Need an input parameter
                 	if (split.length == 1) {
-                        out.println("startTestSchedule: Warning missing test schedule name");
+                        out.println("startTestBadge: Warning missing test badge name");
                         break;
                 	}
                 	List<String> ls1 = getSutBadges(sutID, true);
-                	boolean gotTestSchedule = false;
+                	boolean gotTestBadge = false;
         			for (String entry : ls1) {
                 		if (split[1].equals(entry)) {
-                			gotTestSchedule = true;
+                			gotTestBadge = true;
                 			break;
                 		}
                 	}
-                	if (gotTestSchedule == false) {
-                		out.println("Unknown test schedule " + split[1]);
+                	if (gotTestBadge == false) {
+                		out.println("Unknown test badge " + split[1]);
                 		break;
                 	}
                 	List<String> testcases0 = getTestcasesForBadge(split[1]);
@@ -932,25 +934,25 @@ class Writer extends Thread {
                 	gotNewCommand = true;
                 	ivctCommander.rtp.setTestScheduleName(split[1]);
                     break;
-                case "abortTestSchedule":
-                case "ats":
-                	// Cannot abort test schedule if SUT is not set
+                case "abortTestBadge":
+                case "atb":
+                	// Cannot abort test badge if SUT is not set
             	    if (sutID == null) {
                 		out.println(sutNotSelected);
                 		break;
             	    }
-                	// Cannot abort test schedule if it is not running
+                	// Cannot abort test badge if it is not running
                     if (ivctCommander.rtp.getTestScheduleRunningBool() == false) {
-                        out.println("abortTestSchedule: no test schedule is running");
+                        out.println("abortTestBadge: no test badge is running");
                 		break;
                 	}
                 	// Warn about extra parameters
                 	if (split.length > 1) {
-                        out.println("abortTestSchedule: Warning extra parameter: " + split[1]);
+                        out.println("abortTestBadge: Warning extra parameter: " + split[1]);
                 	}
                 	RuntimeParameters.setAbortTestScheduleBool(true);
-//                	command = new AbortTestSchedule(ivctCommander);
-                    out.println("abortTestSchedule: N.B: only stops running remaining test cases");
+//                	command = new abortTestBadge(ivctCommander);
+                    out.println("abortTestBadge: N.B: only stops running remaining test cases");
                     break;
                 case "listTestCases":
                 case "ltc":
@@ -992,7 +994,7 @@ class Writer extends Thread {
                 	}
                 	String fullTestcaseName = getFullTestcaseName(split[1], split[2]);
                 	if (checkTestCaseNameKnown(split[1], fullTestcaseName) == false) {
-                        out.println("startTestCase: unknown testSchedule testCase: " + split[1] + " " + split[2]);
+                        out.println("startTestCase: unknown testBadge testCase: " + split[1] + " " + split[2]);
                         break;
                 	}
                 	TestSuiteDescription tsd = cmdListTestSuites.getTestSuiteForTc(fullTestcaseName);
@@ -1062,12 +1064,18 @@ class Writer extends Thread {
                 		out.println("SUT sutFederateName: " + sutDescription.sutFederateName);
                 		out.println("SUT federation: " + sutDescription.federation);
                 	}
-                	String testScheduleName = ivctCommander.rtp.getTestScheduleName();
-                	if (testScheduleName != null) {
+                    Map<String, String> heartBeatSenders = ivctCommander.getHeartBeatSenders();
+                    if (heartBeatSenders != null) {
+                        for (Map.Entry<String, String> entry: heartBeatSenders.entrySet()) {
+                            out.println("Process state: " + entry.getKey() + " " + entry);
+                        }
+                    }
+                	String TestBadgeName = ivctCommander.rtp.getTestScheduleName();
+                	if (TestBadgeName != null) {
                 		if (ivctCommander.rtp.getTestScheduleRunningBool()) {
-                			out.println("TestScheduleName: " + testScheduleName + " running");
+                			out.println("TestBadgeName: " + TestBadgeName + " running");
                 		} else {
-                			out.println("TestScheduleName: " + testScheduleName + " finished");
+                			out.println("TestBadgeName: " + TestBadgeName + " finished");
                 		}
                 	}
                 	String testCaseName = ivctCommander.rtp.getTestCaseName();
@@ -1079,6 +1087,43 @@ class Writer extends Thread {
                 		}
                 	}
                 	out.println("loglevel: " + logLevelString);
+                	if (ivctCommander.isOperatorRequestOutstanding()) {
+                    	out.println("OPERATOR REQUEST OUTSTANDING: " + ivctCommander.getOperatorRequestTcId() + " " + ivctCommander.getOperatorRequestText());
+                	}
+                	break;
+                case "cnf":
+            	    if (sutID == null) {
+                		out.println(sutNotSelected);
+                		break;
+            	    }
+                	boolean b = ivctCommander.isOperatorRequestOutstanding();
+                	if (b == false) {
+                    	out.println("cnf: No operator request outstanding");
+                		break;
+                	}
+                	// Need an input parameter
+                	if (split.length < 2) {
+                        out.println("cnf: Error missing true/false value");
+                	}
+                	NamePosition textPosition;
+                	// NB. Assume only one quoted string
+                	if (line.indexOf('"') == -1) {
+                		textPosition = new NamePosition();
+                	} else {
+                	    textPosition = getQuotedString(out, line, line.indexOf('"') - 1, "Confirmation Text");
+                	    if (textPosition == null) {
+                	    	break;
+                	    }
+                	}
+                	if (split[1].contentEquals("t") || split[1].contentEquals("true")) {
+                        ivctCommander.sendOperatorConfirmation(true, textPosition.string);
+                	} else {
+						if (split[1].contentEquals("f") || split[1].contentEquals("false")) {
+	                        ivctCommander.sendOperatorConfirmation(false, textPosition.string);
+						} else {
+	                        out.println("cnf: incorrect true/false value - found: " + split[1]);
+						}
+					}
                 	break;
                 case "quit":
                 case "q":
@@ -1113,15 +1158,16 @@ class Writer extends Thread {
                     out.println("ssd (setSettingsDesignator) settingsDesignator - set settings designator");
                     out.println("lsut (listSUT) - list SUT folders");
                     out.println("ssut (setSUT) sut - set active SUT");
-                    out.println("lts (listTestSchedules) - list the available test schedules for the test suite");
-                    out.println("sts (startTestSchedule) testSchedule - start the named test schedule");
-                    out.println("ats (abortTestSchedule) - abort the running test schedule");
+                    out.println("ltb (listTestBadges) - list the available test badges for the SUT");
+                    out.println("stb (startTestBadge) testBadge - start the named test badge");
+                    out.println("atb (abortTestBadge) - abort the running test abortTestBadge");
                     out.println("ltc (listTestCases) - list the available test cases for the test suite");
-                    out.println("stc (startTestCase) testSchedule testcase - start the named test case");
+                    out.println("stc (startTestCase) testBadge testcase - start the named test case");
                     out.println("atc (abortTestCase) - abort the running test case");
                     out.println("sll (setLogLevel) loglevel - set the log level for logging - error, warning, info, debug, trace");
                     out.println("lv (listVerdicts) - list the verdicts of the current session");
                     out.println("s (status) - display status information");
+                    out.println("cnf (operator confirmation) t/f (true/false) \"confirmation text quoted\"- answer operator request");
                     out.println("q (quit) - quit the program");
                     out.println("h (help) - display the help information");
                     break;

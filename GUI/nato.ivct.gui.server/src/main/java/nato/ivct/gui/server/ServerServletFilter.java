@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server;
 
 import java.io.IOException;
@@ -25,16 +39,16 @@ import org.eclipse.scout.rt.server.commons.authentication.TrivialAccessControlle
  */
 public class ServerServletFilter implements Filter {
 
-	private TrivialAccessController m_trivialAccessController;
-	private ServiceTunnelAccessTokenAccessController m_tunnelAccessController;
-	private DevelopmentAccessController m_developmentAccessController;
+	private TrivialAccessController mTrivialAccessController;
+	private ServiceTunnelAccessTokenAccessController mTunnelAccessController;
+	private DevelopmentAccessController mDevelopmentAccessController;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		m_trivialAccessController = BEANS.get(TrivialAccessController.class)
+		mTrivialAccessController = BEANS.get(TrivialAccessController.class)
 				.init(new TrivialAuthConfig().withExclusionFilter(filterConfig.getInitParameter("filter-exclude")));
-		m_tunnelAccessController = BEANS.get(ServiceTunnelAccessTokenAccessController.class).init();
-		m_developmentAccessController = BEANS.get(DevelopmentAccessController.class).init();
+		mTunnelAccessController = BEANS.get(ServiceTunnelAccessTokenAccessController.class).init();
+		mDevelopmentAccessController = BEANS.get(DevelopmentAccessController.class).init();
 	}
 
 	@Override
@@ -43,15 +57,15 @@ public class ServerServletFilter implements Filter {
 		final HttpServletRequest req = (HttpServletRequest) request;
 		final HttpServletResponse resp = (HttpServletResponse) response;
 
-		if (m_trivialAccessController.handle(req, resp, chain)) {
+		if (mTrivialAccessController.handle(req, resp, chain)) {
 			return;
 		}
 
-		if (m_tunnelAccessController.handle(req, resp, chain)) {
+		if (mTunnelAccessController.handle(req, resp, chain)) {
 			return;
 		}
 
-		if (m_developmentAccessController.handle(req, resp, chain)) {
+		if (mDevelopmentAccessController.handle(req, resp, chain)) {
 			return;
 		}
 
@@ -60,8 +74,8 @@ public class ServerServletFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		m_developmentAccessController.destroy();
-		m_tunnelAccessController.destroy();
-		m_trivialAccessController.destroy();
+		mDevelopmentAccessController.destroy();
+		mTunnelAccessController.destroy();
+		mTrivialAccessController.destroy();
 	}
 }

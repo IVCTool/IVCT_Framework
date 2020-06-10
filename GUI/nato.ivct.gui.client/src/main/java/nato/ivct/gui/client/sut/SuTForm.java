@@ -1,9 +1,31 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.client.sut;
 
+import java.util.Objects;
+import java.util.Set;
+
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -11,11 +33,15 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox;
+import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.DetailsHorizontalSplitterBox.CapabilityStatusBox.SutCapabilityStatusTableField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.DescrField;
 import nato.ivct.gui.client.sut.SuTForm.MainBox.MainBoxHorizontalSplitBox.GeneralBox.NameField;
@@ -29,6 +55,11 @@ public class SuTForm extends AbstractForm {
 
     private String sutId = null;
     private String title = null;
+    
+    // test result verdicts
+    public static final String PASSED_VERDICT       = "PASSED";
+    public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
+    public static final String FAILED_VERDICT       = "FAILED";
 
 
     public SuTForm(String formTitle) {
@@ -74,6 +105,9 @@ public class SuTForm extends AbstractForm {
         return getFieldByClass(CapabilityStatusBox.class);
     }
 
+    public SutCapabilityStatusTableField getSutCapabilityStatusTableField() {
+        return getFieldByClass(SutCapabilityStatusTableField.class);
+    }
 
     public NameField getNameField() {
         return getFieldByClass(NameField.class);
@@ -87,8 +121,8 @@ public class SuTForm extends AbstractForm {
 
 
     @FormData
-    public void setSutId(final String _sutId) {
-        sutId = _sutId;
+    public void setSutId(final String sutId) {
+        this.sutId = sutId;
     }
 
 
@@ -100,7 +134,6 @@ public class SuTForm extends AbstractForm {
 
     @Override
     protected int getConfiguredDisplayHint() {
-        // TODO Auto-generated method stub
         return IForm.DISPLAY_HINT_VIEW;
     }
 
@@ -193,7 +226,7 @@ public class SuTForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridH() {
-                        return 2;
+                        return 7;
                     }
 
 
@@ -287,7 +320,6 @@ public class SuTForm extends AbstractForm {
                 public class CapabilityStatusBox extends AbstractGroupBox {
                     @Override
                     protected boolean getConfiguredVisible() {
-                        // !!! TODO Hide this box until it has no real content !!!
                         return true;
                     }
 
@@ -305,6 +337,11 @@ public class SuTForm extends AbstractForm {
                         }
 
                         public class SutCapabilityStatusTable extends AbstractTable {
+                            
+                            public CbBadgeStatusColumn getCbBadgeStatusColumn() {
+                                return getColumnSet().getColumnByClass(CbBadgeStatusColumn.class);
+                            }
+                            
                             @Order(1000)
                             public class CbBadgeIDColumn extends AbstractStringColumn {
                                 @Override
@@ -312,6 +349,10 @@ public class SuTForm extends AbstractForm {
                                     return TEXTS.get("BadgeId");
                                 }
 
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 200;
+                                }
 
                                 @Override
                                 protected boolean getConfiguredVisible() {
@@ -329,7 +370,7 @@ public class SuTForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 300;
+                                    return 400;
                                 }
                             }
 
@@ -343,7 +384,7 @@ public class SuTForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 100;
+                                    return 200;
                                 }
                             }
                         }
@@ -360,11 +401,6 @@ public class SuTForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("TestReports");
                         }
-
-                        //						@Override
-                        //						protected int getConfiguredGridW() {
-                        //							return 3;
-                        //						}
 
                         @Order(1000)
                         public class TestReportTable extends AbstractTable {
@@ -395,15 +431,43 @@ public class SuTForm extends AbstractForm {
                             }
 
 
+                            @Order(2000)
+                            public class NewMenu extends AbstractMenu {
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.<IMenuType> hashSet(TableMenuType.EmptySpace);
+                                }
+
+
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("CreateTestreport");
+                                }
+
+                                @Override
+                                protected void execAction() {
+                                    final ISuTService service = BEANS.get(ISuTService.class);
+                                    final String fileName = service.createTestreport(getSutId());
+                                    if (fileName != null) {
+                                        final ITableRow row = getTable().addRow(getTable().createRow());
+                                        getTable().getFileNameColumn().setValue(row, fileName);
+                                        getTable().sort();
+                                    } else {
+                                        MessageBoxes.createOk().withHeader(TEXTS.get("reportMsgBoxHeader")).show();
+                                    }
+                                        
+                                }
+                            }
+                                                       
                             // called on double-click on a row
                             @Override
                             protected void execRowAction(ITableRow row) {
-                                final TestReportForm form = new TestReportForm();
-                                // set SUT Id and requested report file name
-                                form.setSutId(getSutId());
-                                form.setReportFileName(getTable().getFileNameColumn().getValue(getSelectedRow()));
-                                //load and open the form
-                                form.startView();
+                                // get the content of the selected file
+                                final BinaryResource downloadFileResource = BEANS.get(ISuTService.class).getTestReportFileContent(getSutId(), getTable().getFileNameColumn().getValue(row));
+                                if (downloadFileResource.getContentLength() != -1) {
+                                    getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+                                }
                             }
                         }
                     }
@@ -422,8 +486,29 @@ public class SuTForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
-
-            //			setEnabledPermission(new UpdateSuTPermission());
+            
+            // set result color in the capability table
+            setTestResultColor();
         }
+    }
+    
+    public void setTestResultColor() {
+        // set the color of the test results in TC Execution History Table Field
+        getSutCapabilityStatusTableField().getTable().getRows().forEach(row -> {
+            Cell cell = row.getCellForUpdate(getSutCapabilityStatusTableField().getTable().getCbBadgeStatusColumn());
+            switch (Objects.toString(cell.getValue(), "")) {
+                case PASSED_VERDICT:
+                    cell.setCssClass("passed-text");
+                    break;
+                case INCONCLUSIVE_VERDICT:
+                    cell.setCssClass("inconclusive-text");
+                    break;
+                case FAILED_VERDICT:
+                    cell.setCssClass("failed-text");
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }

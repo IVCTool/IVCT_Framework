@@ -1,26 +1,25 @@
 package de.fraunhofer.iosb.ivct;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.LinkedList;
 
 import org.apache.activemq.broker.BrokerService;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.CmdStartTestResultListener;
 import nato.ivct.commander.Factory;
 
 public class UiTest {
-
 	private static BrokerService broker = new BrokerService();
+	private static Logger log = LoggerFactory.getLogger(UiTest.class);
 
-	@BeforeClass
+	@BeforeAll
 	public static void startBroker() throws Exception {
 		// configure the broker
 		broker.addConnector("tcp://localhost:61616");
@@ -29,19 +28,19 @@ public class UiTest {
 		broker.start();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void stopBroker() throws Exception {
 		try {
 			broker.stop();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("stopBroker",e);
 		}
 	}
 
+
 	@Test
 	public void testCreateCmdLineTool() {
-		System.out.println("testCreateCmdLineTool enter");
+		log.info("testCreateCmdLineTool enter");
 
     	LogConfigurationHelper.configureLogging();
 
@@ -52,20 +51,20 @@ public class UiTest {
     	try {
     		clt = new CmdLineTool();
     	} catch (IOException e) {
-    		e.printStackTrace();
-    		System.out.println("CmdLineTool: new IVCTcommander: " + e);
+			log.error("testCreateCmdLineTool",e);
+    		log.info("testCreateCmdLineTool: new IVCTcommander: {}", e);
     		return;
     	}
 		assertTrue("CmdLineTool is a null pointer", clt != null);
 
 		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
-		
-		System.out.println("testCreateCmdLineTool leave");
+
+		log.info("testCreateCmdLineTool leave");
 	}
 
 	@Test
 	public void testCheckCtTcTsRunning() {
-		System.out.println("testCheckCtTcTsRunning enter");
+		log.info("testCheckCtTcTsRunning enter");
 
 		// Simple null pointer test
 		RuntimeParameters rp = new RuntimeParameters();
@@ -79,20 +78,19 @@ public class UiTest {
 		tcr = rp.checkCtTcTsRunning(null);
 		assertTrue("checkCtTcTsRunning: null pointer not detected", true == tcr);
 
-		System.out.println("testCheckCtTcTsRunning leave");
+		log.info("testCheckCtTcTsRunning leave");
 	}
 
 	@Test
 	public void testResetSUTvariables() {
-		System.out.println("testResetSUTvariables enter");
+		log.info("testResetSUTvariables enter");
 
 		// Simple null pointer test
 		IVCTcommander ivctCommander = null;
 		try {
 			ivctCommander = new IVCTcommander();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("testResetSUTvariables",e);
 		}
 		assertTrue("IVCTcommander is a null pointer", ivctCommander != null);
 
@@ -104,7 +102,7 @@ public class UiTest {
 		String ts = ivctCommander.rtp.getTestScheduleName();
 		assertTrue("Testschedule name is not a null pointer", ts == null);
 
-		System.out.println("testResetSUTvariables leave");
+		log.info("testResetSUTvariables leave");
 	}
 
 }

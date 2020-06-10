@@ -1,4 +1,4 @@
-/* Copyright 2017, Reinhard Herzog (Fraunhofer IOSB)
+/* Copyright 2020, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class CmdSetLogLevelListener implements Command, MessageListener {
 			final TextMessage textMessage = (TextMessage) message;
 			try {
 				final String content = textMessage.getText();
-				LOGGER.trace("JMS Message received: " + content);
+				LOGGER.trace("JMS Message received: {}", content);
 				try {
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
@@ -54,12 +54,11 @@ public class CmdSetLogLevelListener implements Command, MessageListener {
 						LogLevel logLevelId = LogLevel.valueOf((String) jsonObject.get("logLevelId"));
 						listener.onSetLogLevel(logLevelId);
 					}
-				} catch (ParseException e) {
-					e.printStackTrace();
-					LOGGER.error("onMessage: ", e);
+				} catch (ParseException exc) {
+					LOGGER.error("onMessage: ", exc);
 				}
-			} catch (final JMSException e) {
-				LOGGER.error("onMessage: problems with getText", e);
+			} catch (final JMSException exc) {
+				LOGGER.error("onMessage: problems with getText ", exc);
 			}
 		}
 	}

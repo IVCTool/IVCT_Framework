@@ -19,7 +19,6 @@ public class SuTFormData extends AbstractFormData {
 
     private static final long serialVersionUID = 1L;
 
-
     public Descr getDescr() {
         return getFieldByClass(Descr.class);
     }
@@ -114,7 +113,6 @@ public class SuTFormData extends AbstractFormData {
 
         private static final long serialVersionUID = 1L;
 
-
         @Override
         public SutCapabilityStatusTableRowData addRow() {
             return (SutCapabilityStatusTableRowData) super.addRow();
@@ -165,7 +163,6 @@ public class SuTFormData extends AbstractFormData {
             private String             m_cbBadgeName;
             private String             m_cbBadgeStatus;
 
-
             public String getCbBadgeID() {
                 return m_cbBadgeID;
             }
@@ -210,7 +207,6 @@ public class SuTFormData extends AbstractFormData {
     public static class TestReportTable extends AbstractTableFieldBeanData {
 
         private static final long serialVersionUID = 1L;
-
 
         @Override
         public TestReportTableRowData addRow() {
@@ -257,7 +253,6 @@ public class SuTFormData extends AbstractFormData {
             private static final long  serialVersionUID = 1L;
             public static final String fileName         = "fileName";
             private String             m_fileName;
-
 
             public String getFileName() {
                 return m_fileName;

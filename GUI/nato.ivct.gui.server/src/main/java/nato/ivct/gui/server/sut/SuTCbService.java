@@ -1,3 +1,17 @@
+/* Copyright 2020, Reinhard Herzog, Johannes Mulder, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 package nato.ivct.gui.server.sut;
 
 import java.io.ByteArrayInputStream;
@@ -10,10 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
@@ -21,45 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.Factory;
-import nato.ivct.gui.server.ServerSession;
 import nato.ivct.gui.shared.sut.ISuTCbService;
-import nato.ivct.gui.shared.sut.SuTCbNodePageData;
 
 
 public class SuTCbService implements ISuTCbService {
-    private static final Logger                        LOG    = LoggerFactory.getLogger(ServerSession.class);
-    private static HashMap<String, SuTCbNodePageData> cap_hm = new HashMap<>();
-
-
-    //	/*
-    //	 * get CapapbilityTablePageData for a specific SuT id. Create new one or select existing
-    //	 *
-    //	 * @see nato.ivct.gui.shared.sut.ICapabilityService#getCapabilityTableData(org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter)
-    //	 */
-    //	@Override
-    //	public SuTCbTablePageData getSuTCbTableData(SearchFilter filter) {
-    //		String[] searchText = filter.getDisplayTexts();
-    //		SuTCbTablePageData pageData = cap_hm.get (searchText);
-    //		if (pageData == null) {
-    //			pageData = new SuTCbTablePageData();
-    //		}
-    //
-    //		LOG.info("getCapabilityTableData");
-    //		CbService cbService = BEANS.get(CbService.class);
-    //		BadgeDescription badge = cbService.getBadgeDescription(searchText[0]);
-    //
-    //		for (nato.ivct.commander.InteroperabilityRequirement requirement : badge.requirements.values()) {
-    //			SuTCbTableRowData row = pageData.addRow();
-    //			row.setRequirementId(requirement.ID);
-    //			row.setRequirementDesc(requirement.description);
-    ////			row.setAbstractTC(badge.requirements[j].TC);
-    ////			row.setTCstatus("no result");
-    //		};
-    //
-    //		cap_hm.put(badge.ID, pageData);
-    //		return pageData;
-    //	}
-
+    private static final Logger                       LOG    = LoggerFactory.getLogger(SuTCbService.class);
+    
     @Override
     public BinaryResource getFileContent(final String sutId, final String tsId, final String fileName) {
         BinaryResource fileContent = null;
@@ -68,9 +46,7 @@ public class SuTCbService implements ISuTCbService {
             fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(fileName)));
         }
         catch (IOException | InvalidPathException exc) {
-            LOG.error("error to access fileName %", fileName);
-            // TODO Auto-generated catch block
-            exc.printStackTrace();
+            LOG.error("error to access fileName {}", fileName);
             fileContent = new BinaryResource(fileName, null);
         }
 
@@ -80,16 +56,32 @@ public class SuTCbService implements ISuTCbService {
 
     @Override
     public boolean copyUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
+
+        Path filePath = Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename());
+        boolean fileExist = Files.exists(filePath);
+
         try {
-            Files.copy(new ByteArrayInputStream(file.getContent()), Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()), StandardCopyOption.REPLACE_EXISTING);
+
+            Files.copy(new ByteArrayInputStream(file.getContent()), filePath, StandardCopyOption.REPLACE_EXISTING);
         }
         catch (final IOException exc) {
-            LOG.error("error when copying file %", file.getFilename());
-            exc.printStackTrace();
+            LOG.error("error when copying file {}", file);
             return false;
         }
 
-        return true;
+        return !fileExist;
+    }
+
+
+    @Override
+    public boolean deleteUploadedTcExtraParameterFile(final String sutId, final String tsId, final BinaryResource file) {
+        try {
+            return Files.deleteIfExists(Paths.get(Factory.getSutPathsFiles().getTcParamPath(sutId, tsId)).resolve(file.getFilename()));
+        }
+        catch (final IOException exc) {
+            LOG.error("error when deleting file {}", file);
+            return false;
+        }
     }
 
 
@@ -101,18 +93,16 @@ public class SuTCbService implements ISuTCbService {
         try {
             getExtraTcParamFilesOrderedByName(folder).sorted().forEachOrdered(path -> {
                 extraParamFileNames.add(path.getFileName().toString());
-                LOG.info("Extra parameter file found: {}", path.getFileName().toString());
+                LOG.info("Extra parameter file found: {}", path.getFileName());
             });
         }
         catch (final NoSuchFileException exc) {
             LOG.info("no extra TC parameter files found in folder: {}", folder);
         }
         catch (final IOException exc) {
-            exc.printStackTrace();
+            LOG.error("", exc);
         }
-        finally {
-            return extraParamFileNames;
-        }
+        return extraParamFileNames;
     }
 
 
@@ -121,13 +111,8 @@ public class SuTCbService implements ISuTCbService {
             return Files.find(folder, 1, (path, fileAttributes) -> {
                 final String filenameToCheck = path.getFileName().toString();
                 // ignore the regular parameter file and all potential report files
-                return fileAttributes.isRegularFile() && !filenameToCheck.equalsIgnoreCase("TcParam.json") && !Pattern.compile("report", Pattern.CASE_INSENSITIVE).matcher(filenameToCheck).find();
-            }).sorted(new Comparator<Path>() {
-                @Override
-                public int compare(Path p1, Path p2) {
-                    return p1.getFileName().toString().compareToIgnoreCase(p2.getFileName().toString());
-                }
-            });
+                return fileAttributes.isRegularFile() && !filenameToCheck.equalsIgnoreCase("TcParam.json");
+            }).sorted();
         }
         catch (final IllegalStateException exc) {
             throw new IOException(exc);
@@ -141,21 +126,19 @@ public class SuTCbService implements ISuTCbService {
         try {
             paramFile = getParamFile(sutId, tsId);
             if (paramFile == null) {
-                LOG.info("TC parameter file for SuT" + sutId + " and testsuite " + tsId + " does not exist");
+                LOG.info("TC parameter file for SuT {} and testsuite {} does not exist", sutId, tsId);
                 return null;
             }
-            LOG.debug("load TC parameters from file " + paramFile.toString());
+            LOG.debug("load TC parameters from file {}", paramFile);
             return new String(Files.readAllBytes(paramFile));
         }
         catch (final InvalidPathException e) {
-            LOG.error("invalid path for TC parameter file for SuT" + sutId + " and testsuite " + tsId);
-            return null;
+            LOG.error("invalid path for TC parameter file for SuT {} and testsuite {}", sutId, tsId);
         }
         catch (final Exception e) {
-            LOG.error("could not read TC parameters from file " + paramFile.toString());
-            e.printStackTrace();
-            return null;
+            LOG.error("could not read TC parameters from file {}", paramFile);
         }
+        return null;
     }
 
 
@@ -165,59 +148,29 @@ public class SuTCbService implements ISuTCbService {
         try {
             paramFile = getParamFile(sutId, tsId);
             if (paramFile == null) {
-                LOG.info("TC parameter file for SuT" + sutId + " and testsuite " + tsId + " does not exist");
+                LOG.info("TC parameter file for SuT {} and testsuite {} does not exist", sutId, tsId);
                 return false;
             }
-            LOG.debug("store TC parameters to file " + paramFile.toString());
+            LOG.debug("store TC parameters to file {}", paramFile);
             Files.write(paramFile, parameters.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         }
         catch (final InvalidPathException e) {
-            LOG.error("invalid path for TC parameter file for SuT" + sutId + " and testsuite " + tsId);
-            return false;
+            LOG.error("invalid path for TC parameter file for SuT {} and testsuite {}", sutId, tsId);
         }
         catch (final IOException e) {
-            LOG.error("could not write badge parameters to file " + paramFile.toString());
-            e.printStackTrace();
-            return false;
+            LOG.error("could not write badge parameters to file {}", paramFile);
         }
+        
+        return false;
     }
 
 
-    private Path getParamFile(String sutId, String tsId) throws InvalidPathException {
+    private Path getParamFile(String sutId, String tsId) {
         final List<String> tcParamFiles = Factory.getSutPathsFiles().getTcParamFileNames(sutId, tsId, true);
         if (!tcParamFiles.isEmpty())
             return Paths.get(tcParamFiles.get(0));
         else
             return null;
     }
-
-    //	@Override
-    //	public SuTCbFormData store(SuTCbFormData formData) {
-    //		LOG.info("store");
-    //		if (!ACCESS.check(new UpdateCbPermission())) {
-    //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //		}
-    //
-    //		return formData;
-    //	}
-    //
-    //	@Override
-    //	public SuTCbFormData prepareCreate(SuTCbFormData formData) {
-    //		LOG.info("prepareCreate");
-    //		if (!ACCESS.check(new CreateCbPermission())) {
-    //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //		}
-    //		return formData;
-    //	}
-    //
-    //	@Override
-    //	public SuTCbFormData create(SuTCbFormData formData) {
-    //		LOG.info("create");
-    //		if (!ACCESS.check(new CreateCbPermission())) {
-    //			throw new VetoException(TEXTS.get("AuthorizationFailed"));
-    //		}
-    //
-    //		return formData;
-    //	}
 }

@@ -32,7 +32,7 @@ WARNING: Currently there is no option to revert to default settings, for any ass
 | ACTIVEMQ_PASSWORD  | password for ActiveMQ  | ``password``
 | ACTIVEMQ_HOST      | host name where the ActiveMQ service is running | ``localhost``
 | ACTIVEMQ_PORT      | port name for the ActiveMQ service | ``61616``
-| SETTINGS_DESIGNATOR | Value for the connection string to be used as default if value is not provided in SuT conformance statement | ``crcAddress=localhost:8989``
+| SETTINGS_DESIGNATOR | Value for the connection string to be used as default if value is not provided in SuT conformance statement |
 | FEDERATION_NAME     | Value for the federation name to be used as default if value is not provided in SuT conformance statement  | ``TheWorld``
 |===
 

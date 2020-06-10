@@ -1,6 +1,18 @@
-package nato.ivct.gui.client.sut;
+/* Copyright 2020, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
 
-import java.util.Optional;
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
+package nato.ivct.gui.client.sut;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
@@ -12,8 +24,6 @@ import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.gui.client.outlines.SuTOutline;
-import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcExecutionDetailsBox.DetailsHorizontalSplitBox.TcLogField;
-import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.TcLogMsgNotification;
 
 
@@ -21,14 +31,13 @@ public class TcLogMsgNotificationHandler implements INotificationHandler<TcLogMs
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
-
     @Override
     public void handleNotification(TcLogMsgNotification tcLogMsgNotification) {
         // inform client about test case log message
         ModelJobs.schedule(new IRunnable() {
             @Override
             public void run() throws Exception {
-                logger.trace("Test Case log message received for " + tcLogMsgNotification.getTcId());
+                logger.trace("Test Case log message received for {}", tcLogMsgNotification.getTcId());
                 final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
                 final IOutline outline = desktop.getOutline();
                 if (outline instanceof SuTOutline) {
@@ -37,30 +46,12 @@ public class TcLogMsgNotificationHandler implements INotificationHandler<TcLogMs
                         // show only with a log message that is for this SuT and the currently executed test case
                         if (tcLogMsgNotification.getLogMsg().length() > 0 && form.getSutId().equalsIgnoreCase(tcLogMsgNotification.getSut()) && form.getTestCaseId().equalsIgnoreCase(tcLogMsgNotification.getTcId())) {
 
-                            // message including level and time stamp
-                            //								String logMsg = String.format("[%s] %s: %s", tcLogMsgNotification.getLogLevel(), tcLogMsgNotification.getTimeStamp(), tcLogMsgNotification.getLogMsg());
+                            final String logLevel = String.format(tcLogMsgNotification.getLogLevel());
+                            final String timeStamp = String.format(tcLogMsgNotification.getTimeStamp());
+                            final String logMsg = String.format(tcLogMsgNotification.getLogMsg());
 
-                            // message including only level
-                            final String logMsg = String.format("[%s]: %s", tcLogMsgNotification.getLogLevel(), tcLogMsgNotification.getLogMsg());
+                            form.getTcLogField().addLine(logLevel, timeStamp, logMsg);
 
-                            final SuTTcExecutionFormData formData = (SuTTcExecutionFormData) form.createFormData();
-                            form.exportFormData(formData);
-
-                            // check if sufficient memory is available
-                            final String tcExecLog = Optional.ofNullable(formData.getTcLog().getValue()).orElse("");
-                            final int configuredLogMsgLength = form.getFieldByClass(TcLogField.class).getConfiguredMaxLength();
-                            if (configuredLogMsgLength < Integer.MAX_VALUE) {
-                                // increase the configured data space if required
-                                final int requiredMsgLength = configuredLogMsgLength + logMsg.length();
-                                if (configuredLogMsgLength < requiredMsgLength) {
-                                    // increase the memory
-                                    form.getFieldByClass(TcLogField.class).setMaxLength(requiredMsgLength < Integer.MAX_VALUE ? requiredMsgLength : Integer.MAX_VALUE);
-                                    form.exportFormData(formData);
-                                }
-                            }
-
-                            formData.getTcLog().setValue((tcExecLog.length() > 0 ? tcExecLog + "\n" : tcExecLog) + logMsg);
-                            form.importFormData(formData);
                         }
                     });
                 }
