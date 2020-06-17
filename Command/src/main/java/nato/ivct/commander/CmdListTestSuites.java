@@ -190,32 +190,34 @@ public class CmdListTestSuites implements Command {
 
 		for (String ir : irList) {
 			TestSuiteDescription ts = getTestSuiteforIr(ir);
-			tsSet.add(ts.id);
+			if (ts != null)
+				tsSet.add(ts.id);
 		}
 		return tsSet;
 	}
 
-	
-	public Map<String, TestSuiteDescription> filterForIr (Set<String> irSet) {
-    	Map<String, TestSuiteDescription> filteredTestsuites = new HashMap<>();    	
-    	
-    	for (String ir: irSet) {
-    		TestSuiteDescription ts = getTestSuiteforIr(ir);
-    		TestSuiteDescription fts = filteredTestsuites.get(ts.id);
-    		if (fts == null) {
-    			fts = new TestSuiteDescription();
-    			fts.id = ts.id;
-    			fts.name = ts.name;
-    			fts.version = ts.version;
-    			fts.description = ts.description;
-    			fts.tsLibTimeFolder = ts.tsLibTimeFolder;
-    			fts.tsRunTimeFolder = ts.tsRunTimeFolder;
-    			fts.testcases = new HashMap<String, CmdListTestSuites.TestCaseDesc>();
-    			filteredTestsuites.put(fts.id, fts);
-    		}
-    		TestCaseDesc tc = getTestCaseDescrforIr(ir);
-    		fts.testcases.put(tc.tc, tc);
-    	}
-    	return filteredTestsuites;
-    }
+	public Map<String, TestSuiteDescription> filterForIr(Set<String> irSet) {
+		Map<String, TestSuiteDescription> filteredTestsuites = new HashMap<>();
+
+		for (String ir : irSet) {
+			TestSuiteDescription ts = getTestSuiteforIr(ir);
+			if (ts != null) {
+				TestSuiteDescription fts = filteredTestsuites.get(ts.id);
+				if (fts == null) {
+					fts = new TestSuiteDescription();
+					fts.id = ts.id;
+					fts.name = ts.name;
+					fts.version = ts.version;
+					fts.description = ts.description;
+					fts.tsLibTimeFolder = ts.tsLibTimeFolder;
+					fts.tsRunTimeFolder = ts.tsRunTimeFolder;
+					fts.testcases = new HashMap<String, CmdListTestSuites.TestCaseDesc>();
+					filteredTestsuites.put(fts.id, fts);
+				}
+				TestCaseDesc tc = getTestCaseDescrforIr(ir);
+				fts.testcases.put(tc.tc, tc);
+			}
+		}
+		return filteredTestsuites;
+	}
 }
