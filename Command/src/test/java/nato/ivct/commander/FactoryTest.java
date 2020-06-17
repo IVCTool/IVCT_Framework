@@ -111,11 +111,11 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2017", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2019", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
-		assertTrue("Get Badge name", stc.getSuiteName().contentEquals("HelloWorld-2017"));
+		assertTrue("Get Badge name", stc.getSuiteName().contentEquals("HelloWorld-2019"));
 		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
@@ -146,7 +146,7 @@ public class FactoryTest {
 				resultListener != null);
 		resultListener.execute();
 
-		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2017", "some.test.case", "verdict", "verdictText");
+		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2019", "some.test.case", "verdict", "verdictText");
         assertTrue("Factory Test CmdSendTcVerdict should return some value", stc != null);
         stc.execute();
         try {
@@ -171,8 +171,8 @@ public class FactoryTest {
 		sutDescription.name = "hw_iosb";
 		sutDescription.description = "HelloWorld system under federate for IVCT demonstration";
 		sutDescription.vendor = "Fraunhofer IOSB";
-		sutDescription.badges.add("HLA-BASE-2017");
-		sutDescription.badges.add("TS_HLA_EncodingRulesTester-2017");
+		sutDescription.badges.add("HLA-BASE-2019");
+		sutDescription.badges.add("RPR-Encoding-2.0");
 		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutDescription);
 		try {
 			cus.execute();
