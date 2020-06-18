@@ -45,7 +45,7 @@ public class SutPathsFiles {
         }
 
         final File dir = new File(sutsHomePath);
-        if (dir.exists() == false || dir.isDirectory() == false) {
+        if (!dir.exists() || !dir.isDirectory()) {
             return sutNames;
         }
         final File[] filesList = dir.listFiles();

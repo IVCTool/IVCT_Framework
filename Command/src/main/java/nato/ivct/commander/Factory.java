@@ -343,7 +343,7 @@ public class Factory {
                         }
                         env.setCharAt(k, inString.charAt(j));
                     }
-                    if (gotClosing == false) {
+                    if (!gotClosing) {
                         LOGGER.error("LineUtil:replaceMacro: Missing closing bracket");
                     }
                 }
