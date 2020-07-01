@@ -477,7 +477,7 @@ public class SuTCbForm extends AbstractForm {
 
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("TcParameterSettings");
+                            return TEXTS.get("TsParameterSettings");
                         }
 
 
@@ -1019,7 +1019,7 @@ public class SuTCbForm extends AbstractForm {
                     public class SutTcExtraParameterTableField extends AbstractTableField<SutTcExtraParameterTableField.SutTcExtraParameterTable> {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("TcExtraParameterFiles");
+                            return TEXTS.get("TsParameterFiles");
                         }
 
 
