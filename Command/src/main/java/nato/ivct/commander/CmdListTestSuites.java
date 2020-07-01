@@ -72,7 +72,7 @@ public class CmdListTestSuites implements Command {
 	public void execute() throws Exception {
 		Factory.LOGGER.trace("Factory.IVCT_TS_HOME_ID = {}", Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID));
 		File dir = new File(Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID));
-		if (dir.exists() == false) {
+		if (!dir.exists()) {
 			Factory.LOGGER.error("test suite folder: {} does not exist",
 					Factory.props.getProperty(Factory.IVCT_TS_DEF_HOME_ID));
 			return;
@@ -132,7 +132,6 @@ public class CmdListTestSuites implements Command {
 			}
 		} else {
 			Factory.LOGGER.error("value = {} is not a folder", dir.getAbsolutePath());
-			return;
 		}
 	};
 
