@@ -158,7 +158,7 @@ public class SuTForm extends AbstractForm {
             public class GeneralBox extends AbstractGroupBox {
                 @Override
                 protected String getConfiguredLabel() {
-                    return TEXTS.get("GeneralInformation");
+                    return TEXTS.get("GeneralSuTInformation");
                 }
 
 
@@ -264,6 +264,10 @@ public class SuTForm extends AbstractForm {
                             return TEXTS.get("RTIConnection");
                         }
 
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("RTIConnectionInfo");
+                        }
 
                         @Override
                         protected int getConfiguredGridW() {
@@ -277,7 +281,11 @@ public class SuTForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("FederationName");
                         }
-
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("FederationNameInfo");
+                        }
 
                         @Override
                         protected int getConfiguredGridW() {
@@ -291,7 +299,11 @@ public class SuTForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("FederateName");
                         }
-
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("FederateNameInfo");
+                        }
 
                         @Override
                         protected int getConfiguredGridW() {
@@ -334,6 +346,11 @@ public class SuTForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("CapabilityStatus");
+                        }
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("CapabilityStatusInfo");
                         }
 
                         public class SutCapabilityStatusTable extends AbstractTable {
@@ -400,6 +417,11 @@ public class SuTForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("TestReports");
+                        }
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("TestReportInfo");
                         }
 
                         @Order(1000)
