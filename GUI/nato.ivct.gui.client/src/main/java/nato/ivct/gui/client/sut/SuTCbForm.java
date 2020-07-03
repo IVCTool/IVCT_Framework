@@ -15,7 +15,6 @@ limitations under the License. */
 package nato.ivct.gui.client.sut;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +77,6 @@ import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutP
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField.Accordion;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField.Accordion.TileGroup;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.SutTcRequirementTableField;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.SutTcRequirementTableField.SutTcRequirementTable;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
@@ -142,11 +139,6 @@ public class SuTCbForm extends AbstractForm {
 
     public AccordionField getAccordionField() {
         return getFieldByClass(AccordionField.class);
-    }
-
-
-    public SutTcRequirementTableField getSutTcRequirementTableField() {
-        return getFieldByClass(SutTcRequirementTableField.class);
     }
 
 
@@ -290,35 +282,19 @@ public class SuTCbForm extends AbstractForm {
                             }
                             super.handleGroupCollapsedChange(group);
                         }
-
-
-                        // fill requirement table for the selected TC
+                      
+                        // show test case form in a separate form - single click event
                         @Override
                         protected void execTilesSelected(List<ITile> tiles) {
-                            if (tiles.isEmpty()) {
-                                // clear the requirement table
-                                final SutTcRequirementTable tbl = getSutTcRequirementTableField().getTable();
-                                if (tbl.getRowCount() > 0)
-                                    tbl.deleteAllRows();
-                                return;
-                            }
-
-                            final CustomTile selTc = (CustomTile) tiles.get(0);
-                            final String tcId = selTc.getTcId();
-                            final HashMap<String, String> irDescList = BEANS.get(ITsService.class).getIrForTc(tcId);
-
-                            final SutTcRequirementTable reqTable = getSutTcRequirementTableField().getTable();
-                            reqTable.deleteAllRows();
-                            irDescList.forEach((id, desc) -> {
-                                final ITableRow row = reqTable.addRow();
-                                // set requirement ID and description
-                                reqTable.getRequirementIdColumn().setValue(row, id);
-                                reqTable.getRequirementDescColumn().setValue(row, desc);
-                            });
+                               if (tiles.isEmpty()) {
+                                    return;
+                               }
+    
+                               final CustomTile selTc = (CustomTile) tiles.get(0);
+                               execTileAction(selTc);    
                         }
 
-
-                        // show test case form in a separate form
+                        // show test case form in a separate form - double click event
                         @Override
                         protected void execTileAction(final ITile tile) {
                             // open TC execution form
@@ -380,70 +356,9 @@ public class SuTCbForm extends AbstractForm {
                         }
                     }
                 }
-
-                @Order(1500)
-                public class SutTcRequirementTableField extends AbstractTableField<SutTcRequirementTableField.SutTcRequirementTable> {
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 6;
-                    }
-
-
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Requirements");
-                    }
-
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 2;
-                    }
-
-                    public class SutTcRequirementTable extends AbstractTable {
-
-                        public RequirementIdColumn getRequirementIdColumn() {
-                            return getColumnSet().getColumnByClass(RequirementIdColumn.class);
-                        }
-
-
-                        public RequirementDescColumn getRequirementDescColumn() {
-                            return getColumnSet().getColumnByClass(RequirementDescColumn.class);
-                        }
-
-                        @Order(1000)
-                        public class RequirementIdColumn extends AbstractStringColumn {
-
-                            @Override
-                            protected String getConfiguredHeaderText() {
-                                return TEXTS.get("RequirementId");
-                            }
-
-
-                            @Override
-                            protected int getConfiguredWidth() {
-                                return 250;
-                            }
-                        }
-
-                        @Order(2000)
-                        public class RequirementDescColumn extends AbstractStringColumn {
-                            @Override
-                            protected String getConfiguredHeaderText() {
-                                return TEXTS.get("RequirementDescription");
-                            }
-
-
-                            @Override
-                            protected int getConfiguredWidth() {
-                                return 1250;
-                            }
-                        }
-                    }
-                }
             }
 
-            @Order(2000)
+            @Order(1500)
             public class SutParameterBox extends AbstractGroupBox {
                 @Order(1000)
                 public class ParameterHorizontalSplitterBox extends AbstractSplitBox {
@@ -478,6 +393,12 @@ public class SuTCbForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("TsParameterSettings");
+                        }
+                        
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("TsParameterInfo");
                         }
 
 
@@ -1021,6 +942,12 @@ public class SuTCbForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("TsParameterFiles");
                         }
+                        
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("TsParameterFilesInfo");
+                        }
 
 
                         @Override
@@ -1217,10 +1144,10 @@ public class SuTCbForm extends AbstractForm {
 
         @Override
         protected String getConfiguredContent() {
-            return "<div title=>" + "<p name=\"" + TC_NAME_KW + "\">" + "</p>" + "<p name=\"" + TC_VERDICT_KW + "\">" + "</p>" + "</div>";
+            return "<div title=>" +"<img src=\"res/startButton.png\" width=\"20\" height=\"21\" style=\"float:right;vertical-align:top\">"+ "<p name=\"" + TC_NAME_KW + "\">" + "</p>" + "<p name=\"" + TC_VERDICT_KW + "\">" + "</p>" + "</div>";
         }
-
-
+        
+        
         public void setTcTileContent(String tc, String tcVerdict) {
             setTcName(tc);
             setTcVerdict(tcVerdict);
@@ -1297,7 +1224,7 @@ public class SuTCbForm extends AbstractForm {
 
             // if only a single group then open it or collapse them all otherwise
             if (accordion.getGroupCount() == 1) {
-                // load TC parameters
+                // load TS parameters
                 final String tsId = accordion.getGroups().get(0).getTitle();
                 setActiveTsId(tsId);
                 getSutTcParameterTableField().loadTcParamTable(tsId);
