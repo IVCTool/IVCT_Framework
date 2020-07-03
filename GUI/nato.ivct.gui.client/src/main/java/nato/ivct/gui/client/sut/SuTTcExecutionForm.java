@@ -14,6 +14,7 @@ limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -53,6 +54,8 @@ import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.HeartBeatNotificationHandler;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.ContentForm.MainBox.FieldsBox.CommentField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcRequirementTableField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcRequirementTableField.TcRequirementTable;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcProgressField;
@@ -64,6 +67,7 @@ import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
+import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
@@ -135,8 +139,13 @@ public class SuTTcExecutionForm extends AbstractForm {
     public void setTestCaseId(String testCaseId) {
         this.testCaseId = testCaseId;
     }
+    
+    
+    public TcRequirementTableField getTcRequirementTableField() {
+        return getFieldByClass(TcRequirementTableField.class);
+    }
 
-
+    
     @FormData
     public String getTestCaseStatus() {
         return testCaseStatus;
@@ -506,47 +515,8 @@ public class SuTTcExecutionForm extends AbstractForm {
                 // set all fields to read-only
                 return false;
             }
-
+            
             @Order(1010)
-            public class TcDescrField extends AbstractStringField {
-
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Description");
-                }
-
-
-                @Override
-                protected int getConfiguredGridW() {
-                    return 3;
-                }
-
-
-                @Override
-                protected int getConfiguredHeightInPixel() {
-                    return 80;
-                }
-
-
-                @Override
-                protected boolean getConfiguredMultilineText() {
-                    return true;
-                }
-
-
-                @Override
-                protected boolean getConfiguredWrapText() {
-                    return true;
-                }
-
-
-                @Override
-                protected int getConfiguredMaxLength() {
-                    return 2000;
-                }
-            }
-
-            @Order(1031)
             public class TcExecutionStatus extends AbstractStringField {
                 @Override
                 protected int getConfiguredGridW() {
@@ -573,7 +543,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             }
 
-            @Order(1100)
+            @Order(1080)
             public class TcProgressField extends AbstractHtmlField {
                 @Override
                 protected int getConfiguredGridW() {
@@ -620,6 +590,106 @@ public class SuTTcExecutionForm extends AbstractForm {
                 protected String createHtmlContent(int progress) {
                     return HTML.fragment(HTML.body("<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:" + Integer.toString(progress) + "%'>" + Integer.toString(progress) + "%</div></div>")).toPlainText();
 
+                }
+            }
+
+            @Order(1090)
+            public class TcDescrField extends AbstractStringField {
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Description");
+                }
+
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 3;
+                }
+
+
+                @Override
+                protected int getConfiguredHeightInPixel() {
+                    return 80;
+                }
+
+
+                @Override
+                protected boolean getConfiguredMultilineText() {
+                    return true;
+                }
+
+
+                @Override
+                protected boolean getConfiguredWrapText() {
+                    return true;
+                }
+
+
+                @Override
+                protected int getConfiguredMaxLength() {
+                    return 2000;
+                }
+            }
+            
+            @Order(1100)
+            public class TcRequirementTableField extends AbstractTableField<TcRequirementTableField.TcRequirementTable> {
+                @Override
+                protected int getConfiguredGridW() {
+                    return 6;
+                }
+
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Requirements");
+                }
+
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 3;
+                }
+
+                public class TcRequirementTable extends AbstractTable {
+
+                    public RequirementIdColumn getRequirementIdColumn() {
+                        return getColumnSet().getColumnByClass(RequirementIdColumn.class);
+                    }
+
+
+                    public RequirementDescColumn getRequirementDescColumn() {
+                        return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+                    }
+
+                    @Order(1000)
+                    public class RequirementIdColumn extends AbstractStringColumn {
+
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("RequirementId");
+                        }
+
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 140;
+                        }
+                    }
+
+                    @Order(2000)
+                    public class RequirementDescColumn extends AbstractStringColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("RequirementDescription");
+                        }
+
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 800;
+                        }
+                    }
                 }
             }
         }
@@ -937,6 +1007,9 @@ public class SuTTcExecutionForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
+            
+            // fill the requirement table for the TC
+            setIrTable();
 
             // set result color in the execution history table
             setTestResultColor();
@@ -966,6 +1039,19 @@ public class SuTTcExecutionForm extends AbstractForm {
                 default:
                     break;
             }
+        });
+    }
+    
+    // fill requirement table for the selected TC
+    public void setIrTable() {
+        final HashMap<String, String> irDescList = BEANS.get(ITsService.class).getIrForTc(testCaseId);
+        final TcRequirementTable reqTable = getTcRequirementTableField().getTable();
+        reqTable.deleteAllRows();
+        irDescList.forEach((id, desc) -> {
+            final ITableRow row = reqTable.addRow();
+            // set requirement ID and description
+            reqTable.getRequirementIdColumn().setValue(row, id);
+            reqTable.getRequirementDescColumn().setValue(row, desc);
         });
     }
 }
