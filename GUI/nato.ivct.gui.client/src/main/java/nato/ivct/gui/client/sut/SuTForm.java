@@ -14,6 +14,7 @@ limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -451,10 +452,22 @@ public class SuTForm extends AbstractForm {
                             public FileNameColumn getFileNameColumn() {
                                 return getColumnSet().getColumnByClass(FileNameColumn.class);
                             }
-
+                            
+                            @Override
+                            protected void execRowsSelected(List<? extends ITableRow> rows) {
+                                if (rows.size() == 1) {
+                                    // set download menu visible
+                                    getMenuByClass(TestReportCreateMenu.class).setVisible(true);
+                                    getMenuByClass(TestReportDownloadMenu.class).setVisible(true);
+                                }
+                                else {
+                                    // hide download menu if no row is selected
+                                    getMenuByClass(TestReportDownloadMenu.class).setVisible(false);
+                                }
+                            }
 
                             @Order(2000)
-                            public class NewMenu extends AbstractMenu {
+                            public class TestReportCreateMenu extends AbstractMenu {
 
                                 @Override
                                 protected Set<? extends IMenuType> getConfiguredMenuTypes() {
@@ -479,6 +492,41 @@ public class SuTForm extends AbstractForm {
                                         MessageBoxes.createOk().withHeader(TEXTS.get("reportMsgBoxHeader")).show();
                                     }
                                         
+                                }
+                            }
+                            
+                            @Order(3000)
+                            public class TestReportDownloadMenu extends AbstractMenu {
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("TestReportDownload");
+                                }
+
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                                }
+
+
+                                @Override
+                                protected boolean getConfiguredVisible() {
+                                    return false;
+                                }
+
+
+                                @Override
+                                protected void execAction() {
+                                    // get the selected file name from the table
+                                    final ITableRow row = getTable().getSelectedRow();
+                                    if (row == null)
+                                        // no row selected - nothing to do
+                                        return;
+                                    // get the content of the selected file
+                                    final BinaryResource downloadFileResource = BEANS.get(ISuTService.class).getTestReportFileContent(getSutId(), getTable().getFileNameColumn().getValue(row));
+                                    if (downloadFileResource.getContentLength() != -1) {
+                                        getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+                                    }
                                 }
                             }
                                                        
