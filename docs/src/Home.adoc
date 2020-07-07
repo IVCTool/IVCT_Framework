@@ -7,7 +7,7 @@ NOTE: The documentation pages are currently under construction.
 Some pages might be outdated or unfinished.
 
 
-== Preparations
+== Background
 
 A good starting point to get a bit of an background on the architecture are the
 following sections.
