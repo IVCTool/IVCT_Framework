@@ -54,6 +54,7 @@ import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
+import org.eclipse.scout.rt.client.ui.tile.ITileGrid;
 import org.eclipse.scout.rt.client.ui.tile.TileGridLayoutConfig;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -291,9 +292,9 @@ public class SuTCbForm extends AbstractForm {
                                }
     
                                final CustomTile selTc = (CustomTile) tiles.get(0);
-                               execTileAction(selTc);    
+                               execTileAction(selTc);
                         }
-
+                        
                         // show test case form in a separate form - double click event
                         @Override
                         protected void execTileAction(final ITile tile) {
@@ -308,11 +309,19 @@ public class SuTCbForm extends AbstractForm {
                             List<SuTTcExecutionForm> forms = desktop.findForms(SuTTcExecutionForm.class);
                             Optional<SuTTcExecutionForm> optionalForm = forms.stream().filter(executionForm -> executionForm.getSutId().equalsIgnoreCase(getSutId()) && executionForm.getTestCaseId().equalsIgnoreCase(((CustomTile) tile).getTcId())).findFirst();
                             if (optionalForm.isPresent()) {
+                                deselectAllTiles();
                                 optionalForm.get().activate();
                             }
                             else {
+                                deselectAllTiles();
                                 form.startView();
                             }
+                        }
+                        
+                        // deselect all tiles after a click event
+                        @Override
+                        public void deselectAllTiles() {
+                          getTileGrids().forEach(ITileGrid::deselectAllTiles);
                         }
 
                         public class TileGroup extends AbstractGroup {
