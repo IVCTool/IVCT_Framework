@@ -6,8 +6,8 @@ ext {
     gradleWrapperVersion = "${gradleVersion}"
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-    ivctVersion = '3.0.0'
-    compatibleVersions = ['3.0.0':'compatible','2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
+    ivctVersion = '3.1.0-SNAPSHOT'
+    compatibleVersions = ['3.1.0-SNAPSHOT':'compatible','3.0.0':'compatible','2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
     logbackVersion = '1.2.3'
