@@ -17,6 +17,7 @@ package nato.ivct.gui.client.sut;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -26,11 +27,15 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -45,7 +50,9 @@ import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
 import nato.ivct.commander.CmdOperatorConfirmation;
@@ -776,12 +783,57 @@ public class SuTTcExecutionForm extends AbstractForm {
                                 return 200;
                             }
                         }
+                        
+                        @Order(3000)
+                        public class LogfileDownloadMenu extends AbstractMenu {
+                            @Override
+                            protected String getConfiguredText() {
+                                return TEXTS.get("LogfileDownload");
+                            }
+
+
+                            @Override
+                            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                            }
+
+
+                            @Override
+                            protected boolean getConfiguredVisible() {
+                                return false;
+                            }
+
+
+                            @Override
+                            protected void execAction() {
+                                // get the selected file name from the table
+                                final ITableRow row = getTable().getSelectedRow();
+                                if (row == null)
+                                    // no row selected - nothing to do
+                                    return;
+                                // get the content of the selected file
+                                final BinaryResource downloadFileResource = BEANS.get(ISuTTcService.class).getLogfileContent(getSutId(), getTestsuiteId(),  getTable().getFileNameColumn().getValue(row));
+                                if (downloadFileResource.getContentLength() != -1) {
+                                    getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+                                }
+                            }
+                        }
 
                         @Override
                         protected void execRowsSelected(List<? extends ITableRow> rows) {
                             // clear TC Execution Log table
                             getTcLogField().getTable().discardAllRows();
                             if (!rows.isEmpty()) {
+                                
+                                if (rows.size() == 1) {
+                                    // set download menu visible
+                                    getMenuByClass(LogfileDownloadMenu.class).setVisible(true);
+                                }
+                                else {
+                                    // hide download menu if no row is selected
+                                    getMenuByClass(LogfileDownloadMenu.class).setVisible(false);
+                                }
+                                
                                 // row is selected
                                 final String logFileName = getTable().getFileNameColumn().getValue(getSelectedRow());
                                 // load log file content

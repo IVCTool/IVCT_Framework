@@ -14,6 +14,7 @@ limitations under the License. */
 
 package nato.ivct.gui.shared.sut;
 
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -39,4 +40,7 @@ public interface ISuTTcService extends IService {
 
 
     SuTTcExecutionFormData loadJSONLogFileContent(String sutId, String testsuiteId, String fileName, SuTTcExecutionFormData formData);
+    
+    
+    BinaryResource getLogfileContent(String sutId, String testsuiteId, String fileName);
 }
