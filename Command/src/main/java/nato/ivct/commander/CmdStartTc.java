@@ -87,9 +87,9 @@ public class CmdStartTc implements Command {
 			startCmd.put(SUT_NAME, sut);
 			startCmd.put(SUT_DIR, sutHome + '/' + sut);
 			startCmd.put(TS_ID, testSuiteName);
-                        startCmd.put(TC_ID, tc);
-                        startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
-                        startCmd.put(FEDERATION, federationName);
+            startCmd.put(TC_ID, tc);
+            startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
+            startCmd.put(FEDERATION, federationName);
 			startCmd.put(FEDERATE, sutFederateName);
 			
 			LOGGER.info("StartTc Command: {}", startCmd);
