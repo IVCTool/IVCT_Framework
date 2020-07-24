@@ -40,6 +40,7 @@ import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdStartTc;
+import nato.ivct.commander.CmdAbortTc;
 import nato.ivct.commander.Factory;
 
 
@@ -59,8 +60,7 @@ public class ServerSession extends AbstractServerSession {
     private static IFuture<SutTcResultDescription> loadTcResultsJob;
     private static IFuture<CmdListBadges>          loadBadgesJob;
     private static IFuture<CmdListTestSuites>      loadTestSuitesJob;
-    private static IFuture<CmdStartTc>             startTcJobs;
-
+    
     public class SutTcResultDescription {
 
         /*
@@ -229,6 +229,28 @@ public class ServerSession extends AbstractServerSession {
         }
 
     }
+    
+    /*
+     * Abort test case job
+     */
+    public class AbortTestCase implements Callable<CmdAbortTc> {
+        private final String sut;
+        private final String tc;
+
+        public AbortTestCase(String sut, String tc) {
+            this.sut = sut;
+            this.tc = tc;
+        }
+
+
+        @Override
+        public CmdAbortTc call() throws Exception {
+            final CmdAbortTc tcCmd = Factory.createCmdAbortTc(sut, tc);
+            tcCmd.execute();
+            return null;
+        }
+
+    }
 
     public class ExecuteSetLogLevel implements Callable<CmdSetLogLevel> {
 
@@ -322,12 +344,17 @@ public class ServerSession extends AbstractServerSession {
 
     public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
         LOG.info("starting test case");
-        startTcJobs = Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
+        Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
     }
 
 
     public void setLogLevel(String level) {
         LOG.info("set log level");
         Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
+    }
+    
+    public void execAbortTc(String sut, String tc) {
+        LOG.info("abort test case");
+        Jobs.schedule(new AbortTestCase(sut, tc), Jobs.newInput());
     }
 }
