@@ -1,12 +1,16 @@
 package de.fraunhofer.iosb.testrunner;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +37,9 @@ import nato.ivct.commander.CmdSetLogLevelListener.OnSetLogLevelListener;
 import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
+import nato.ivct.commander.CmdAbortTcListener;
+import nato.ivct.commander.CmdAbortTcListener.OnAbortTestCaseListener;
+import nato.ivct.commander.CmdAbortTcListener.TcAbortInfo;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.TcLoggerData;
 
@@ -42,7 +49,7 @@ import nato.ivct.commander.TcLoggerData;
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
-public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener,
+public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnAbortTestCaseListener,
 		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
 	public String logLevelId = Level.INFO.toString();
@@ -51,6 +58,12 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	private CmdListTestSuites testSuites;
 	private Map<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
+	
+	// the number of threads in the fixed thread pool
+	private static final int MAX_THREADS = 10;
+	
+	ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
+	private Map<String,SoftReference<Future>> threadCache = new HashMap<>();
 
 	/**
 	 * Main entry point from the command line.
@@ -77,9 +90,10 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		LogConfigurationHelper.configureLogging();
 
 		// start command listeners
-		(new CmdSetLogLevelListener(this)).execute();
-		(new CmdStartTcListener(this)).execute();
-		(new CmdQuitListener(this)).execute();
+		new CmdSetLogLevelListener(this).execute();
+		new CmdStartTcListener(this).execute();
+		new CmdQuitListener(this).execute();
+		new CmdAbortTcListener(this).execute();
 		try {
 			(new CmdHeartbeatSend(this)).execute();
 		} catch (Exception e1) {
@@ -198,7 +212,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 			String tcDir = f.getAbsolutePath();
 			tcLogger.info("TestEngine:onMessageConsumer:run: TC DIR is " + tcDir);
 
-			tcLogger.info("TestEngine:onMessageConsumer:run: The test case class is: " + testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: The test case class is: " + info.testCaseId);
 			String[] testcases = info.testCaseId.split("\\s");
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
@@ -249,7 +263,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					cf.printStackTrace();
 					continue;
 				}
-
+				
 				verdicts[i] = testCase.execute(info.testCaseParam, tcLogger);
 				tcLogger.info("Test Case Ended");
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
@@ -269,15 +283,23 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	@Override
 	public void onQuit() {
+	    executorService.shutdown();
 		System.exit(0);
 	}
 
 	@Override
 	public void onStartTestCase(TcInfo info) {
-		this.testCaseId = new String(info.testCaseId);
-		Thread th1 = new Thread(new TestScheduleRunner(info, this));
-		th1.start();
+		Runnable th1 = new TestScheduleRunner(info, this);
+		Future<?> startedThread = executorService.submit(th1);
+		threadCache.put(info.testCaseId, new SoftReference<>(startedThread));
 	}
+	
+   @Override
+    public void onAbortTestCase(TcAbortInfo info) {
+       Future<?> threadToAbort = threadCache.get(info.testCaseId).get();
+       if (threadToAbort != null && !threadToAbort.isDone() && !threadToAbort.isCancelled())
+           threadToAbort.cancel(true);
+    }
 
 	@Override
 	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
