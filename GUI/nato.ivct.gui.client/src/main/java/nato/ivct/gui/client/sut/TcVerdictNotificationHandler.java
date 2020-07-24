@@ -98,8 +98,14 @@ public class TcVerdictNotificationHandler implements INotificationHandler<TcVerd
                         // show TC Execution History Table after TC execution
                         form.getTcExecutionHistoryTableField().setVisible(true);
 
-                        // show Execute TC button
+                        // show TC execution button
                         form.getTcExecutionButton().setVisible(true);
+                        
+                        // show Close button
+                        form.getCloseButton().setVisible(true);
+                        
+                        // hide Abort button
+                        form.getTcAbortButton().setVisible(false);
 
                         // reset progress bar
                         form.setTestCaseProgress(0);
