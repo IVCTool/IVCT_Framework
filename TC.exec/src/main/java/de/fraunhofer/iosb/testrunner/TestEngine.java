@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
 import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
@@ -52,18 +51,16 @@ import nato.ivct.commander.TcLoggerData;
 public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnAbortTestCaseListener,
 		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
-	public String logLevelId = Level.INFO.toString();
-	public String testCaseId = "no test case is running";
 	private AbstractTestCase testCase = null;
 
 	private CmdListTestSuites testSuites;
-	private Map<String, URLClassLoader> classLoaders = new HashMap<String, URLClassLoader>();
+	private Map<String, URLClassLoader> classLoaders = new HashMap<>();
 	
 	// the number of threads in the fixed thread pool
 	private static final int MAX_THREADS = 10;
 	
 	ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
-	private Map<String,SoftReference<Future>> threadCache = new HashMap<>();
+	private Map<String,SoftReference<Future<?>>> threadCache = new HashMap<>();
 
 	/**
 	 * Main entry point from the command line.
@@ -71,8 +68,12 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	 * @param args The command line arguments
 	 */
 	public static void main(final String[] args) {
-		@SuppressWarnings("unused")
-		final TestEngine runner = new TestEngine();
+	    startTestEngine();
+	}
+	
+	
+	private static void startTestEngine() {
+	    new TestEngine();
 	}
 
 	/**
@@ -99,7 +100,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		} catch (Exception e1) {
 			Set<Logger> loggers = TcLoggerData.getLoggers();
 			for (Logger entry : loggers) {
-				entry.error("Could not start HeartbeatSend: " + e1.toString());
+				entry.error("Could not start HeartbeatSend: ",e1);
 			}
 			if (loggers.size() == 0) {
 				System.out.println("Could not start HeartbeatSend: " + e1.toString());
@@ -125,11 +126,9 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	 */
 	private class TestScheduleRunner implements Runnable {
 		TcInfo info;
-		private TestRunner testRunner;
 
-		TestScheduleRunner(final TcInfo info, final TestRunner testRunner) {
+		TestScheduleRunner(final TcInfo info) {
 			this.info = info;
-			this.testRunner = testRunner;
 		}
 
 		private File getCwd() {
@@ -142,15 +141,15 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		 *
 		 * N.B. This method uses a trick to get the desired result
 		 *
-		 * @param directory_name name of directory to be the current directory
+		 * @param directoryName name of directory to be the current directory
 		 * @return true if successful
 		 */
-		private boolean setCurrentDirectory(String directory_name) {
+		private boolean setCurrentDirectory(String directoryName) {
 			boolean result = false; // Boolean indicating whether directory was
 									// set
 			File directory; // Desired current working directory
 
-			directory = new File(directory_name).getAbsoluteFile();
+			directory = new File(directoryName).getAbsoluteFile();
 			if (directory.exists()) {
 				directory.mkdirs();
 				result = (System.setProperty("user.dir", directory.getAbsolutePath()) != null);
@@ -162,9 +161,9 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		private void extendThreadClassLoader(final TestSuiteDescription testSuiteDescription) {
 			URLClassLoader classLoader = classLoaders.get(testSuiteDescription.id);
 			if (classLoader == null) {
-				String ts_path = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID);
-				String lib_path = ts_path + "/" + testSuiteDescription.tsLibTimeFolder;
-				File dir = new File(lib_path);
+				String tsPath = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID);
+				String libPath = tsPath + "/" + testSuiteDescription.tsLibTimeFolder;
+				File dir = new File(libPath);
 				File[] filesList = dir.listFiles();
 				if (filesList == null) {
 					Set<Logger> loggers = TcLoggerData.getLoggers();
@@ -194,25 +193,25 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		public void run() {
 			Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
 			TcLoggerData.addLoggerData(tcLogger, tcLogger.getName(), info.sutName, info.testSuiteId, info.testCaseId);
-			tcLogger.info("TestEngine:onMessageConsumer:run: " + info.testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: {}", info.testCaseId);
 
 			TestSuiteDescription tsd = testSuites.getTestSuiteForTc(info.testCaseId);
 			if (tsd == null) {
-				tcLogger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: " + info.testCaseId);
+				tcLogger.error("TestEngine:onMessageConsumer:run: unknown testsuite for testcase: {}", info.testCaseId);
 				return;
 			}
 			String runFolder = Factory.props.getProperty(Factory.IVCT_TS_DIST_HOME_ID) + '/' + tsd.tsRunTimeFolder;
 
-			tcLogger.info("TestEngine:onMessageConsumer:run: tsRunFolder is " + runFolder);
+			tcLogger.info("TestEngine:onMessageConsumer:run: tsRunFolder is {}", runFolder);
 			if (setCurrentDirectory(runFolder)) {
 				tcLogger.info("TestEngine:onMessageConsumer:run: setCurrentDirectory true");
 			}
 
 			File f = getCwd();
 			String tcDir = f.getAbsolutePath();
-			tcLogger.info("TestEngine:onMessageConsumer:run: TC DIR is " + tcDir);
+			tcLogger.info("TestEngine:onMessageConsumer:run: TC DIR is {}", tcDir);
 
-			tcLogger.info("TestEngine:onMessageConsumer:run: The test case class is: " + info.testCaseId);
+			tcLogger.info("TestEngine:onMessageConsumer:run: The test case class is: {}", info.testCaseId);
 			String[] testcases = info.testCaseId.split("\\s");
 			IVCT_Verdict verdicts[] = new IVCT_Verdict[testcases.length];
 
@@ -243,24 +242,22 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);
 
-				/**
+				/*
 				 * Check the compability of IVCT-Version which had this testCase at
 				 * building-time against the IVCT-Version at Runtime
 				 */
 
 				try {
-					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase " + testCase + " is: "
-							+ testCase.getIVCTVersion()); // Debug
+					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase {} is: {}", testCase, testCase.getIVCTVersion());
 
 					new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
 
 				} catch (IVCTVersionCheckException cf) {
-					tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ");
+					tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ", cf);
 					verdicts[i] = new IVCT_Verdict();
 					verdicts[i].verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
 					verdicts[i].text = "Could not instantiate because of IVCTVersionCheckError " + classname;
 					i++;
-					cf.printStackTrace();
 					continue;
 				}
 				
@@ -289,16 +286,24 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	@Override
 	public void onStartTestCase(TcInfo info) {
-		Runnable th1 = new TestScheduleRunner(info, this);
+	    Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+		Runnable th1 = new TestScheduleRunner(info);
 		Future<?> startedThread = executorService.submit(th1);
 		threadCache.put(info.testCaseId, new SoftReference<>(startedThread));
+		tcLogger.info("Test Case Started: {}", info.testCaseId);
 	}
 	
    @Override
     public void onAbortTestCase(TcAbortInfo info) {
+       Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+       tcLogger.warn("Prepare termination of the test case: {}", info.testCaseId);
        Future<?> threadToAbort = threadCache.get(info.testCaseId).get();
-       if (threadToAbort != null && !threadToAbort.isDone() && !threadToAbort.isCancelled())
+       if (threadToAbort != null && !threadToAbort.isDone() && !threadToAbort.isCancelled()) {
            threadToAbort.cancel(true);
+           tcLogger.warn("Test Case Aborted: {}", info.testCaseId);
+       } else {
+           tcLogger.warn("Test case could not be aborted: {} {}", info.testCaseId, threadToAbort);
+       }
     }
 
 	@Override
