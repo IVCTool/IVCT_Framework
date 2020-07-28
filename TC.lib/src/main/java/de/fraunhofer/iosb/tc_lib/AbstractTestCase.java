@@ -104,7 +104,7 @@ public abstract class AbstractTestCase {
     	this.defaultLogger = logger;
     }
 
-    public void sendOperatorRequest(String text) throws InterruptedException, TcInconclusive {
+    public void sendOperatorRequest(String text) throws TcInconclusive {
 		if (skipOperatorMsg) return;
     	if (text == null) {
     		// Make an empty string
@@ -112,7 +112,13 @@ public abstract class AbstractTestCase {
     	}
     	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(sutName, testSuiteId, tcName, text);
     	operatorRequestCmd.execute();
-    	semOperatorRequest.acquire();
+    	
+        try {
+            semOperatorRequest.acquire();
+        } catch (InterruptedException interrupt) {
+            throw new TcInconclusive("Test case aborted", interrupt);
+        }
+        
     	if (confirmationBool == false) {
     		if (cnfText != null) {
                 throw new TcInconclusive("Operator reject message: " + cnfText);
