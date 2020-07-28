@@ -296,13 +296,15 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
    @Override
     public void onAbortTestCase(TcAbortInfo info) {
        Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
-       tcLogger.warn("Prepare termination of the test case: {}", info.testCaseId);
+       tcLogger.warn("Aborting the test case: {}", info.testCaseId);
        Future<?> threadToAbort = threadCache.get(info.testCaseId).get();
        if (threadToAbort != null && !threadToAbort.isDone() && !threadToAbort.isCancelled()) {
            threadToAbort.cancel(true);
            tcLogger.warn("Test Case Aborted: {}", info.testCaseId);
        } else {
            tcLogger.warn("Test case could not be aborted: {} {}", info.testCaseId, threadToAbort);
+           if (threadToAbort != null)
+               tcLogger.warn("Thread isDone: {}, Thread is already canceled: {}", threadToAbort.isDone(), threadToAbort.isCancelled());
        }
     }
 
