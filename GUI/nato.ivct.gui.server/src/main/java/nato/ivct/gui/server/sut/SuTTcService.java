@@ -256,4 +256,11 @@ public class SuTTcService implements ISuTTcService {
         return verdict;
     }
 
+
+    @Override
+    public void abortTestCase(String sutId, String tcId) {
+        // execute the CmdAbortTc command
+        ServerSession.get().execAbortTc(sutId, tcId);
+    }
+
 }

@@ -60,9 +60,11 @@ import nato.ivct.commander.Factory;
 import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.HeartBeatNotificationHandler;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.ContentForm.MainBox.FieldsBox.CommentField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.CloseButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcRequirementTableField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcRequirementTableField.TcRequirementTable;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcAbortButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcProgressField;
@@ -257,6 +259,16 @@ public class SuTTcExecutionForm extends AbstractForm {
 
     public TcExecutionButton getTcExecutionButton() {
         return getFieldByClass(TcExecutionButton.class);
+    }
+    
+    
+    public CloseButton getCloseButton() {
+        return getFieldByClass(CloseButton.class);
+    }
+    
+    
+    public TcAbortButton getTcAbortButton() {
+        return getFieldByClass(TcAbortButton.class);
     }
 
 
@@ -980,6 +992,12 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected String getConfiguredLabel() {
                 return TEXTS.get("CloseButton");
             }
+            
+            
+            @Override
+            protected boolean getConfiguredVisible() {
+                return true;
+            }
 
 
             @Override
@@ -1014,14 +1032,16 @@ public class SuTTcExecutionForm extends AbstractForm {
                     MessageBoxes.createOk().withHeader(TEXTS.get("TcExecMsgBoxHeader")).withBody(TEXTS.get("TcExecMsgBoxBody")).show();
                     return;
                 }
-
+                
                 // show progress bar
                 getTcProgressField().setVisible(true);
+                
                 // reset tc status foreground color
                 getTcExecutionStatus().setForegroundColor(getDefaultTcStatusForegroundColor());
+                
                 //hide tc execution button
                 this.setVisible(false);
-
+                
                 // hide TC Execution History Table during TC execution
                 getTcExecutionHistoryTableField().setVisible(false);
 
@@ -1040,7 +1060,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                         // before starting the TC, communicate this user's last used log level
                         final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
                         final IOptionsService service = BEANS.get(IOptionsService.class);
-                        service.setLogLevel(logLevel);
+                        service.setLogLevel(logLevel);                        
                         // now start the TC
                         final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
                         sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId());
@@ -1048,6 +1068,30 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
             }
         }
+        @Order(120000)
+        public class TcAbortButton extends AbstractButton {
+
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("Abort");
+            }
+            
+            @Override
+            protected boolean getConfiguredVisible() {
+                return false;
+            }
+
+            @Override
+            protected void execClickAction() {
+
+                //hide abort button
+                this.setVisible(false);
+                         
+                //abort test case
+                final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
+                sutCbService.abortTestCase(getSutId(), getTestCaseId());
+            }
+        }  
     }
 
     public class ViewHandler extends AbstractFormHandler {
@@ -1059,7 +1103,7 @@ public class SuTTcExecutionForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
-            
+                        
             // fill the requirement table for the TC
             setIrTable();
 

@@ -43,4 +43,7 @@ public interface ISuTTcService extends IService {
     
     
     BinaryResource getLogfileContent(String sutId, String testsuiteId, String fileName);
+
+
+    void abortTestCase(String sutId, String testCaseId);
 }

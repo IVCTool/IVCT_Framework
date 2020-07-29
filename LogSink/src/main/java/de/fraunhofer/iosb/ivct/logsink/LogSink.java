@@ -12,6 +12,7 @@ import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.CmdAbortTcListener;
 import nato.ivct.commander.Factory;
 
 
@@ -64,6 +65,7 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
         (new CmdQuitListener(jmsLogSink)).execute();
         (new CmdStartTcListener(jmsLogSink)).execute();
         (new CmdLogMsgListener(jmsLogSink)).execute();
+        (new CmdAbortTcListener(jmsLogSink)).execute();
     }
 
 	public String getTestCaseResults() {

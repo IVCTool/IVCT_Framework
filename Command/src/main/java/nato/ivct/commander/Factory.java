@@ -395,6 +395,12 @@ public class Factory {
         initialize();
         return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
     }
+    
+    
+    public static CmdAbortTc createCmdAbortTc(String sut, String tc) {
+        initialize();
+        return new CmdAbortTc(sut, tc);
+    }
 
 
     public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {
@@ -509,5 +515,4 @@ public class Factory {
     private static void setBuild(String build) {
         Factory.build = build;
     }
-
 }
