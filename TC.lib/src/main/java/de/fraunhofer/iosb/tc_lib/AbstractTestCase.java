@@ -182,20 +182,16 @@ public abstract class AbstractTestCase {
             ivct_BaseModel.setSettingsDesignator(settingsDesignator);
         }
         catch (final TcInconclusive e) {
-            logger.info("Exception: " + e);
-            final String s = "getIVCT_BaseModel unsuccessful";
-            logger.info("TC INCONCLUSIVE " + s);
+            final String verdictText = "getIVCT_BaseModel unsuccessful";
+            logger.warn("TC INCONCLUSIVE Initialization Error <{}>: {}", verdictText, e);
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = s;
+            ivct_Verdict.text = verdictText;
             return ivct_Verdict;
         }
 
         sendTcStatus("initiated", 0);
 
         logTestPurpose(logger);
-
-        // Print out test case parameters
-        // logger.info(tcParam.toString());
 
         // preamble block
         try {
