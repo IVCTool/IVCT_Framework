@@ -1,9 +1,60 @@
-== Test case logging
+== Test Case Logging
 
-Test case logging is a very important function of the IVCT. It is used during development of test cases, documentation of a conformance test execution and debugging of test federate behaviour.
+Test case logging is a very important function of the IVCT. It is used during development of test cases, documentation of a conformance test execution and debugging of test federate behavior.
 
 In order to get full logging of all HLA services without the test case writer having to remember calling the logger for every service call, wrappers were written for the RTIambassador and the FedAmbassador which log the call and parameters of the call. The logging level was chosen as INFO for most services, but may be tuned for a less verbose level for some services when experience with conformance tests shows a problem.
 
 The link:http://www.slf4j.org/[Simple Logging Facade for Java] (slf4j) was the implementation chosen for logging. The slf4j is a widely used logging tool since it provides a single interface to a number of common loggers. The loggers can be swapped by simply exchanging the dll's to be used.
 
 By using link:http://logback.qos.ch/[Logback] as the logging implementation it is possible to do all logging via a Java Message Service (JMS) bus and collect the logs via a dedicated logging process. This logging process can be configured to display or store the log data in a number of ways.
+
+
+=== The IVCT Logging Approach
+
+logging in TC.lib
+log messages forwarded to GUI and to Log-Reporter
+log messages will be included in test report
+
+
+=== Conventions on Log-Level
+
+the SLF knows the following log levels:
+
+Five of log4j's six logging levels are used (ERROR, WARN, INFO, DEBUG, TRACE)
+
+Recommendation 
+
+The definition of the org.apache.log4j.Level are the following:
+
+[cols="1,3,3", options="header"] 
+.Table Log Level
+|===
+| Level 
+| org.apache.log4j.Level Definition 
+| Test Case Recommendation
+
+| DEBUG  
+| Designates fine-grained informational events that are most useful to debug an application. 
+| Shall be used by the test case programmer during development testing. These events may be still  useful in the production deployment, but should not be included in the standard test case protocols. 
+
+| INFO
+| Designates informational messages that highlight the progress of the application at coarse-grained level. 
+| These messages shall give the IVCT operator insights into the progress of the test case execution. This is the default level and it is recommended to use that level for the test case report.
+
+| WARN
+| Designates potentially harmful situations. 
+| This level shall be used to report on anything happens outside the expected behavior, and is not considered a test case failure. Event at that level are requiring the attention of the IVCT operator, and will be included in the test case report. In case there is an internal error in the test case logic itself, the log event shall reported as warning and the test case shall be ended with the Inconclusive verdict. 
+
+| ERROR
+| Designates error events that might still allow the application to continue running. 
+| This level shall be used for invalid behavior of the system under test. Any event reported with the error level, shall cause a test case failed verdict.
+
+| TRACE
+| Designates finer-grained informational events than the DEBUG. 
+| The trace level shall be used for detailed insights into the test execution. The instrumented HLA ambassador objects within the IVCT test case library are reporting on that level.
+|===
+
+
+
+
+
