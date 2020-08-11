@@ -139,7 +139,7 @@ public abstract class AbstractTestCase {
 			boolText = "false";
 		}
 		if (defaultLogger != null) {
-		    defaultLogger.info("OperatorConfirmation: " + boolText + " Text: " + operatorConfirmationInfo.text);
+		    defaultLogger.info("OperatorConfirmation: {}, Text: {}", boolText, operatorConfirmationInfo.text);
 		}
     	semOperatorRequest.release();
     }
@@ -234,7 +234,7 @@ public abstract class AbstractTestCase {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.terminateRti();
             }
-            logger.info("TC INCONCLUSIVE " + ex.getMessage());
+            logger.warn("TC INCONCLUSIVE " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
             ivct_Verdict.text = ex.getMessage();
             return ivct_Verdict;
@@ -243,7 +243,7 @@ public abstract class AbstractTestCase {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.terminateRti();
             }
-            logger.info("TC FAILED " + ex.getMessage());
+            logger.warn("TC FAILED " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.FAILED;
             ivct_Verdict.text = ex.getMessage();
             return ivct_Verdict;
@@ -262,13 +262,14 @@ public abstract class AbstractTestCase {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.terminateRti();
             }
-            logger.info("TC INCONCLUSIVE " + ex.getMessage());
+            logger.warn("TC INCONCLUSIVE " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
             ivct_Verdict.text = ex.getMessage();
             return ivct_Verdict;
         }
 
         sendTcStatus("finished", 100);
+        logger.info("TEST CASE FINISHED");
 
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
         return ivct_Verdict;
@@ -373,7 +374,7 @@ public abstract class AbstractTestCase {
      */
     public String getIVCTVersion()  throws IVCTVersionCheckException {
       
-      String infoIVCTVersion = "not defined yet";  
+      String infoIVCTVersion;  
       InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
       
       
@@ -387,7 +388,6 @@ public abstract class AbstractTestCase {
         versionProperties.load(in);
         infoIVCTVersion = versionProperties.getProperty("ivctVersion");
       } catch (IOException ex) {      
-        infoIVCTVersion = "undefined";      
         throw new IVCTVersionCheckException("/testCaseBuild.properties could not be load ", ex );
       }
       return infoIVCTVersion;

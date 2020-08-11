@@ -1,6 +1,6 @@
 == Test Case Logging
 
-Test case logging is a very important function of the IVCT. It is used during development of test cases, and it is used to document the conformance test execution results. The logging events will be shown during the test case execution within the user interface, they will be stored on the file system, and they will be used for the test report generation. 
+Testing means to observe and the main instrument to observe the test case execution is logging. It is used during development of test cases, and it is used to document the conformance test execution results. The logging events will be shown during the test case execution within the user interface, they will be stored on the file system, and they will be used for the test report generation. 
 
 
 The link:http://www.slf4j.org/[Simple Logging Facade for Java] (slf4j) was the implementation chosen for logging. The slf4j is a widely used logging tool since it provides a single interface to a number of common loggers. The link:http://logback.qos.ch/[Logback] implementation is currently being used by the IVCT tool.
@@ -53,9 +53,41 @@ The slf4j knows the log levels ERROR, WARN, INFO, DEBUG, and TRACE. The test cas
 
 
 
-=== Embedded TC.lib Logging 
+=== Embedded TC.lib Logging and Test Case Log Level Recommendations
 
 In order to get full logging of all HLA services without the test case writer having to remember calling the logger for every service call, wrappers were written for the RTIambassador and the FedAmbassador which log the call and parameters of the call. The logging level was chosen as TRACE for all services. The TC.lib will not create any ERROR or WARN messages, as it is up to the test case logic to decide on the meaning of HLA events. 
+
+[cols="2,1,4", options="header"] 
+.Table TC.lib Log Level
+|===
+| Component 
+| Log Level
+| Log Message Content
+
+| AbstractTestCase
+| INFO
+| Key functions of the test case, like preamble, postambel actions, and operator dialog flow. This is the standard logging for the test case.
+
+|
+| WARN
+| Unexpected test case control flow, like initialization error that leads to an INCONCLUSIVE test result.
+
+| IVCT_BaseModel
+| TRACE
+|
+
+|
+| INFO
+|
+
+| IVCT_NullFederateAmbassador
+| WARN
+| the NullFederateAmbassodor provides default implementations, that should be overwritten, if the test case intents to use them. If a NullFederateAmbassador method is directly called, this is considered unexpected and requires the attention of the operator. 
+
+| IVCT_RTIAmbassador and IVCT_LoggingFederateAmbassador
+| TRACE
+| Low level protocol logging for all HLA API service calls.
+|===
 
 ----
 <<<example trace here>>>>

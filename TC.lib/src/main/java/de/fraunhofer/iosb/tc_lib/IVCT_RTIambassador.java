@@ -205,11 +205,11 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @param localSettingsDesignator the settings for the rti
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel, final String localSettingsDesignator) throws ConnectionFailed, InvalidLocalSettingsDesignator, UnsupportedCallbackModel, AlreadyConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-		this.logger.trace("connect federateReference=" + federateReference.toString() + ", callbackModel=" + callbackModel.toString() + ", localSettingsDesignator=" + localSettingsDesignator);
+		this.logger.trace("connect federateReference={}, callbackModel={}, localSettingsDesignator={}", federateReference, callbackModel, localSettingsDesignator);
 		try {
 			this._rtiAmbassador.connect(federateReference, callbackModel, localSettingsDesignator);
 		} catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-			this.logger.error("connect exception=" + e.getMessage());
+			this.logger.trace("connect exception={}", e.getMessage());
 			throw e;
 		}
     }
@@ -221,11 +221,11 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @param callbackModel the type of callback
      */
     public void connect(final FederateAmbassador federateReference, final CallbackModel callbackModel) throws ConnectionFailed, InvalidLocalSettingsDesignator, UnsupportedCallbackModel, AlreadyConnected, CallNotAllowedFromWithinCallback, RTIinternalError {
-    	this.logger.trace("connect federateReference=" + federateReference.toString() + ", callbackModel=" + callbackModel.toString());
+    	this.logger.trace("connect federateReference={}, callbackModel={}", federateReference, callbackModel);
     	try {
     		this._rtiAmbassador.connect(federateReference, callbackModel);
     	} catch (ConnectionFailed | InvalidLocalSettingsDesignator | UnsupportedCallbackModel | AlreadyConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("connect exception=" + e.getMessage());
+    		this.logger.trace("connect exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -242,7 +242,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.disconnect();
     	} catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("disconnect exception=" + e.getMessage());
+    		this.logger.trace("disconnect exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -265,14 +265,14 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @throws RTIinternalError rti internal error
      */
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final URL mimModule, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, ErrorReadingMIM, CouldNotOpenMIM, DesignatorIsHLAstandardMIM, NotConnected, RTIinternalError {
-        this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", mimModule=" + mimModule.toString() + ", logicalTimeImplementationName=" + logicalTimeImplementationName);
+        this.logger.trace("createFederationExecution federationExecutionName={}, fomModules={}, mimModule={}, logicalTimeImplementationName={}", federationExecutionName, fomModules, mimModule, logicalTimeImplementationName);
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule, logicalTimeImplementationName);
         } catch (FederationExecutionAlreadyExists e) {
-        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        	this.logger.trace("createFederationExecution: {} already exists (ignored)", federationExecutionName);
         }
         catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | NotConnected | RTIinternalError e) {
-        	this.logger.error("createFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("createFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -291,14 +291,14 @@ public class IVCT_RTIambassador implements RTIambassador {
      * @throws RTIinternalError rti internal error
      */
     public void createFederationExecution(final String federationExecutionName, final URL[] fomModules, final String logicalTimeImplementationName) throws CouldNotCreateLogicalTimeFactory, InconsistentFDD, ErrorReadingFDD, CouldNotOpenFDD, NotConnected, RTIinternalError {
-        this.logger.trace("createFederationExecution federationExecutionName=" + federationExecutionName + ", fomModules=" + Arrays.toString(fomModules) + ", logicalTimeImplementationName=" + logicalTimeImplementationName);
+        this.logger.trace("createFederationExecution federationExecutionName={}, fomModules={}, logicalTimeImplementationName={}", federationExecutionName, fomModules, logicalTimeImplementationName);
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, logicalTimeImplementationName);
         } catch (FederationExecutionAlreadyExists e) {
-        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        	this.logger.trace("createFederationExecution: {} already exists (ignored)", federationExecutionName);
         }
         catch (CouldNotCreateLogicalTimeFactory | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
-        	this.logger.error("createFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("createFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -310,10 +310,10 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules, mimModule);
         } catch (FederationExecutionAlreadyExists e) {
-        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        	this.logger.trace("createFederationExecution: {} already exists (ignored)", federationExecutionName);
         }
         catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | ErrorReadingMIM | CouldNotOpenMIM | DesignatorIsHLAstandardMIM | NotConnected | RTIinternalError e) {
-        	this.logger.error("createFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("createFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -325,10 +325,10 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModules);
         } catch (FederationExecutionAlreadyExists e) {
-        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        	this.logger.trace("createFederationExecution: {} already exists (ignored)", federationExecutionName);
         }
         catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
-        	this.logger.error("createFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("createFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -340,10 +340,10 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.createFederationExecution(federationExecutionName, fomModule);
         } catch (FederationExecutionAlreadyExists e) {
-        	this.logger.warn("createFederationExecution: {} already exists (ignored)", federationExecutionName);
+        	this.logger.trace("createFederationExecution: {} already exists (ignored)", federationExecutionName);
         }
         catch (InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | NotConnected | RTIinternalError e) {
-        	this.logger.error("createFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("createFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -351,11 +351,11 @@ public class IVCT_RTIambassador implements RTIambassador {
 
     //4.6
     public void destroyFederationExecution(final String federationExecutionName) throws FederatesCurrentlyJoined, FederationExecutionDoesNotExist, NotConnected, RTIinternalError {
-        this.logger.trace("destroyFederationExecution federationExecutionName=" + federationExecutionName);
+        this.logger.trace("destroyFederationExecution federationExecutionName={}", federationExecutionName);
         try {
         	this._rtiAmbassador.destroyFederationExecution(federationExecutionName);
         } catch (FederatesCurrentlyJoined | FederationExecutionDoesNotExist | NotConnected | RTIinternalError e) {
-        	this.logger.error("destroyFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("destroyFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -367,7 +367,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.listFederationExecutions();
         } catch (NotConnected | RTIinternalError e) {
-        	this.logger.error("listFederationExecutions exception=" + e.getMessage());
+        	this.logger.trace("listFederationExecutions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -382,7 +382,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("joinFederationExecution return " + myFederateHandle.toString());
         	return myFederateHandle;
         } catch (CouldNotCreateLogicalTimeFactory | FederateNameAlreadyInUse | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-        	this.logger.error("joinFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("joinFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -396,7 +396,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("joinFederationExecution return " + federateHandle.toString());
     		return federateHandle;
     	} catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | InconsistentFDD | ErrorReadingFDD | CouldNotOpenFDD | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("joinFederationExecution exception=" + e.getMessage());
+    		this.logger.trace("joinFederationExecution exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -410,7 +410,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("joinFederationExecution return " + federateHandle.toString());
     		return federateHandle;
     	} catch (CouldNotCreateLogicalTimeFactory | FederateNameAlreadyInUse | FederationExecutionDoesNotExist | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("joinFederationExecution exception=" + e.getMessage());
+    		this.logger.trace("joinFederationExecution exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -424,7 +424,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("joinFederationExecution return " + federateHandle.toString());
     		return federateHandle;
     	} catch (CouldNotCreateLogicalTimeFactory | FederationExecutionDoesNotExist | SaveInProgress | RestoreInProgress | FederateAlreadyExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("joinFederationExecution exception=" + e.getMessage());
+    		this.logger.trace("joinFederationExecution exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -436,7 +436,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.resignFederationExecution(resignAction);
         } catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | NotConnected | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-        	this.logger.error("resignFederationExecution exception=" + e.getMessage());
+        	this.logger.trace("resignFederationExecution exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -448,7 +448,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.registerFederationSynchronizationPoint(synchronizationPointLabel, userSuppliedTag);
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("registerFederationSynchronizationPoint exception=" + e.getMessage());
+        	this.logger.trace("registerFederationSynchronizationPoint exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -460,7 +460,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.registerFederationSynchronizationPoint(synchronizationPointLabel, userSuppliedTag, synchronizationSet);
         } catch (InvalidFederateHandle | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected |  RTIinternalError e) {
-        	this.logger.error("registerFederationSynchronizationPoint exception=" + e.getMessage());
+        	this.logger.trace("registerFederationSynchronizationPoint exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -472,7 +472,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.synchronizationPointAchieved(synchronizationPointLabel);
         } catch (SynchronizationPointLabelNotAnnounced | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("synchronizationPointAchieved exception=" + e.getMessage());
+        	this.logger.trace("synchronizationPointAchieved exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -484,7 +484,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.synchronizationPointAchieved(synchronizationPointLabel, successIndicator);
         } catch (SynchronizationPointLabelNotAnnounced | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("synchronizationPointAchieved exception=" + e.getMessage());
+        	this.logger.trace("synchronizationPointAchieved exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -496,7 +496,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestFederationSave(label);
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestFederationSave exception=" + e.getMessage());
+        	this.logger.trace("requestFederationSave exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -508,7 +508,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestFederationSave(label, theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | FederateUnableToUseTime | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestFederationSave exception=" + e.getMessage());
+        	this.logger.trace("requestFederationSave exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -520,7 +520,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.federateSaveBegun();
         } catch (SaveNotInitiated | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("federateSaveBegun exception=" + e.getMessage());
+        	this.logger.trace("federateSaveBegun exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -532,7 +532,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.federateSaveComplete();
         } catch (FederateHasNotBegunSave | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("federateSaveComplete exception=" + e.getMessage());
+        	this.logger.trace("federateSaveComplete exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -544,7 +544,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.federateSaveNotComplete();
         } catch (FederateHasNotBegunSave | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("federateSaveNotComplete exception=" + e.getMessage());
+        	this.logger.trace("federateSaveNotComplete exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -556,7 +556,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.abortFederationSave();
         } catch (SaveNotInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("abortFederationSave exception=" + e.getMessage());
+        	this.logger.trace("abortFederationSave exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -568,7 +568,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.queryFederationSaveStatus();
         } catch (RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryFederationSaveStatus exception=" + e.getMessage());
+        	this.logger.trace("queryFederationSaveStatus exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -580,7 +580,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestFederationRestore(label);
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestFederationRestore exception=" + e.getMessage());
+        	this.logger.trace("requestFederationRestore exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -592,7 +592,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.federateRestoreComplete();
         } catch (RestoreNotRequested | SaveInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("federateRestoreComplete exception=" + e.getMessage());
+        	this.logger.trace("federateRestoreComplete exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -604,7 +604,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.federateRestoreNotComplete();
         } catch (RestoreNotRequested | SaveInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("federateRestoreNotComplete exception=" + e.getMessage());
+        	this.logger.trace("federateRestoreNotComplete exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -616,7 +616,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.abortFederationRestore();
         } catch (RestoreNotInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("abortFederationRestore exception=" + e.getMessage());
+        	this.logger.trace("abortFederationRestore exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -628,7 +628,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.queryFederationRestoreStatus();
         } catch (SaveInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryFederationRestoreStatus exception=" + e.getMessage());
+        	this.logger.trace("queryFederationRestoreStatus exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -644,7 +644,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.publishObjectClassAttributes(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("publishObjectClassAttributes exception=" + e.getMessage());
+        	this.logger.trace("publishObjectClassAttributes exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -656,7 +656,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unpublishObjectClass(theClass);
         } catch (OwnershipAcquisitionPending | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unpublishObjectClass exception=" + e.getMessage());
+        	this.logger.trace("unpublishObjectClass exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -668,7 +668,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unpublishObjectClassAttributes(theClass, attributeList);
         } catch (OwnershipAcquisitionPending | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unpublishObjectClassAttributes exception=" + e.getMessage());
+        	this.logger.trace("unpublishObjectClassAttributes exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -680,7 +680,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.publishInteractionClass(theInteraction);
         } catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("publishInteractionClass exception=" + e.getMessage());
+        	this.logger.trace("publishInteractionClass exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -692,7 +692,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unpublishInteractionClass(theInteraction);
         } catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unpublishInteractionClass exception=" + e.getMessage());
+        	this.logger.trace("unpublishInteractionClass exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -704,7 +704,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributes(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributes exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributes exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -716,7 +716,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributes(theClass, attributeList, updateRateDesignator);
         } catch (AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributes exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributes exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -728,7 +728,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesPassively(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributesPassively exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributesPassively exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -740,7 +740,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.subscribeObjectClassAttributesPassively(theClass, attributeList, updateRateDesignator);
     	} catch (AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("subscribeObjectClassAttributesPassively exception=" + e.getMessage());
+    		this.logger.trace("subscribeObjectClassAttributesPassively exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -752,7 +752,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unsubscribeObjectClass(theClass);
         } catch (ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unsubscribeObjectClass exception=" + e.getMessage());
+        	this.logger.trace("unsubscribeObjectClass exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -764,7 +764,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unsubscribeObjectClassAttributes(theClass, attributeList);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unsubscribeObjectClassAttributes exception=" + e.getMessage());
+        	this.logger.trace("unsubscribeObjectClassAttributes exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -776,7 +776,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.subscribeInteractionClass(theClass);
     	} catch (FederateServiceInvocationsAreBeingReportedViaMOM | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("subscribeInteractionClass exception=" + e.getMessage());
+    		this.logger.trace("subscribeInteractionClass exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -788,7 +788,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.subscribeInteractionClassPassively(theClass);
     	} catch (FederateServiceInvocationsAreBeingReportedViaMOM | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("subscribeInteractionClassPassively exception=" + e.getMessage());
+    		this.logger.trace("subscribeInteractionClassPassively exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -800,7 +800,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.unsubscribeInteractionClass(theClass);
     	} catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("unsubscribeInteractionClass exception=" + e.getMessage());
+    		this.logger.trace("unsubscribeInteractionClass exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -816,7 +816,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.reserveObjectInstanceName(theObjectName);
         } catch (IllegalName | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("reserveObjectInstanceName exception=" + e.getMessage());
+        	this.logger.trace("reserveObjectInstanceName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -828,7 +828,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.releaseObjectInstanceName(theObjectInstanceName);
         } catch (ObjectInstanceNameNotReserved | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("releaseObjectInstanceName exception=" + e.getMessage());
+        	this.logger.trace("releaseObjectInstanceName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -840,7 +840,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.reserveMultipleObjectInstanceName(theObjectNames);
         } catch (IllegalName | NameSetWasEmpty | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("reserveMultipleObjectInstanceName exception=" + e.getMessage());
+        	this.logger.trace("reserveMultipleObjectInstanceName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -852,7 +852,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.releaseMultipleObjectInstanceName(theObjectNames);
         } catch (ObjectInstanceNameNotReserved | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("releaseMultipleObjectInstanceName exception=" + e.getMessage());
+        	this.logger.trace("releaseMultipleObjectInstanceName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -866,7 +866,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("registerObjectInstance return " + objectInstanceHandle.toString());
     		return objectInstanceHandle;
     	} catch (ObjectClassNotPublished | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("registerObjectInstance exception=" + e.getMessage());
+    		this.logger.trace("registerObjectInstance exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -880,7 +880,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("registerObjectInstance return " + objectInstanceHandle.toString());
         	return objectInstanceHandle;
         } catch (ObjectInstanceNameInUse | ObjectInstanceNameNotReserved | ObjectClassNotPublished | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("registerObjectInstance exception=" + e.getMessage());
+        	this.logger.trace("registerObjectInstance exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -892,7 +892,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.updateAttributeValues(theObject, theAttributes, userSuppliedTag);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("updateAttributeValues exception=" + e.getMessage());
+        	this.logger.trace("updateAttributeValues exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -906,7 +906,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("updateAttributeValues return " + messageRetractionReturn.toString());
         	return messageRetractionReturn;
         } catch (InvalidLogicalTime | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("updateAttributeValues exception=" + e.getMessage());
+        	this.logger.trace("updateAttributeValues exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -918,7 +918,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.sendInteraction(theInteraction, theParameters, userSuppliedTag);
         } catch (InteractionClassNotPublished | InteractionParameterNotDefined | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("sendInteraction exception=" + e.getMessage());
+        	this.logger.trace("sendInteraction exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -932,7 +932,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("sendInteraction return " + messageRetractionReturn.toString());
         	return messageRetractionReturn;
         } catch (InvalidLogicalTime | InteractionClassNotPublished | InteractionParameterNotDefined | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("sendInteraction exception=" + e.getMessage());
+        	this.logger.trace("sendInteraction exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -944,7 +944,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.deleteObjectInstance(objectHandle, userSuppliedTag);
         } catch (DeletePrivilegeNotHeld | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("deleteObjectInstance exception=" + e.getMessage());
+        	this.logger.trace("deleteObjectInstance exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -958,7 +958,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("deleteObjectInstance return " + messageRetractionReturn.toString());
         	return messageRetractionReturn;
         } catch (InvalidLogicalTime | DeletePrivilegeNotHeld | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("deleteObjectInstance exception=" + e.getMessage());
+        	this.logger.trace("deleteObjectInstance exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -970,7 +970,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.localDeleteObjectInstance(objectHandle);
         } catch (OwnershipAcquisitionPending | FederateOwnsAttributes | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("localDeleteObjectInstance exception=" + e.getMessage());
+        	this.logger.trace("localDeleteObjectInstance exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -982,7 +982,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestAttributeValueUpdate(theObject, theAttributes, userSuppliedTag);
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestAttributeValueUpdate exception=" + e.getMessage());
+        	this.logger.trace("requestAttributeValueUpdate exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -994,7 +994,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestAttributeValueUpdate(theClass, theAttributes, userSuppliedTag);
         } catch (AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestAttributeValueUpdate exception=" + e.getMessage());
+        	this.logger.trace("requestAttributeValueUpdate exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1006,7 +1006,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestAttributeTransportationTypeChange(theObject, theAttributes, theType);
         } catch (AttributeAlreadyBeingChanged | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | InvalidTransportationType | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestAttributeTransportationTypeChange exception=" + e.getMessage());
+        	this.logger.trace("requestAttributeTransportationTypeChange exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1018,7 +1018,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.queryAttributeTransportationType(theObject, theAttribute);
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryAttributeTransportationType exception=" + e.getMessage());
+        	this.logger.trace("queryAttributeTransportationType exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1030,7 +1030,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestInteractionTransportationTypeChange(theClass, theType);
         } catch (InteractionClassAlreadyBeingChanged | InteractionClassNotPublished | InteractionClassNotDefined | InvalidTransportationType | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestInteractionTransportationTypeChange exception=" + e.getMessage());
+        	this.logger.trace("requestInteractionTransportationTypeChange exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1042,7 +1042,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.queryInteractionTransportationType(theFederate, theInteraction);
         } catch (InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryInteractionTransportationType exception=" + e.getMessage());
+        	this.logger.trace("queryInteractionTransportationType exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1058,7 +1058,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unconditionalAttributeOwnershipDivestiture(theObject, theAttributes);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unconditionalAttributeOwnershipDivestiture exception=" + e.getMessage());
+        	this.logger.trace("unconditionalAttributeOwnershipDivestiture exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1070,7 +1070,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.negotiatedAttributeOwnershipDivestiture(theObject, theAttributes, userSuppliedTag);
         } catch (AttributeAlreadyBeingDivested | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("negotiatedAttributeOwnershipDivestiture exception=" + e.getMessage());
+        	this.logger.trace("negotiatedAttributeOwnershipDivestiture exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1082,7 +1082,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.confirmDivestiture(theObject, theAttributes, userSuppliedTag);
         } catch (NoAcquisitionPending | AttributeDivestitureWasNotRequested | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("confirmDivestiture exception=" + e.getMessage());
+        	this.logger.trace("confirmDivestiture exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1094,7 +1094,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.attributeOwnershipAcquisition(theObject, desiredAttributes, userSuppliedTag);
         } catch (AttributeNotPublished | ObjectClassNotPublished | FederateOwnsAttributes | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("attributeOwnershipAcquisition exception=" + e.getMessage());
+        	this.logger.trace("attributeOwnershipAcquisition exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1106,7 +1106,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.attributeOwnershipAcquisitionIfAvailable(theObject, desiredAttributes);
         } catch (AttributeAlreadyBeingAcquired | AttributeNotPublished | ObjectClassNotPublished | FederateOwnsAttributes | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("attributeOwnershipAcquisitionIfAvailable exception=" + e.getMessage());
+        	this.logger.trace("attributeOwnershipAcquisitionIfAvailable exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1118,7 +1118,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.attributeOwnershipReleaseDenied(theObject, theAttributes);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("attributeOwnershipReleaseDenied exception=" + e.getMessage());
+        	this.logger.trace("attributeOwnershipReleaseDenied exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1132,7 +1132,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("attributeOwnershipDivestitureIfWanted return " + attributeHandleSet.toString());
         	return attributeHandleSet;
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("attributeOwnershipDivestitureIfWanted exception=" + e.getMessage());
+        	this.logger.trace("attributeOwnershipDivestitureIfWanted exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1144,7 +1144,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.cancelNegotiatedAttributeOwnershipDivestiture(theObject, theAttributes);
         } catch (AttributeDivestitureWasNotRequested | AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("cancelNegotiatedAttributeOwnershipDivestiture exception=" + e.getMessage());
+        	this.logger.trace("cancelNegotiatedAttributeOwnershipDivestiture exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1156,7 +1156,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.cancelAttributeOwnershipAcquisition(theObject, theAttributes);
         } catch (AttributeAcquisitionWasNotRequested | AttributeAlreadyOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("cancelAttributeOwnershipAcquisition exception=" + e.getMessage());
+        	this.logger.trace("cancelAttributeOwnershipAcquisition exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1168,7 +1168,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.queryAttributeOwnership(theObject, theAttribute);
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryAttributeOwnership exception=" + e.getMessage());
+        	this.logger.trace("queryAttributeOwnership exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1182,7 +1182,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("isAttributeOwnedByFederate return " + bool);
         	return bool;
         } catch (AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("isAttributeOwnedByFederate exception=" + e.getMessage());
+        	this.logger.trace("isAttributeOwnedByFederate exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1198,7 +1198,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableTimeRegulation(theLookahead);
         } catch (InvalidLookahead | InTimeAdvancingState | RequestForTimeRegulationPending | TimeRegulationAlreadyEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("enableTimeRegulation exception=" + e.getMessage());
+        	this.logger.trace("enableTimeRegulation exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1210,7 +1210,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableTimeRegulation();
         } catch (TimeRegulationIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("disableTimeRegulation exception=" + e.getMessage());
+        	this.logger.trace("disableTimeRegulation exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1222,7 +1222,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableTimeConstrained();
         } catch (InTimeAdvancingState | RequestForTimeConstrainedPending | TimeConstrainedAlreadyEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("enableTimeConstrained exception=" + e.getMessage());
+        	this.logger.trace("enableTimeConstrained exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1234,7 +1234,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableTimeConstrained();
         } catch (TimeConstrainedIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("disableTimeConstrained exception=" + e.getMessage());
+        	this.logger.trace("disableTimeConstrained exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1246,7 +1246,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.timeAdvanceRequest(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("timeAdvanceRequest exception=" + e.getMessage());
+        	this.logger.trace("timeAdvanceRequest exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1258,7 +1258,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.timeAdvanceRequestAvailable(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("timeAdvanceRequestAvailable exception=" + e.getMessage());
+        	this.logger.trace("timeAdvanceRequestAvailable exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1270,7 +1270,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.nextMessageRequest(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("nextMessageRequest exception=" + e.getMessage());
+        	this.logger.trace("nextMessageRequest exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1282,7 +1282,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.nextMessageRequestAvailable(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("nextMessageRequestAvailable exception=" + e.getMessage());
+        	this.logger.trace("nextMessageRequestAvailable exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1294,7 +1294,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.flushQueueRequest(theTime);
         } catch (LogicalTimeAlreadyPassed | InvalidLogicalTime | InTimeAdvancingState | RequestForTimeRegulationPending | RequestForTimeConstrainedPending | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("flushQueueRequest exception=" + e.getMessage());
+        	this.logger.trace("flushQueueRequest exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1306,7 +1306,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableAsynchronousDelivery();
         } catch (AsynchronousDeliveryAlreadyEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("enableAsynchronousDelivery exception=" + e.getMessage());
+        	this.logger.trace("enableAsynchronousDelivery exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1318,7 +1318,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableAsynchronousDelivery();
         } catch (AsynchronousDeliveryAlreadyDisabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("disableAsynchronousDelivery exception=" + e.getMessage());
+        	this.logger.trace("disableAsynchronousDelivery exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1332,7 +1332,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("queryGALT return " + timeQueryReturn.toString());
         	return timeQueryReturn;
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryGALT exception=" + e.getMessage());
+        	this.logger.trace("queryGALT exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1346,7 +1346,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("queryLogicalTime return " + logicalTime.toString());
         	return logicalTime;
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryLogicalTime exception=" + e.getMessage());
+        	this.logger.trace("queryLogicalTime exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1360,7 +1360,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("queryLITS return " + timeQueryReturn.toString());
         	return timeQueryReturn;
         } catch (SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryLITS exception=" + e.getMessage());
+        	this.logger.trace("queryLITS exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1372,7 +1372,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.modifyLookahead(theLookahead);
         } catch (InvalidLookahead | InTimeAdvancingState | TimeRegulationIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("modifyLookahead exception=" + e.getMessage());
+        	this.logger.trace("modifyLookahead exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1386,7 +1386,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("queryLookahead return " + logicalTimeInterval.toString());
         	return logicalTimeInterval;
         } catch (TimeRegulationIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("queryLookahead exception=" + e.getMessage());
+        	this.logger.trace("queryLookahead exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1398,7 +1398,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.retract(theHandle);
         } catch (MessageCanNoLongerBeRetracted | InvalidMessageRetractionHandle | TimeRegulationIsNotEnabled | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("retract exception=" + e.getMessage());
+        	this.logger.trace("retract exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1410,7 +1410,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.changeAttributeOrderType(theObject, theAttributes, theType);
         } catch (AttributeNotOwned | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("changeAttributeOrderType exception=" + e.getMessage());
+        	this.logger.trace("changeAttributeOrderType exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1422,7 +1422,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.changeInteractionOrderType(theClass, theType);
         } catch (InteractionClassNotPublished | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("changeInteractionOrderType exception=" + e.getMessage());
+        	this.logger.trace("changeInteractionOrderType exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1440,7 +1440,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("createRegion return " + regionHandle.toString());
         	return regionHandle;
         } catch (InvalidDimensionHandle | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("createRegion exception=" + e.getMessage());
+        	this.logger.trace("createRegion exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1452,7 +1452,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.commitRegionModifications(regions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("commitRegionModifications exception=" + e.getMessage());
+        	this.logger.trace("commitRegionModifications exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1464,7 +1464,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.deleteRegion(theRegion);
         } catch (RegionInUseForUpdateOrSubscription | RegionNotCreatedByThisFederate | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("deleteRegion exception=" + e.getMessage());
+        	this.logger.trace("deleteRegion exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1478,7 +1478,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("registerObjectInstanceWithRegions return " + objectInstanceHandle.toString());
         	return objectInstanceHandle;
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotPublished | ObjectClassNotPublished | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("registerObjectInstanceWithRegions exception=" + e.getMessage());
+        	this.logger.trace("registerObjectInstanceWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1492,7 +1492,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("registerObjectInstanceWithRegions return " + objectInstanceHandle.toString());
         	return objectInstanceHandle;
         } catch (ObjectInstanceNameInUse | ObjectInstanceNameNotReserved | InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotPublished | ObjectClassNotPublished | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("registerObjectInstanceWithRegions exception=" + e.getMessage());
+        	this.logger.trace("registerObjectInstanceWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1504,7 +1504,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.associateRegionsForUpdates(theObject, attributesAndRegions);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("associateRegionsForUpdates exception=" + e.getMessage());
+        	this.logger.trace("associateRegionsForUpdates exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1516,7 +1516,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unassociateRegionsForUpdates(theObject, attributesAndRegions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectInstanceNotKnown | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unassociateRegionsForUpdates exception=" + e.getMessage());
+        	this.logger.trace("unassociateRegionsForUpdates exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1528,7 +1528,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesWithRegions(theClass, attributesAndRegions);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributesWithRegions exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributesWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1540,7 +1540,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesWithRegions(theClass, attributesAndRegions, updateRateDesignator);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributesWithRegions exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributesWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1552,7 +1552,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesPassivelyWithRegions(theClass, attributesAndRegions);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributesPassivelyWithRegions exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributesPassivelyWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1564,7 +1564,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeObjectClassAttributesPassivelyWithRegions(theClass, attributesAndRegions, updateRateDesignator);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | InvalidUpdateRateDesignator | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeObjectClassAttributesPassivelyWithRegions exception=" + e.getMessage());
+        	this.logger.trace("subscribeObjectClassAttributesPassivelyWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1576,7 +1576,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unsubscribeObjectClassAttributesWithRegions(theClass, attributesAndRegions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unsubscribeObjectClassAttributesWithRegions exception=" + e.getMessage());
+        	this.logger.trace("unsubscribeObjectClassAttributesWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1588,7 +1588,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeInteractionClassWithRegions(theClass, regions);
         } catch (FederateServiceInvocationsAreBeingReportedViaMOM | InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeInteractionClassWithRegions exception=" + e.getMessage());
+        	this.logger.trace("subscribeInteractionClassWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1600,7 +1600,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.subscribeInteractionClassPassivelyWithRegions(theClass, regions);
         } catch (FederateServiceInvocationsAreBeingReportedViaMOM | InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("subscribeInteractionClassPassivelyWithRegions exception=" + e.getMessage());
+        	this.logger.trace("subscribeInteractionClassPassivelyWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1612,7 +1612,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.unsubscribeInteractionClassWithRegions(theClass, regions);
         } catch (RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("unsubscribeInteractionClassWithRegions exception=" + e.getMessage());
+        	this.logger.trace("unsubscribeInteractionClassWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1624,7 +1624,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.sendInteractionWithRegions(theInteraction, theParameters, regions, userSuppliedTag);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotPublished | InteractionParameterNotDefined | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("sendInteractionWithRegions exception=" + e.getMessage());
+        	this.logger.trace("sendInteractionWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1638,7 +1638,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("sendInteractionWithRegions return " + messageRetractionReturn.toString());
         	return messageRetractionReturn;
         } catch (InvalidLogicalTime | InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | InteractionClassNotPublished | InteractionParameterNotDefined | InteractionClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("sendInteractionWithRegions exception=" + e.getMessage());
+        	this.logger.trace("sendInteractionWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1650,7 +1650,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.requestAttributeValueUpdateWithRegions(theClass, attributesAndRegions, userSuppliedTag);
         } catch (InvalidRegionContext | RegionNotCreatedByThisFederate | InvalidRegion | AttributeNotDefined | ObjectClassNotDefined | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("requestAttributeValueUpdateWithRegions exception=" + e.getMessage());
+        	this.logger.trace("requestAttributeValueUpdateWithRegions exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1668,7 +1668,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getAutomaticResignDirective return " + resignAction.toString());
         	return resignAction;
         } catch (FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getAutomaticResignDirective exception=" + e.getMessage());
+        	this.logger.trace("getAutomaticResignDirective exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1680,7 +1680,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.setAutomaticResignDirective(resignAction);
         } catch (InvalidResignAction | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("setAutomaticResignDirective exception=" + e.getMessage());
+        	this.logger.trace("setAutomaticResignDirective exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1694,7 +1694,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getFederateHandle return " + federateHandle.toString());
         	return federateHandle;
         } catch (NameNotFound | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getFederateHandle exception=" + e.getMessage());
+        	this.logger.trace("getFederateHandle exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1708,7 +1708,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getFederateName return " + str);
         	return str;
         } catch (InvalidFederateHandle | FederateHandleNotKnown | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getFederateName exception=" + e.getMessage());
+        	this.logger.trace("getFederateName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1722,7 +1722,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getObjectClassHandle return " + objectClassHandle.toString());
         	return objectClassHandle;
         } catch (NameNotFound | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getObjectClassHandle exception=" + e.getMessage());
+        	this.logger.trace("getObjectClassHandle exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1736,7 +1736,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getObjectClassName return " + str);
         	return str;
         } catch (InvalidObjectClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getObjectClassName exception=" + e.getMessage());
+        	this.logger.trace("getObjectClassName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1750,7 +1750,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getKnownObjectClassHandle return " + objectClassHandle.toString());
         	return objectClassHandle;
         } catch (ObjectInstanceNotKnown | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getKnownObjectClassHandle exception=" + e.getMessage());
+        	this.logger.trace("getKnownObjectClassHandle exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1764,7 +1764,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getObjectInstanceHandle return " + objectInstanceHandle.toString());
         	return objectInstanceHandle;
         } catch (ObjectInstanceNotKnown | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getObjectInstanceHandle exception=" + e.getMessage());
+        	this.logger.trace("getObjectInstanceHandle exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1778,7 +1778,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getObjectInstanceName return " + str);
         	return str;
         } catch (ObjectInstanceNotKnown | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getObjectInstanceName exception=" + e.getMessage());
+        	this.logger.trace("getObjectInstanceName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1792,7 +1792,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getAttributeHandle return " + attributeHandle.toString());
     		return attributeHandle;
     	} catch (NameNotFound | InvalidObjectClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getAttributeHandle exception=" + e.getMessage());
+    		this.logger.trace("getAttributeHandle exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1806,7 +1806,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getAttributeName return " + str);
         	return str;
         } catch (AttributeNotDefined | InvalidAttributeHandle | InvalidObjectClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getAttributeName exception=" + e.getMessage());
+        	this.logger.trace("getAttributeName exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1820,7 +1820,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getUpdateRateValue return " + d);
         	return d;
         } catch (InvalidUpdateRateDesignator | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getUpdateRateValue exception=" + e.getMessage());
+        	this.logger.trace("getUpdateRateValue exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1834,7 +1834,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getUpdateRateValueForAttribute return " + d);
         	return d;
         } catch (ObjectInstanceNotKnown | AttributeNotDefined | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getUpdateRateValueForAttribute exception=" + e.getMessage());
+        	this.logger.trace("getUpdateRateValueForAttribute exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1848,7 +1848,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         	this.logger.trace("getInteractionClassHandle return " + interactionClassHandle.toString());
         	return interactionClassHandle;
         } catch (NameNotFound | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("getInteractionClassHandle exception=" + e.getMessage());
+        	this.logger.trace("getInteractionClassHandle exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -1862,7 +1862,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getInteractionClassName return " + str);
     		return str;
     	} catch (InvalidInteractionClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getInteractionClassName exception=" + e.getMessage());
+    		this.logger.trace("getInteractionClassName exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1876,7 +1876,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getParameterHandle return " + parameterHandle.toString());
     		return parameterHandle;
     	} catch (NameNotFound | InvalidInteractionClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getParameterHandle exception=" + e.getMessage());
+    		this.logger.trace("getParameterHandle exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1890,7 +1890,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getParameterName return " + str);
     		return str;
     	} catch (InteractionParameterNotDefined | InvalidParameterHandle | InvalidInteractionClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getParameterName exception=" + e.getMessage());
+    		this.logger.trace("getParameterName exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1904,7 +1904,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getOrderType return " + orderType.toString());
     		return orderType;
     	} catch (InvalidOrderName | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getOrderType exception=" + e.getMessage());
+    		this.logger.trace("getOrderType exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1918,7 +1918,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getOrderName return " + str);
     		return str;
     	} catch (InvalidOrderType | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getOrderName exception=" + e.getMessage());
+    		this.logger.trace("getOrderName exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1932,7 +1932,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getTransportationTypeHandle return " + transportationTypeHandle.toString());
     		return transportationTypeHandle;
     	} catch (InvalidTransportationName | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getTransportationTypeHandle exception=" + e.getMessage());
+    		this.logger.trace("getTransportationTypeHandle exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1946,7 +1946,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getTransportationTypeName return " + str);
     		return str;
     	} catch (InvalidTransportationType | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getTransportationTypeName exception=" + e.getMessage());
+    		this.logger.trace("getTransportationTypeName exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1960,7 +1960,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getAvailableDimensionsForClassAttribute return " + dimensionHandleSet.toString());
     		return dimensionHandleSet;
     	} catch (AttributeNotDefined | InvalidAttributeHandle | InvalidObjectClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getAvailableDimensionsForClassAttribute exception=" + e.getMessage());
+    		this.logger.trace("getAvailableDimensionsForClassAttribute exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1974,7 +1974,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getAvailableDimensionsForInteractionClass return " + dimensionHandleSet.toString());
     		return dimensionHandleSet;
     	} catch (InvalidInteractionClassHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getAvailableDimensionsForInteractionClass exception=" + e.getMessage());
+    		this.logger.trace("getAvailableDimensionsForInteractionClass exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -1988,7 +1988,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getDimensionHandle return " + dimensionHandle.toString());
     		return dimensionHandle;
     	} catch (NameNotFound | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getDimensionHandle exception=" + e.getMessage());
+    		this.logger.trace("getDimensionHandle exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2002,7 +2002,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getDimensionName return " + str);
     		return str;
     	} catch (InvalidDimensionHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getDimensionName exception=" + e.getMessage());
+    		this.logger.trace("getDimensionName exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2016,7 +2016,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getDimensionUpperBound return " + upperBound);
     		return upperBound;
     	} catch (InvalidDimensionHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getDimensionUpperBound exception=" + e.getMessage());
+    		this.logger.trace("getDimensionUpperBound exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2030,7 +2030,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getDimensionHandleSet return " + dimensionHandleSet.toString());
     		return dimensionHandleSet;
     	} catch (InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getDimensionHandleSet exception=" + e.getMessage());
+    		this.logger.trace("getDimensionHandleSet exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2044,7 +2044,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("getRangeBounds return " + rangeBounds.toString());
     		return rangeBounds;
     	} catch (RegionDoesNotContainSpecifiedDimension | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("getRangeBounds exception=" + e.getMessage());
+    		this.logger.trace("getRangeBounds exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2056,7 +2056,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.setRangeBounds(region, dimension, bounds);
     	} catch (InvalidRangeBound | RegionDoesNotContainSpecifiedDimension | RegionNotCreatedByThisFederate | InvalidRegion | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("setRangeBounds exception=" + e.getMessage());
+    		this.logger.trace("setRangeBounds exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2070,7 +2070,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("normalizeFederateHandle return " + normalizedFederateHandle);
     		return normalizedFederateHandle;
     	} catch (InvalidFederateHandle | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("normalizeFederateHandle exception=" + e.getMessage());
+    		this.logger.trace("normalizeFederateHandle exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2084,7 +2084,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("normalizeServiceGroup return " + normalizedServiceGroup);
     		return normalizedServiceGroup;
     	} catch (InvalidServiceGroup | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("normalizeServiceGroup exception=" + e.getMessage());
+    		this.logger.trace("normalizeServiceGroup exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2096,7 +2096,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.enableObjectClassRelevanceAdvisorySwitch();
     	} catch (ObjectClassRelevanceAdvisorySwitchIsOn | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("enableObjectClassRelevanceAdvisorySwitch exception=" + e.getMessage());
+    		this.logger.trace("enableObjectClassRelevanceAdvisorySwitch exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2108,7 +2108,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     	try {
     		this._rtiAmbassador.disableObjectClassRelevanceAdvisorySwitch();
     	} catch (ObjectClassRelevanceAdvisorySwitchIsOff | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-    		this.logger.error("disableObjectClassRelevanceAdvisorySwitch exception=" + e.getMessage());
+    		this.logger.trace("disableObjectClassRelevanceAdvisorySwitch exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2120,7 +2120,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableAttributeRelevanceAdvisorySwitch();
         } catch (AttributeRelevanceAdvisorySwitchIsOn | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("enableAttributeRelevanceAdvisorySwitch exception=" + e.getMessage());
+        	this.logger.trace("enableAttributeRelevanceAdvisorySwitch exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2132,7 +2132,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableAttributeRelevanceAdvisorySwitch();
         } catch (AttributeRelevanceAdvisorySwitchIsOff | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("disableAttributeRelevanceAdvisorySwitch exception=" + e.getMessage());
+        	this.logger.trace("disableAttributeRelevanceAdvisorySwitch exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2144,7 +2144,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableAttributeScopeAdvisorySwitch();
         } catch (AttributeScopeAdvisorySwitchIsOn | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("enableAttributeScopeAdvisorySwitch exception=" + e.getMessage());
+        	this.logger.trace("enableAttributeScopeAdvisorySwitch exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2156,7 +2156,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableAttributeScopeAdvisorySwitch();
         } catch (AttributeScopeAdvisorySwitchIsOff | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("disableAttributeScopeAdvisorySwitch exception=" + e.getMessage());
+        	this.logger.trace("disableAttributeScopeAdvisorySwitch exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2168,7 +2168,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableInteractionRelevanceAdvisorySwitch();
         } catch (InteractionRelevanceAdvisorySwitchIsOn | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("enableInteractionRelevanceAdvisorySwitch exception=" + e.getMessage());
+        	this.logger.trace("enableInteractionRelevanceAdvisorySwitch exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2180,7 +2180,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableInteractionRelevanceAdvisorySwitch();
         } catch (InteractionRelevanceAdvisorySwitchIsOff | SaveInProgress | RestoreInProgress | FederateNotExecutionMember | NotConnected | RTIinternalError e) {
-        	this.logger.error("disableInteractionRelevanceAdvisorySwitch exception=" + e.getMessage());
+        	this.logger.trace("disableInteractionRelevanceAdvisorySwitch exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2194,7 +2194,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("evokeCallback return " + b);
     		return b;
     	} catch (CallNotAllowedFromWithinCallback |  RTIinternalError e) {
-    		this.logger.error("evokeCallback exception=" + e.getMessage());
+    		this.logger.trace("evokeCallback exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2208,7 +2208,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     		this.logger.trace("evokeMultipleCallbacks return " + b);
     		return b;
     	} catch (CallNotAllowedFromWithinCallback |  RTIinternalError e) {
-    		this.logger.error("evokeMultipleCallbacks exception=" + e.getMessage());
+    		this.logger.trace("evokeMultipleCallbacks exception={}", e.getMessage());
     		throw e;
     	}
     }
@@ -2220,7 +2220,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.enableCallbacks();
         } catch (SaveInProgress | RestoreInProgress | RTIinternalError e) {
-        	this.logger.error("enableCallbacks exception=" + e.getMessage());
+        	this.logger.trace("enableCallbacks exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2232,7 +2232,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	this._rtiAmbassador.disableCallbacks();
         } catch (SaveInProgress | RestoreInProgress | RTIinternalError e) {
-        	this.logger.error("disableCallbacks exception=" + e.getMessage());
+        	this.logger.trace("disableCallbacks exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2244,7 +2244,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getAttributeHandleFactory();
         } catch (FederateNotExecutionMember |  NotConnected e) {
-        	this.logger.error("getAttributeHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getAttributeHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2255,7 +2255,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getAttributeHandleSetFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getAttributeHandleSetFactory exception=" + e.getMessage());
+        	this.logger.trace("getAttributeHandleSetFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2266,7 +2266,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getAttributeHandleValueMapFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getAttributeHandleValueMapFactory exception=" + e.getMessage());
+        	this.logger.trace("getAttributeHandleValueMapFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2277,7 +2277,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getAttributeSetRegionSetPairListFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getAttributeSetRegionSetPairListFactory exception=" + e.getMessage());
+        	this.logger.trace("getAttributeSetRegionSetPairListFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2288,7 +2288,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getDimensionHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getDimensionHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getDimensionHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2299,7 +2299,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getDimensionHandleSetFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getDimensionHandleSetFactory exception=" + e.getMessage());
+        	this.logger.trace("getDimensionHandleSetFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2310,7 +2310,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getFederateHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getFederateHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getFederateHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2321,7 +2321,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getFederateHandleSetFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getFederateHandleSetFactory exception=" + e.getMessage());
+        	this.logger.trace("getFederateHandleSetFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2332,7 +2332,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getInteractionClassHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getInteractionClassHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getInteractionClassHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2343,7 +2343,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getObjectClassHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getObjectClassHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getObjectClassHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2354,7 +2354,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getObjectInstanceHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getObjectInstanceHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getObjectInstanceHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2365,7 +2365,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getParameterHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getParameterHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getParameterHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2376,7 +2376,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getParameterHandleValueMapFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getParameterHandleValueMapFactory exception=" + e.getMessage());
+        	this.logger.trace("getParameterHandleValueMapFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2387,7 +2387,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getRegionHandleSetFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getRegionHandleSetFactory exception=" + e.getMessage());
+        	this.logger.trace("getRegionHandleSetFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2398,7 +2398,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getTransportationTypeHandleFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getTransportationTypeHandleFactory exception=" + e.getMessage());
+        	this.logger.trace("getTransportationTypeHandleFactory exception={}", e.getMessage());
         	throw e;
         }
     }
@@ -2407,7 +2407,7 @@ public class IVCT_RTIambassador implements RTIambassador {
     public String getHLAversion() {
         this.logger.trace("getHLAversion");
         String str = this._rtiAmbassador.getHLAversion();
-		this.logger.error("getHLAversion return " + str);
+		this.logger.trace("getHLAversion return " + str);
         return str;
     }
 
@@ -2417,7 +2417,7 @@ public class IVCT_RTIambassador implements RTIambassador {
         try {
         	return this._rtiAmbassador.getTimeFactory();
         } catch (FederateNotExecutionMember | NotConnected e) {
-        	this.logger.error("getTimeFactory exception=" + e.getMessage());
+        	this.logger.trace("getTimeFactory exception={}", e.getMessage());
         	throw e;
         }
     }
