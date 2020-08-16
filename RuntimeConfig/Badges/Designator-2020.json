@@ -1,0 +1,98 @@
+{
+	"id" 			: 	"Designator-2020",
+	"version"		:	"1.0.0",
+	"name" 			: 	"RPR-FOM Designator Badge",
+	"description"	:	"This badge encapsulates all Designator related interoperability requirements",
+	"graphics"		:	"Designator-2020.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-DS-0001",
+			"description"	:	"[Create] The SUT shall provide all non-optional attributes in the initial attribute value update of the Designator object instance."
+		},
+		{
+			"id"			:	"IR-DS-0002",
+			"description"	:	"[Create] The SUT shall refer to an existing host object instance in the EmbeddedSystem.HostObjectIdentifier (the designating entity)."
+		},
+		{
+			"id"			:	"IR-DS-0003",
+			"description"	:	"[Create] The SUT shall refer to an existing host object instance  in the EmbeddedSystem.EntityIdentifier (the designating entity)."
+		},
+		{
+			"id"			:	"IR-DS-0004",
+			"description"	:	"[Create] The SUT shall refer to the same host object instance in EmbeddedSystem.HostObjectIdentifier and EmbeddedSystem.EntityIdentifier."
+		},
+		{
+			"id"			:	"IR-DS-0005",
+			"description"	:	"[Update] When the SUT provides a DesignatedObjectIdentifier value, it shall refer to an existing object instance."
+		},
+		{
+			"id"			:	"IR-DS-0006",
+			"description"	:	"[Update] The SUT shall provide static attributes only once, unless requested via a Provide Attribute Value Update request."
+		},
+		{
+			"id"			:	"IR-DS-0007",
+			"description"	:	"[Update] The SUT shall provide a non-negative value for the DesignatorOutputPower attribute."
+		},
+		{
+			"id"			:	"IR-DS-0008",
+			"description"	:	"[Update] The SUT shall provide a non-negative value for the DesignatorEmissionWavelength attribute."
+		},
+		{
+			"id"			:	"IR-DS-0009",
+			"description"	:	"[Update] When the SUT provides a non-zero-filled relative spot location, it shall (in the same or an earlier update) provide a DesignatedObjectIdentifier value."
+		},
+		{
+			"id"			:	"IR-DS-0010",
+			"description"	:	"[Update] When the SUT provides a zero-length DesignatedObjectIdentifier value (representing D-SPOT_NO_ENTITY), it shall (in the same update) provide a zero-filled relative spot location if a non-zero-filled relative spot location was provided before."
+		},
+		{
+			"id"			:	"IR-DS-0011",
+			"description"	:	"[Delete] The SUT shall provide a zero value for the Designator Power to indicate that the designator is inactive."
+		},
+		{
+			"id"			:	"IR-DS-0012",
+			"description"	:	"[Delete] When the SUT provides a zero value for the Designator Power, it shall not provide further Designator object instance attribute updates."
+		},
+		{
+			"id"			:	"IR-DS-0013",
+			"description"	:	"[Delete] When the SUT provides a zero value for the Designator Power, it shall delete the Designator object instance within DS_DELETE_TIME wall-clock seconds."
+		},
+		{
+			"id"			:	"IR-DS-0014",
+			"description"	:	"[Delete] When the SUT deletes the host entity of the Designator object instance, it shall (in this order) provide a zero value for the Designator Power and delete the Designator object instance within DS_DELETE_TIME wall-clock seconds."
+		},
+		{
+			"id"			:	"IR-DS-0015",
+			"description"	:	"[Delete] When the SUT deletes the Designated object instance to which the designator spot is attached, it shall (in this order) provide a zero value for the Designator Power and delete the Designator object instance within DS_DELETE_TIME wall-clock seconds."
+		},
+		{
+			"id"			:	"IR-DS-0016",
+			"description"	:	"[Dead reckoning] The SUT shall provide a location update when the discrepancy between the designator spot’s actual position (as determined by its own internal model) and its dead reckoned position (as determined by using specified dead reckoning algorithms) exceeds a predetermined threshold."
+		},
+		{
+			"id"			:	"IR-DS-0017",
+			"description"	:	"[Dead reckoning] The SUT shall provide a location update when a predetermined length of real-world time (HBT_PDU_DESIGNATOR seconds) has elapsed since the issuing of the last Designator location update."
+		},
+		{
+			"id"			:	"IR-DS-0018",
+			"description"	:	"[Dead reckoning] When the SUT uses the static DR algorithm, it shall either (1) not provide an update of the SpotLinearAcceleration Vector, or (2) provide an update of the SpotLinearAcceleration with zero values in the attribute value update of the object instance."
+		},
+		{
+			"id"			:	"IR-DS-0019",
+			"description"	:	"[Dead reckoning] When the SUT uses a non-static DR algorithm, it shall provide an update of the SpotLinearAcceleration Vector in the attribute value update of the object instance."
+		},
+		{
+			"id"			:	"IR-DS-0020",
+			"description"	:	"[Dead reckoning] When the DR algorithm is static and the SUT does an update of the SpotLinearAcceleration, the SUT shall only provide zero values."
+		},
+		{
+			"id"			:	"IR-DS-0021",
+			"description"	:	"[Dead reckoning] When the DR algorithm is changed from static to non-static, the SUT shall provide an update of the SpotLinearAcceleration Vector in the same attribute value update of the object instance."
+		},
+		{
+			"id"			:	"IR-DS-0022",
+			"description"	:	"[Dead reckoning] When the DR algorithm is changed from non-static to static, the SUT shall provide an update of the SpotLinearAcceleration Vector in the same attribute value update of the object instance, providing zero values."
+		}
+	]
+}
