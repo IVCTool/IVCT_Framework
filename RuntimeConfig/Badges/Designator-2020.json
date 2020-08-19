@@ -68,7 +68,7 @@
 		},
 		{
 			"id"			:	"IR-DS-0016",
-			"description"	:	"[Dead reckoning] The SUT shall provide a location update when the discrepancy between the designator spot’s actual position (as determined by its own internal model) and its dead reckoned position (as determined by using specified dead reckoning algorithms) exceeds a predetermined threshold."
+			"description"	:	"[Dead reckoning] The SUT shall provide a location update when the discrepancy between the designator spot's actual position (as determined by its own internal model) and its dead reckoned position (as determined by using specified dead reckoning algorithms) exceeds a predetermined threshold."
 		},
 		{
 			"id"			:	"IR-DS-0017",
