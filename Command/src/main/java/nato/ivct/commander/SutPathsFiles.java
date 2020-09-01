@@ -142,9 +142,8 @@ public class SutPathsFiles {
      * Get the path where the TcParam file(s) are located
      * 
      * @param sutId the desired SUT ID
-     * @return path where TcParam file(s) are located
      * @param testsuiteName name of the testsuite
-     * @return the TcParamPath
+     * @return path where TcParam file(s) are located
      */
     public String getTcParamPath(final String sutId, final String testsuiteName) {
         final String sutsHomePath = getSutsHomePath();
