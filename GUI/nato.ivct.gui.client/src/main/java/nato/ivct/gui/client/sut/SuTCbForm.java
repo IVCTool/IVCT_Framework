@@ -66,11 +66,16 @@ import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.data.tile.TileColorScheme;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.Factory;
+import nato.ivct.commander.CmdListTestSuites.TSParameters;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcParameterTableField;
@@ -99,10 +104,22 @@ public class SuTCbForm extends AbstractForm {
     public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
+    
+    private final Supplier<CmdListTestSuites> testSuitesSupplier = Suppliers.memoize(() -> {
+        CmdListTestSuites testSuites = Factory.createCmdListTestSuites();
+        try {
+            testSuites.execute();
+        }
+        catch (Exception exc) {
+            throw new IllegalStateException(exc);
+        }
+        return testSuites;
+    });
 
     private String sutId      = null;
     private String cbId       = null;
     private String activeTsId = null;
+    
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -547,13 +564,23 @@ public class SuTCbForm extends AbstractForm {
                             table.getParentIdColumn().setValue(row, Optional.ofNullable(parentRow).map(r -> table.getIdColumn().getValue(parentRow)).orElse(null));
                             table.getParameterNameColumn().setValue(row, key);
                             table.getParameterValueColumn().setValue(row, value);
+                            // fill description table field
+                            table.getParameterDescriptionColumn().setValue(row, getParameterDescription(key));
 
                             // add row to table
                             mRows.add(row);
 
                             return row;
                         }
+                        
+                        private Map<String,TSParameters> getDescriptionMap() {
+                            return testSuitesSupplier.get().getParametersForTs(activeTsId);
+                        }
 
+                        private String getParameterDescription(final String key) {
+                            final TSParameters params = getDescriptionMap().get(key);
+                            return params == null ? "" : params.description;
+                        }
 
                         private void newRowWithParent(final ITableRow parent) {
                             final SuTTcParameterTable table = getTable();
@@ -585,6 +612,10 @@ public class SuTCbForm extends AbstractForm {
 
                             public ParameterValueColumn getParameterValueColumn() {
                                 return getColumnSet().getColumnByClass(ParameterValueColumn.class);
+                            }
+                            
+                            public ParameterDescriptionColumn getParameterDescriptionColumn() {
+                                return getColumnSet().getColumnByClass(ParameterDescriptionColumn.class);
                             }
 
 
@@ -646,7 +677,7 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 300;
+                                    return 200;
                                 }
                             }
 
@@ -660,7 +691,21 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 1200;
+                                    return 600;
+                                }
+                            }
+                            
+                            @Order(2500)
+                            public class ParameterDescriptionColumn extends AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Description");
+                                }
+
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 700;
                                 }
                             }
 
