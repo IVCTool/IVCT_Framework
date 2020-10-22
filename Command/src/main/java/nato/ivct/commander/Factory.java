@@ -64,6 +64,8 @@ public class Factory {
 
     public static final String RTI_ID                       = "RTI_ID";
     public static final String RTI_ID_DEFLT                 = "pRTI";
+    
+       
     public static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
     public static final String MESSAGING_USER_ID            = PropertyBasedClientSetup.PROPERTY_USER;
     public static final String MESSAGING_USER_DEFLT         = "admin";
@@ -95,6 +97,11 @@ public class Factory {
     public static final String FEDERATION_NAME           = "FEDERATION_NAME";
     public static final String FEDERATION_NAME_DEFLT     = "TheWorld";
     public static final String FEDERATE_NAME_DEFLT       = "sut";
+    
+    //  for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    public static final String RTI_TYPE_ENGINE_LABEL       = "RTI_TYPE_ENGINE_LABEL";
+    public static final String RTI_TYPE_ENGINE_LABEL_DEFLT = "" ;
+    
 
     private static MessageProducer producer   = null;
     private static int             cmdCounter = 0;
@@ -180,6 +187,8 @@ public class Factory {
             fallback.put(LOGSINK_USER_ID, LOGSINK_USER_DEFLT);
             fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);
             fallback.put(SETTINGS_DESIGNATOR, SETTINGS_DESIGNATOR_DEFLT);
+            // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+            fallback.put(RTI_TYPE_ENGINE_LABEL, RTI_TYPE_ENGINE_LABEL_DEFLT);
 
             props = new Properties(fallback);
 
@@ -220,6 +229,7 @@ public class Factory {
                     LOGGER.error("initialize Factory", e1);
                 }
             }
+            
 
             // overwrite with environment settings
             overwriteWithEnv(IVCT_TS_DIST_HOME_ID);
@@ -239,6 +249,10 @@ public class Factory {
             overwriteWithEnv(LOGSINK_PASSWORD_ID);
             overwriteWithEnv(SETTINGS_DESIGNATOR);
             overwriteWithEnv(FEDERATION_NAME);
+            // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+            overwriteWithEnv(RTI_TYPE_ENGINE_LABEL);
+
+            
 
             LOGGER.debug("Properties used: {}", props);
 

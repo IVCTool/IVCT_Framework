@@ -56,8 +56,14 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	private CmdListTestSuites testSuites;
 	private Map<String, URLClassLoader> classLoaders = new HashMap<>();
 	
+	
+	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    private String rtiTypeEngineLabel;
+	
+	
 	// the number of threads in the fixed thread pool
 	private static final int MAX_THREADS = 10;
+	
 	
 	ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
 	private Map<String,SoftReference<Future<?>>> threadCache = new HashMap<>();
@@ -85,7 +91,10 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		myClassName = this.getClass().getSimpleName();
 
 		// initialize the IVCT Commander Factory
-		Factory.initialize();
+		Factory.initialize();		
+		
+		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+		rtiTypeEngineLabel = Factory.props.getProperty("RTI_TYPE_ENGINE_LABEL") ;		
 
 		// Configure the logger
 		LogConfigurationHelper.configureLogging();
@@ -240,7 +249,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
-				testCase.setSutFederateName(info.sutFederateName);
+				testCase.setSutFederateName(info.sutFederateName);		
 
 				/*
 				 * Check the compability of IVCT-Version which had this testCase at
@@ -330,5 +339,12 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	public boolean getMyHealth() {
 		return health;
 	}
+	
+	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+	public String getMyRtiTypeEngineLabel() {
+		return rtiTypeEngineLabel;
+	}
+	
+	
 
 }

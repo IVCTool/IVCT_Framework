@@ -34,6 +34,9 @@ public class CmdHeartbeatSend  implements Command {
     public interface OnCmdHeartbeatSend { 
           public boolean getMyHealth ();
           public String getMyClassName();
+          
+          // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+          public String getMyRtiTypeEngineLabel();         
       }
     
    
@@ -51,12 +54,17 @@ public class CmdHeartbeatSend  implements Command {
     public static final String HB_ALLERTTIME= "Alert-Time";
     public static final String HB_COMMENT= "Comment";
     public static final String HB_IVCTVERSION= "IVCTVersion";
+    // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    public static final String HB_RTITYPEENGINELABEL= "RTI_TYPE_ENGINE_LABEL";
         
     private boolean health;    
        
     private String heartbeatSenderName;
     
     private OnCmdHeartbeatSend sender;
+    
+    // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    private String rtiTypeEngineLabel;
     
       
     public CmdHeartbeatSend(OnCmdHeartbeatSend sender) {
@@ -65,7 +73,7 @@ public class CmdHeartbeatSend  implements Command {
         this.sender=sender;
     }
         
-    
+
     /*
      *  this execute method is started by a application which instanciate this class  
      *  we fetch all xy seconds some variables from that application,
@@ -82,6 +90,10 @@ public class CmdHeartbeatSend  implements Command {
         if (sender != null) {
             this.health = sender.getMyHealth();
             this.heartbeatSenderName= sender.getMyClassName();
+            
+            // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+            this.rtiTypeEngineLabel = sender.getMyRtiTypeEngineLabel();
+            
             } else {
             logger.warn("In CmdHeartbeatSend sender  is null !!!!");
         }
@@ -90,7 +102,10 @@ public class CmdHeartbeatSend  implements Command {
         JSONObject heartbeatjson = new JSONObject();              
         heartbeatjson.put(HB_SENDER, this.heartbeatSenderName);
         heartbeatjson.put(HB_LASTSENDINGPERIOD, 5000L);         
-        heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );    
+        heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );
+        
+        // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+        heartbeatjson.put(HB_RTITYPEENGINELABEL, rtiTypeEngineLabel );
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
         Timer timer = new Timer();
@@ -125,7 +140,5 @@ public class CmdHeartbeatSend  implements Command {
         //logger.info("heartbeatClient Test message ist: " + message);  // Debug          
          logProducer.send(message);        
     }
-    
-    
     
 }
