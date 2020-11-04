@@ -35,8 +35,8 @@ public class CmdHeartbeatSend  implements Command {
           public boolean getMyHealth ();
           public String getMyClassName();
           
-          // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-          public String getMyRtiTypeEngineLabel();         
+          // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020      
+          public String getMyTestEngineLabel();
       }
     
    
@@ -55,7 +55,7 @@ public class CmdHeartbeatSend  implements Command {
     public static final String HB_COMMENT= "Comment";
     public static final String HB_IVCTVERSION= "IVCTVersion";
     // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-    public static final String HB_RTITYPEENGINELABEL= "RTI_TYPE_ENGINE_LABEL";
+    public static final String HB_TESTENGINELABEL= "TESTENGINE_LABEL";
         
     private boolean health;    
        
@@ -64,7 +64,7 @@ public class CmdHeartbeatSend  implements Command {
     private OnCmdHeartbeatSend sender;
     
     // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-    private String rtiTypeEngineLabel;
+    private String testEngineLabel;
     
       
     public CmdHeartbeatSend(OnCmdHeartbeatSend sender) {
@@ -92,7 +92,8 @@ public class CmdHeartbeatSend  implements Command {
             this.heartbeatSenderName= sender.getMyClassName();
             
             // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-            this.rtiTypeEngineLabel = sender.getMyRtiTypeEngineLabel();
+            //this.rtiTypeEngineLabel = sender.getMyRtiTypeEngineLabel();
+            this.testEngineLabel = sender.getMyTestEngineLabel();
             
             } else {
             logger.warn("In CmdHeartbeatSend sender  is null !!!!");
@@ -105,7 +106,8 @@ public class CmdHeartbeatSend  implements Command {
         heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );
         
         // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-        heartbeatjson.put(HB_RTITYPEENGINELABEL, rtiTypeEngineLabel );
+        //heartbeatjson.put(HB_RTITYPEENGINELABEL, rtiTypeEngineLabel );
+        heartbeatjson.put(HB_TESTENGINELABEL, testEngineLabel );
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
         Timer timer = new Timer();

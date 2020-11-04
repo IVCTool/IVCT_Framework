@@ -34,7 +34,8 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     private String myClassName = "LogSink";
     
  // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-    private String rtiTypeEngineLabel="notNecessaryForLogSink" ;
+    //private String rtiTypeEngineLabel="notNecessaryForLogSink" ;
+    private String testEngineLabel="notNecessaryForLogSink";
 
 
     /**
@@ -129,9 +130,10 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     return health;
   }
   
-   // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-	public String getMyRtiTypeEngineLabel() {
-		return rtiTypeEngineLabel;
+   // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020	
+	public String getMyTestEngineLabel() {
+		return testEngineLabel;
 	}
+	
 
 }

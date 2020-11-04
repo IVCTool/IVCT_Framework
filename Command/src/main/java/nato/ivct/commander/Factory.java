@@ -99,8 +99,8 @@ public class Factory {
     public static final String FEDERATE_NAME_DEFLT       = "sut";
     
     //  for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-    public static final String RTI_TYPE_ENGINE_LABEL       = "RTI_TYPE_ENGINE_LABEL";
-    public static final String RTI_TYPE_ENGINE_LABEL_DEFLT = "" ;
+    public static final String TESTENGINE_LABEL       = "TESTENGINE_LABEL";
+    public static final String TESTENGINE_LABEL_DEFLT = "" ;
     
 
     private static MessageProducer producer   = null;
@@ -188,7 +188,7 @@ public class Factory {
             fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);
             fallback.put(SETTINGS_DESIGNATOR, SETTINGS_DESIGNATOR_DEFLT);
             // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-            fallback.put(RTI_TYPE_ENGINE_LABEL, RTI_TYPE_ENGINE_LABEL_DEFLT);
+            fallback.put(TESTENGINE_LABEL, TESTENGINE_LABEL_DEFLT);
 
             props = new Properties(fallback);
 
@@ -250,7 +250,7 @@ public class Factory {
             overwriteWithEnv(SETTINGS_DESIGNATOR);
             overwriteWithEnv(FEDERATION_NAME);
             // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-            overwriteWithEnv(RTI_TYPE_ENGINE_LABEL);
+            overwriteWithEnv(TESTENGINE_LABEL);
 
             
 

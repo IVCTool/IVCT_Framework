@@ -58,7 +58,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	
 	
 	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-    private String rtiTypeEngineLabel;
+    private String testEngineLabel;
 	
 	
 	// the number of threads in the fixed thread pool
@@ -94,7 +94,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		Factory.initialize();		
 		
 		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-		rtiTypeEngineLabel = Factory.props.getProperty("RTI_TYPE_ENGINE_LABEL") ;		
+		testEngineLabel = Factory.props.getProperty("TESTENGINE_LABEL") ;		
 
 		// Configure the logger
 		LogConfigurationHelper.configureLogging();
@@ -341,8 +341,8 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	}
 	
 	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-	public String getMyRtiTypeEngineLabel() {
-		return rtiTypeEngineLabel;
+	public String getMyTestEngineLabel() {
+		return testEngineLabel;
 	}
 	
 	
