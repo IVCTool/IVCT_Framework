@@ -37,6 +37,7 @@ public class CmdStartTcListener implements MessageListener, Command {
         public String settingsDesignator;
         public String federationName;
         public String sutFederateName;
+        //  ######################## 
     }
 
     public interface OnStartTestCaseListener {

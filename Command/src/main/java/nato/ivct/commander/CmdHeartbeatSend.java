@@ -106,7 +106,6 @@ public class CmdHeartbeatSend  implements Command {
         heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );
         
         // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-        //heartbeatjson.put(HB_RTITYPEENGINELABEL, rtiTypeEngineLabel );
         heartbeatjson.put(HB_TESTENGINELABEL, testEngineLabel );
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
