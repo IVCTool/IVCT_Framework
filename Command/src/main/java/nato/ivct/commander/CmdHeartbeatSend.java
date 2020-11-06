@@ -92,7 +92,6 @@ public class CmdHeartbeatSend  implements Command {
             this.heartbeatSenderName= sender.getMyClassName();
             
             // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-            //this.rtiTypeEngineLabel = sender.getMyRtiTypeEngineLabel();
             this.testEngineLabel = sender.getMyTestEngineLabel();
             
             } else {

@@ -295,6 +295,11 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	@Override
 	public void onStartTestCase(TcInfo info) {
+		// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+		String TCInfoTestEngineLabel = info.testEngineLabel; 
+		System.out.println("#### TestEngine onStartTestCase get TCInfo testEngineLabel " + TCInfoTestEngineLabel );
+		
+				
 	    Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
 		Runnable th1 = new TestScheduleRunner(info);
 		Future<?> startedThread = executorService.submit(th1);

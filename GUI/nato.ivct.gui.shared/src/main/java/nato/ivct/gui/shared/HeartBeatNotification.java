@@ -31,7 +31,7 @@ public class HeartBeatNotification implements Serializable{
     public boolean senderHealthState = false;
     public String comment = null;
     // for enhanced heartbeat with RTI-Type-Information brf 04.11.2020
-    public String testEngineLabel = null;
+    public String testEngineLabel = null ;
     
 	public enum HbNotificationState {
 		UNKNOWN("grey"), OK("green"), WARNING("yellow"), CRITICAL("red"), DEAD("black"); 
