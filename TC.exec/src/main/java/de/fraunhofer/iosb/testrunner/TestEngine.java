@@ -12,6 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.jms.TextMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,12 +297,18 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	@Override
 	public void onStartTestCase(TcInfo info) {
-		// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
-		String TCInfoTestEngineLabel = info.testEngineLabel; 
-		System.out.println("#### TestEngine onStartTestCase get TCInfo testEngineLabel " + TCInfoTestEngineLabel );
+		Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
 		
-				
-	    Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+		// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+		 tcLogger.info("TestEngine.onStartTestCase get TCInfo.testEngineLabel  \" " + info.testEngineLabel  +"\"" );
+		 System.out.println("#### TestEngine onStartTestCase get TCInfo.testEngineLabel:  \" " + info.testEngineLabel +"\"");	 // Debug
+		
+		// if the TestEngineLabel we get with the Testcase is not the same we are startet with, stop here
+		 if (! (info.testEngineLabel.equals(testEngineLabel) || info.testEngineLabel.equals(Factory.TESTENGINE_LABEL_DEFLT) )) {
+	            return;
+		 }
+		
+	    
 		Runnable th1 = new TestScheduleRunner(info);
 		Future<?> startedThread = executorService.submit(th1);
 		threadCache.put(info.testCaseId, new SoftReference<>(startedThread));

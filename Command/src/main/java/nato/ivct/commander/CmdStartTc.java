@@ -50,14 +50,10 @@ public class CmdStartTc implements Command {
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
-	
+	// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
 	public CmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
-		this(sut, testSuiteName,tc ,settingsDesignator, federationName, sutFederateName,null);		
+		this(sut, testSuiteName,tc ,settingsDesignator, federationName, sutFederateName, Factory.TESTENGINE_LABEL_DEFLT );		
 	}
-	/*
-	public CmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
-		this(sut, testSuiteName,tc ,settingsDesignator, federationName, sutFederateName, "notDefined" );		
-	}  */
 	
 	public CmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName, String _testEngineLabel) {
 		this.sut = sut;
@@ -68,10 +64,6 @@ public class CmdStartTc implements Command {
 		this.sutFederateName = sutFederateName;
 		// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
 	    this.testEngineLabel = _testEngineLabel;		
-	    
-		if (_testEngineLabel == null || _testEngineLabel.isEmpty()   ) {
-			this.testEngineLabel=  "notdefined " ;
-		}		
 	}
 
 	@SuppressWarnings("unchecked")

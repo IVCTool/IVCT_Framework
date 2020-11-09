@@ -100,8 +100,7 @@ public class Factory {
     
     //  for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
     public static final String TESTENGINE_LABEL       = "TESTENGINE_LABEL";
-    public static final String TESTENGINE_LABEL_DEFLT = "" ;
-    
+    public static final String TESTENGINE_LABEL_DEFLT = "Broadcast" ;    
 
     private static MessageProducer producer   = null;
     private static int             cmdCounter = 0;
@@ -404,10 +403,21 @@ public class Factory {
         return new CmdListTestSuites();
     }
 
-
+    /*    org
     public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
         initialize();
         return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
+    }  */
+    
+    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
+        initialize();
+        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, TESTENGINE_LABEL_DEFLT);
+    }
+
+    // for enhanced heartbeat with RTI-Type-Information brf 09.11.2020
+    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName, String _testEngineLabel) {
+        initialize();
+        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, _testEngineLabel );
     }
     
     
