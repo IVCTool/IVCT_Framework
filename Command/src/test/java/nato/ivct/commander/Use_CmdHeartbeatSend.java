@@ -95,10 +95,6 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
       }
 	  
    // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-  	//public String getMyRtiTypeEngineLabel() {
-  	//	return rtiTypeEngineLabel;
-  	//}
-  	
   	public String getMyTestEngineLabel() {
 		return testEngineLabel;
 	}

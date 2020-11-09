@@ -403,12 +403,7 @@ public class Factory {
         return new CmdListTestSuites();
     }
 
-    /*    org
-    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
-        initialize();
-        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
-    }  */
-    
+        
     public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
         initialize();
         return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, TESTENGINE_LABEL_DEFLT);

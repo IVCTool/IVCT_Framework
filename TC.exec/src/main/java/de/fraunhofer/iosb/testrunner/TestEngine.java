@@ -301,13 +301,12 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		
 		// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
 		 tcLogger.info("TestEngine.onStartTestCase get TCInfo.testEngineLabel  \" " + info.testEngineLabel  +"\"" );
-		 System.out.println("#### TestEngine onStartTestCase get TCInfo.testEngineLabel:  \" " + info.testEngineLabel +"\"");	 // Debug
+		 System.out.println("#### TestEngine onStartTestCase get TCInfo.testEngineLabel:  \" " + info.testEngineLabel +"\"");// Debug
 		
 		// if the TestEngineLabel we get with the Testcase is not the same we are startet with, stop here
 		 if (! (info.testEngineLabel.equals(testEngineLabel) || info.testEngineLabel.equals(Factory.TESTENGINE_LABEL_DEFLT) )) {
 	            return;
-		 }
-		
+		 }		
 	    
 		Runnable th1 = new TestScheduleRunner(info);
 		Future<?> startedThread = executorService.submit(th1);
