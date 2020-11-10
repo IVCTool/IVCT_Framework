@@ -62,7 +62,7 @@ public class CmdStartTcListener implements MessageListener, Command {
         if (!(message instanceof TextMessage))
             return;
 
-        final TextMessage textMessage = (TextMessage) message;
+        final TextMessage textMessage = (TextMessage) message;        
         try {
             final String content = textMessage.getText();
             JSONParser jsonParser = new JSONParser();
@@ -85,7 +85,8 @@ public class CmdStartTcListener implements MessageListener, Command {
             info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString(); 
             
             // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
-            if (info.testEngineLabel == null  || info.testEngineLabel.isEmpty() ) {
+            if ( (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString() == null) ||
+                    (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString().isEmpty() ) )  {
             	info.testEngineLabel= "TestEngine_Label not given to CmdStartTCListen" ;
             } else {
             info.testEngineLabel = jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString();
