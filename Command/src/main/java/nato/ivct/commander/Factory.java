@@ -100,7 +100,7 @@ public class Factory {
     
     //  for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
     public static final String TESTENGINE_LABEL       = "TESTENGINE_LABEL";
-    public static final String TESTENGINE_LABEL_DEFLT = "" ;
+    public static final String TESTENGINE_LABEL_DEFLT = "Broadcast";
     
 
     private static MessageProducer producer   = null;
@@ -408,7 +408,7 @@ public class Factory {
     public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName, String testEngine) {
         initialize();
         if (testEngine == null) {
-            return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
+            return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, TESTENGINE_LABEL_DEFLT);
         } else {
             return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, testEngine);
         }
