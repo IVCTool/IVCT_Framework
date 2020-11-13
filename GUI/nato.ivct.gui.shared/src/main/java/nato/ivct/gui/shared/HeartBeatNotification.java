@@ -44,4 +44,13 @@ public class HeartBeatNotification implements Serializable{
 			return state;
 		}
 	}
+	
+	
+	public String getTestEngineLabel() {
+	    return testEngineLabel;
+	}
+	
+	public HbNotificationState getNotificationState() {
+	    return notifyState;
+	}
 }
