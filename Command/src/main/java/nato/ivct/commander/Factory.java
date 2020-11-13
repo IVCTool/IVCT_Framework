@@ -414,6 +414,11 @@ public class Factory {
         }
     }
     
+    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
+        initialize();
+        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, TESTENGINE_LABEL_DEFLT);
+    }
+    
     
     public static CmdAbortTc createCmdAbortTc(String sut, String tc) {
         initialize();
