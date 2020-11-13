@@ -405,9 +405,13 @@ public class Factory {
     }
 
 
-    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
+    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName, String testEngine) {
         initialize();
-        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
+        if (testEngine == null) {
+            return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
+        } else {
+            return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, testEngine);
+        }
     }
     
     
@@ -420,6 +424,11 @@ public class Factory {
     public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {
         initialize();
         return new CmdSetLogLevel(level);
+    }
+    
+    public static CmdSetTestEngine createCmdSetTestEngine(String testEngine) {
+        initialize();
+        return new CmdSetTestEngine(testEngine);
     }
 
 

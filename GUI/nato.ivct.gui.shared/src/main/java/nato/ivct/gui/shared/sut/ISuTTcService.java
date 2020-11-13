@@ -36,7 +36,7 @@ public interface ISuTTcService extends IService {
     SuTTcExecutionFormData updateLogFileTable(SuTTcExecutionFormData formData);
 
 
-    void executeTestCase(String sutId, String tc, String badgeId);
+    void executeTestCase(String sutId, String tc, String badgeId, String testEngine);
 
 
     SuTTcExecutionFormData loadJSONLogFileContent(String sutId, String testsuiteId, String fileName, SuTTcExecutionFormData formData);

@@ -221,10 +221,10 @@ public class SuTTcService implements ISuTTcService {
     }
 
     @Override
-    public void executeTestCase(String sutId, String tc, String tsId) {
+    public void executeTestCase(String sutId, String tc, String tsId, String testEngine) {
         // execute the CmdStartTc commands
         final SutDescription sut = BEANS.get(SuTService.class).getSutDescription(sutId);
-        ServerSession.get().execStartTc(sutId, tc, tsId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
+        ServerSession.get().execStartTc(sutId, tc, tsId, sut.settingsDesignator, sut.federation, sut.sutFederateName, testEngine);
     }
 
 

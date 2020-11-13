@@ -1019,11 +1019,12 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected void execClickAction() {
 
                 // check the status of the TestEngine
-                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
-                if (hbn.notifyState != HbNotificationState.OK) {
-                    MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
-                    return;
-                }
+//                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
+//                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender(testEngine);
+//                if (hbn == null || hbn.notifyState != HbNotificationState.OK) {
+//                    MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
+//                    return;
+//                }
 
                 // hide TC execute button if the same test case is already executed
                 final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
@@ -1060,10 +1061,12 @@ public class SuTTcExecutionForm extends AbstractForm {
                         // before starting the TC, communicate this user's last used log level
                         final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
                         final IOptionsService service = BEANS.get(IOptionsService.class);
-                        service.setLogLevel(logLevel);                        
+                        service.setLogLevel(logLevel);
+                        // get TestEngine with which the test case should be started
+                        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
                         // now start the TC
                         final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
-                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId());
+                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId(), testEngine);
                     }
                 }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
             }

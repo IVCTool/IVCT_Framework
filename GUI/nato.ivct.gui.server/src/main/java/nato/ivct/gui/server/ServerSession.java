@@ -39,6 +39,7 @@ import nato.ivct.commander.CmdListSuT;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdSetLogLevel;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
+import nato.ivct.commander.CmdSetTestEngine;
 import nato.ivct.commander.CmdStartTc;
 import nato.ivct.commander.CmdAbortTc;
 import nato.ivct.commander.Factory;
@@ -210,20 +211,22 @@ public class ServerSession extends AbstractServerSession {
         private final String settingsDesignator;
         private final String federationName;
         private final String federateName;
+        private final String testEngine;
 
-        public ExecuteTestCase(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
+        public ExecuteTestCase(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName, String testEngine) {
             this.sut = sut;
             this.tc = tc;
             this.badge = badge;
             this.settingsDesignator = settingsDesignator;
             this.federationName = federationName;
             this.federateName = federateName;
+            this.testEngine = testEngine;
         }
 
 
         @Override
         public CmdStartTc call() throws Exception {
-            final CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName, federateName);
+            final CmdStartTc tcCmd = Factory.createCmdStartTc(sut, badge, tc, settingsDesignator, federationName, federateName, testEngine);
             tcCmd.execute();
             return null;
         }
@@ -286,6 +289,22 @@ public class ServerSession extends AbstractServerSession {
         }
 
     }
+    
+    public class ExecuteSetTestEngine implements Callable<CmdSetTestEngine> {
+
+        private String testEngine;
+        
+        public ExecuteSetTestEngine(String testEngine) {
+            this.testEngine = testEngine;            
+        }
+
+        public CmdSetTestEngine call() throws Exception {
+            final CmdSetTestEngine setCmd = Factory.createCmdSetTestEngine(testEngine);
+            setCmd.execute();
+            return null;
+        }
+
+    }
 
     private static final long   serialVersionUID = 1L;
     private static final Logger LOG              = LoggerFactory.getLogger(ServerSession.class);
@@ -342,9 +361,9 @@ public class ServerSession extends AbstractServerSession {
     }
 
 
-    public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName) {
+    public void execStartTc(String sut, String tc, String badge, String settingsDesignator, String federationName, String federateName, String testEngine) {
         LOG.info("starting test case");
-        Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName), Jobs.newInput());
+        Jobs.schedule(new ExecuteTestCase(sut, tc, badge, settingsDesignator, federationName, federateName, testEngine), Jobs.newInput());
     }
 
 
@@ -356,5 +375,10 @@ public class ServerSession extends AbstractServerSession {
     public void execAbortTc(String sut, String tc) {
         LOG.info("abort test case");
         Jobs.schedule(new AbortTestCase(sut, tc), Jobs.newInput());
+    }
+    
+    public void setTestEngine(String testEngine) {
+        LOG.info("set TestEngine");
+        Jobs.schedule(new ExecuteSetTestEngine(testEngine), Jobs.newInput());
     }
 }
