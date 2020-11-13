@@ -32,7 +32,6 @@ public class TestEngineLookupCall extends LocalLookupCall<String> {
         return HeartBeatNotificationHandler.getHbLastReceivedMap().values().stream().filter(TestEngineLookupCall::isActiveTestEngine).map(HeartBeatNotification::getTestEngineLabel).sorted().map(testEngine -> new LookupRow<String>(testEngine, testEngine)).collect(Collectors.toList());
     }
 
-
     private static boolean isActiveTestEngine(final HeartBeatNotification notification) {
         if (("notNecessaryForLogSink").equalsIgnoreCase(notification.getTestEngineLabel()))
             return false;
@@ -45,5 +44,13 @@ public class TestEngineLookupCall extends LocalLookupCall<String> {
                 return false;
         }
     }
-
+    
+    public String getInitialTestEngine() {
+        List<LookupRow<String>> lookupRow = execCreateLookupRows();
+        if (!lookupRow.isEmpty()) {
+            LookupRow<String> initialTestEngine = lookupRow.get(0);
+            return initialTestEngine.getKey();
+        }
+        return "";
+    }
 }

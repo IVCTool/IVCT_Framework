@@ -39,6 +39,7 @@ import nato.ivct.gui.shared.AvailableLocaleLookupCall;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
 import nato.ivct.gui.shared.OptionsFormData;
+import nato.ivct.gui.shared.sut.ISuTTcService;
 
 
 @FormData(value = OptionsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -59,8 +60,8 @@ public class OptionsForm extends AbstractForm {
         final String logLevelString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, "");
         getLogLevelField().setValue(logLevelString);
         
-        // set the TestEngine
-        final String testEngineString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, "");
+        // set the selected TestEngine or the initial TestEngine
+        final String testEngineString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, BEANS.get(TestEngineLookupCall.class).getInitialTestEngine());
         getTestEngineField().setValue(testEngineString);
     }
 

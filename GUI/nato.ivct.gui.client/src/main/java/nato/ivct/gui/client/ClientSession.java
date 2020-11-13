@@ -71,8 +71,8 @@ public class ClientSession extends AbstractClientSession {
         final Locale userLocale = LocaleUtility.parse(localeString);
         setLocale(userLocale);
         
-        // set the TestEngine or a default value
-        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
+        // set the selected TestEngine or the initial TestEngine
+        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, BEANS.get(TestEngineLookupCall.class).getInitialTestEngine());
         BEANS.get(IOptionsService.class).setTestEngine(testEngine);
 
         setDesktop(new Desktop());
