@@ -1019,12 +1019,12 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected void execClickAction() {
 
                 // check the status of the TestEngine
-//                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
-//                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender(testEngine);
-//                if (hbn == null || hbn.notifyState != HbNotificationState.OK) {
-//                    MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
-//                    return;
-//                }
+                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
+                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender(testEngine);
+                if (hbn == null || hbn.notifyState != HbNotificationState.OK) {
+                    MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
+                    return;
+                }
 
                 // hide TC execute button if the same test case is already executed
                 final IDesktop desktop = ClientSessionProvider.currentSession().getDesktop();
