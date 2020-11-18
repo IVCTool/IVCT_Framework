@@ -39,7 +39,6 @@ import nato.ivct.gui.shared.AvailableLocaleLookupCall;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
 import nato.ivct.gui.shared.OptionsFormData;
-import nato.ivct.gui.shared.sut.ISuTTcService;
 
 
 @FormData(value = OptionsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -61,7 +60,7 @@ public class OptionsForm extends AbstractForm {
         getLogLevelField().setValue(logLevelString);
         
         // set the selected TestEngine or the initial TestEngine
-        final String testEngineString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, BEANS.get(TestEngineLookupCall.class).getInitialTestEngine());
+        final String testEngineString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, "");
         getTestEngineField().setValue(testEngineString);
     }
 
@@ -215,6 +214,7 @@ public class OptionsForm extends AbstractForm {
         if (logLevelChanged) {
             //Required for multiuser support: ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
             BEANS.get(IOptionsService.class).setLogLevel(logLevel);
+            ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
         }
     }
 
@@ -232,6 +232,7 @@ public class OptionsForm extends AbstractForm {
         final boolean testEngineChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_TEST_ENGINE, getTestEngineField().getValue());
         if (testEngineChanged) {
             BEANS.get(IOptionsService.class).setTestEngine(testEngine);
+            ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
         }
     }
 }
