@@ -509,9 +509,14 @@ public class Factory {
     }
 
 
+    public static CmdOperatorConfirmation createCmdOperatorConfirmation(String sutName, String testSuiteId, String tc, String testEngine, boolean confirmationBool, String text) {
+        initialize();
+        return new CmdOperatorConfirmation(sutName, testSuiteId, tc, testEngine, confirmationBool, text);
+    }
+    
     public static CmdOperatorConfirmation createCmdOperatorConfirmation(String sutName, String testSuiteId, String tc, boolean confirmationBool, String text) {
         initialize();
-        return new CmdOperatorConfirmation(sutName, testSuiteId, tc, confirmationBool, text);
+        return new CmdOperatorConfirmation(sutName, testSuiteId, tc, TESTENGINE_LABEL_DEFLT, confirmationBool, text);
     }
 
 

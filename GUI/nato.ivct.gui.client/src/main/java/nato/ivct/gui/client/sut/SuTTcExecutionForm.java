@@ -272,8 +272,8 @@ public class SuTTcExecutionForm extends AbstractForm {
     }
 
 
-    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
-        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, operatorMessage);
+    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String testEngine, String operatorMessage) {
+        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, testEngine, operatorMessage);
         form.start();
         form.waitFor();
     }
@@ -283,12 +283,14 @@ public class SuTTcExecutionForm extends AbstractForm {
         private String sutName;
         private String testSuiteId;
         private String testCaseId;
+        private String testEngine;
         private String operatorMessage;
 
-        public ContentForm(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
+        public ContentForm(String sutName, String testSuiteId, String testCaseId, String testEngine, String operatorMessage) {
             this.sutName = sutName;
             this.testSuiteId = testSuiteId;
             this.testCaseId = testCaseId;
+            this.testEngine = testEngine;
             this.operatorMessage = operatorMessage;
         }
 
@@ -398,8 +400,36 @@ public class SuTTcExecutionForm extends AbstractForm {
                     }
 
                 }
-
+                
                 @Order(40)
+                public class TestEngineField extends AbstractLabelField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TestEngine");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(testEngine);
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                }
+
+                @Order(50)
                 public class MessageField extends AbstractStringField {
 
                     @Override
@@ -444,7 +474,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 }
 
-                @Order(50)
+                @Order(60)
                 public class CommentField extends AbstractStringField {
 
                     @Override
@@ -466,7 +496,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            @Order(60)
+            @Order(70)
             public class ConfirmButton extends AbstractButton {
 
                 @Override
@@ -480,7 +510,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     ContentForm.this.doClose();
 
                     // Confirmation Message for the TestEngine            
-                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, true, getCommentField().getValue());
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, testEngine, true, getCommentField().getValue());
                     operatorConfirmationCmd.execute();
 
                 }
@@ -491,7 +521,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            @Order(70)
+            @Order(80)
             public class CancelButton extends AbstractButton {
 
                 @Override
@@ -505,7 +535,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     ContentForm.this.doClose();
 
                     // Reject Message for the TestEngine              
-                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, false, getCommentField().getValue());
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, testEngine, false, getCommentField().getValue());
                     operatorConfirmationCmd.execute();
 
                 }
