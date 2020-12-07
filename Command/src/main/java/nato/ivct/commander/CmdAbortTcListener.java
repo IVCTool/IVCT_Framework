@@ -31,6 +31,7 @@ public class CmdAbortTcListener implements MessageListener, Command {
     public class TcAbortInfo {
         public String sutName;
         public String testCaseId;
+        public String testEngineLabel;
     }
 
     public interface OnAbortTestCaseListener {
@@ -67,6 +68,7 @@ public class CmdAbortTcListener implements MessageListener, Command {
 
             info.sutName = (String) jsonObject.get(CmdAbortTc.SUT_NAME);
             info.testCaseId = (String) jsonObject.get(CmdAbortTc.TC_ID);
+            info.testEngineLabel = (String) jsonObject.get(CmdAbortTc.TEST_ENGINE);
 
             Factory.LOGGER.info("AbortTcListener Command received: {}", jsonObject);
 

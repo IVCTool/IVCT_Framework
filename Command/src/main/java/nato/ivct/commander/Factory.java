@@ -420,9 +420,9 @@ public class Factory {
     }
     
     
-    public static CmdAbortTc createCmdAbortTc(String sut, String tc) {
+    public static CmdAbortTc createCmdAbortTc(String sut, String tc, String testEngine) {
         initialize();
-        return new CmdAbortTc(sut, tc);
+        return new CmdAbortTc(sut, tc, testEngine);
     }
 
 

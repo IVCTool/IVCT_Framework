@@ -258,9 +258,9 @@ public class SuTTcService implements ISuTTcService {
 
 
     @Override
-    public void abortTestCase(String sutId, String tcId) {
+    public void abortTestCase(String sutId, String tcId, String testEngine) {
         // execute the CmdAbortTc command
-        ServerSession.get().execAbortTc(sutId, tcId);
+        ServerSession.get().execAbortTc(sutId, tcId, testEngine);
     }
 
 }

@@ -1119,10 +1119,13 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 //hide abort button
                 this.setVisible(false);
+                
+                // get the current TestEngine
+                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, "");
                          
                 //abort test case
                 final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
-                sutCbService.abortTestCase(getSutId(), getTestCaseId());
+                sutCbService.abortTestCase(getSutId(), getTestCaseId(), testEngine);
             }
         }  
     }

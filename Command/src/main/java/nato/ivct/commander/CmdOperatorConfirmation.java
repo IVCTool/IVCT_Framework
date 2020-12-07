@@ -44,6 +44,7 @@ public class CmdOperatorConfirmation implements Command {
 	 * @param sutName the SUT name
 	 * @param testSuiteId the testsuite id
 	 * @param tc the fully qualified text case name
+	 * @param testEngine the TestEngine name
 	 * @param confirmationBool true means positive, false negative
 	 * @param text the text to be written to the tc log
 	 */

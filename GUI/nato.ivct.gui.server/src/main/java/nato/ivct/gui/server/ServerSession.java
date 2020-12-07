@@ -239,16 +239,18 @@ public class ServerSession extends AbstractServerSession {
     public class AbortTestCase implements Callable<CmdAbortTc> {
         private final String sut;
         private final String tc;
+        private final String testEngine;
 
-        public AbortTestCase(String sut, String tc) {
+        public AbortTestCase(String sut, String tc, String testEngine) {
             this.sut = sut;
             this.tc = tc;
+            this.testEngine = testEngine;
         }
 
 
         @Override
         public CmdAbortTc call() throws Exception {
-            final CmdAbortTc tcCmd = Factory.createCmdAbortTc(sut, tc);
+            final CmdAbortTc tcCmd = Factory.createCmdAbortTc(sut, tc, testEngine);
             tcCmd.execute();
             return null;
         }
@@ -372,9 +374,9 @@ public class ServerSession extends AbstractServerSession {
         Jobs.schedule(new ExecuteSetLogLevel(level), Jobs.newInput());
     }
     
-    public void execAbortTc(String sut, String tc) {
+    public void execAbortTc(String sut, String tc, String testEngine) {
         LOG.info("abort test case");
-        Jobs.schedule(new AbortTestCase(sut, tc), Jobs.newInput());
+        Jobs.schedule(new AbortTestCase(sut, tc, testEngine), Jobs.newInput());
     }
     
     public void setTestEngine(String testEngine) {
