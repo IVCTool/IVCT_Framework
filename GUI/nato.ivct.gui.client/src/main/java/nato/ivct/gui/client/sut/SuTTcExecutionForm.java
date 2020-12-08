@@ -1148,7 +1148,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
 
-            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result));
+            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result + " - " + getSutId()));
             
             setEnabledPermission(new UpdateSuTPermission());
         }
