@@ -310,8 +310,8 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		 // if the TestEngineLabel is like makRti4.6* but the settingsDesignator is not for MAK RtI, stop here
      if ( info.testEngineLabel.toLowerCase().contains("mak".toLowerCase()) &&
                                !info.settingsDesignator.toLowerCase().contains("setqb".toLowerCase()) ) {
-       tcLogger.warn("TestEngine is startet for MAK RTI but got wrong settingsDesignator - finish here ");
-       return; 
+       tcLogger.warn("TestEngine is startet for MAK RTI but possibly got wrong settingsDesignator  ");
+       //return; 
      }
      
 		Runnable th1 = new TestScheduleRunner(info);
