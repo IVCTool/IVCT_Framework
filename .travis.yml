@@ -9,15 +9,12 @@ branches:
 
 before_install:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    # - echo "$TNO_DOCKER_PASSWORD" | docker login app-docker136.hex.tno.nl -u "$TNO_DOCKER_USERNAME" --password-stdin
-    # - docker pull app-docker136.hex.tno.nl/vtmak/lrc:4.5f-alpine
-    # - docker pull app-docker136.hex.tno.nl/pitch/lrc:5.4.3.0-alpine-nolib
-    # - docker pull app-docker136.hex.tno.nl/portico/lrc:nightly-20160528-alpine
 
 install:
   - gradle -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
 
 script:
+  # extract the ivct version tag
   - export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
   # tag branch version
   - docker tag ivct/logsink:$VERSION ivct/logsink:$TRAVIS_BRANCH-latest
