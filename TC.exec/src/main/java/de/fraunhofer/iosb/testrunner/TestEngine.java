@@ -345,25 +345,30 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	@Override
 	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
 	  
-    // for enhanced RTI-Type-Information brf 07.12.2020              
-    Logger tcLogger = LoggerFactory.getLogger(operatorConfirmationInfo.testCaseId);
-    tcLogger.info("Testengine.onOperatorConfirmation get OperatorConfirmationInfo.testEngineLabel: " + operatorConfirmationInfo.testEngineLabel);
-    if (!verifyTestEngineLabel("onOperatorConfirmation", tcLogger, operatorConfirmationInfo.testEngineLabel)) {
-      return;
-    }
+        // for enhanced RTI-Type-Information brf 07.12.2020              
+        Logger tcLogger = LoggerFactory.getLogger(operatorConfirmationInfo.testCaseId);
+
+        if (operatorConfirmationInfo.testEngineLabel != null) {
+            tcLogger.info("Testengine.onOperatorConfirmation get OperatorConfirmationInfo.testEngineLabel: " + operatorConfirmationInfo.testEngineLabel);
+       
+            if (!verifyTestEngineLabel("onOperatorConfirmation", tcLogger, operatorConfirmationInfo.testEngineLabel)) {
+                return;
+            }
+        }
     
 		testCase.onOperatorConfirmation(operatorConfirmationInfo);
 	}
 	
-  //for enhanced RTI-Type-Information brf 07.12.2020
-  private boolean verifyTestEngineLabel(String requestingMethod, Logger tcLogger, String testEngineLabel_) {
-    boolean competence = true;
-    if (!(testEngineLabel_.equals(testEngineLabel) || testEngineLabel_.equals(Factory.TESTENGINE_LABEL_DEFLT))) {
-      tcLogger.info("TestEngine." + requestingMethod + ": This Job is not for this TestEngine - do not perfom\"  ");
-      competence = false;
+
+    //for enhanced RTI-Type-Information brf 07.12.2020
+    private boolean verifyTestEngineLabel(String requestingMethod, Logger tcLogger, String testEngineLabel_) {
+        boolean competence = true;
+        if (!(testEngineLabel_.equals(testEngineLabel) || testEngineLabel_.equals(Factory.TESTENGINE_LABEL_DEFLT))) {
+            tcLogger.info("TestEngine." + requestingMethod + ": This Job is not for this TestEngine - do not perfom\"  ");
+            competence = false;
+        }
+        return competence;
     }
-    return competence;
-  }
 
 	/*
 	 * implement a heartbeat , brf 05.07.2019 (Fraunhofer IOSB) CmdHeartbeatSend
