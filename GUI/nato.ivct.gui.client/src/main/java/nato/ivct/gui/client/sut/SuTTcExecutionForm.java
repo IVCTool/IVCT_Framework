@@ -272,8 +272,8 @@ public class SuTTcExecutionForm extends AbstractForm {
     }
 
 
-    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
-        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, operatorMessage);
+    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String testEngine, String operatorMessage) {
+        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, testEngine, operatorMessage);
         form.start();
         form.waitFor();
     }
@@ -283,12 +283,14 @@ public class SuTTcExecutionForm extends AbstractForm {
         private String sutName;
         private String testSuiteId;
         private String testCaseId;
+        private String testEngine;
         private String operatorMessage;
 
-        public ContentForm(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
+        public ContentForm(String sutName, String testSuiteId, String testCaseId, String testEngine, String operatorMessage) {
             this.sutName = sutName;
             this.testSuiteId = testSuiteId;
             this.testCaseId = testCaseId;
+            this.testEngine = testEngine;
             this.operatorMessage = operatorMessage;
         }
 
@@ -398,8 +400,36 @@ public class SuTTcExecutionForm extends AbstractForm {
                     }
 
                 }
-
+                
                 @Order(40)
+                public class TestEngineField extends AbstractLabelField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TestEngine");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(testEngine);
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                }
+
+                @Order(50)
                 public class MessageField extends AbstractStringField {
 
                     @Override
@@ -444,7 +474,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 }
 
-                @Order(50)
+                @Order(60)
                 public class CommentField extends AbstractStringField {
 
                     @Override
@@ -466,7 +496,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            @Order(60)
+            @Order(70)
             public class ConfirmButton extends AbstractButton {
 
                 @Override
@@ -480,7 +510,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     ContentForm.this.doClose();
 
                     // Confirmation Message for the TestEngine            
-                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, true, getCommentField().getValue());
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, testEngine, true, getCommentField().getValue());
                     operatorConfirmationCmd.execute();
 
                 }
@@ -491,7 +521,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            @Order(70)
+            @Order(80)
             public class CancelButton extends AbstractButton {
 
                 @Override
@@ -505,7 +535,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     ContentForm.this.doClose();
 
                     // Reject Message for the TestEngine              
-                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, false, getCommentField().getValue());
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, testEngine, false, getCommentField().getValue());
                     operatorConfirmationCmd.execute();
 
                 }
@@ -1019,8 +1049,9 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected void execClickAction() {
 
                 // check the status of the TestEngine
-                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
-                if (hbn.notifyState != HbNotificationState.OK) {
+                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
+                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender(testEngine);
+                if (hbn == null || hbn.notifyState != HbNotificationState.OK) {
                     MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
                     return;
                 }
@@ -1060,10 +1091,12 @@ public class SuTTcExecutionForm extends AbstractForm {
                         // before starting the TC, communicate this user's last used log level
                         final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
                         final IOptionsService service = BEANS.get(IOptionsService.class);
-                        service.setLogLevel(logLevel);                        
+                        service.setLogLevel(logLevel);
+                        // get TestEngine with which the test case should be started
+                        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
                         // now start the TC
                         final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
-                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId());
+                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId(), testEngine);
                     }
                 }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
             }
@@ -1086,10 +1119,13 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 //hide abort button
                 this.setVisible(false);
+                
+                // get the current TestEngine
+                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, "");
                          
                 //abort test case
                 final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
-                sutCbService.abortTestCase(getSutId(), getTestCaseId());
+                sutCbService.abortTestCase(getSutId(), getTestCaseId(), testEngine);
             }
         }  
     }
@@ -1112,7 +1148,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
 
-            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result));
+            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result + " - " + getSutId()));
             
             setEnabledPermission(new UpdateSuTPermission());
         }

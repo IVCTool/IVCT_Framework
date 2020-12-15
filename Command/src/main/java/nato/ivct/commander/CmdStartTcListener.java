@@ -37,6 +37,8 @@ public class CmdStartTcListener implements MessageListener, Command {
         public String settingsDesignator;
         public String federationName;
         public String sutFederateName;
+        // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+        public String testEngineLabel;
     }
 
     public interface OnStartTestCaseListener {
@@ -60,7 +62,7 @@ public class CmdStartTcListener implements MessageListener, Command {
         if (!(message instanceof TextMessage))
             return;
 
-        final TextMessage textMessage = (TextMessage) message;
+        final TextMessage textMessage = (TextMessage) message;        
         try {
             final String content = textMessage.getText();
             JSONParser jsonParser = new JSONParser();
@@ -80,8 +82,16 @@ public class CmdStartTcListener implements MessageListener, Command {
             info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
             info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
             info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
-            info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
-
+            info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString(); 
+            
+            // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+            if ( (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString() == null) ||
+                    (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString().isEmpty() ) )  {
+            	info.testEngineLabel= "TestEngine_Label not given to CmdStartTCListen" ;
+            } else {
+            info.testEngineLabel = jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString();
+            }            
+   
             Factory.LOGGER.info("StartTcListener Command received: {}", jsonObject);
 
             // check for missing values
@@ -101,6 +111,9 @@ public class CmdStartTcListener implements MessageListener, Command {
                 Factory.LOGGER.error("sutFederateName is missing");
             if (info.testCaseParam == null)
                 Factory.LOGGER.error("testCaseParam is missing");
+            // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+            if (info.testEngineLabel == null)
+                Factory.LOGGER.error("testEngineLabel is missing");
 
             listener.onStartTestCase(info);
         }

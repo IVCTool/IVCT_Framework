@@ -32,24 +32,38 @@ public class CmdStartTc implements Command {
     public static final String SETTINGS_DESIGNATOR = "settingsDesignator";
     public static final String FEDERATION          = "federationName";
 	public static final String FEDERATE            = "sutFederateName";
+	// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+	public static final String TESTENGINE_LABEL    = "testEngineLabel";
             
 	// private MessageProducer producer;
 	private String sut;
 	private String testSuiteName;
     private String tc;
     private String settingsDesignator;
+    
     private String federationName;
 	private String sutFederateName;
+	// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+	private String testEngineLabel ;
+	
+	
 
 	public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CmdStartTc.class);
 
+	// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
 	public CmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
+		this(sut, testSuiteName,tc ,settingsDesignator, federationName, sutFederateName, Factory.TESTENGINE_LABEL_DEFLT );		
+	}
+	
+	public CmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName, String _testEngineLabel) {
 		this.sut = sut;
 		this.tc = tc;
 		this.testSuiteName = testSuiteName;
 		this.settingsDesignator = settingsDesignator;
 		this.federationName = federationName;
 		this.sutFederateName = sutFederateName;
+		// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+	    this.testEngineLabel = _testEngineLabel;		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,6 +105,9 @@ public class CmdStartTc implements Command {
             startCmd.put(SETTINGS_DESIGNATOR, settingsDesignator);
             startCmd.put(FEDERATION, federationName);
 			startCmd.put(FEDERATE, sutFederateName);
+			// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+			startCmd.put(TESTENGINE_LABEL, testEngineLabel);
+			
 			
 			LOGGER.info("StartTc Command: {}", startCmd);
 

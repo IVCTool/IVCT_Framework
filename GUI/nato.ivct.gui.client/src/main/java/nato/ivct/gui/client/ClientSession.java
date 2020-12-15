@@ -38,6 +38,7 @@ public class ClientSession extends AbstractClientSession {
     public static final String PREF_USER_LOCALE = "PREF_USER_LOCALE";
     public static final String DEF_LOG_LEVEL    = "DEF_LOG_LEVEL";
     public static final String CUR_LOG_LEVEL    = "CUR_LOG_LEVEL";
+    public static final String CUR_TEST_ENGINE  = "CUR_TEST_ENGINE";
 
     public ClientSession() {
         super(true);
@@ -69,6 +70,10 @@ public class ClientSession extends AbstractClientSession {
         final String localeString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(PREF_USER_LOCALE, Locale.ENGLISH.toString());
         final Locale userLocale = LocaleUtility.parse(localeString);
         setLocale(userLocale);
+        
+        // set the selected TestEngine or the initial TestEngine
+        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, BEANS.get(TestEngineLookupCall.class).getInitialTestEngine());
+        BEANS.get(IOptionsService.class).setTestEngine(testEngine);
 
         setDesktop(new Desktop());
 

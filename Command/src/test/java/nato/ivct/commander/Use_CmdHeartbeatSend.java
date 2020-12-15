@@ -32,6 +32,10 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 	 private boolean health;
 	 
 	 private String myClassName = "Use_CmdHeartbeatSend";
+	 
+	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+	// private String rtiTypeEngineLabel;
+    private String testEngineLabel="notInUseIn_CmdHeartbeatSend" ;
 	
 	
 	  //  for this  a ActiveMQ has to be started
@@ -90,6 +94,10 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
           return myClassName;
       }
 	  
+   // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+  	public String getMyTestEngineLabel() {
+		return testEngineLabel;
+	}
 	  
 
 }
