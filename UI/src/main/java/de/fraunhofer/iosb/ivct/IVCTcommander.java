@@ -14,7 +14,6 @@ limitations under the License.
 package de.fraunhofer.iosb.ivct;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
