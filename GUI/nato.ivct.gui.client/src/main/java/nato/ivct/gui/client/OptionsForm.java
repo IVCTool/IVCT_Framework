@@ -34,6 +34,7 @@ import nato.ivct.gui.client.OptionsForm.MainBox.CancelButton;
 import nato.ivct.gui.client.OptionsForm.MainBox.LocaleField;
 import nato.ivct.gui.client.OptionsForm.MainBox.LogLevelField;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
+import nato.ivct.gui.client.OptionsForm.MainBox.TestEngineField;
 import nato.ivct.gui.shared.AvailableLocaleLookupCall;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
@@ -48,7 +49,6 @@ public class OptionsForm extends AbstractForm {
         return TEXTS.get("Options");
     }
 
-
     @Override
     protected void execInitForm() {
         // set the language
@@ -58,6 +58,10 @@ public class OptionsForm extends AbstractForm {
         // set the log level
         final String logLevelString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, "");
         getLogLevelField().setValue(logLevelString);
+        
+        // set the selected TestEngine or the initial TestEngine
+        final String testEngineString = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, "");
+        getTestEngineField().setValue(testEngineString);
     }
 
 
@@ -78,6 +82,10 @@ public class OptionsForm extends AbstractForm {
 
     public LogLevelField getLogLevelField() {
         return getFieldByClass(LogLevelField.class);
+    }
+    
+    public TestEngineField getTestEngineField() {
+        return getFieldByClass(TestEngineField.class);
     }
 
 
@@ -146,6 +154,33 @@ public class OptionsForm extends AbstractForm {
                 return LogLevelLookupCall.class;
             }
         }
+               
+        @Order(1200)
+        public class TestEngineField extends AbstractSmartField<String> {
+
+            @Override
+            protected int getConfiguredGridW() {
+                return 1;
+            }
+
+
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("TestEngine");
+            }
+
+
+            @Override
+            protected boolean getConfiguredStatusVisible() {
+                return false;
+            }
+
+
+            @Override
+            protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+                return TestEngineLookupCall.class;
+            }
+        }
 
         @Order(100000)
         public class OkButton extends AbstractOkButton {
@@ -154,6 +189,7 @@ public class OptionsForm extends AbstractForm {
                 // publish log level
                 final String level = getLogLevelField().getValue();
                 final Locale language = getLocaleField().getValue();
+                final String testEngine = getTestEngineField().getValue();
 
                 if (level != null) {
                     storeLogLevel(level);
@@ -161,6 +197,10 @@ public class OptionsForm extends AbstractForm {
 
                 if (language != null) {
                     storeLanguageOptions();
+                }
+                
+                if (testEngine != null) {
+                    storeTestEngine(testEngine);
                 }
             }
         }
@@ -174,6 +214,7 @@ public class OptionsForm extends AbstractForm {
         if (logLevelChanged) {
             //Required for multiuser support: ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
             BEANS.get(IOptionsService.class).setLogLevel(logLevel);
+            ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
         }
     }
 
@@ -184,6 +225,14 @@ public class OptionsForm extends AbstractForm {
         if (localeChanged) {
             ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
             MessageBoxes.createOk().withBody(TEXTS.get("ChangeOfLanguageApplicationOnNextLogin")).show();
+        }
+    }
+    
+    protected void storeTestEngine(String testEngine) {
+        final boolean testEngineChanged = ClientUIPreferences.getClientPreferences(ClientSession.get()).put(ClientSession.CUR_TEST_ENGINE, getTestEngineField().getValue());
+        if (testEngineChanged) {
+            BEANS.get(IOptionsService.class).setTestEngine(testEngine);
+            ClientUIPreferences.getClientPreferences(ClientSession.get()).flush();
         }
     }
 }

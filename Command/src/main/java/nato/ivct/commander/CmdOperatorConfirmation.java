@@ -25,6 +25,7 @@ public class CmdOperatorConfirmation implements Command {
     public static final String SUT_NAME				= "sutName";
     public static final String TS_ID				= "testSuiteId";
     public static final String TC_ID				= "testCaseId";
+    public static final String TEST_ENGINE          = "testEngine";
     public static final String CONFIRMATION_BOOL	= "confirmationBool";
     public static final String TEXT					= "text";
 
@@ -32,6 +33,7 @@ public class CmdOperatorConfirmation implements Command {
     private String sutName;
     private String testSuiteId;
     private String tc;
+    private String testEngine;
 	private boolean confirmationBool;
 	private String text;
 
@@ -42,13 +44,15 @@ public class CmdOperatorConfirmation implements Command {
 	 * @param sutName the SUT name
 	 * @param testSuiteId the testsuite id
 	 * @param tc the fully qualified text case name
+	 * @param testEngine the TestEngine name
 	 * @param confirmationBool true means positive, false negative
 	 * @param text the text to be written to the tc log
 	 */
-	public CmdOperatorConfirmation(String sutName, String testSuiteId, String tc, boolean confirmationBool, String text) {
+	public CmdOperatorConfirmation(String sutName, String testSuiteId, String tc, String testEngine, boolean confirmationBool, String text) {
 		this.sutName = sutName;
 		this.testSuiteId = testSuiteId;
 		this.tc = tc;
+		this.testEngine = testEngine;
 		this.confirmationBool = confirmationBool;
 		this.text = text;
 	}
@@ -76,6 +80,7 @@ public class CmdOperatorConfirmation implements Command {
 		operatorConfirmationCmd.put(SUT_NAME, sutName);
 		operatorConfirmationCmd.put(TS_ID, testSuiteId);
 		operatorConfirmationCmd.put(TC_ID, tc);
+	    operatorConfirmationCmd.put(TEST_ENGINE, testEngine);
 		if (confirmationBool) {
 			operatorConfirmationCmd.put(CONFIRMATION_BOOL, "true");
 		} else {

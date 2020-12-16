@@ -30,6 +30,8 @@ public interface IOptionsService extends IService {
 	
 	void setLogLevel (String level);
 	
+	void setTestEngine (String testEngine);
+	
 	String getIvctVersion();
 	
 	String getIvctBuild();

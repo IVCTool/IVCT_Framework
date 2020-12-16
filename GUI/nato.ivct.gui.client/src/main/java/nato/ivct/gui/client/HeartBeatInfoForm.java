@@ -1,4 +1,4 @@
-/* Copyright 2020, Michael Theis (Fraunhofer IOSB)
+/* Copyright 2020, Michael Theis, Felix Schoeppenthau (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
@@ -29,6 +30,7 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.CloseButton;
 import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.HbLastSeenField;
 import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.StatusField;
+import nato.ivct.gui.client.HeartBeatInfoForm.MainBox.LabelField;
 import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.OptionsFormData;
@@ -48,10 +50,14 @@ public class HeartBeatInfoForm extends AbstractForm {
         final long weekInSeconds = dayInSeconds * 7;
         final long monthInSeconds = dayInSeconds * 30;
         final long yearInSeconds = dayInSeconds * 365;
+        
+        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
 
-        HeartBeatNotification hbn = HeartBeatNotificationHandler.hbLastReceivedMap.get(getTitle());
+        HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine".equals(getTitle()) ? testEngine : "notNecessaryForLogSink");
         if (hbn != null) {
             getFieldByClass(StatusField.class).setValue(hbn.notifyState.name() + "  (" + getTitle() + ")");
+            
+            getFieldByClass(LabelField.class).setValue(hbn.testEngineLabel);
 
             long timedif;
             String timeElapsed = "";
@@ -146,6 +152,27 @@ public class HeartBeatInfoForm extends AbstractForm {
             @Override
             protected String getConfiguredLabel() {
                 return TEXTS.get("LastSeen");
+            }
+
+
+            @Override
+            protected boolean getConfiguredEnabled() {
+                return false;
+            }
+        }
+        
+        @Order(1200)
+        public class LabelField extends AbstractStringField {
+
+            @Override
+            protected int getConfiguredGridW() {
+                return 1;
+            }
+
+
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("Label");
             }
 
 

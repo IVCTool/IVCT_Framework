@@ -31,6 +31,7 @@ public class CmdOperatorConfirmationListener implements MessageListener, Command
 		public String testCaseId;
 		public boolean confirmationBool;
 		public String text;
+        public String testEngineLabel;
 	}
 
 	public interface OnOperatorConfirmationListener {
@@ -71,6 +72,7 @@ public class CmdOperatorConfirmationListener implements MessageListener, Command
                         	info.confirmationBool = false;
                         }
                         info.text = (String) jsonObject.get(CmdOperatorConfirmation.TEXT);
+                        info.testEngineLabel = (String) jsonObject.get(CmdOperatorConfirmation.TEST_ENGINE);
 
 						Factory.LOGGER.info("CmdOperatorConfirmationListener Command received: {}", jsonObject);
 

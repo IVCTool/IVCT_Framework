@@ -12,6 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.jms.TextMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +58,14 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	private CmdListTestSuites testSuites;
 	private Map<String, URLClassLoader> classLoaders = new HashMap<>();
 	
+	
+	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    private String testEngineLabel;
+	
+	
 	// the number of threads in the fixed thread pool
 	private static final int MAX_THREADS = 10;
+	
 	
 	ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
 	private Map<String,SoftReference<Future<?>>> threadCache = new HashMap<>();
@@ -85,7 +93,10 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		myClassName = this.getClass().getSimpleName();
 
 		// initialize the IVCT Commander Factory
-		Factory.initialize();
+		Factory.initialize();		
+		
+		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+		testEngineLabel = Factory.props.getProperty("TESTENGINE_LABEL") ;		
 
 		// Configure the logger
 		LogConfigurationHelper.configureLogging();
@@ -240,7 +251,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
-				testCase.setSutFederateName(info.sutFederateName);
+				testCase.setSutFederateName(info.sutFederateName);		
 
 				/*
 				 * Check the compability of IVCT-Version which had this testCase at
@@ -283,10 +294,26 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	    executorService.shutdown();
 		System.exit(0);
 	}
+	
 
 	@Override
 	public void onStartTestCase(TcInfo info) {
-	    Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+		Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+		
+		// for enhanced RTI-Type-Information brf 06.11.2020
+		 tcLogger.info("TestEngine.onStartTestCase get TCInfo.testEngineLabel  \"" + info.testEngineLabel  +"\"" );
+		 tcLogger.info("TestEngine.onStartTestCase get TCInfo.settingsDesignator \""+ info.settingsDesignator +"\"");
+		 if ( ! verifyTestEngineLabel("onStartTestCase", tcLogger, info.testEngineLabel ) ) {
+		   return;
+		 }
+		 
+		 // if the TestEngineLabel is like makRti4.6* but the settingsDesignator is not for MAK RtI, stop here
+     if ( info.testEngineLabel.toLowerCase().contains("mak".toLowerCase()) &&
+                               !info.settingsDesignator.toLowerCase().contains("setqb".toLowerCase()) ) {
+       tcLogger.warn("TestEngine is startet for MAK RTI but possibly got wrong settingsDesignator  ");
+       //return; 
+     }
+     
 		Runnable th1 = new TestScheduleRunner(info);
 		Future<?> startedThread = executorService.submit(th1);
 		threadCache.put(info.testCaseId, new SoftReference<>(startedThread));
@@ -296,6 +323,13 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
    @Override
     public void onAbortTestCase(TcAbortInfo info) {
        Logger tcLogger = LoggerFactory.getLogger(info.testCaseId);
+       
+    // for  RTI-Type-Information brf 07.12.2020 
+       tcLogger.info("TestEngine.onAbortTestCase get TcAbortInfo.testEngineLabel  \"" + info.testEngineLabel  +"\"" );           
+       if ( ! verifyTestEngineLabel("onAbortTestCase", tcLogger, info.testEngineLabel ) ) {
+         return;
+       }
+          
        tcLogger.warn("Aborting the test case: {}", info.testCaseId);
        Future<?> threadToAbort = threadCache.get(info.testCaseId).get();
        if (threadToAbort != null && !threadToAbort.isDone() && !threadToAbort.isCancelled()) {
@@ -310,8 +344,31 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 
 	@Override
 	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
+	  
+        // for enhanced RTI-Type-Information brf 07.12.2020              
+        Logger tcLogger = LoggerFactory.getLogger(operatorConfirmationInfo.testCaseId);
+
+        if (operatorConfirmationInfo.testEngineLabel != null) {
+            tcLogger.info("Testengine.onOperatorConfirmation get OperatorConfirmationInfo.testEngineLabel: " + operatorConfirmationInfo.testEngineLabel);
+       
+            if (!verifyTestEngineLabel("onOperatorConfirmation", tcLogger, operatorConfirmationInfo.testEngineLabel)) {
+                return;
+            }
+        }
+    
 		testCase.onOperatorConfirmation(operatorConfirmationInfo);
 	}
+	
+
+    //for enhanced RTI-Type-Information brf 07.12.2020
+    private boolean verifyTestEngineLabel(String requestingMethod, Logger tcLogger, String testEngineLabel_) {
+        boolean competence = true;
+        if (!(testEngineLabel_.equals(testEngineLabel) || testEngineLabel_.equals(Factory.TESTENGINE_LABEL_DEFLT))) {
+            tcLogger.info("TestEngine." + requestingMethod + ": This Job is not for this TestEngine - do not perfom\"  ");
+            competence = false;
+        }
+        return competence;
+    }
 
 	/*
 	 * implement a heartbeat , brf 05.07.2019 (Fraunhofer IOSB) CmdHeartbeatSend
@@ -330,5 +387,12 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	public boolean getMyHealth() {
 		return health;
 	}
+	
+	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+	public String getMyTestEngineLabel() {
+		return testEngineLabel;
+	}
+	
+	
 
 }

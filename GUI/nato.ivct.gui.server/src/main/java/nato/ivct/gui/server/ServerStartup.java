@@ -149,6 +149,10 @@ public class ServerStartup implements IPlatformListener {
                 hbn.lastSendingTime = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_LASTSENDINGTIME, "");
                 hbn.senderHealthState = (boolean) heartBeat.getOrDefault(CmdHeartbeatSend.HB_SENDERHEALTHSTATE, false);
                 hbn.comment = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_COMMENT, "");
+                
+                // for enhanced heartbeat with RTI-Type-Information brf 04.11.2020
+                hbn.testEngineLabel = (String) heartBeat.getOrDefault(CmdHeartbeatSend.HB_TESTENGINELABEL, "");
+                
             }
             catch (final Exception exc) {
                 exc.printStackTrace();

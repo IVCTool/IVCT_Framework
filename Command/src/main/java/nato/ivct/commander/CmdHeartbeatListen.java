@@ -102,7 +102,8 @@ public class CmdHeartbeatListen implements MessageListener, Command {
         JSONObject jMessage = (JSONObject) jsonParser.parse(content);
                 
         // get the HB_Sender-name from the JsonObject
-        String senderName = (String) jMessage.get(CmdHeartbeatSend.HB_SENDER);
+        //String senderName = (String) jMessage.get(CmdHeartbeatSend.HB_SENDER);
+        String senderName = (String) jMessage.get(CmdHeartbeatSend.HB_SENDER) + "_" + jMessage.get(CmdHeartbeatSend.HB_TESTENGINELABEL);
 
         /* if we got a desiredHeartBeatSenderClass but in the Message of ActiveMQ in
          * "HeartbeatSender" this name is not found, we discard this message
