@@ -139,7 +139,7 @@ public class Desktop extends AbstractDesktop {
     public class AlterSuTMenu extends AbstractMenu {
         @Override
         protected String getConfiguredText() {
-            return TEXTS.get("SuTSettings");
+            return TEXTS.get("SuT");
         }
 
 
