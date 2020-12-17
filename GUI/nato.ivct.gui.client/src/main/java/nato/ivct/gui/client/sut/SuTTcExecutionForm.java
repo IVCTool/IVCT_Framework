@@ -14,8 +14,10 @@ limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -25,11 +27,15 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
@@ -44,7 +50,9 @@ import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 
 import nato.ivct.commander.CmdOperatorConfirmation;
@@ -52,7 +60,11 @@ import nato.ivct.commander.Factory;
 import nato.ivct.gui.client.ClientSession;
 import nato.ivct.gui.client.HeartBeatNotificationHandler;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.ContentForm.MainBox.FieldsBox.CommentField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.CloseButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcRequirementTableField;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcRequirementTableField.TcRequirementTable;
+import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.TcAbortButton;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcDescrField;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcExecutionStatus;
 import nato.ivct.gui.client.sut.SuTTcExecutionForm.MainBox.GeneralBox.TcProgressField;
@@ -64,6 +76,7 @@ import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.HeartBeatNotification.HbNotificationState;
 import nato.ivct.gui.shared.IOptionsService;
 import nato.ivct.gui.shared.LogLevelLookupCall;
+import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTTcService;
 import nato.ivct.gui.shared.sut.SuTTcExecutionFormData;
 import nato.ivct.gui.shared.sut.UpdateSuTPermission;
@@ -135,8 +148,13 @@ public class SuTTcExecutionForm extends AbstractForm {
     public void setTestCaseId(String testCaseId) {
         this.testCaseId = testCaseId;
     }
+    
+    
+    public TcRequirementTableField getTcRequirementTableField() {
+        return getFieldByClass(TcRequirementTableField.class);
+    }
 
-
+    
     @FormData
     public String getTestCaseStatus() {
         return testCaseStatus;
@@ -242,10 +260,20 @@ public class SuTTcExecutionForm extends AbstractForm {
     public TcExecutionButton getTcExecutionButton() {
         return getFieldByClass(TcExecutionButton.class);
     }
+    
+    
+    public CloseButton getCloseButton() {
+        return getFieldByClass(CloseButton.class);
+    }
+    
+    
+    public TcAbortButton getTcAbortButton() {
+        return getFieldByClass(TcAbortButton.class);
+    }
 
 
-    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
-        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, operatorMessage);
+    protected void openPopup(String sutName, String testSuiteId, String testCaseId, String testEngine, String operatorMessage) {
+        IForm form = new ContentForm(sutName, testSuiteId, testCaseId, testEngine, operatorMessage);
         form.start();
         form.waitFor();
     }
@@ -255,12 +283,14 @@ public class SuTTcExecutionForm extends AbstractForm {
         private String sutName;
         private String testSuiteId;
         private String testCaseId;
+        private String testEngine;
         private String operatorMessage;
 
-        public ContentForm(String sutName, String testSuiteId, String testCaseId, String operatorMessage) {
+        public ContentForm(String sutName, String testSuiteId, String testCaseId, String testEngine, String operatorMessage) {
             this.sutName = sutName;
             this.testSuiteId = testSuiteId;
             this.testCaseId = testCaseId;
+            this.testEngine = testEngine;
             this.operatorMessage = operatorMessage;
         }
 
@@ -370,8 +400,36 @@ public class SuTTcExecutionForm extends AbstractForm {
                     }
 
                 }
-
+                
                 @Order(40)
+                public class TestEngineField extends AbstractLabelField {
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("TestEngine");
+                    }
+
+
+                    @Override
+                    protected void execInitField() {
+                        setValue(testEngine);
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 5;
+                    }
+
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                }
+
+                @Order(50)
                 public class MessageField extends AbstractStringField {
 
                     @Override
@@ -416,7 +474,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
                 }
 
-                @Order(50)
+                @Order(60)
                 public class CommentField extends AbstractStringField {
 
                     @Override
@@ -438,7 +496,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            @Order(60)
+            @Order(70)
             public class ConfirmButton extends AbstractButton {
 
                 @Override
@@ -452,7 +510,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     ContentForm.this.doClose();
 
                     // Confirmation Message for the TestEngine            
-                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, true, getCommentField().getValue());
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, testEngine, true, getCommentField().getValue());
                     operatorConfirmationCmd.execute();
 
                 }
@@ -463,7 +521,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                 }
             }
 
-            @Order(70)
+            @Order(80)
             public class CancelButton extends AbstractButton {
 
                 @Override
@@ -477,7 +535,7 @@ public class SuTTcExecutionForm extends AbstractForm {
                     ContentForm.this.doClose();
 
                     // Reject Message for the TestEngine              
-                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, false, getCommentField().getValue());
+                    CmdOperatorConfirmation operatorConfirmationCmd = Factory.createCmdOperatorConfirmation(sutName, testSuiteId, testCaseId, testEngine, false, getCommentField().getValue());
                     operatorConfirmationCmd.execute();
 
                 }
@@ -506,47 +564,8 @@ public class SuTTcExecutionForm extends AbstractForm {
                 // set all fields to read-only
                 return false;
             }
-
+            
             @Order(1010)
-            public class TcDescrField extends AbstractStringField {
-
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Description");
-                }
-
-
-                @Override
-                protected int getConfiguredGridW() {
-                    return 3;
-                }
-
-
-                @Override
-                protected int getConfiguredHeightInPixel() {
-                    return 80;
-                }
-
-
-                @Override
-                protected boolean getConfiguredMultilineText() {
-                    return true;
-                }
-
-
-                @Override
-                protected boolean getConfiguredWrapText() {
-                    return true;
-                }
-
-
-                @Override
-                protected int getConfiguredMaxLength() {
-                    return 2000;
-                }
-            }
-
-            @Order(1031)
             public class TcExecutionStatus extends AbstractStringField {
                 @Override
                 protected int getConfiguredGridW() {
@@ -573,7 +592,7 @@ public class SuTTcExecutionForm extends AbstractForm {
 
             }
 
-            @Order(1100)
+            @Order(1080)
             public class TcProgressField extends AbstractHtmlField {
                 @Override
                 protected int getConfiguredGridW() {
@@ -620,6 +639,106 @@ public class SuTTcExecutionForm extends AbstractForm {
                 protected String createHtmlContent(int progress) {
                     return HTML.fragment(HTML.body("<div class='progress'><div class='progress-bar' role='progressbar' aria-valuenow='40' aria-valuemin='0' aria-valuemax='100' style='width:" + Integer.toString(progress) + "%'>" + Integer.toString(progress) + "%</div></div>")).toPlainText();
 
+                }
+            }
+
+            @Order(1090)
+            public class TcDescrField extends AbstractStringField {
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Description");
+                }
+
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 3;
+                }
+
+
+                @Override
+                protected int getConfiguredHeightInPixel() {
+                    return 80;
+                }
+
+
+                @Override
+                protected boolean getConfiguredMultilineText() {
+                    return true;
+                }
+
+
+                @Override
+                protected boolean getConfiguredWrapText() {
+                    return true;
+                }
+
+
+                @Override
+                protected int getConfiguredMaxLength() {
+                    return 2000;
+                }
+            }
+            
+            @Order(1100)
+            public class TcRequirementTableField extends AbstractTableField<TcRequirementTableField.TcRequirementTable> {
+                @Override
+                protected int getConfiguredGridW() {
+                    return 6;
+                }
+
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Requirements");
+                }
+
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 3;
+                }
+
+                public class TcRequirementTable extends AbstractTable {
+
+                    public RequirementIdColumn getRequirementIdColumn() {
+                        return getColumnSet().getColumnByClass(RequirementIdColumn.class);
+                    }
+
+
+                    public RequirementDescColumn getRequirementDescColumn() {
+                        return getColumnSet().getColumnByClass(RequirementDescColumn.class);
+                    }
+
+                    @Order(1000)
+                    public class RequirementIdColumn extends AbstractStringColumn {
+
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("RequirementId");
+                        }
+
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 140;
+                        }
+                    }
+
+                    @Order(2000)
+                    public class RequirementDescColumn extends AbstractStringColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("RequirementDescription");
+                        }
+
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 800;
+                        }
+                    }
                 }
             }
         }
@@ -706,12 +825,57 @@ public class SuTTcExecutionForm extends AbstractForm {
                                 return 200;
                             }
                         }
+                        
+                        @Order(3000)
+                        public class LogfileDownloadMenu extends AbstractMenu {
+                            @Override
+                            protected String getConfiguredText() {
+                                return TEXTS.get("LogfileDownload");
+                            }
+
+
+                            @Override
+                            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                            }
+
+
+                            @Override
+                            protected boolean getConfiguredVisible() {
+                                return false;
+                            }
+
+
+                            @Override
+                            protected void execAction() {
+                                // get the selected file name from the table
+                                final ITableRow row = getTable().getSelectedRow();
+                                if (row == null)
+                                    // no row selected - nothing to do
+                                    return;
+                                // get the content of the selected file
+                                final BinaryResource downloadFileResource = BEANS.get(ISuTTcService.class).getLogfileContent(getSutId(), getTestsuiteId(),  getTable().getFileNameColumn().getValue(row));
+                                if (downloadFileResource.getContentLength() != -1) {
+                                    getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+                                }
+                            }
+                        }
 
                         @Override
                         protected void execRowsSelected(List<? extends ITableRow> rows) {
                             // clear TC Execution Log table
                             getTcLogField().getTable().discardAllRows();
                             if (!rows.isEmpty()) {
+                                
+                                if (rows.size() == 1) {
+                                    // set download menu visible
+                                    getMenuByClass(LogfileDownloadMenu.class).setVisible(true);
+                                }
+                                else {
+                                    // hide download menu if no row is selected
+                                    getMenuByClass(LogfileDownloadMenu.class).setVisible(false);
+                                }
+                                
                                 // row is selected
                                 final String logFileName = getTable().getFileNameColumn().getValue(getSelectedRow());
                                 // load log file content
@@ -858,6 +1022,12 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected String getConfiguredLabel() {
                 return TEXTS.get("CloseButton");
             }
+            
+            
+            @Override
+            protected boolean getConfiguredVisible() {
+                return true;
+            }
 
 
             @Override
@@ -879,8 +1049,9 @@ public class SuTTcExecutionForm extends AbstractForm {
             protected void execClickAction() {
 
                 // check the status of the TestEngine
-                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender("TestEngine");
-                if (hbn.notifyState != HbNotificationState.OK) {
+                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
+                HeartBeatNotification hbn = HeartBeatNotificationHandler.lastReceivedFromSender(testEngine);
+                if (hbn == null || hbn.notifyState != HbNotificationState.OK) {
                     MessageBoxes.createOk().withHeader(TEXTS.get("TeExecMsgBoxHeader")).withBody(TEXTS.get("TeExecMsgBoxBody")).show();
                     return;
                 }
@@ -892,14 +1063,16 @@ public class SuTTcExecutionForm extends AbstractForm {
                     MessageBoxes.createOk().withHeader(TEXTS.get("TcExecMsgBoxHeader")).withBody(TEXTS.get("TcExecMsgBoxBody")).show();
                     return;
                 }
-
+                
                 // show progress bar
                 getTcProgressField().setVisible(true);
+                
                 // reset tc status foreground color
                 getTcExecutionStatus().setForegroundColor(getDefaultTcStatusForegroundColor());
+                
                 //hide tc execution button
                 this.setVisible(false);
-
+                
                 // hide TC Execution History Table during TC execution
                 getTcExecutionHistoryTableField().setVisible(false);
 
@@ -919,13 +1092,42 @@ public class SuTTcExecutionForm extends AbstractForm {
                         final String logLevel = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_LOG_LEVEL, null);
                         final IOptionsService service = BEANS.get(IOptionsService.class);
                         service.setLogLevel(logLevel);
+                        // get TestEngine with which the test case should be started
+                        final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, null);
                         // now start the TC
                         final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
-                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId());
+                        sutCbService.executeTestCase(getSutId(), getTestCaseId(), getTestsuiteId(), testEngine);
                     }
                 }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
             }
         }
+        @Order(120000)
+        public class TcAbortButton extends AbstractButton {
+
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("Abort");
+            }
+            
+            @Override
+            protected boolean getConfiguredVisible() {
+                return false;
+            }
+
+            @Override
+            protected void execClickAction() {
+
+                //hide abort button
+                this.setVisible(false);
+                
+                // get the current TestEngine
+                final String testEngine = ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, "");
+                         
+                //abort test case
+                final ISuTTcService sutCbService = BEANS.get(ISuTTcService.class);
+                sutCbService.abortTestCase(getSutId(), getTestCaseId(), testEngine);
+            }
+        }  
     }
 
     public class ViewHandler extends AbstractFormHandler {
@@ -937,13 +1139,16 @@ public class SuTTcExecutionForm extends AbstractForm {
             exportFormData(formData);
             formData = service.load(formData);
             importFormData(formData);
+                        
+            // fill the requirement table for the TC
+            setIrTable();
 
             // set result color in the execution history table
             setTestResultColor();
 
             setDefaultTcStatusForegroundColor(getTcExecutionStatus().getForegroundColor());
 
-            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result));
+            Stream.of(getTestCaseId().split(Pattern.quote("."))).reduce((a, b) -> b).ifPresent(result -> getForm().setTitle(result + " - " + getSutId()));
             
             setEnabledPermission(new UpdateSuTPermission());
         }
@@ -966,6 +1171,19 @@ public class SuTTcExecutionForm extends AbstractForm {
                 default:
                     break;
             }
+        });
+    }
+    
+    // fill requirement table for the selected TC
+    public void setIrTable() {
+        final HashMap<String, String> irDescList = BEANS.get(ITsService.class).getIrForTc(testCaseId);
+        final TcRequirementTable reqTable = getTcRequirementTableField().getTable();
+        reqTable.deleteAllRows();
+        irDescList.forEach((id, desc) -> {
+            final ITableRow row = reqTable.addRow();
+            // set requirement ID and description
+            reqTable.getRequirementIdColumn().setValue(row, id);
+            reqTable.getRequirementDescColumn().setValue(row, desc);
         });
     }
 }

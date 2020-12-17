@@ -55,7 +55,7 @@ public class CmdListBadges implements Command {
         String iconsFolder = Factory.props.getProperty(Factory.IVCT_BADGE_ICONS_ID);
         File dir = new File(Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID));
         String dirName = Factory.props.getProperty(Factory.IVCT_BADGE_HOME_ID);
-        if (dir.exists() == false) {
+        if (!dir.exists()) {
             Factory.LOGGER.error("badge: {} does not exist", dirName);
             return;
         }
@@ -128,7 +128,6 @@ public class CmdListBadges implements Command {
             }
         } else {
             Factory.LOGGER.error("badge: {} value not a folder", dirName);
-            return;
         }
     }
 

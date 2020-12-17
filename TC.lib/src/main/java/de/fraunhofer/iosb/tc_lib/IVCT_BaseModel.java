@@ -31,7 +31,6 @@ import hla.rti1516e.exceptions.FederateIsExecutionMember;
 import hla.rti1516e.exceptions.FederateNotExecutionMember;
 import hla.rti1516e.exceptions.FederateOwnsAttributes;
 import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
-import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
 import hla.rti1516e.exceptions.InconsistentFDD;
 import hla.rti1516e.exceptions.InvalidLocalSettingsDesignator;
@@ -86,7 +85,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
                 ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE);
             }
             else {
-                this.logger.info("initiateRTI: settingsDesignator is set to " + this.settingsDesignator);
+                this.logger.info("initiateRTI: settingsDesignator is set to {}", this.settingsDesignator);
                 ivct_rti.connect(federateReference, CallbackModel.HLA_IMMEDIATE, this.settingsDesignator);
             }
         }
@@ -128,11 +127,11 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         	ivct_rti.resignFederationExecution(ResignAction.DELETE_OBJECTS_THEN_DIVEST);
         }
         catch (NotConnected e) {
-            this.logger.warn("terminateRti: NotConnected (ignored)");
+            this.logger.info("terminateRti: NotConnected (ignored)");
     		return;
         }
         catch (InvalidResignAction | OwnershipAcquisitionPending | FederateOwnsAttributes | FederateNotExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.warn("resignFederationExecution exception=" + e.getMessage());
+    		this.logger.warn("resignFederationExecution exception={}", e.getMessage());
         }
 
         // Destroy federation execution
@@ -140,14 +139,14 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         	ivct_rti.destroyFederationExecution(this.federationName);
         }
         catch (final FederatesCurrentlyJoined e1) {
-            this.logger.warn("terminateRti: FederatesCurrentlyJoined (ignored)");
+            this.logger.info("terminateRti: FederatesCurrentlyJoined (ignored)");
         }
         catch (NotConnected e) {
-            this.logger.warn("terminateRti: NotConnected (ignored)");
+            this.logger.info("terminateRti: NotConnected (ignored)");
     		return;
         }
         catch (FederationExecutionDoesNotExist | RTIinternalError e) {
-    		this.logger.error("destroyFederationExecution exception=" + e.getMessage());
+    		this.logger.error("destroyFederationExecution exception={}", e.getMessage());
         }
 
         // Disconnect from rti
@@ -155,7 +154,7 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         	ivct_rti.disconnect();
         }
         catch (FederateIsExecutionMember | CallNotAllowedFromWithinCallback | RTIinternalError e) {
-    		this.logger.error("disconnect exception=" + e.getMessage());
+    		this.logger.error("disconnect exception={}", e.getMessage());
         }
     }
 

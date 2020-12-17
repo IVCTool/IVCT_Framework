@@ -179,7 +179,7 @@ public class CbForm extends AbstractForm {
             public class GeneralBox extends AbstractGroupBox {
                 @Override
                 protected String getConfiguredLabel() {
-                    return TEXTS.get("GeneralInformation");
+                    return TEXTS.get("GeneralBadgeInformation");
                 }
 
 

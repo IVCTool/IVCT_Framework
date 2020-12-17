@@ -16,14 +16,17 @@ package nato.ivct.gui.client;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
+import org.eclipse.scout.rt.client.ui.ClientUIPreferences;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.platform.util.concurrent.IRunnable;
 import org.eclipse.scout.rt.shared.notification.INotificationHandler;
 import org.slf4j.LoggerFactory;
+
 
 import nato.ivct.gui.shared.HeartBeatNotification;
 import nato.ivct.gui.shared.Icons;
@@ -32,11 +35,17 @@ public class HeartBeatNotificationHandler implements INotificationHandler<HeartB
 
 	org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 	
-	public static final HashMap<String, HeartBeatNotification> hbLastReceivedMap = new HashMap<>();
+	private static final Map<String, HeartBeatNotification> hbLastReceivedMap = new HashMap<>();
 	
 	public static HeartBeatNotification lastReceivedFromSender(String hbSender) {
 		return hbLastReceivedMap.get(hbSender);
 	}
+	
+	public static Map<String, HeartBeatNotification> getHbLastReceivedMap() {
+	    return hbLastReceivedMap;
+	}
+	
+	
 
 	@Override
 	public void handleNotification(HeartBeatNotification notification) {
@@ -45,10 +54,16 @@ public class HeartBeatNotificationHandler implements INotificationHandler<HeartB
 			@Override
 			public void run() throws Exception {
 				logger.trace("Heartbeat notification received for {}", notification.heartBeatSender);
+               
 				
-				if (!notification.heartBeatSender.isEmpty())
-					hbLastReceivedMap.put(notification.heartBeatSender, notification);
-				
+                if (!notification.testEngineLabel.isEmpty())
+                    hbLastReceivedMap.put(notification.testEngineLabel, notification);
+                
+                if (!"LogSink".equals(notification.heartBeatSender) && !notification.testEngineLabel.equals(ClientUIPreferences.getClientPreferences(ClientSession.get()).get(ClientSession.CUR_TEST_ENGINE, ""))) {
+                    return;
+                }
+
+                
 				IDesktop desktop = ClientSession.get().getDesktop();
 				
 				// try...catch to avoid exception when calling getMenuByClass and Desktop is still in the opening state

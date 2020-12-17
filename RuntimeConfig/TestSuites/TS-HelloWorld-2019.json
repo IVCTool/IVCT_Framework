@@ -12,8 +12,14 @@
         },
         {
             "TC": "de.fraunhofer.iosb.tc_helloworld.TC0002",
-            "IR": ["IP-HW-0002"],
+            "IR": ["IR-HW-0002"],
             "description": "Test inter-country communication"
         }
-    ]
+    ],
+	"parameters":[
+		{
+			"name": "growthRate",
+			"description": "expected growth rate for SuT federate within HelloWorld federation"
+		}
+	]
 }

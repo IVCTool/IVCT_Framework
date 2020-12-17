@@ -1,9 +1,96 @@
-== Test case logging
+== Test Case Logging
 
-Test case logging is a very important function of the IVCT. It is used during development of test cases, documentation of a conformance test execution and debugging of test federate behaviour.
+Testing means to observe and the main instrument to observe the test case execution is logging. It is used during development of test cases, and it is used to document the conformance test execution results. The logging events will be shown during the test case execution within the user interface, they will be stored on the file system, and they will be used for the test report generation. 
 
-In order to get full logging of all HLA services without the test case writer having to remember calling the logger for every service call, wrappers were written for the RTIambassador and the FedAmbassador which log the call and parameters of the call. The logging level was chosen as INFO for most services, but may be tuned for a less verbose level for some services when experience with conformance tests shows a problem.
 
-The link:http://www.slf4j.org/[Simple Logging Facade for Java] (slf4j) was the implementation chosen for logging. The slf4j is a widely used logging tool since it provides a single interface to a number of common loggers. The loggers can be swapped by simply exchanging the dll's to be used.
+The link:http://www.slf4j.org/[Simple Logging Facade for Java] (slf4j) was the implementation chosen for logging. The slf4j is a widely used logging tool since it provides a single interface to a number of common loggers. The link:http://logback.qos.ch/[Logback] implementation is currently being used by the IVCT tool.
 
-By using link:http://logback.qos.ch/[Logback] as the logging implementation it is possible to do all logging via a Java Message Service (JMS) bus and collect the logs via a dedicated logging process. This logging process can be configured to display or store the log data in a number of ways.
+
+=== Using the Test Case Logger
+
+All test related events shall be logged within the same context, i.e the same logger. The logger to be used by the test case and also by the test case library, is created by the test engine. The test case shall use the logger object provided with the _preambleAction_, _performTest_, and _postambleAction_ method.
+
+----
+@Override
+protected void performTest(final Logger logger) throws TcInconclusive, TcFailed {
+    logger.info("Test Case starting");
+    ....
+}
+----
+
+=== Conventions on Log-Level
+
+The slf4j knows the log levels ERROR, WARN, INFO, DEBUG, and TRACE. The test case developer shall use these levels to classify the events during the test case execution, so that the operator can understand what the test case doing. The table below gives some recommendation on the usage of the levels.
+
+[cols="1,3,3", options="header"] 
+.Table Log Level
+|===
+| Level 
+| org.apache.log4j.Level Definition 
+| Test Case Recommendation
+
+| DEBUG  
+| Designates fine-grained informational events that are most useful to debug an application. 
+| Shall be used by the test case programmer during development testing. These events may be still useful in the production deployment, but should not be included in the standard test case protocols. 
+
+| INFO
+| Designates informational messages that highlight the progress of the application at coarse-grained level. 
+| These messages shall give the IVCT operator insights into the progress of the test case execution. This is the default level and it is recommended to use that level for the test case report. Only significant events on the test process shall be classified as INFO. It is not recommended to use this level within high frequent loops.
+
+| WARN
+| Designates potentially harmful situations. 
+| This level shall be used to report on anything happens outside the expected behavior, and is not considered a test case failure. Event at that level are requiring the attention of the IVCT operator, and shall be included in the test case report. In case there is an internal error in the test case logic itself, the log event shall reported this as warning and the test case shall be ended with the Inconclusive verdict. 
+
+| ERROR
+| Designates error events that might still allow the application to continue running. 
+| This level shall be used for invalid behavior of the system under test. It is recommended to use that level for events causing the Failed verdict. In most cases such an test case end after such an event.
+
+| TRACE
+| Designates finer-grained informational events than the DEBUG. 
+| The trace level shall be used for detailed insights into the test execution. The instrumented HLA ambassador objects within the IVCT test case library are reporting on that level. The test case may use that level to report on minor events within the test case execution. The test case operator will typically use that level to locate problems with the test evaluation. 
+|===
+
+
+
+
+=== Embedded TC.lib Logging and Test Case Log Level Recommendations
+
+In order to get full logging of all HLA services without the test case writer having to remember calling the logger for every service call, wrappers were written for the RTIambassador and the FedAmbassador which log the call and parameters of the call. The logging level was chosen as TRACE for all services. The TC.lib will not create any ERROR or WARN messages, as it is up to the test case logic to decide on the meaning of HLA events. 
+
+[cols="2,1,4", options="header"] 
+.Table TC.lib Log Level
+|===
+| Component 
+| Log Level
+| Log Message Content
+
+| AbstractTestCase
+| INFO
+| Key functions of the test case, like preamble, postambel actions, and operator dialog flow. This is the standard logging for the test case.
+
+|
+| WARN
+| Unexpected test case control flow, like initialization error that leads to an INCONCLUSIVE test result.
+
+| IVCT_BaseModel
+| TRACE
+|
+
+|
+| INFO
+|
+
+| IVCT_NullFederateAmbassador
+| WARN
+| the NullFederateAmbassodor provides default implementations, that should be overwritten, if the test case intents to use them. If a NullFederateAmbassador method is directly called, this is considered unexpected and requires the attention of the operator. 
+
+| IVCT_RTIAmbassador and IVCT_LoggingFederateAmbassador
+| TRACE
+| Low level protocol logging for all HLA API service calls.
+|===
+
+----
+<<<example trace here>>>>
+----
+
+

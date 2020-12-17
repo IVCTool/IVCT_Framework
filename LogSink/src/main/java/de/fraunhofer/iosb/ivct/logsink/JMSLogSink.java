@@ -39,11 +39,13 @@ import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
+import nato.ivct.commander.CmdAbortTcListener.OnAbortTestCaseListener;
+import nato.ivct.commander.CmdAbortTcListener.TcAbortInfo;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.SutPathsFiles;
 
 
-public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnStartTestCaseListener, OnJsonLogMsgListener {
+public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnStartTestCaseListener, OnJsonLogMsgListener, OnAbortTestCaseListener {
 
     static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
@@ -80,7 +82,7 @@ public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnSta
     private Logger getTestCaseLogger(String tcName, String sutName, String tcLogDir) {
         FileAppender<ILoggingEvent> fileAppender = appenderMap.get(tcName);
         if (fileAppender == null) {
-            logger.debug("create new Appender for " + tcName);
+            logger.debug("create new Appender for ", tcName);
             final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
             // final PatternLayoutEncoder ple = new PatternLayoutEncoder();
             final LayoutWrappingEncoder<ILoggingEvent> ple = new ch.qos.logback.core.encoder.LayoutWrappingEncoder<ILoggingEvent>();
@@ -159,7 +161,7 @@ public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnSta
 
     @Override
     public void onStartTestCase(TcInfo info) {
-        logger.info("Test Case changed to :" + info.testCaseId);
+        logger.info("Test Case changed to: ", info.testCaseId);
     }
 
 
@@ -177,6 +179,12 @@ public class JMSLogSink<Gson> implements OnResultListener, OnQuitListener, OnSta
             log.trace(msg.toString(),msg);
         }
 
+    }
+
+
+    @Override
+    public void onAbortTestCase(TcAbortInfo info) {
+        logger.info("Test Case aborted: ", info.testCaseId);       
     }
 
 }

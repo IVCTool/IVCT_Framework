@@ -111,12 +111,12 @@ public class FactoryTest {
 
 	@Test
 	public void testCreateCmdStartTcMethod() {
-		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2017", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2019", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate", "broadcast");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut().contentEquals("hw_iosb"));
-		assertTrue("Get Badge name", stc.getSuiteName().contentEquals("HelloWorld-2017"));
-		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate");
+		assertTrue("Get Badge name", stc.getSuiteName().contentEquals("HelloWorld-2019"));
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate", "broadcast");
 		assertTrue("Factory Test createCmdStartTc should return CmdStartTc", stc != null);
 		stc.execute();
 		assertTrue("Get SuT name", stc.getSut() != null);
@@ -146,7 +146,7 @@ public class FactoryTest {
 				resultListener != null);
 		resultListener.execute();
 
-		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2017", "some.test.case", "verdict", "verdictText");
+		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2019", "some.test.case", "verdict", "verdictText");
         assertTrue("Factory Test CmdSendTcVerdict should return some value", stc != null);
         stc.execute();
         try {
@@ -159,10 +159,10 @@ public class FactoryTest {
 	}
 
 	@Test
-	public void testCreateCmdUpdateSUTMethod() {
+	public void testCreateCmdUpdateSUTMethod() throws Exception {
 
 		// If property is not set, do not have any access to any SUTs
-		if (Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID) == false) {
+		if (!Factory.props.containsKey(Factory.IVCT_SUT_HOME_ID)) {
 			return;
 		}
 		String vendorName = "Fraunhofer IOSB";
@@ -171,49 +171,39 @@ public class FactoryTest {
 		sutDescription.name = "hw_iosb";
 		sutDescription.description = "HelloWorld system under federate for IVCT demonstration";
 		sutDescription.vendor = "Fraunhofer IOSB";
-		sutDescription.badges.add("HLA-BASE-2017");
-		sutDescription.badges.add("TS_HLA_EncodingRulesTester-2017");
+		sutDescription.badges.add("HLA-BASE-2019");
+		sutDescription.badges.add("RPR-Encoding-2.0");
 		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutDescription);
-		try {
-			cus.execute();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		cus.execute();
 		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.ID + "/" + "CS.json";
-		try {
-			// The parameters should be the same. Thus expected false.
-			assertFalse("CS.json values should be equal", cus.compareCSdata(csJsonFilename, sutDescription));
-			SutDescription tmpSutDescription = new SutDescription();
+		// The parameters should be the same. Thus expected false.
+		assertFalse("CS.json values should be equal", cus.compareCSdata(csJsonFilename, sutDescription));
+		SutDescription tmpSutDescription = new SutDescription();
 
-			copySUT(tmpSutDescription, sutDescription);
-			tmpSutDescription.name = "dummy";
-			// The name is changed. Thus expected true.
-			assertTrue("CS.json sut name change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+		copySUT(tmpSutDescription, sutDescription);
+		tmpSutDescription.name = "dummy";
+		// The name is changed. Thus expected true.
+		assertTrue("CS.json sut name change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
 
-			copySUT(tmpSutDescription, sutDescription);
-			tmpSutDescription.description = "dummy";
-			// The description is changed. Thus expected true.
-			assertTrue("CS.json sut description change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+		copySUT(tmpSutDescription, sutDescription);
+		tmpSutDescription.description = "dummy";
+		// The description is changed. Thus expected true.
+		assertTrue("CS.json sut description change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
 
-			copySUT(tmpSutDescription, sutDescription);
-			tmpSutDescription.vendor = "dummy";
-			// The vendor has changed. Thus expected true.
-			assertTrue("CS.json vendor change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+		copySUT(tmpSutDescription, sutDescription);
+		tmpSutDescription.vendor = "dummy";
+		// The vendor has changed. Thus expected true.
+		assertTrue("CS.json vendor change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
 
-			copySUT(tmpSutDescription, sutDescription);
-			tmpSutDescription.version = "dummy";
-			// The version has changed. Thus expected true.
-			assertTrue("CS.json version change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
+		copySUT(tmpSutDescription, sutDescription);
+		tmpSutDescription.version = "dummy";
+		// The version has changed. Thus expected true.
+		assertTrue("CS.json version change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
 
-			copySUT(tmpSutDescription, sutDescription);
-			tmpSutDescription.badges.add("dummy");
-			// The badges have changed. Thus expected true.
-			assertTrue("CS.json badge change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		copySUT(tmpSutDescription, sutDescription);
+		tmpSutDescription.badges.add("dummy");
+		// The badges have changed. Thus expected true.
+		assertTrue("CS.json badge change should be detected", cus.compareCSdata(csJsonFilename, tmpSutDescription));
 	}
 
 	private void copySUT(SutDescription tmpSutDescription, SutDescription sutDescription) {
@@ -231,10 +221,6 @@ public class FactoryTest {
 		CmdListSuT cmd = Factory.createCmdListSut();
 		cmd.execute();
 		assertTrue("should have a list of SuTs", cmd.sutMap != null);
-		if (cmd.sutMap.containsKey("hw_iosb") == false) {
-//			throw new AssumptionViolatedException("Inconclusive");
-			return;
-		}
 		assertTrue("hw_iosb should exist", cmd.sutMap.containsKey("hw_iosb"));
 		SutDescription hw = cmd.sutMap.get("hw_iosb");
 		assertTrue(hw.vendor.equals("Fraunhofer IOSB"));

@@ -14,6 +14,7 @@ limitations under the License. */
 
 package nato.ivct.gui.client.sut;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -158,7 +159,7 @@ public class SuTForm extends AbstractForm {
             public class GeneralBox extends AbstractGroupBox {
                 @Override
                 protected String getConfiguredLabel() {
-                    return TEXTS.get("GeneralInformation");
+                    return TEXTS.get("GeneralSuTInformation");
                 }
 
 
@@ -264,6 +265,10 @@ public class SuTForm extends AbstractForm {
                             return TEXTS.get("RTIConnection");
                         }
 
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("RTIConnectionInfo");
+                        }
 
                         @Override
                         protected int getConfiguredGridW() {
@@ -277,7 +282,11 @@ public class SuTForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("FederationName");
                         }
-
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("FederationNameInfo");
+                        }
 
                         @Override
                         protected int getConfiguredGridW() {
@@ -291,7 +300,11 @@ public class SuTForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("FederateName");
                         }
-
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("FederateNameInfo");
+                        }
 
                         @Override
                         protected int getConfiguredGridW() {
@@ -334,6 +347,11 @@ public class SuTForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("CapabilityStatus");
+                        }
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("CapabilityStatusInfo");
                         }
 
                         public class SutCapabilityStatusTable extends AbstractTable {
@@ -401,6 +419,11 @@ public class SuTForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("TestReports");
                         }
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("TestReportInfo");
+                        }
 
                         @Order(1000)
                         public class TestReportTable extends AbstractTable {
@@ -429,10 +452,22 @@ public class SuTForm extends AbstractForm {
                             public FileNameColumn getFileNameColumn() {
                                 return getColumnSet().getColumnByClass(FileNameColumn.class);
                             }
-
+                            
+                            @Override
+                            protected void execRowsSelected(List<? extends ITableRow> rows) {
+                                if (rows.size() == 1) {
+                                    // set download menu visible
+                                    getMenuByClass(TestReportCreateMenu.class).setVisible(true);
+                                    getMenuByClass(TestReportDownloadMenu.class).setVisible(true);
+                                }
+                                else {
+                                    // hide download menu if no row is selected
+                                    getMenuByClass(TestReportDownloadMenu.class).setVisible(false);
+                                }
+                            }
 
                             @Order(2000)
-                            public class NewMenu extends AbstractMenu {
+                            public class TestReportCreateMenu extends AbstractMenu {
 
                                 @Override
                                 protected Set<? extends IMenuType> getConfiguredMenuTypes() {
@@ -457,6 +492,41 @@ public class SuTForm extends AbstractForm {
                                         MessageBoxes.createOk().withHeader(TEXTS.get("reportMsgBoxHeader")).show();
                                     }
                                         
+                                }
+                            }
+                            
+                            @Order(3000)
+                            public class TestReportDownloadMenu extends AbstractMenu {
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("TestReportDownload");
+                                }
+
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                                }
+
+
+                                @Override
+                                protected boolean getConfiguredVisible() {
+                                    return false;
+                                }
+
+
+                                @Override
+                                protected void execAction() {
+                                    // get the selected file name from the table
+                                    final ITableRow row = getTable().getSelectedRow();
+                                    if (row == null)
+                                        // no row selected - nothing to do
+                                        return;
+                                    // get the content of the selected file
+                                    final BinaryResource downloadFileResource = BEANS.get(ISuTService.class).getTestReportFileContent(getSutId(), getTable().getFileNameColumn().getValue(row));
+                                    if (downloadFileResource.getContentLength() != -1) {
+                                        getDesktop().openUri(downloadFileResource, OpenUriAction.DOWNLOAD);
+                                    }
                                 }
                             }
                                                        

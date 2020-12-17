@@ -33,7 +33,8 @@ public class CmdHeartbeatSend  implements Command {
     // ----  Organize communication  mechanism (the client has to implement this interface.)
     public interface OnCmdHeartbeatSend { 
           public boolean getMyHealth ();
-          public String getMyClassName();
+          public String getMyClassName(); 
+          public String getMyTestEngineLabel();
       }
     
    
@@ -51,12 +52,15 @@ public class CmdHeartbeatSend  implements Command {
     public static final String HB_ALLERTTIME= "Alert-Time";
     public static final String HB_COMMENT= "Comment";
     public static final String HB_IVCTVERSION= "IVCTVersion";
+    public static final String HB_TESTENGINELABEL= "TESTENGINE_LABEL";
         
     private boolean health;    
        
     private String heartbeatSenderName;
     
     private OnCmdHeartbeatSend sender;
+
+    private String testEngineLabel;
     
       
     public CmdHeartbeatSend(OnCmdHeartbeatSend sender) {
@@ -65,7 +69,7 @@ public class CmdHeartbeatSend  implements Command {
         this.sender=sender;
     }
         
-    
+
     /*
      *  this execute method is started by a application which instanciate this class  
      *  we fetch all xy seconds some variables from that application,
@@ -82,6 +86,9 @@ public class CmdHeartbeatSend  implements Command {
         if (sender != null) {
             this.health = sender.getMyHealth();
             this.heartbeatSenderName= sender.getMyClassName();
+
+            this.testEngineLabel = sender.getMyTestEngineLabel();
+            
             } else {
             logger.warn("In CmdHeartbeatSend sender  is null !!!!");
         }
@@ -90,7 +97,9 @@ public class CmdHeartbeatSend  implements Command {
         JSONObject heartbeatjson = new JSONObject();              
         heartbeatjson.put(HB_SENDER, this.heartbeatSenderName);
         heartbeatjson.put(HB_LASTSENDINGPERIOD, 5000L);         
-        heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );    
+        heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );
+        
+        heartbeatjson.put(HB_TESTENGINELABEL, testEngineLabel );
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
         Timer timer = new Timer();
@@ -125,7 +134,5 @@ public class CmdHeartbeatSend  implements Command {
         //logger.info("heartbeatClient Test message ist: " + message);  // Debug          
          logProducer.send(message);        
     }
-    
-    
     
 }

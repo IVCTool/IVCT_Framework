@@ -15,7 +15,6 @@ limitations under the License. */
 package nato.ivct.gui.client.sut;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +54,7 @@ import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
+import org.eclipse.scout.rt.client.ui.tile.ITileGrid;
 import org.eclipse.scout.rt.client.ui.tile.TileGridLayoutConfig;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -66,11 +66,16 @@ import org.eclipse.scout.rt.platform.util.TriState;
 import org.eclipse.scout.rt.shared.data.tile.TileColorScheme;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import nato.ivct.commander.CmdListTestSuites;
+import nato.ivct.commander.Factory;
+import nato.ivct.commander.CmdListTestSuites.TSParameters;
 import nato.ivct.gui.client.OptionsForm.MainBox.OkButton;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcExtraParameterTableField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutParameterBox.ParameterHorizontalSplitterBox.SutTcParameterTableField;
@@ -78,8 +83,6 @@ import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.SutP
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField.Accordion;
 import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.AccordionField.Accordion.TileGroup;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.SutTcRequirementTableField;
-import nato.ivct.gui.client.sut.SuTCbForm.MainBox.MainBoxHorizontalSplitBox.TestsuiteBox.SutTcRequirementTableField.SutTcRequirementTable;
 import nato.ivct.gui.shared.cb.ICbService;
 import nato.ivct.gui.shared.cb.ITsService;
 import nato.ivct.gui.shared.sut.ISuTCbService;
@@ -101,10 +104,22 @@ public class SuTCbForm extends AbstractForm {
     public static final String INCONCLUSIVE_VERDICT = "INCONCLUSIVE";
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
+    
+    private final Supplier<CmdListTestSuites> testSuitesSupplier = Suppliers.memoize(() -> {
+        CmdListTestSuites testSuites = Factory.createCmdListTestSuites();
+        try {
+            testSuites.execute();
+        }
+        catch (Exception exc) {
+            throw new IllegalStateException(exc);
+        }
+        return testSuites;
+    });
 
     private String sutId      = null;
     private String cbId       = null;
     private String activeTsId = null;
+    
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -142,11 +157,6 @@ public class SuTCbForm extends AbstractForm {
 
     public AccordionField getAccordionField() {
         return getFieldByClass(AccordionField.class);
-    }
-
-
-    public SutTcRequirementTableField getSutTcRequirementTableField() {
-        return getFieldByClass(SutTcRequirementTableField.class);
     }
 
 
@@ -290,35 +300,19 @@ public class SuTCbForm extends AbstractForm {
                             }
                             super.handleGroupCollapsedChange(group);
                         }
-
-
-                        // fill requirement table for the selected TC
+                      
+                        // show test case form in a separate form - single click event
                         @Override
                         protected void execTilesSelected(List<ITile> tiles) {
-                            if (tiles.isEmpty()) {
-                                // clear the requirement table
-                                final SutTcRequirementTable tbl = getSutTcRequirementTableField().getTable();
-                                if (tbl.getRowCount() > 0)
-                                    tbl.deleteAllRows();
-                                return;
-                            }
-
-                            final CustomTile selTc = (CustomTile) tiles.get(0);
-                            final String tcId = selTc.getTcId();
-                            final HashMap<String, String> irDescList = BEANS.get(ITsService.class).getIrForTc(tcId);
-
-                            final SutTcRequirementTable reqTable = getSutTcRequirementTableField().getTable();
-                            reqTable.deleteAllRows();
-                            irDescList.forEach((id, desc) -> {
-                                final ITableRow row = reqTable.addRow();
-                                // set requirement ID and description
-                                reqTable.getRequirementIdColumn().setValue(row, id);
-                                reqTable.getRequirementDescColumn().setValue(row, desc);
-                            });
+                               if (tiles.isEmpty()) {
+                                    return;
+                               }
+    
+                               final CustomTile selTc = (CustomTile) tiles.get(0);
+                               execTileAction(selTc);
                         }
-
-
-                        // show test case form in a separate form
+                        
+                        // show test case form in a separate form - double click event
                         @Override
                         protected void execTileAction(final ITile tile) {
                             // open TC execution form
@@ -332,11 +326,19 @@ public class SuTCbForm extends AbstractForm {
                             List<SuTTcExecutionForm> forms = desktop.findForms(SuTTcExecutionForm.class);
                             Optional<SuTTcExecutionForm> optionalForm = forms.stream().filter(executionForm -> executionForm.getSutId().equalsIgnoreCase(getSutId()) && executionForm.getTestCaseId().equalsIgnoreCase(((CustomTile) tile).getTcId())).findFirst();
                             if (optionalForm.isPresent()) {
+                                deselectAllTiles();
                                 optionalForm.get().activate();
                             }
                             else {
+                                deselectAllTiles();
                                 form.startView();
                             }
+                        }
+                        
+                        // deselect all tiles after a click event
+                        @Override
+                        public void deselectAllTiles() {
+                          getTileGrids().forEach(ITileGrid::deselectAllTiles);
                         }
 
                         public class TileGroup extends AbstractGroup {
@@ -380,70 +382,9 @@ public class SuTCbForm extends AbstractForm {
                         }
                     }
                 }
-
-                @Order(1500)
-                public class SutTcRequirementTableField extends AbstractTableField<SutTcRequirementTableField.SutTcRequirementTable> {
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 6;
-                    }
-
-
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Requirements");
-                    }
-
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 2;
-                    }
-
-                    public class SutTcRequirementTable extends AbstractTable {
-
-                        public RequirementIdColumn getRequirementIdColumn() {
-                            return getColumnSet().getColumnByClass(RequirementIdColumn.class);
-                        }
-
-
-                        public RequirementDescColumn getRequirementDescColumn() {
-                            return getColumnSet().getColumnByClass(RequirementDescColumn.class);
-                        }
-
-                        @Order(1000)
-                        public class RequirementIdColumn extends AbstractStringColumn {
-
-                            @Override
-                            protected String getConfiguredHeaderText() {
-                                return TEXTS.get("RequirementId");
-                            }
-
-
-                            @Override
-                            protected int getConfiguredWidth() {
-                                return 250;
-                            }
-                        }
-
-                        @Order(2000)
-                        public class RequirementDescColumn extends AbstractStringColumn {
-                            @Override
-                            protected String getConfiguredHeaderText() {
-                                return TEXTS.get("RequirementDescription");
-                            }
-
-
-                            @Override
-                            protected int getConfiguredWidth() {
-                                return 1250;
-                            }
-                        }
-                    }
-                }
             }
 
-            @Order(2000)
+            @Order(1500)
             public class SutParameterBox extends AbstractGroupBox {
                 @Order(1000)
                 public class ParameterHorizontalSplitterBox extends AbstractSplitBox {
@@ -477,7 +418,13 @@ public class SuTCbForm extends AbstractForm {
 
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("TcParameterSettings");
+                            return TEXTS.get("TsParameterSettings");
+                        }
+                        
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("TsParameterInfo");
                         }
 
 
@@ -617,13 +564,23 @@ public class SuTCbForm extends AbstractForm {
                             table.getParentIdColumn().setValue(row, Optional.ofNullable(parentRow).map(r -> table.getIdColumn().getValue(parentRow)).orElse(null));
                             table.getParameterNameColumn().setValue(row, key);
                             table.getParameterValueColumn().setValue(row, value);
+                            // fill description table field
+                            table.getParameterDescriptionColumn().setValue(row, getParameterDescription(key));
 
                             // add row to table
                             mRows.add(row);
 
                             return row;
                         }
+                        
+                        private Map<String,TSParameters> getDescriptionMap() {
+                            return testSuitesSupplier.get().getParametersForTs(activeTsId);
+                        }
 
+                        private String getParameterDescription(final String key) {
+                            final TSParameters params = getDescriptionMap().get(key);
+                            return params == null ? "" : params.description;
+                        }
 
                         private void newRowWithParent(final ITableRow parent) {
                             final SuTTcParameterTable table = getTable();
@@ -655,6 +612,10 @@ public class SuTCbForm extends AbstractForm {
 
                             public ParameterValueColumn getParameterValueColumn() {
                                 return getColumnSet().getColumnByClass(ParameterValueColumn.class);
+                            }
+                            
+                            public ParameterDescriptionColumn getParameterDescriptionColumn() {
+                                return getColumnSet().getColumnByClass(ParameterDescriptionColumn.class);
                             }
 
 
@@ -716,7 +677,7 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 300;
+                                    return 200;
                                 }
                             }
 
@@ -730,7 +691,21 @@ public class SuTCbForm extends AbstractForm {
 
                                 @Override
                                 protected int getConfiguredWidth() {
-                                    return 1200;
+                                    return 600;
+                                }
+                            }
+                            
+                            @Order(2500)
+                            public class ParameterDescriptionColumn extends AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Description");
+                                }
+
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 700;
                                 }
                             }
 
@@ -1019,7 +994,13 @@ public class SuTCbForm extends AbstractForm {
                     public class SutTcExtraParameterTableField extends AbstractTableField<SutTcExtraParameterTableField.SutTcExtraParameterTable> {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("TcExtraParameterFiles");
+                            return TEXTS.get("TsParameterFiles");
+                        }
+                        
+                        
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                          return TEXTS.get("TsParameterFilesInfo");
                         }
 
 
@@ -1217,10 +1198,10 @@ public class SuTCbForm extends AbstractForm {
 
         @Override
         protected String getConfiguredContent() {
-            return "<div title=>" + "<p name=\"" + TC_NAME_KW + "\">" + "</p>" + "<p name=\"" + TC_VERDICT_KW + "\">" + "</p>" + "</div>";
+            return "<div title=>" +"<img src=\"res/startButton.png\" width=\"20\" height=\"21\" style=\"float:right;vertical-align:top\">"+ "<p name=\"" + TC_NAME_KW + "\">" + "</p>" + "<p name=\"" + TC_VERDICT_KW + "\">" + "</p>" + "</div>";
         }
-
-
+        
+        
         public void setTcTileContent(String tc, String tcVerdict) {
             setTcName(tc);
             setTcVerdict(tcVerdict);
@@ -1297,7 +1278,7 @@ public class SuTCbForm extends AbstractForm {
 
             // if only a single group then open it or collapse them all otherwise
             if (accordion.getGroupCount() == 1) {
-                // load TC parameters
+                // load TS parameters
                 final String tsId = accordion.getGroups().get(0).getTitle();
                 setActiveTsId(tsId);
                 getSutTcParameterTableField().loadTcParamTable(tsId);

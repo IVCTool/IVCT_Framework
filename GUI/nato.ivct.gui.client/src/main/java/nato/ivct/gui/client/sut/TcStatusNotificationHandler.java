@@ -44,14 +44,21 @@ public class TcStatusNotificationHandler implements INotificationHandler<TcStatu
                 final IOutline outline = desktop.getOutline();
                 if (outline instanceof SuTOutline) {
                     Desktop.CURRENT.get().findForms(SuTTcExecutionForm.class).forEach(form -> {
-                        if (form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) {
+                        if (form.getSutId().equalsIgnoreCase(notification.getSutId()) && form.getTestCaseId().equalsIgnoreCase(notification.getTcId())) { 
                             // set TC execution status attribute in detail form
                             form.setTestCaseStatus(notification.getStatus());
+                            
                             // set TC execution status field in detail form
                             form.getTcExecutionStatus().setValue(notification.getStatus());
 
                             // set execution progress
                             form.setTestCaseProgress(notification.getPercent());
+                            
+                            // hide close button during TC execution
+                            form.getCloseButton().setVisible(false);
+                            
+                            // set abort button visible during TC execution
+                            form.getTcAbortButton().setVisible(true);
                         }
                     });
                 }

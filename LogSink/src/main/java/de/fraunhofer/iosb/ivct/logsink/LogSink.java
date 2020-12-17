@@ -12,6 +12,7 @@ import nato.ivct.commander.CmdLogMsgListener;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdStartTcListener;
 import nato.ivct.commander.CmdStartTestResultListener;
+import nato.ivct.commander.CmdAbortTcListener;
 import nato.ivct.commander.Factory;
 
 
@@ -31,6 +32,10 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
     // for CmdHeartbeatSend
     private boolean health;
     private String myClassName = "LogSink";
+    
+ // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    //private String rtiTypeEngineLabel="notNecessaryForLogSink" ;
+    private String testEngineLabel="notNecessaryForLogSink";
 
 
     /**
@@ -64,6 +69,7 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
         (new CmdQuitListener(jmsLogSink)).execute();
         (new CmdStartTcListener(jmsLogSink)).execute();
         (new CmdLogMsgListener(jmsLogSink)).execute();
+        (new CmdAbortTcListener(jmsLogSink)).execute();
     }
 
 	public String getTestCaseResults() {
@@ -123,5 +129,11 @@ public class LogSink implements CmdHeartbeatSend.OnCmdHeartbeatSend {
   public boolean getMyHealth() {
     return health;
   }
+  
+   // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020	
+	public String getMyTestEngineLabel() {
+		return testEngineLabel;
+	}
+	
 
 }

@@ -1,0 +1,58 @@
+{
+	"id"             : "TS-HLA-Designator-2020",
+	"version"        : "1.0.0",
+	"name"           : "HLA RPR-FOM Desigator Test Suite",
+	"description"    : "This is a test suite to verify if the RPR-FOM Designator is used correctly.",
+	"tsRunTimeFolder": "TS_Designator-1.0.0/bin",
+	"tsLibTimeFolder": "TS_Designator-1.0.0/lib",
+	"testcases" : [
+		{
+			"TC"         : "nl.tno.msg.tc_designator.TC0001_Lifecycle",
+			"IR"         : ["IR-DS-0001", "IR-DS-0002", "IR-DS-0003", "IR-DS-0004", "IR-DS-0005", "IR-DS-0006", "IR-DS-0007", "IR-DS-0008", "IR-DS-0009", "IR-DS-0010", "IR-DS-0011", "IR-DS-0012", "IR-DS-0013", "IR-DS-0014", "IR-DS-0015"],
+			"description": "Test if the SuT correctly generates lifecycle-related messages for a Designator."
+		},
+		{
+			"TC"         : "nl.tno.msg.tc_designator.TC0002_Deadreckoning",
+			"IR"         : ["IR-DS-0016", "IR-DS-0017", "IR-DS-0018", "IR-DS-0019", "IR-DS-0020", "IR-DS-0021", "IR-DS-0022"],
+			"description": "Test if the SuT correctly generates dead reckoning-related messages for a Designator."
+		}
+	],
+    "parameters":[
+        {
+            "name": "alwaysReportWhenTestPassesAfterFail",
+            "description": "The test case generally tries to only report an error once. When this option is set to true, the test cases also reports when the error condition has disappeared, and when the error condition reappears."
+        },
+        {
+            "name": "initialWaitingTime",
+            "description": "[s]: the time the test case will wait before starting to the execute test."
+        },
+        {
+            "name": "totalTestCaseTime",
+            "description": "[s]: the total time the testcase will keep running."
+        },
+        {
+            "name": "maxTimeBetweenPowerZeroAndDesignatorRemoval",
+            "description": "[s]: the maximum allowed time between first setting the Designator Output Power to zero and then removing the Designator."
+        },
+        {
+            "name": "maxTimeBetweenHostRemovalAndDesignatorRemoval",
+            "description": "[s]: the maximum allowed time between first removing the Host entity and then removing the Designator."
+        },
+        {
+            "name": "heartbeatDrNonStatic",
+            "description": "[s]: a spot location update shall be provided at least every heartbeatDrNonStatic seconds (valid for dead reckoning algorithm not Static)."
+        },
+        {
+            "name": "distanceThresholdDrNonStatic",
+            "description": "[m]: a spot location update shall be provided when the discrepancy between the actual position (as determined by its own internal model) and its dead reckoned position (as determined by using a specified dead reckoning algorithm) exceeds this threshold (valid for deadreckoning algorithm not Static)."
+        },
+        {
+            "name": "heartbeatDrStatic",
+            "description": "[s]: a spot location update shall be provided at least every heartbeatDrStatic seconds (valid for dead reckoning algorithm Static)."
+        },
+        {
+            "name": "distanceThresholdDrStatic",
+            "description": "[m]: a spot location update shall be provided when the discrepancy between the actual position (as determined by its own internal model) and its dead reckoned position (as determined by using a specified dead reckoning algorithm) exceeds this threshold (valid for dead reckoning algorithm Static)."
+        }
+    ]
+}

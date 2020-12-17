@@ -122,7 +122,7 @@ public class TsForm extends AbstractForm {
 			public class GeneralBox extends AbstractGroupBox {
 				@Override
 				protected String getConfiguredLabel() {
-					return TEXTS.get("GeneralInformation");
+					return TEXTS.get("GeneralTSInformation");
 				}
 				
 				// set all fields of this box to read-only

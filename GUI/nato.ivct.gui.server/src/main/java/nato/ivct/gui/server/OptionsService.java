@@ -74,4 +74,8 @@ public class OptionsService implements IOptionsService {
 	public String getIvctBuild() {
 		return Factory.getBuild();
 	}
+
+    public void setTestEngine (String testEngine) {
+        ServerSession.get().setTestEngine(testEngine);
+    }
 }

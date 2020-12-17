@@ -16,6 +16,7 @@ package nato.ivct.gui.server.sut;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.job.IFuture;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.security.ACCESS;
 import org.slf4j.Logger;
@@ -102,6 +104,22 @@ public class SuTTcService implements ISuTTcService {
             LOG.error("", exc);
         }
         return formData;
+    }
+    
+    
+    @Override
+    public BinaryResource getLogfileContent(final String sutId, final String testsuiteId, final String fileName) {
+        BinaryResource fileContent = null;
+
+        try {
+            fileContent = new BinaryResource(fileName, Files.readAllBytes(Paths.get(Factory.getSutPathsFiles().getSutLogPathName(sutId, testsuiteId)).resolve(fileName)));
+        }
+        catch (IOException | InvalidPathException exc) {
+            LOG.error("error to access fileName " + fileName, exc);
+            fileContent = new BinaryResource(fileName, null);
+        }
+
+        return fileContent;
     }
 
 
@@ -203,10 +221,10 @@ public class SuTTcService implements ISuTTcService {
     }
 
     @Override
-    public void executeTestCase(String sutId, String tc, String tsId) {
+    public void executeTestCase(String sutId, String tc, String tsId, String testEngine) {
         // execute the CmdStartTc commands
         final SutDescription sut = BEANS.get(SuTService.class).getSutDescription(sutId);
-        ServerSession.get().execStartTc(sutId, tc, tsId, sut.settingsDesignator, sut.federation, sut.sutFederateName);
+        ServerSession.get().execStartTc(sutId, tc, tsId, sut.settingsDesignator, sut.federation, sut.sutFederateName, testEngine);
     }
 
 
@@ -236,6 +254,13 @@ public class SuTTcService implements ISuTTcService {
         }
 
         return verdict;
+    }
+
+
+    @Override
+    public void abortTestCase(String sutId, String tcId, String testEngine) {
+        // execute the CmdAbortTc command
+        ServerSession.get().execAbortTc(sutId, tcId, testEngine);
     }
 
 }

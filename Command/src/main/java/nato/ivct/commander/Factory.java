@@ -64,6 +64,8 @@ public class Factory {
 
     public static final String RTI_ID                       = "RTI_ID";
     public static final String RTI_ID_DEFLT                 = "pRTI";
+    
+       
     public static final String PROPERTY_IVCTCOMMANDER_QUEUE = "ivctcommander.queue";
     public static final String MESSAGING_USER_ID            = PropertyBasedClientSetup.PROPERTY_USER;
     public static final String MESSAGING_USER_DEFLT         = "admin";
@@ -95,6 +97,11 @@ public class Factory {
     public static final String FEDERATION_NAME           = "FEDERATION_NAME";
     public static final String FEDERATION_NAME_DEFLT     = "TheWorld";
     public static final String FEDERATE_NAME_DEFLT       = "sut";
+    
+    //  for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+    public static final String TESTENGINE_LABEL       = "TESTENGINE_LABEL";
+    public static final String TESTENGINE_LABEL_DEFLT = "Broadcast";
+    
 
     private static MessageProducer producer   = null;
     private static int             cmdCounter = 0;
@@ -180,6 +187,8 @@ public class Factory {
             fallback.put(LOGSINK_USER_ID, LOGSINK_USER_DEFLT);
             fallback.put(LOGSINK_PASSWORD_ID, LOGSINK_PASSWORD_DEFLT);
             fallback.put(SETTINGS_DESIGNATOR, SETTINGS_DESIGNATOR_DEFLT);
+            // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+            fallback.put(TESTENGINE_LABEL, TESTENGINE_LABEL_DEFLT);
 
             props = new Properties(fallback);
 
@@ -220,6 +229,7 @@ public class Factory {
                     LOGGER.error("initialize Factory", e1);
                 }
             }
+            
 
             // overwrite with environment settings
             overwriteWithEnv(IVCT_TS_DIST_HOME_ID);
@@ -239,6 +249,10 @@ public class Factory {
             overwriteWithEnv(LOGSINK_PASSWORD_ID);
             overwriteWithEnv(SETTINGS_DESIGNATOR);
             overwriteWithEnv(FEDERATION_NAME);
+            // for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+            overwriteWithEnv(TESTENGINE_LABEL);
+
+            
 
             LOGGER.debug("Properties used: {}", props);
 
@@ -343,7 +357,7 @@ public class Factory {
                         }
                         env.setCharAt(k, inString.charAt(j));
                     }
-                    if (gotClosing == false) {
+                    if (!gotClosing) {
                         LOGGER.error("LineUtil:replaceMacro: Missing closing bracket");
                     }
                 }
@@ -391,15 +405,35 @@ public class Factory {
     }
 
 
+    public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName, String testEngine) {
+        initialize();
+        if (testEngine == null) {
+            return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, TESTENGINE_LABEL_DEFLT);
+        } else {
+            return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, testEngine);
+        }
+    }
+    
     public static CmdStartTc createCmdStartTc(String sut, String testSuiteName, String tc, String settingsDesignator, String federationName, String sutFederateName) {
         initialize();
-        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName);
+        return new CmdStartTc(sut, testSuiteName, tc, settingsDesignator, federationName, sutFederateName, TESTENGINE_LABEL_DEFLT);
+    }
+    
+    
+    public static CmdAbortTc createCmdAbortTc(String sut, String tc, String testEngine) {
+        initialize();
+        return new CmdAbortTc(sut, tc, testEngine);
     }
 
 
     public static CmdSetLogLevel createCmdSetLogLevel(LogLevel level) {
         initialize();
         return new CmdSetLogLevel(level);
+    }
+    
+    public static CmdSetTestEngine createCmdSetTestEngine(String testEngine) {
+        initialize();
+        return new CmdSetTestEngine(testEngine);
     }
 
 
@@ -475,9 +509,14 @@ public class Factory {
     }
 
 
+    public static CmdOperatorConfirmation createCmdOperatorConfirmation(String sutName, String testSuiteId, String tc, String testEngine, boolean confirmationBool, String text) {
+        initialize();
+        return new CmdOperatorConfirmation(sutName, testSuiteId, tc, testEngine, confirmationBool, text);
+    }
+    
     public static CmdOperatorConfirmation createCmdOperatorConfirmation(String sutName, String testSuiteId, String tc, boolean confirmationBool, String text) {
         initialize();
-        return new CmdOperatorConfirmation(sutName, testSuiteId, tc, confirmationBool, text);
+        return new CmdOperatorConfirmation(sutName, testSuiteId, tc, TESTENGINE_LABEL_DEFLT, confirmationBool, text);
     }
 
 
@@ -509,5 +548,4 @@ public class Factory {
     private static void setBuild(String build) {
         Factory.build = build;
     }
-
 }

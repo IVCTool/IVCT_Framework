@@ -23,91 +23,106 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 public class CmdStartTcListener implements MessageListener, Command {
 
-	private OnStartTestCaseListener listener;
+    private OnStartTestCaseListener listener;
 
-	public class TcInfo {
-		public String sutName;
-		public String sutDir;
-		public String testSuiteId;
-		public String testCaseId;
-		public String testCaseParam;
-		public String settingsDesignator;
-		public String federationName;
-		public String sutFederateName;
-	}
+    public class TcInfo {
+        public String sutName;
+        public String sutDir;
+        public String testSuiteId;
+        public String testCaseId;
+        public String testCaseParam;
+        public String settingsDesignator;
+        public String federationName;
+        public String sutFederateName;
+        // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+        public String testEngineLabel;
+    }
 
-	public interface OnStartTestCaseListener {
-		public void onStartTestCase(TcInfo info);
-	}
+    public interface OnStartTestCaseListener {
+        public void onStartTestCase(TcInfo info);
+    }
 
-	public CmdStartTcListener(OnStartTestCaseListener listener) {
-		this.listener = listener;
-	}
+    public CmdStartTcListener(OnStartTestCaseListener listener) {
+        this.listener = listener;
+    }
 
-	@Override
-	public void execute() {
-		Factory.LOGGER.trace("subsribing the commands listener");
-		Factory.jmsHelper
-				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
-	}
 
-	@Override
-	public void onMessage(Message message) {
-		if (message instanceof TextMessage) {
-			final TextMessage textMessage = (TextMessage) message;
-			try {
-				final String content = textMessage.getText();
-				try {
-					JSONParser jsonParser = new JSONParser();
-					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
-					String commandTypeName = (String) jsonObject.get(CmdStartTc.COMMAND_ID);
+    @Override
+    public void execute() {
+        Factory.LOGGER.trace("subsribing the commands listener");
+        Factory.jmsHelper.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
+    }
 
-					if (commandTypeName.equals(CmdStartTc.COMMAND)) {
-						Factory.LOGGER.trace("JMS Message received: {}", content);
-						TcInfo info = new TcInfo();
 
-						info.sutName = (String) jsonObject.get(CmdStartTc.SUT_NAME);
-						info.sutDir = (String) jsonObject.get(CmdStartTc.SUT_DIR);
-						info.testSuiteId = (String) jsonObject.get(CmdStartTc.TS_ID);
-						info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
-						info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
-						info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
-						info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
-						info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString();
+    @Override
+    public void onMessage(Message message) {
+        if (!(message instanceof TextMessage))
+            return;
 
-						Factory.LOGGER.info("StartTcListener Command received: {}", jsonObject);
+        final TextMessage textMessage = (TextMessage) message;        
+        try {
+            final String content = textMessage.getText();
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
+            String commandTypeName = (String) jsonObject.get(CmdStartTc.COMMAND_ID);
 
-						// check for missing values
-						if (info.sutName == null)
-							Factory.LOGGER.error("sutName is missing");
-						if (info.sutDir == null)
-							Factory.LOGGER.error("sutDir is missing");
-						if (info.testSuiteId == null)
-							Factory.LOGGER.error("testSuiteId is missing");
-						if (info.testCaseId == null)
-							Factory.LOGGER.error("testCaseId is missing");
-						if (info.settingsDesignator == null)
-							Factory.LOGGER.error("settingsDesignator is missing");
-						if (info.federationName == null)
-							Factory.LOGGER.error("federationName is missing");
-						if (info.sutFederateName == null)
-							Factory.LOGGER.error("sutFederateName is missing");
-						if (info.testCaseParam == null)
-							Factory.LOGGER.error("testCaseParam is missing");
+            if (!commandTypeName.equals(CmdStartTc.COMMAND))
+                return;
 
-						listener.onStartTestCase(info);
-					}
+            Factory.LOGGER.trace("JMS Message received: {}", content);
+            TcInfo info = new TcInfo();
 
-				} catch (ParseException e) {
-					Factory.LOGGER.error("onMessage: ", e);
-				}
+            info.sutName = (String) jsonObject.get(CmdStartTc.SUT_NAME);
+            info.sutDir = (String) jsonObject.get(CmdStartTc.SUT_DIR);
+            info.testSuiteId = (String) jsonObject.get(CmdStartTc.TS_ID);
+            info.testCaseId = (String) jsonObject.get(CmdStartTc.TC_ID);
+            info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
+            info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
+            info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
+            info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString(); 
+            
+            // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+            if ( (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString() == null) ||
+                    (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString().isEmpty() ) )  {
+            	info.testEngineLabel= "TestEngine_Label not given to CmdStartTCListen" ;
+            } else {
+            info.testEngineLabel = jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString();
+            }            
+   
+            Factory.LOGGER.info("StartTcListener Command received: {}", jsonObject);
 
-			} catch (final JMSException e) {
-				Factory.LOGGER.error("onMessage: problems with getText", e);
-			}
-		}
-	}
+            // check for missing values
+            if (info.sutName == null)
+                Factory.LOGGER.error("sutName is missing");
+            if (info.sutDir == null)
+                Factory.LOGGER.error("sutDir is missing");
+            if (info.testSuiteId == null)
+                Factory.LOGGER.error("testSuiteId is missing");
+            if (info.testCaseId == null)
+                Factory.LOGGER.error("testCaseId is missing");
+            if (info.settingsDesignator == null)
+                Factory.LOGGER.error("settingsDesignator is missing");
+            if (info.federationName == null)
+                Factory.LOGGER.error("federationName is missing");
+            if (info.sutFederateName == null)
+                Factory.LOGGER.error("sutFederateName is missing");
+            if (info.testCaseParam == null)
+                Factory.LOGGER.error("testCaseParam is missing");
+            // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
+            if (info.testEngineLabel == null)
+                Factory.LOGGER.error("testEngineLabel is missing");
+
+            listener.onStartTestCase(info);
+        }
+        catch (ParseException e) {
+            Factory.LOGGER.error("onMessage: ", e);
+        }
+        catch (final JMSException e) {
+            Factory.LOGGER.error("onMessage: problems with getText", e);
+        }
+    }
 
 }

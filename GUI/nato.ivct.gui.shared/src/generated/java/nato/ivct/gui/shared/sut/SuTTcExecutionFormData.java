@@ -107,6 +107,11 @@ public class SuTTcExecutionFormData extends AbstractFormData {
     }
 
 
+    public TcRequirementTable getTcRequirementTable() {
+        return getFieldByClass(TcRequirementTable.class);
+    }
+
+
     /**
      * access method for property TestCaseId.
      */
@@ -397,6 +402,79 @@ public class SuTTcExecutionFormData extends AbstractFormData {
     public static class TcProgress extends AbstractValueFieldData<String> {
 
         private static final long serialVersionUID = 1L;
+    }
+
+    public static class TcRequirementTable extends AbstractTableFieldBeanData {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public TcRequirementTableRowData addRow() {
+            return (TcRequirementTableRowData) super.addRow();
+        }
+
+
+        @Override
+        public TcRequirementTableRowData addRow(int rowState) {
+            return (TcRequirementTableRowData) super.addRow(rowState);
+        }
+
+
+        @Override
+        public TcRequirementTableRowData createRow() {
+            return new TcRequirementTableRowData();
+        }
+
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return TcRequirementTableRowData.class;
+        }
+
+
+        @Override
+        public TcRequirementTableRowData[] getRows() {
+            return (TcRequirementTableRowData[]) super.getRows();
+        }
+
+
+        @Override
+        public TcRequirementTableRowData rowAt(int index) {
+            return (TcRequirementTableRowData) super.rowAt(index);
+        }
+
+
+        public void setRows(TcRequirementTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class TcRequirementTableRowData extends AbstractTableRowData {
+
+            private static final long  serialVersionUID = 1L;
+            public static final String requirementId    = "requirementId";
+            public static final String requirementDesc  = "requirementDesc";
+            private String             m_requirementId;
+            private String             m_requirementDesc;
+
+            public String getRequirementId() {
+                return m_requirementId;
+            }
+
+
+            public void setRequirementId(String newRequirementId) {
+                m_requirementId = newRequirementId;
+            }
+
+
+            public String getRequirementDesc() {
+                return m_requirementDesc;
+            }
+
+
+            public void setRequirementDesc(String newRequirementDesc) {
+                m_requirementDesc = newRequirementDesc;
+            }
+        }
     }
 
     public static class TestCaseIdProperty extends AbstractPropertyData<String> {

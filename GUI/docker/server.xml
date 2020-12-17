@@ -50,7 +50,7 @@
                directory="logs" prefix="localhost_access_log" suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
-       <Context path="" docBase="ivct.gui.ui.html##3.0.0"  reloadable="true" >
+       <Context path="" docBase="ivct.gui.ui.html##4.0.0"  reloadable="true" >
        </Context>
 
 
