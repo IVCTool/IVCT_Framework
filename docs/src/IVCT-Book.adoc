@@ -1,7 +1,11 @@
+
+:toc: 
+:numbered:
+
+
 = IVCT Documentation
 
-:toc:
-
+toc::[]
 
 == Background
 
