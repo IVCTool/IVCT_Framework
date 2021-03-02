@@ -3,9 +3,6 @@
 This page gives an overview of the available documentation for the IVCT Framework code.
 It is designed for system integrators, framework and test case developers.
 
-NOTE: The documentation pages are currently under construction.
-Some pages might be outdated or unfinished.
-
 
 == Background
 
