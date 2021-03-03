@@ -2,12 +2,16 @@
 // Allows centralized definition of the version of artifacts to use.
 ext {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-    gradleVersion = '5.1.1'
+    gradleVersion = '5.6.4'
     gradleWrapperVersion = "${gradleVersion}"
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-    ivctVersion = '4.0.0'
-    compatibleVersions = ['3.1.0-SNAPSHOT':'compatible','3.0.0':'compatible','2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
+    ivctVersion = '4.0.1-SNAPSHOT'
+    compatibleVersions = ['4.0.0':'compatible', '3.1.0-SNAPSHOT':'compatible','3.0.0':'compatible','2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
+
+    // JDK Version Compatibility
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
     logbackVersion = '1.2.3'
