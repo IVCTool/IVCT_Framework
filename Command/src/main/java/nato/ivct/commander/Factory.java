@@ -193,39 +193,35 @@ public class Factory {
             props = new Properties(fallback);
 
             String home = System.getenv(IVCT_CONF);
-        	String propertiesFileName = home + "/IVCT.properties";
 
             if (home == null) {
-                LOGGER.debug("using IVCT_CONF default (" + IVCT_CONF_DEFLT + ")");
-                home = props.getProperty(IVCT_CONF);
+                LOGGER.debug("no system setting for properties file found - using IVCT_CONF default (" + IVCT_CONF_DEFLT + ")");
+                home = IVCT_CONF_DEFLT;
             }
             try {
                 File f = new File(home);
-                // test if IVCT_CONF is already a filename
-                if (f.exists()) {
-                    LOGGER.debug("{} exists", home);
-                }
+                // test if IVCT_CONF points to a directory
                 if (f.isDirectory()) {
-                    LOGGER.debug("{} is directory", home);
+                    LOGGER.debug("{} is directory, using default file name \"IVCT.properties\"", home);
+                    home = home + "/IVCT.properties";
+                    props.load(new FileInputStream(home));
+                    LOGGER.debug("Properties {} file loaded", home);
                 }
-                if (f.exists() && !f.isDirectory()) {
+                // test if IVCT_CONF is already a filename
+                else if (f.exists()) {
+                    LOGGER.debug("{} exists", home);
                     props.load(new FileInputStream(f));
-                }
-                else {
-                    // if not, just try to read the properties file with the default name
-                    props.load(new FileInputStream(propertiesFileName));
-                    LOGGER.debug("Properties {} file loaded", propertiesFileName);
                 }
             }
             catch (final Exception e) {
                 LOGGER.error("Unable to read IVCT_CONF = {}  creating default values", home);
                 try {
-                    fallback.store(new FileOutputStream(home + "/IVCT.properties"), "IVCT Properties File");
+                    fallback.store(new FileOutputStream(home), "IVCT Properties File");
                     LOGGER.warn("New IVCT.properties file has been created with default values. Please verify settings!");
                     LOGGER.warn(props.toString());
                 }
                 catch (IOException e1) {
-                    LOGGER.error("Unable to write {}", propertiesFileName);
+                    LOGGER.error("Unable to write {}", home);
                     LOGGER.error("initialize Factory", e1);
                 }
             }
