@@ -22,9 +22,7 @@ dependencies {
 	
 	implementation libraries.apacheCommonsIO
 
-	// testImplementation	libraries.junit
 	testImplementation	libraries.junit_jupiter_engine
-    // testImplementation  libraries.junit_vintage_engine
 	testImplementation	libraries.activemqEmbedded
 }
 
