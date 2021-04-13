@@ -54,7 +54,7 @@ public class TestCmdHeartbeat {
         }    
     }
 
-    public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSend{
+    public class Use_CmdHeartbeatSend implements CmdHeartbeatSend.OnCmdHeartbeatSend{
 	
         private boolean health = true;
         private String myClassName = Use_CmdHeartbeatSend.this.getMyClassName();
