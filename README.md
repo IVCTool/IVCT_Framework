@@ -24,6 +24,8 @@ The IVCT tool is a open source projects that invites developers to share and con
 
 There is a [tutorial to explain the concepts and the best practices for developing test cases](https://github.com/IVCTool/IVCT_TestSuiteDevelopment).
 
+An important resource for building the IVCT tool is the [HLA Container](https://github.com/hlacontainers) project, donated by [TNO](https://www.tno.nl/en/). This project provides the docker images required for the various RTI connections, which are used by the test case engine.  
+
 ## Futher Reading
 
 The general concepts of [HLA Certification is explained by the NATO Modelling & Simulation Centre of Excellence](https://www.mscoe.org/nato-hla-certification-home/).
