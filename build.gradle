@@ -1,11 +1,21 @@
-// sonarqube
 plugins {
+// sonarqube
   id "org.sonarqube" version "2.7"
+  // open-source license dependency reporter
+  id 'com.github.jk1.dependency-license-report' version '1.16'
+}
+
+import com.github.jk1.license.render.*
+import com.github.jk1.license.filter.*
+licenseReport {
+  renderers = [new InventoryHtmlReportRenderer(), new InventoryMarkdownReportRenderer()]
+  filters = [new LicenseBundleNormalizer(bundlePath: "$projectDir/.shared/license-normalizer-bundle.json")]
+  configurations = ['runtime']
+//  filters = [new ExcludeTransitiveDependenciesFilter()]
 }
 
 apply from: "./.shared/libraries.gradle"
-
+apply from: "./.shared/commons.gradle"
 
 project.group = 'io.github.ivctool'
 project.version = "${ivctVersion}"
-apply from: "./.shared/commons.gradle"
