@@ -10,8 +10,7 @@ import com.github.jk1.license.filter.*
 licenseReport {
   renderers = [new InventoryHtmlReportRenderer(), new InventoryMarkdownReportRenderer()]
   filters = [new LicenseBundleNormalizer(bundlePath: "$projectDir/.shared/license-normalizer-bundle.json")]
-  configurations = ['runtime']
-//  filters = [new ExcludeTransitiveDependenciesFilter()]
+  configurations = ['compile']
 }
 
 apply from: "./.shared/libraries.gradle"
