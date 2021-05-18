@@ -1,6 +1,8 @@
 package de.fraunhofer.iosb.ivct;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -55,7 +57,7 @@ public class UiTest {
     		log.info("testCreateCmdLineTool: new IVCTcommander: {}", e);
     		return;
     	}
-		assertTrue("CmdLineTool is a null pointer", clt != null);
+		assertNotNull(clt, "CmdLineTool is a null pointer");
 
 		(new CmdStartTestResultListener(CmdLineTool.ivctCommander)).execute();
 
@@ -68,15 +70,15 @@ public class UiTest {
 
 		// Simple null pointer test
 		RuntimeParameters rp = new RuntimeParameters();
-		assertTrue("RuntimeParameters is a null pointer", rp != null);
+		assertNotNull(rp, "RuntimeParameters is a null pointer");
 
 		// No test case/schedule started, thus should be not running
 		boolean tcr = rp.checkCtTcTsRunning("testRunTimeParameters");
-		assertTrue("checkCtTcTsRunning: should not be running", false == tcr);
+		assertFalse(tcr, "checkCtTcTsRunning: should not be running");
 
 		// Just to test if method is robust against null pointers
 		tcr = rp.checkCtTcTsRunning(null);
-		assertTrue("checkCtTcTsRunning: null pointer not detected", true == tcr);
+		assertTrue(tcr, "checkCtTcTsRunning: null pointer not detected");
 
 		log.info("testCheckCtTcTsRunning leave");
 	}
@@ -92,15 +94,15 @@ public class UiTest {
 		} catch (IOException e) {
 			log.error("testResetSUTvariables",e);
 		}
-		assertTrue("IVCTcommander is a null pointer", ivctCommander != null);
+		assertNotNull(ivctCommander, "IVCTcommander is a null pointer");
 
 		// Reset SUT should reset verdict list
     	ivctCommander.rtp.resetSut();
     	ivctCommander.resetSUT();
 		String tc = ivctCommander.rtp.getTestCaseName();
-		assertTrue("Testcase name is not a null pointer", tc == null);
+		assertNotNull(tc, "Testcase name is not a null pointer");
 		String ts = ivctCommander.rtp.getTestScheduleName();
-		assertTrue("Testschedule name is not a null pointer", ts == null);
+		assertNotNull(ts, "Testschedule name is not a null pointer");
 
 		log.info("testResetSUTvariables leave");
 	}

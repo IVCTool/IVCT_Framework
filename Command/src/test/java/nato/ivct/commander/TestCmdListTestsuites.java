@@ -14,9 +14,10 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -66,36 +67,36 @@ public class TestCmdListTestsuites {
             fail("exception during execute");
             e.printStackTrace();
         }
-        assertTrue("Some Testsuites's should be found", cmd.testsuites.size() > 0);
+        assertTrue(cmd.testsuites.size() > 0, "Some Testsuites's should be found");
 
         // all testsuites should be well formed
         for (CmdListTestSuites.TestSuiteDescription value : cmd.testsuites.values()) {
-            assertTrue("Test case has a name", value.id != null);
-            assertTrue("Test case has a name", value.description != null);
-            assertTrue("Test case has a name", value.name != null);
-            assertTrue("Test case has a name", value.tsLibTimeFolder != null);
-            assertTrue("Test case has a name", value.tsRunTimeFolder != null);
-            assertTrue("Test case has a name", value.version != null);
+            assertNotNull(value.id, "Test case has a name");
+            assertNotNull(value.description, "Test case has a name");
+            assertNotNull(value.name, "Test case has a name");
+            assertNotNull(value.tsLibTimeFolder, "Test case has a name");
+            assertNotNull(value.tsRunTimeFolder, "Test case has a name");
+            assertNotNull(value.version, "Test case has a name");
         }
 
         TestSuiteDescription ts = null;
         ts = cmd.getTestSuiteForTc("de.fraunhofer.iosb.tc_helloworld.TC0002");
-        assertTrue("TestSuite not found", ts != null);
+        assertNotNull(ts, "TestSuite not found");
         ts = cmd.getTestSuiteforIr("IR-SOM-0014");
-        assertTrue("TestSuite not found", ts != null);
+        assertNotNull(ts, "TestSuite not found");
 
         CmdListTestSuites.TestCaseDesc tc = null;
         tc = cmd.getTestCaseDescrforIr("IR-SOM-0014");
-        assertTrue("TestCase not found", tc != null);
+        assertNotNull(tc, "TestCase not found");
 
         Set<String> irList = cmd.getIrForTc("de.fraunhofer.iosb.tc_helloworld.TC0002");
-        assertFalse("TC does not test IR", irList.isEmpty());
+        assertFalse(irList.isEmpty(), "TC does not test IR");
 
         Set<String> irSet = new HashSet<>();
         irSet.add("IR-SOM-0017");
         irSet.add("IR-SOM-0018");
         Set<String> tsSet = cmd.getTsForIr(irSet);
-        assertTrue("Testsuite Set should be not empty", tsSet.size() == 1);
+        assertTrue(tsSet.size() == 1, "Testsuite Set should be not empty");
         
         irSet.add("IR-SOM-0001");
         irSet.add("IR-SOM-0002");
@@ -103,7 +104,7 @@ public class TestCmdListTestsuites {
         irSet.add("IR-SOM-0015");
 
     	Map<String, TestSuiteDescription> fts = cmd.filterForIr (irSet);
-    	assertTrue("filtered Testsuite list shall not be empty", fts.size() > 0);
+    	assertTrue(fts.size() > 0, "filtered Testsuite list shall not be empty");
 
     }
 

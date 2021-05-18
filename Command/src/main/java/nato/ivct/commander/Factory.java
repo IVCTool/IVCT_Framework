@@ -34,6 +34,7 @@ import nato.ivct.commander.CmdLogMsgListener.OnLogMsgListener;
 import nato.ivct.commander.CmdOperatorRequestListener.OnOperatorRequestListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
+import nato.ivct.commander.CmdSetLogLevelListener.OnSetLogLevelListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 
@@ -426,6 +427,12 @@ public class Factory {
         initialize();
         return new CmdSetLogLevel(level);
     }
+
+    public static CmdSetLogLevelListener createCmdSetLogLevelListener (OnSetLogLevelListener listener) {
+        initialize();
+        return new CmdSetLogLevelListener(listener);
+    }
+
     
     public static CmdSetTestEngine createCmdSetTestEngine(String testEngine) {
         initialize();

@@ -14,7 +14,8 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -52,13 +53,13 @@ public class TestCmdListBadges {
     @BeforeEach 
     public void setUp()  {
         this.lb = Factory.createCmdListBadges();
-        assertTrue("Factory Test createCmdListBadges should return CmdListBadges", this.lb != null);
+        assertNotNull(this.lb, "Factory Test createCmdListBadges should return CmdListBadges");
         this.lb.execute();
     }
 
     @Test
     public void testCreateCmdListBadgesMethod() {
-        assertTrue("badge list should not be empty", this.lb.badgeMap.size() > 0);
+        assertTrue(this.lb.badgeMap.size() > 0, "badge list should not be empty");
     }
 
     @Test
@@ -69,7 +70,7 @@ public class TestCmdListBadges {
         cs.add("HelloWorld-2019");
         cs.add("HLA-BASE-2019");
         this.lb.collectIrForCs(irSet, cs);
-        assertTrue("interoperability set should not be empty", irSet.size() > 0);
+        assertTrue(irSet.size() > 0, "interoperability set should not be empty");
     }
 
 

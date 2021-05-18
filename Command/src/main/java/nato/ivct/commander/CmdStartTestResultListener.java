@@ -51,7 +51,7 @@ public class CmdStartTestResultListener implements MessageListener, Command {
 
     @Override
     public void execute() {
-        LOGGER.trace("subsribing the CmdStartTestResultListener");
+        LOGGER.trace("subscribing the CmdStartTestResultListener");
         Factory.jmsHelper.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
     }
 

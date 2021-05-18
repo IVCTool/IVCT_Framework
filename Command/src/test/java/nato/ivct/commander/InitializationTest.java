@@ -14,6 +14,8 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.apache.activemq.broker.BrokerService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,6 +47,7 @@ public class InitializationTest {
     @Test
     public void testReadVersion() {
         Factory.readVersion();
+		assertNotNull(Factory.getVersion());
     }
 
 }

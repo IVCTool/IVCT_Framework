@@ -14,13 +14,19 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+//import static org.junit.Assert.assertTrue;
+//import static org.junit.jupiter.api.Assertions.fail;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.activemq.broker.BrokerService;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.concurrent.Semaphore;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,16 +35,37 @@ import org.json.simple.JSONObject;
 
 public class TestCmdHeartbeat {
 	private static BrokerService broker = new BrokerService();
+
+	@BeforeAll
+	public static void startBroker() throws Exception {
+		// configure the broker
+		broker.addConnector("tcp://localhost:61616"); 
+		broker.setPersistent(false);
+
+		broker.start();
+        Factory.initialize();
+	}
+
+	@AfterAll
+	public static void stopBroker() throws Exception {
+		try {
+			broker.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+    
     static Logger logger = LoggerFactory.getLogger(Use_CmdHeartbeatSend.class);
 
     public class Use_CmdHeartbeatListen implements CmdHeartbeatListen.OnCmdHeartbeatListen {
         public String heartbeatSender = "undefined";
         public String timestamp = "undefined";
         public boolean healthstatus = false;
+        public Semaphore semaphore = new Semaphore(0);
 
         //  work with a Json Object as return
         public void hearHeartbeat(JSONObject jsonObject) {
-            assertTrue("heartbeat message must not be null", jsonObject != null);
+            assertNotNull(jsonObject, "heartbeat message must not be null");
             logger.info(jsonObject.toString());
             try {
                 heartbeatSender = (String) jsonObject.get("HeartbeatSender");
@@ -50,7 +77,7 @@ public class TestCmdHeartbeat {
             } catch (final Exception e) {
                 fail("Use_CmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
             } 
-    
+            semaphore.release(1);
         }    
     }
 
@@ -73,29 +100,10 @@ public class TestCmdHeartbeat {
         }
     }    
 
-	@BeforeAll
-	public static void startBroker() throws Exception {
-		// configure the broker
-		broker.addConnector("tcp://localhost:61616"); 
-		broker.setPersistent(false);
-
-		broker.start();
-        Factory.initialize();
-	}
-
-	@AfterAll
-	public static void stopBroker() throws Exception {
-		try {
-			broker.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-    
 	@Test
 	public void testStartListener() throws Exception {
-        Use_CmdHeartbeatListen querryClient = new Use_CmdHeartbeatListen();
-        CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
+        Use_CmdHeartbeatListen queryClient = new Use_CmdHeartbeatListen();
+        CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient);
         heartbeatListener.execute();
 
 		Use_CmdHeartbeatSend testHeartbeatSender = new  Use_CmdHeartbeatSend();
@@ -103,7 +111,13 @@ public class TestCmdHeartbeat {
 
 		testHeartbeatSender.health=true;
         cmdHeartbeatSend.execute();
-        Thread.sleep(1000);
-        //assertTrue("health status was set to true", querryClient.healthstatus);
+        try {
+        	queryClient.semaphore.acquire(1);
+
+        } catch (InterruptedException e) {
+        	e.printStackTrace();
+        }
+        //Thread.sleep(1000);
+        //assertTrue("health status was set to true", queryClient.healthstatus);
     }
 }
