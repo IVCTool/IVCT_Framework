@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
     public static void main(String[] args) throws Exception {     
         
      // creating a instance of this 'client'  to  deliver it to the listener
-     Use_CmdHeartbeatListen querryClient = new Use_CmdHeartbeatListen();
+     Use_CmdHeartbeatListen queryClient = new Use_CmdHeartbeatListen();
      
     
      // instantiating a new heartbeatListener and deliver this client  without a special Sender-class to observe
-     CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient);
+     CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient);
 
      // instantiating a new heartbeatListener and deliver this client  an  a special Sender-class to observe
-     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(querryClient, Use_CmdHeartbeatListen.desiredHeartBeatSenderClass );
+     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient, Use_CmdHeartbeatListen.desiredHeartBeatSenderClass );
      
 
      heartbeatListener.execute();
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
         }
     }
 
-    /*   // work with the  json as a String  what's comming back  , an example
+    /*   // work with the  json as a String  what's coming back  , an example
     @Override
     public void hearHeartbeat(String backinfo) {
         logger.info("delivered string to Use_CmdHeartbeatListen is: " + backinfo);
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
             //String healthstatus = (String) jsonObject.get("SenderHealthState");
             boolean  healthstatus = (boolean) jsonObject.get("SenderHealthState");
             String testOutput=  heartbeatSender+" , "+ timestamp +" , "+ healthstatus;
-            logger.info("## If we got back json following output shoud be correct: " + testOutput ); // Debug
+            logger.info("## If we got back json following output should be correct: " + testOutput ); // Debug
             
         } catch (final Exception e) {
             Factory.LOGGER.error("Use_CmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
