@@ -132,7 +132,7 @@ public class FactoryTest {
 	public void testCreateCmdSetLogLevelMethod() {
 		Semaphore semaphore = new Semaphore(0);
 		class OnSetLogLevelListenerTest implements CmdSetLogLevelListener.OnSetLogLevelListener {
-			LogLevel logMsg = null;
+			protected LogLevel logMsg = null;
 			@Override
 			public void onSetLogLevel(LogLevel msg) {
 				logMsg = msg;
