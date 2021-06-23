@@ -123,7 +123,6 @@ public class SutPathsFiles {
         for (final File fileEntry: folderName.listFiles()) {
             if (fileEntry.isFile()) {
                 final String s = fileEntry.getName();
-                final int len = s.length();
                 if (s.endsWith(".json")) {
                     if (withPath) {
                         reportFileNames.add(path + "/" + fileEntry.getName());
@@ -192,8 +191,6 @@ public class SutPathsFiles {
         for (final File fileEntry: folder.listFiles()) {
             if (fileEntry.isFile()) {
                 final String s = fileEntry.getName();
-                //              May have multiple TcParam file in the future
-                //	        	if (s.substring(len - 5, len).equals(".json")) {
                 if (s.equals("TcParam.json")) {
                     if (withPath) {
                         tcParamFileNames.add(folderName + "/" + fileEntry.getName());

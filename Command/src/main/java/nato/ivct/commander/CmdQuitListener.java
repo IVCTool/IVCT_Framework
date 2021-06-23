@@ -41,19 +41,16 @@ public class CmdQuitListener implements Command, MessageListener {
 			try {
 				final String content = textMessage.getText();
 				Factory.LOGGER.trace("JMS Message received: {}", content);
-				try {
-					JSONParser jsonParser = new JSONParser();
-					JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
-					String commandTypeName = (String) jsonObject.get("commandType");
-
-					if (commandTypeName.equals("quit")) {
-						listener.onQuit();
-					}
-				} catch (ParseException exc) {
-					Factory.LOGGER.error("onMessage: ", exc);
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(content);
+				String commandTypeName = (String) jsonObject.get("commandType");
+				if (commandTypeName.equals("quit")) {
+					listener.onQuit();
 				}
-
-			} catch (final JMSException exc) {
+			} catch (ParseException exc) {
+				Factory.LOGGER.error("onMessage: ", exc);
+			}
+			catch (final JMSException exc) {
 				Factory.LOGGER.error("onMessage: problems with getText ", exc);
 			}
 		}
@@ -61,7 +58,7 @@ public class CmdQuitListener implements Command, MessageListener {
 
 	@Override
 	public void execute() {
-		Factory.LOGGER.trace("subsribing the commands listener");
+		Factory.LOGGER.trace("subscribing the commands listener");
 		Factory.jmsHelper
 				.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
 	}
