@@ -36,3 +36,6 @@ compatibleVersions.properties
 *.org
 
 compatibleVersions.properties
+
+# visual studio settings
+.vscode
