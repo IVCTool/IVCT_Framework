@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
 //import nato.ivct.commander.Factory;
 
 
-public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSend{
+public class TestCmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSend{
 	
-	static Logger logger = LoggerFactory.getLogger(Use_CmdHeartbeatSend.class);
+	static Logger logger = LoggerFactory.getLogger(TestCmdHeartbeatSend.class);
 
 	/* this es an example for a application sending heartbeat-Information 
 	 *  with CmdHeartbeatSend to a ActiveMQ
@@ -31,7 +31,7 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 
 	 private boolean health;
 	 
-	 private String myClassName = "Use_CmdHeartbeatSend";
+	 private String myClassName = "TestCmdHeartbeatSend";
 	 
 	// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
 	// private String rtiTypeEngineLabel;
@@ -43,10 +43,10 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 	      
 	      logger.info(" UserDir ist : {}", System.getProperty("user.dir"));      // Debug
 
-		  logger.info(" Use_CmdHeartbeatSend  has started");      // Debug
+		  logger.info(" TestCmdHeartbeatSend  has started");      // Debug
 		  
 		  // we need a Instance of this class
-		  Use_CmdHeartbeatSend testHeartbeatSender = new  Use_CmdHeartbeatSend();
+		  TestCmdHeartbeatSend testHeartbeatSender = new  TestCmdHeartbeatSend();
 		  
 		  // and deliver it to  an new instance of  CmdHeartbeatSend
 		  CmdHeartbeatSend  cmdHeartbeatSend = new CmdHeartbeatSend(testHeartbeatSender);
@@ -55,20 +55,20 @@ public class Use_CmdHeartbeatSend  implements CmdHeartbeatSend.OnCmdHeartbeatSen
 		  
 		  
 	      // for testing the CmdHeartbeatSend  we start it and change the 'health' - variable after a while
-		  logger.info(" ### Use_CmdHeartbeatSend starts now  cmdHeartbeatSend.execute() ");      // Debug
+		  logger.info(" ### TestCmdHeartbeatSend starts now  cmdHeartbeatSend.execute() ");      // Debug
 		  
 		  cmdHeartbeatSend.execute();
 		  
 		  
 		  // ----------   for testing ------------------------
-		  logger.info(" ### Use_CmdHeartbeatSend has startet cmdheartbeatSend.execute() ");
+		  logger.info(" ### TestCmdHeartbeatSend has startet cmdheartbeatSend.execute() ");
 		  int count = 0;
 	        while (count < 15) {
 	            Thread.sleep(3000);
 	            count++;
 	        }
 		  
-	       logger.info(" Use_CmdHeartbeatSend change health to false ");
+	       logger.info(" TestCmdHeartbeatSend change health to false ");
 	       testHeartbeatSender.health = false;
 		  
 	       
