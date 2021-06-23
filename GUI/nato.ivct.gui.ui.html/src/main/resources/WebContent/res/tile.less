@@ -2,26 +2,6 @@
 
 /* The default class is added if displayStyle is set to DEFAULT. If it is set to PLAIN no class will be added. */
 
-.default-tile:hover {
-    background-color: @item-selection-background-color;
-    border-color: @item-selection-border-color;
-}
-
-.passed-tile:hover {
-    background-color: @palette-green-3;
-    border-color: @item-selection-border-color;
-}
-
-.inconclusive-tile:hover {
-    background-color: #997bb7;
-    border-color: @item-selection-border-color;
-}
-
-.failed-tile:hover {
-    background-color: #db3d57;
-    border-color: @item-selection-border-color;
-}
-
 .default-tile {
   background-color: @palette-gray-1;
   border: 1px solid @border-color;
@@ -36,6 +16,11 @@
     background-color: @item-selection-background-color;
     border-color: @item-selection-border-color;
   }
+}
+
+.default-tile:hover {
+  background-color: @item-selection-background-color;
+  border-color: @item-selection-border-color;
 }
 
 .passed-tile {
@@ -54,6 +39,11 @@
   }
 }
 
+.passed-tile:hover {
+  background-color: @palette-green-3;
+  border-color: @item-selection-border-color;
+}
+
 .inconclusive-tile {
   background-color: #bfadd2;
   border: 1px solid @border-color;
@@ -70,6 +60,11 @@
   }
 }
 
+.inconclusive-tile:hover {
+  background-color: #997bb7;
+  border-color: @item-selection-border-color;
+}
+
 .failed-tile {
   background-color: #efa9b5;
   border: 1px solid @border-color;
@@ -84,6 +79,11 @@
     background-color: #db3d57;
     border-color: @item-selection-border-color;
   }
+}
+
+.failed-tile:hover {
+  background-color: #db3d57;
+  border-color: @item-selection-border-color;
 }
 
 .passed-text {
