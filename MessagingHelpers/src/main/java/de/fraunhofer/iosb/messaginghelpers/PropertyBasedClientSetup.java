@@ -105,7 +105,7 @@ public final class PropertyBasedClientSetup {
         }
     }
 
-
+    
     /**
      * check if the current state is allowed. If state is not allowed, an
      * IllegalStateException is thrown

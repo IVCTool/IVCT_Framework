@@ -38,7 +38,6 @@ public class FactoryTest {
 		// configure the broker
 		broker.addConnector("tcp://localhost:61616"); 
 		broker.setPersistent(false);
-
 		broker.start();
 	}
 

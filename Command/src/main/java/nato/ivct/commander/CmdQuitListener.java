@@ -24,12 +24,11 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class CmdQuitListener implements Command, MessageListener {
+	private OnQuitListener listener = null;
 
 	public interface OnQuitListener {
 		public void onQuit();
 	}
-
-	private OnQuitListener listener = null;
 
 	public CmdQuitListener(OnQuitListener listener) {
 		this.listener = listener;

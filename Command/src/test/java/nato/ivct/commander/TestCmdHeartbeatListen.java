@@ -19,11 +19,11 @@ import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 
 
-    public class Use_CmdHeartbeatListen implements CmdHeartbeatListen.OnCmdHeartbeatListen {
+    public class TestCmdHeartbeatListen implements CmdHeartbeatListen.OnCmdHeartbeatListen {
         
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Use_CmdHeartbeatListen.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TestCmdHeartbeatListen.class);
 
-    static Use_CmdHeartbeatListen client; 
+    static TestCmdHeartbeatListen client; 
     
     // You can choose a special  Class to be monitored
     //private static String desiredHeartBeatSenderClass="Use_CmdHeartbeatSend";
@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
     public static void main(String[] args) throws Exception {     
         
      // creating a instance of this 'client'  to  deliver it to the listener
-     Use_CmdHeartbeatListen queryClient = new Use_CmdHeartbeatListen();
+     TestCmdHeartbeatListen queryClient = new TestCmdHeartbeatListen();
      
     
      // instantiating a new heartbeatListener and deliver this client  without a special Sender-class to observe
      CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient);
 
      // instantiating a new heartbeatListener and deliver this client  an  a special Sender-class to observe
-     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient, Use_CmdHeartbeatListen.desiredHeartBeatSenderClass );
+     //CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient, TestCmdHeartbeatListen.desiredHeartBeatSenderClass );
      
 
      heartbeatListener.execute();
@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
     /*   // work with the  json as a String  what's coming back  , an example
     @Override
     public void hearHeartbeat(String backinfo) {
-        logger.info("delivered string to Use_CmdHeartbeatListen is: " + backinfo);
+        logger.info("delivered string to TestCmdHeartbeatListen is: " + backinfo);
         
         try {
             JSONParser jsonParser = new JSONParser();            
@@ -69,14 +69,14 @@ import org.slf4j.LoggerFactory;
             logger.info("## If we got back json following output should be correct: " + testOutput ); // Debug
             
         } catch (final Exception e) {
-            Factory.LOGGER.error("Use_CmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
+            Factory.LOGGER.error("TestCmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
         } 
     }
     */
     
     //  work with a Json Object as return
     public void hearHeartbeat(JSONObject backJson) {        
-        logger.info("delivered Json to Use_CmdHeartbeatListen ist: {}", backJson);        
+        logger.info("delivered Json to TestCmdHeartbeatListen ist: {}", backJson);        
     }    
 
 }
