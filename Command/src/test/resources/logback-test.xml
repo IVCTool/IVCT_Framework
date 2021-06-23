@@ -7,12 +7,15 @@
 		</encoder>
 	</appender>
 
-	<root level="ERROR">
+	<!-- TRACE	DEBUG	INFO	WARN	ERROR	FATAL	OFF -->
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 
 	<logger name="nato.ivct.commander.Factory" level="INFO">
 		<appender-ref ref="console" />
 	</logger>
+	<logger name="de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup" level="DEBUG" />
+	
 
 </configuration>
