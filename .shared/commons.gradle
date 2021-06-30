@@ -1,5 +1,5 @@
 /*
- * Common configuration used by all msg-134 subprojects.
+ * Common configuration used by all IVCT subprojects.
  */
 
 // -----------------------------------------------------------------------------
@@ -39,11 +39,11 @@ allprojects {
 subprojects { subProject ->
     defaultTasks 'build'
 
-  group = subProject.parent.group
-  if (subProject.version == 'unspecified') {
-    version = subProject.parent.version
-  }
-  description = subProject.parent.description
+    group = subProject.parent.group
+    if (subProject.version == 'unspecified') {
+        version = subProject.parent.version
+    }
+    description = subProject.parent.description
     ext {
         specificationVersion = version
     }
