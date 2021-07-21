@@ -82,7 +82,11 @@ public class CmdStartTcListener implements MessageListener, Command {
             info.settingsDesignator = (String) jsonObject.get(CmdStartTc.SETTINGS_DESIGNATOR);
             info.federationName = (String) jsonObject.get(CmdStartTc.FEDERATION);
             info.sutFederateName = (String) jsonObject.get(CmdStartTc.FEDERATE);
-            info.testCaseParam = jsonObject.get(CmdStartTc.TC_PARAM).toString(); 
+
+            // add context info into properties
+            Factory.props.setProperty("IVCT_SUT_ID", info.sutName);
+			Factory.props.setProperty("IVCT_TESTSUITE_ID", info.testSuiteId);
+            info.testCaseParam = Factory.replaceMacro(jsonObject.get(CmdStartTc.TC_PARAM).toString());
             
             // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
             if ( (jsonObject.get(CmdStartTc.TESTENGINE_LABEL).toString() == null) ||
