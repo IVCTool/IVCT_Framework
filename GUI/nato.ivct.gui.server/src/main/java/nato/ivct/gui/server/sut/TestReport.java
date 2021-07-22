@@ -179,8 +179,6 @@ class TestReport {
         final String TESTCONFIGURATION_KW = "TestConfiguration";
         final String FEDERATION_KW = "Federation";
         final String SUTFEDERATE_KW = "SutFederate";
-        final String RTI_KW = "Rti";
-        final String SETTINGSDESIGNATOR_KW = "SettingsDesignator";
 
         // SuT information
         final SutDescription sutDesc = BEANS.get(SuTService.class).getSutDescription(sutId);
@@ -190,8 +188,6 @@ class TestReport {
 
         testConfigurationSection.addProperty(FEDERATION_KW, sutDesc.federation);
         testConfigurationSection.addProperty(SUTFEDERATE_KW, sutDesc.sutFederateName);
-        testConfigurationSection.addProperty(RTI_KW, Factory.props.getProperty(Factory.RTI_ID));
-        testConfigurationSection.addProperty(SETTINGSDESIGNATOR_KW, Factory.props.getProperty(Factory.SETTINGS_DESIGNATOR));
 
         jReport.add(TESTCONFIGURATION_KW, testConfigurationSection);
     }
