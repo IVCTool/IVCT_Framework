@@ -53,7 +53,7 @@ The table shows all 3rd party libraries used in the IVCT project.
 |Testing Framework
 
 |jasperReports
-|6.12.2
+|6.17.0
 |https://www.gnu.org/licenses/gpl-3.0.html[LGPL 3]
 |https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports
 |Free Java Reporting Library

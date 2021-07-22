@@ -230,6 +230,7 @@ public class Factory {
 
             // overwrite with environment settings
             overwriteWithEnv(IVCT_TS_DIST_HOME_ID);
+            overwriteWithEnv(IVCT_TS_DEF_HOME_ID);            
             overwriteWithEnv(IVCT_SUT_HOME_ID);
             overwriteWithEnv(IVCT_BADGE_HOME_ID);
             overwriteWithEnv(IVCT_BADGE_ICONS_ID);
