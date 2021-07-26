@@ -18,12 +18,8 @@ trap 'term_handler' SIGTERM
 
 # run application in the background and set the PID
 echo "Starting the Dockerized IVCT Test Case Engine"
+exec java -cp $( cat /app/jib-classpath-file ):"$LRC_CLASSPATH" $( cat /app/jib-main-class-file )
 
-# call the TC exec
-chmod a+x /root/application/TC.exec/bin/TC.exec
-
-sh /root/application/TC.exec/bin/TC.exec
-	
 pid="$!"
 
 wait "$pid"
