@@ -8,18 +8,43 @@ buildscript {
   }
 }
 
-// docker plugin
-apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+plugins {
+    id 'com.google.cloud.tools.jib' version '3.1.2'
+}
+apply plugin: 'war'
 
-// import remote API plugin task groups
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+jib {
+	from {
+		image = 'tomcat:jre8-slim'
+	}
+	to {
+		image = "ivct/gui:${ivctVersion}"
+	}
+	extraDirectories {
+	paths {
+		path {
+			from = file('docker')
+			into = '/usr/local/tomcat/conf'
+		}
+		path {
+			from = file("nato.ivct.gui.server.app.war/build/libs")
+			into = '/usr/local/tomcat/webapps/'
+		}
+		path {
+			from = file("nato.ivct.gui.ui.html.app.war/build/libs")
+			into = '/usr/local/tomcat/webapps/'
+		}
+	}
+	}
+	container {
+		appRoot = '/usr/local/tomcat/webapps/ivct.gui.ui.html'
+		creationTime = 'USE_CURRENT_TIMESTAMP'
+	}
+}
 
-task dockerBuildImage(type: DockerBuildImage) {
+tasks.register ("dockerBuildImage") {
+    group = 'Docker'
+    description = 'Creates docker images for RTIs'
 	dependsOn subprojects.install
-	group = 'Docker'
-	description = 'Builds the GUI docker image'
-    buildArgs.put('version', "${ivctVersion}")
-	inputDir = file('.')
-	tags.add ("ivct/ivct-gui:${ivctVersion}")
+    dependsOn 'jibDockerBuild'
 }
