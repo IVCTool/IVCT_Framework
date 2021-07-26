@@ -170,8 +170,12 @@ public abstract class AbstractTestCase {
             tcGlobalVariables.append("\nSUT Federation Name: ");
             tcGlobalVariables.append(federationName);
         }
+        if (Factory.props.getProperty("TESTENGINE_LABEL") != null) {
+            tcGlobalVariables.append("\nEngine Label: ");
+            tcGlobalVariables.append(Factory.props.getProperty("TESTENGINE_LABEL"));
+        }
         if (settingsDesignator != null) {
-            tcGlobalVariables.append("\nsettingsDesignator: ");
+            tcGlobalVariables.append("\nSettings Designator: ");
             tcGlobalVariables.append(settingsDesignator);
         }
         tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- END");
