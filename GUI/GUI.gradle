@@ -1,17 +1,9 @@
-buildscript {
-    repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-  dependencies {
-	classpath libraries.docker
-  }
-}
-
 plugins {
+	// using the Java war core core plugin
+	id 'war'
+    // using JIB Container Support for Java applications
     id 'com.google.cloud.tools.jib' version '3.1.2'
 }
-apply plugin: 'war'
 
 jib {
 	from {
@@ -22,22 +14,22 @@ jib {
 		image = "ivct/gui:${ivctVersion}"
 	}
 	extraDirectories {
-	paths {
-		path {
-			from = file('docker')
-			into = '/usr/local/tomcat/conf'
+		paths {
+			path {
+				from = file('docker')
+				into = '/usr/local/tomcat/conf'
+			}
+			path {
+				from = file("nato.ivct.gui.server.app.war/build/libs")
+				includes = ['*.war']
+				into = '/usr/local/tomcat/webapps/'
+			}
+			path {
+				from = file("nato.ivct.gui.ui.html.app.war/build/libs")
+				includes = ['*.war']
+				into = '/usr/local/tomcat/webapps/'
+			}
 		}
-		path {
-			from = file("nato.ivct.gui.server.app.war/build/libs")
-	        includes = ['*.war']
-			into = '/usr/local/tomcat/webapps/'
-		}
-		path {
-			from = file("nato.ivct.gui.ui.html.app.war/build/libs")
-	        includes = ['*.war']
-			into = '/usr/local/tomcat/webapps/'
-		}
-	}
 	}
 	container {
 		creationTime = 'USE_CURRENT_TIMESTAMP'

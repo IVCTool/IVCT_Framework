@@ -1,28 +1,7 @@
-buildscript {
-    repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-  dependencies {
-	classpath libraries.docker
-  }
-}
 
-
-
-// apply plugin: 'java'
-
-apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
-
-// import remote API plugin task groups
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
-
-task dockerBuildImage(type: DockerBuildImage) {
-    dependsOn 'install'
+task dockerBuildImage (type: Exec) {
 	group = 'Docker'
-	description = 'Runtime configuration'
-
-	inputDir = file('.')
-	tags.add ("ivct/runtime-config:${ivctVersion}")
+	description = 'command line task to create docker image'
+	executable 'docker'
+	args 'build', '-t', "ivct/runtime-config:${ivctVersion}", '.'
 }
