@@ -15,7 +15,8 @@ apply plugin: 'war'
 
 jib {
 	from {
-		image = 'tomcat:jre8-slim'
+		// image = 'tomcat:jre8-slim'
+		image = 'tomcat:jdk8-openjdk'
 	}
 	to {
 		image = "ivct/gui:${ivctVersion}"
@@ -28,16 +29,17 @@ jib {
 		}
 		path {
 			from = file("nato.ivct.gui.server.app.war/build/libs")
+	        includes = ['*.war']
 			into = '/usr/local/tomcat/webapps/'
 		}
 		path {
 			from = file("nato.ivct.gui.ui.html.app.war/build/libs")
+	        includes = ['*.war']
 			into = '/usr/local/tomcat/webapps/'
 		}
 	}
 	}
 	container {
-		appRoot = '/usr/local/tomcat/webapps/ivct.gui.ui.html'
 		creationTime = 'USE_CURRENT_TIMESTAMP'
 	}
 }
@@ -45,6 +47,9 @@ jib {
 tasks.register ("dockerBuildImage") {
     group = 'Docker'
     description = 'Creates docker images for RTIs'
-	dependsOn subprojects.install
     dependsOn 'jibDockerBuild'
 }
+
+jibDockerBuild.dependsOn (':GUI:nato.ivct.gui.server.app.war:war')
+jibDockerBuild.dependsOn (':GUI:nato.ivct.gui.ui.html.app.war:war')
+
