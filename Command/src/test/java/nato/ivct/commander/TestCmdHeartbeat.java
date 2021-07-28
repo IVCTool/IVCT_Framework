@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.activemq.broker.BrokerService;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -70,10 +71,13 @@ public class TestCmdHeartbeat {
             try {
                 heartbeatSender = (String) jsonObject.get("HeartbeatSender");
                 timestamp = (String) jsonObject.get("LastSendingTime");
-// not used?                healthstatus = (boolean) jsonObject.get("SenderHealthState");
+                Object healthstatusRaw = jsonObject.get("SenderHealthState");
+                if (healthstatusRaw != null) {
+                    healthstatus = (boolean) healthstatusRaw;
+                }
                 logger.debug("HeartbeatSender: {}", heartbeatSender); 
                 logger.debug("LastSendingTime: {}", timestamp);
-//                logger.debug("SenderHealthState: {}", healthstatus);
+                logger.debug("SenderHealthState: {}", healthstatus);
             } catch (final Exception e) {
                 fail("Use_CmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
             } 
@@ -117,7 +121,7 @@ public class TestCmdHeartbeat {
         } catch (InterruptedException e) {
         	e.printStackTrace();
         }
-        //Thread.sleep(1000);
-        //assertTrue("health status was set to true", queryClient.healthstatus);
+        Thread.sleep(7000);
+        assertTrue("health status was set to true", queryClient.healthstatus);
     }
 }
