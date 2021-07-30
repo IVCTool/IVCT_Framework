@@ -1,30 +1,31 @@
-apply plugin: 'application'
-
-// -----------------------------------------------------------------------------
-// Docker
-// -----------------------------------------------------------------------------
-buildscript {
-    repositories {
-        mavenLocal()
-		mavenCentral()
-    }
-    dependencies {
-        classpath libraries.docker
-    }
+// Plugins used for LogSink
+plugins {
+    // using the Java core Application plugin
+    id 'application'
+    // JIB Container Support for Java applications
+    id 'com.google.cloud.tools.jib' version '3.1.2'
 }
-apply plugin: 'com.bmuschko.docker-java-application'
 
+apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.ivct.logsink.LogSink'
 
-
-docker {
-    javaApplication {
-        baseImage = 'openjdk:8-jre-alpine'
-        maintainer = 'Reinhard Herzog "reinhard.herzog@iosb.fraunhofer.de"'
-        tag = "ivct/logsink:${ivctVersion}"
+jib {
+    from {
+        image = 'openjdk:8-jre-alpine'
     }
+    to {
+        image = "ivct/logsink:${ivctVersion}"
+    }
+	container {
+		creationTime = 'USE_CURRENT_TIMESTAMP'
+	}
 }
 
+tasks.register ("dockerBuildImage") {
+    group = 'Docker'
+    description = 'Creates docker image for LogSink'
+    dependsOn 'jibDockerBuild'
+}
 
 dependencies {
 	compile     project(':Command')

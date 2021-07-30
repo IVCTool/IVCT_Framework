@@ -1,76 +1,98 @@
-// -----------------------------------------------------------------------------
-// Docker
-// -----------------------------------------------------------------------------
-buildscript {
-    repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-  dependencies {
-	classpath libraries.docker
-  }
-}
-
 // Plugins used for TC.exec
 plugins {
+    // using the Java core Application plugin
     id 'application'
+    // using JIB Container Support for Java applications
+    id 'com.google.cloud.tools.jib' version '3.1.2'
 }
 
-// def runDockerBuild(String target) {
-//     exec {
-//         executable "docker"
-//         // args "build", "-f ${target} --build-arg version=${ivctVersion} -t ivct/tc-runner:pi-${ivctVersion} ."
-//         // args "build", '-f Dockerfile-pi --build-arg version=2.1.1 -t ivct/tc-runner:pi-2.1.1 .'
-//         commandLine 'docker', 'build', "-f ${target} --build-arg version=$ivctVersion -t ivct/logsink:pi-$ivctVersion ."
-//     }
-// }
+mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
 
-// docker plugin
-apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
-
-// import remote API plugin task groups
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
-
-task dockerBuildPitchImage(type: DockerBuildImage) {
-    dependsOn 'install'
-	group = 'Docker'
-	description = 'Builds the tc-runner docker image for Pitch'
-    dockerFile = project.file('Dockerfile-pi')
-    buildArgs.put('version', "${ivctVersion}")
-	inputDir = file('.')
-	tags.add ("ivct/tc-runner:pi-skeleton-${ivctVersion}")
+// setup the common jib configuration
+task jibApplication () {
+    doFirst {
+        jib {
+            container {
+                entrypoint = 'INHERIT'
+                creationTime = 'USE_CURRENT_TIMESTAMP'
+                environment = ['LRC_ENTRYPOINT': '/root/application/start.sh']
+                mainClass = "de.fraunhofer.iosb.testrunner.TestEngine"
+            }
+            extraDirectories {
+                paths {
+                    path {
+                        from = file('docker')
+                        into = '/root/application'
+                    }
+                    path {
+                        from = file('src/main/resources')
+                        into = '/root/application'
+                    }
+                }
+                permissions = ['/root/application/start.sh': '755']
+            }
+        }
+    }
 }
 
-task dockerBuildPorticoImage(type: DockerBuildImage) {
-    dependsOn 'install'
-	group = 'Docker'
-	description = 'Builds the tc-runner docker image for Portico'
-    dockerFile = project.file('Dockerfile-po')
-    buildArgs.put('version', "${ivctVersion}")
-	inputDir = file('.')
-	tags.add ("ivct/tc-runner:po-${ivctVersion}")
+task jibPitch (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
+    group = 'Docker'
+    description = 'Creates images for the Pitch RTI'
+    jibExtension = project.extensions.getByName('jib')
+    dependsOn jibApplication
+    doFirst {
+        jib {
+            from {
+                image = 'hlacontainers/lrc:pitch-skeleton-alpine'
+            }
+            to {
+                image = "ivct/tc-runner:pi-skeleton-${ivctVersion}"
+            }
+        }
+    }
 }
 
-task dockerBuildMakImage(type: DockerBuildImage) {
-    dependsOn 'install'
-	group = 'Docker'
-	description = 'Builds the tc-runner docker image for MaK'
-    dockerFile = project.file('Dockerfile-ma')
-    buildArgs.put('version', "${ivctVersion}")
-	inputDir = file('.')
-	tags.add ("ivct/tc-runner:ma-${ivctVersion}")
+task jibPortico (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
+    group = 'Docker'
+    description = 'Creates images for the Portico RTI'
+    jibExtension = project.extensions.getByName('jib')
+    dependsOn jibApplication
+    doFirst {
+        jib {
+            from {
+                image = 'hlacontainers/lrc:portico-nightly-2016.05.28-alpine'
+            }
+            to {
+                image = "ivct/tc-runner:po-${ivctVersion}"
+            }
+        }
+    }
+}
+
+task jibMak (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
+    group = 'Docker'
+    description = 'Creates images for the Mak RTI'
+    jibExtension = project.extensions.getByName('jib')
+    dependsOn jibApplication
+    doFirst {
+        jib {
+            from {
+                image = 'hlacontainers/lrc:vtmak-4.5f-centos7'
+            }
+            to {
+                image = "ivct/tc-runner:ma-${ivctVersion}"
+            }
+        }
+    }
 }
 
 tasks.register ("dockerBuildImage") {
     group = 'Docker'
     description = 'Creates docker images for RTIs'
-    dependsOn 'dockerBuildPitchImage'
-    dependsOn 'dockerBuildPorticoImage'
-    dependsOn 'dockerBuildMakImage'
+    dependsOn 'jibPitch'
+    dependsOn 'jibPortico'
+    dependsOn 'jibMak'
 }
-
-mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
 
 dependencies {
     compile     project(':Command')
@@ -82,8 +104,7 @@ dependencies {
 	runtime		libraries.actimemqClient
 	runtime		libraries.logback_classic
 	runtime		libraries.logback_core
-
-	// compileOnly     group: 'io.github.msg134', name: 'IEEE1516e', version: ivctVersion
+//    compile     files('C:/MAK/makRti4.6/lib/hla.jar')
 }
 distributions {
     main {
