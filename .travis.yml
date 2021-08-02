@@ -19,14 +19,14 @@ script:
   # tag branch version
   - docker tag ivct/logsink:$VERSION ivct/logsink:$TRAVIS_BRANCH-latest
   - docker tag ivct/runtime-config:$VERSION ivct/runtime-config:$TRAVIS_BRANCH-latest
-  - docker tag ivct/ivct-gui:$VERSION ivct/ivct-gui:$TRAVIS_BRANCH-latest
+  - docker tag ivct/gui:$VERSION ivct/gui:$TRAVIS_BRANCH-latest
   - docker tag ivct/tc-runner:pi-skeleton-$VERSION ivct/tc-runner:pi-skeleton-$TRAVIS_BRANCH-latest
   - docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-$TRAVIS_BRANCH-latest
   - docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$TRAVIS_BRANCH-latest
   # push images to docker hub
   - docker push ivct/logsink
   - docker push ivct/tc-runner
-  - docker push ivct/ivct-gui
+  - docker push ivct/gui
   - docker push ivct/runtime-config
 
 before_cache:
