@@ -3,7 +3,7 @@ apply plugin: 'java'
 description = """IVCT HTML UI Server Development"""
 
 dependencies {
-  compile     project(':GUI:nato.ivct.gui.ui.html')
-
-  compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.dev.jetty', version:"${scoutVersion}"
+  implementation project(':GUI:nato.ivct.gui.ui.html')
+	// external project dependencies
+  implementation libraries.scoutJetty
 }

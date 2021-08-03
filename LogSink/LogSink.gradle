@@ -6,7 +6,6 @@ plugins {
     id 'com.google.cloud.tools.jib' version '3.1.2'
 }
 
-apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.ivct.logsink.LogSink'
 
 jib {
@@ -28,22 +27,17 @@ tasks.register ("dockerBuildImage") {
 }
 
 dependencies {
-	compile     project(':Command')
-	compile 	libraries.actimemqClient
-	compile 	libraries.logback_classic
-	compile     libraries.slf4j_api
-	compile		libraries.jsonSimple
-	compile		libraries.jsonIo
-
-    compile		libraries.logback_classic
-    compile		libraries.logback_core
-    compile     libraries.logback_contrib
-    compile     libraries.logback_json_classic
-
-    runtime		libraries.logback_classic
-    runtime		libraries.logback_core
-    runtime     libraries.logback_contrib
-    runtime     libraries.logback_json_classic
+	// local project dependencies
+	implementation  project(':Command')
+	// external project dependencies
+	implementation 	libraries.actimemqClient
+	implementation  libraries.slf4j_api
+	implementation	libraries.jsonSimple
+	implementation	libraries.jsonIo
+    implementation	libraries.logback_core
+    implementation	libraries.logback_classic
+    implementation  libraries.logback_contrib
+    implementation  libraries.logback_json_classic
 }
 
 distributions {

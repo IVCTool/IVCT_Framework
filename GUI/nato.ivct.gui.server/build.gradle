@@ -3,17 +3,17 @@ apply plugin: 'java'
 description = """IVCT Server"""
 
 dependencies {
-	compile     project(':Command')
-	compile     project(':GUI:nato.ivct.gui.shared')
+	implementation project(':Command')
+	implementation project(':GUI:nato.ivct.gui.shared')
 	
-	implementation	libraries.gson
-	implementation  libraries.jasperReports
-	implementation  libraries.antlr //Optional Library for jasperReports
-
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server', version:"${scoutVersion}"
-    compile group: 'org.apache.geronimo.specs', name: 'geronimo-jms_1.1_spec', version:"${geronimoJmsVersion}"
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version:"${javaxServletVersion}"
-    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.server.test', version:"${scoutVersion}"
+	// external project dependencies
+	implementation libraries.gson
+	implementation libraries.jasperReports				// Framework to generate pdf report from test results
+	implementation libraries.antlr 						// Optional Library for jasperReports
+	implementation libraries.scout_rt_server
+	implementation libraries.scout_rt_server_test
+	implementation libraries.servlet
+	implementation libraries.geronimoJms
 	testImplementation	libraries.hamcrest_core
 	testImplementation	libraries.activemqEmbedded
 }

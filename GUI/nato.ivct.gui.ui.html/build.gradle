@@ -10,7 +10,8 @@ sourceSets.main.resources.srcDirs += 'src/main/js'
 
 
 dependencies {
-    compile     project(':GUI:nato.ivct.gui.client')
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.ui.html', version:"${scoutVersion}"
-	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
+    implementation project(':GUI:nato.ivct.gui.client')
+	// external project dependencies
+    implementation libraries.servlet
+    implementation libraries.scout_rt_html
 }

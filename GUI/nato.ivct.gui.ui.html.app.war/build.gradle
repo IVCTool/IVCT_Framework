@@ -11,5 +11,5 @@ war {
 }
 
 dependencies {
-	compile     project(':GUI:nato.ivct.gui.ui.html')
+	implementation     project(':GUI:nato.ivct.gui.ui.html')
 }
