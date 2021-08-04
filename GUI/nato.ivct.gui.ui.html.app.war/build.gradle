@@ -6,8 +6,9 @@ apply from: "../../.shared/commons.gradle"
 description = """IVCT HTML UI WAR"""
 
 war {
-    baseName = 'ivct.gui.ui.html'
-	archiveName = "${baseName}##${version}.${extension}"
+    archiveBaseName = 'ivct.gui.ui.html'
+    archiveVersion = "${ivctVersion}"
+	archiveFileName = "${archiveBaseName.get()}##${archiveVersion.get()}.${archiveExtension.get()}"
 }
 
 dependencies {
