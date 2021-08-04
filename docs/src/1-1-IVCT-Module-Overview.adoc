@@ -3,7 +3,7 @@
 The IVCT consists of the modules shown in the picture below.
 On the left side there are the IVCT modules communication via an JMS message bus. On the right side is the HLA run time infrastructure with the System under Test (SuT) and optionally the System under Test Environment (SuTE). Both sides are connected by the TestEngine, which is tasked by the IVCT user interface modules, and which is part of a federation with the SuT and the SuTE.
 
-image:images/ivct_modules.jpg[IVCT Module Overview]
+image:{includedir}/images/ivct_modules.jpg[IVCT Module Overview]
 
 The IVCT components can be considered as a micro service architecture. Communications between these components are realized as JMS messages. All messages are implemented inside the ``Command`` library, where each message is following the link:https://en.wikipedia.org/wiki/Command_pattern[Command pattern].
 

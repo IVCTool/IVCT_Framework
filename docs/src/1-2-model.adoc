@@ -5,7 +5,7 @@ The IVCT framework is defining a set of elementes to describe system under test 
 
 The image below gives an overview
 
-image:images/DataModel.png[Data Model]
+image:{includedir}/images/DataModel.png[Data Model]
 
 The information is split into several JSON files for easier maintenance. The badge definitions are imported from the badge information management systems.
 The HelloWorld badge is an example for a badge file:
