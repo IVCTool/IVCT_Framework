@@ -33,6 +33,7 @@ task jibApplication () {
             }
         }
     }
+    dependsOn 'distTar'
 }
 
 task jibPitch (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
@@ -95,17 +96,20 @@ tasks.register ("dockerBuildImage") {
 }
 
 dependencies {
-    compile     project(':Command')
-	compile     project(':TC.lib')
-
-	compile     libraries.slf4j_api
-	compile     libraries.jsonSimple
-
-	runtime		libraries.actimemqClient
-	runtime		libraries.logback_classic
-	runtime		libraries.logback_core
-//    compile     files('C:/MAK/makRti4.6/lib/hla.jar')
+	// local project dependencies
+    implementation project(':Command')
+	implementation project(':TC.lib')
+	// external project dependencies
+	implementation libraries.slf4j_api
+	implementation libraries.jsonSimple
+	implementation libraries.actimemqClient
+	implementation libraries.logback_classic
+	implementation libraries.logback_core
+    // include explicit dependency to local RTI installation only for debugging
+    // implementation files('C:/MAK/makRti4.6/lib/hla.jar')
+    // implementation files('C:\Program Files\prti1516e\lib\prti.jar')
 }
+
 distributions {
     main {
         contents {
@@ -118,7 +122,7 @@ distributions {
 
 tasks.withType(CreateStartScripts) {
     classpath += files('lib')
-doLast {
+    doLast {
 		/*
 		* Get the default scripts from the gradle task.
 		*/

@@ -4,23 +4,14 @@ apply from: "../../.shared/libraries.gradle"
 apply from: "../../.shared/commons.gradle"
 
 description = """IVCT Shared"""
-/*
-sourceSets {
-	main {
-		java {
-			srcDirs 'src'
-			srcDirs 'generated'
-			srcDirs 'resources'
-		}
-	}
-}
-*/
+
 sourceSets.main.java.srcDirs += 'src/generated/java'
 
 dependencies {
-    compile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared', version:"${scoutVersion}"
-    compile libraries.slf4j_jul_to_slf4j
-    compile libraries.logback_classic
-    compile libraries.javaxannotation
-    testCompile group: 'org.eclipse.scout.rt', name: 'org.eclipse.scout.rt.shared.test', version:"${scoutVersion}"
+	implementation libraries.scout_rt_shared
+    implementation libraries.slf4j_jul_to_slf4j
+    implementation libraries.logback_classic
+    implementation libraries.javaxannotation
+
+	testImplementation libraries.scout_rt_shared_test
 }

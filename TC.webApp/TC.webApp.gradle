@@ -5,18 +5,17 @@ repositories {
 }
 
 dependencies {
-	compile     project(':TC.exec')
-
-	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
-
-	compile     libraries.slf4j_api
-	compile     libraries.jsonSimple
-
-	runtime		libraries.actimemqClient
-	runtime		libraries.logback_classic
-	runtime		libraries.logback_core
-
-	runtime     libraries.slf4j_jcl_over_slf4j
-	runtime     libraries.slf4j_jul_to_slf4j
-	runtime     libraries.slf4j_log4j_over_slf4j
+	// local project dependencies
+	implementation project(':TC.exec')
+	implementation project(':Command')
+	// external project dependencies
+	implementation libraries.servlet
+	implementation libraries.jsonSimple
+	implementation libraries.actimemqClient
+	implementation libraries.logback_classic
+	implementation libraries.logback_core
+	implementation libraries.slf4j_api
+	implementation libraries.slf4j_jcl_over_slf4j
+	implementation libraries.slf4j_jul_to_slf4j
+	implementation libraries.slf4j_log4j_over_slf4j
 }

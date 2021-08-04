@@ -1,3 +1,6 @@
+plugins {
+    id 'java-library'
+}
 
 task writeVersion {
     group = "Build"
@@ -16,14 +19,14 @@ task writeVersion {
 processResources.dependsOn writeVersion
 
 dependencies {
-	compile	libraries.slf4j_api
-	compile	libraries.jsonSimple
-	compile	project(':MessagingHelpers')
-	
+	// local project dependencies
+	api	project(':MessagingHelpers')
+	// external project dependencies
+	api	libraries.slf4j_api
+	api	libraries.jsonSimple
 	implementation libraries.apacheCommonsIO
-
-	testImplementation	libraries.junit_jupiter_engine
-	testImplementation	libraries.activemqEmbedded
+	testImplementation libraries.junit_jupiter_engine
+	testImplementation libraries.activemqEmbedded
 }
 
 test {

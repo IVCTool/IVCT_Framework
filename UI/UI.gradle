@@ -3,14 +3,14 @@ apply plugin: 'application'
 mainClassName = 'de.fraunhofer.iosb.ivct.CmdLineTool'
 
 dependencies {
-	compile     project(':Command')
-	compile     libraries.slf4j_api
-	compile     libraries.jsonSimple
+	implementation     project(':Command')
+	implementation     libraries.slf4j_api
+	implementation     libraries.jsonSimple
 
 
-	runtime		libraries.actimemqClient
-	runtime		libraries.logback_classic
-	runtime		libraries.logback_core
+	implementation		libraries.actimemqClient
+	implementation		libraries.logback_classic
+	implementation		libraries.logback_core
 
 	// testImplementation	libraries.junit
 	// testImplementation	libraries.hamcrest_core

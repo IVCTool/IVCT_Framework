@@ -5,13 +5,13 @@ repositories {
 }
 
 dependencies {
-	compile     project(':LogSink')
-
-	compile group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxServletVersion}"
-
-	compile     libraries.slf4j_api
-
-	runtime     libraries.slf4j_jcl_over_slf4j
-	runtime     libraries.slf4j_jul_to_slf4j
-	runtime     libraries.slf4j_log4j_over_slf4j
+	// local project dependencies
+	implementation project(':LogSink')
+	implementation project(':Command')
+	// external project dependencies
+	implementation libraries.servlet
+	implementation libraries.slf4j_api
+	implementation libraries.slf4j_jcl_over_slf4j
+	implementation libraries.slf4j_jul_to_slf4j
+	implementation libraries.slf4j_log4j_over_slf4j
 }

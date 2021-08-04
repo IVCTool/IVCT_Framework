@@ -58,9 +58,19 @@ ext {
         // https://www.eclipse.org/scout/  GUI framework
         scout_rt_client:				"org.eclipse.scout.rt:org.eclipse.scout.rt.client:${scoutVersion}",
         scout_rt_client_test:			"org.eclipse.scout.rt:org.eclipse.scout.rt.client.test:${scoutVersion}",
+        scout_rt_server:                "org.eclipse.scout.rt:org.eclipse.scout.rt.server:${scoutVersion}",
+        scout_rt_server_test:           "org.eclipse.scout.rt:org.eclipse.scout.rt.server.test:${scoutVersion}",
+        scout_rt_shared:                "org.eclipse.scout.rt:org.eclipse.scout.rt.shared:${scoutVersion}",
+        scout_rt_shared_test:           "org.eclipse.scout.rt:org.eclipse.scout.rt.shared.test:${scoutVersion}",
+        scout_rt_html:                  "org.eclipse.scout.rt:org.eclipse.scout.rt.ui.html:${scoutVersion}",
+        scoutJetty:                     "org.eclipse.scout.rt:org.eclipse.scout.dev.jetty:${scoutVersion}",
+        geronimoJms:                    "org.apache.geronimo.specs:geronimo-jms_1.1_spec:${geronimoJmsVersion}",
         // Junit test framework
         junit_jupiter_engine:           "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}",
         // http://hamcrest.org/JavaHamcrest/  Framework for matcher objects
         hamcrest_core:					"org.hamcrest:hamcrest-core:${hamcrestVersion}",
+        // servlet api
+        servlet:                        "javax.servlet:javax.servlet-api:${javaxServletVersion}"
+
     ]
 }

@@ -1,11 +1,14 @@
+plugins {
+    id 'java-library'
+}
 
 dependencies {
-	compile 	libraries.actimemqClient
-	compile 	libraries.logback_classic
-	compile     libraries.slf4j_api
+	api 	libraries.actimemqClient
+	api 	libraries.logback_classic
+	api     libraries.slf4j_api
 
-	runtime		libraries.logback_classic
-	runtime		libraries.logback_core
+	implementation		libraries.logback_classic
+	implementation		libraries.logback_core
 
 	testImplementation	libraries.junit_jupiter_engine
 	// testRuntime libraries.junit

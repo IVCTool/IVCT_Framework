@@ -76,12 +76,11 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 
 dependencies {
-    compileOnly project(':Command')
+    implementation project(':Command')
     compileOnly project(':IEEE1516e')
 
 	compileOnly libraries.slf4j_api
 	compileOnly libraries.jsonSimple
-
-	runtime		libraries.logback_classic
-	runtime		libraries.logback_core
+	compileOnly libraries.logback_classic
+	compileOnly libraries.logback_core
 }

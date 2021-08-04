@@ -12,28 +12,28 @@ toc::[]
 A good starting point to get a bit of an background on the architecture are the
 following sections.
 
-include::1-1-IVCT-Module-Overview.adoc[]
-include::1-2-model.adoc[]
-include::1-3-badge2testsuite.adoc[]
-include::1-4-terminology.adoc[]
+include::{includedir}/1-1-IVCT-Module-Overview.adoc[]
+include::{includedir}/1-2-model.adoc[]
+include::{includedir}/1-3-badge2testsuite.adoc[]
+include::{includedir}/1-4-terminology.adoc[]
 
 == Building the software
 If you plan do build the software by yourself, the following sections will give
 you an overview on tools and the development environment.
 
-include::2-1-build-overview.adoc[]
-include::2-2-prerequisites.adoc[]
-include::2-3-Branching-and-Merging.adoc[]
-include::2-4-gradleDoc.adoc[]
-include::2-5-travis.adoc[]
-include::2-6-3rdpartyRti.adoc[]
-include::2-8-IVCT_Configuration.adoc[]
+include::{includedir}/2-1-build-overview.adoc[]
+include::{includedir}/2-2-prerequisites.adoc[]
+include::{includedir}/2-3-Branching-and-Merging.adoc[]
+include::{includedir}/2-4-gradleDoc.adoc[]
+include::{includedir}/2-5-travis.adoc[]
+include::{includedir}/2-6-3rdpartyRti.adoc[]
+include::{includedir}/2-8-IVCT_Configuration.adoc[]
 
 == Building Docker Images
 The primary deployment typ for the IVCTool is the containerization with docker images.
 The underlying concept and configurations are explained below.
 
-include::3-5-Building-Docker-images.adoc[]
+include::{includedir}/3-5-Building-Docker-images.adoc[]
 
 
 == Running the tools
@@ -41,14 +41,14 @@ To use the IVCTool there are two types of interfaces available, a web-based and 
 commandline-based UI. These are described below, as well as some background on
 reading log files and the available test suite.
 
-include::4-1-Setup-the-JMS-broker.adoc[]
-include::4-3-commandlinetool.adoc[]
-include::4-4-Reading-and-understanding-Test-Case-logfiles.adoc[]
+include::{includedir}/4-1-Setup-the-JMS-broker.adoc[]
+include::{includedir}/4-3-commandlinetool.adoc[]
+include::{includedir}/4-4-Reading-and-understanding-Test-Case-logfiles.adoc[]
 
 == Extending the framework
 Finally there are some guidelines on writing test cases and considerations for
 future enhancements.
 
-include::5-4-TClogging.adoc[]
+include::{includedir}/5-4-TClogging.adoc[]
 
-include::6-1-futureenhancements.adoc[]
+include::{includedir}/6-1-futureenhancements.adoc[]
