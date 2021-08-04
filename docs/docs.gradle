@@ -1,22 +1,17 @@
-buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-      classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.17'
-      classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.6.1'
-  }
+plugins {
+    id 'org.asciidoctor.jvm.pdf' version '3.1.0'
+    id 'org.asciidoctor.jvm.convert' version '3.1.0'
 }
 
-apply plugin: "org.asciidoctor.convert"
-
 asciidoctor {
-  backends 'html5', 'pdf'
-  sourceDir = file('src')
+  sourceDir file('src')
+  outputDir file('build')
+}
+
+asciidoctorPdf {
+  sourceDir file('src')
   sources {
-    include 'Home.adoc','IVCT-Book.adoc'  
+    include 'IVCT-Book.adoc'  
   }
-  outputDir = file('build')
+  outputDir file('build')
 }
