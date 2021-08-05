@@ -38,7 +38,8 @@ jobs:
 
     - name: Read IVCT Version tag
       run: |
-        env.VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
+        VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
+        echo "Building version ${VERSION}"
         echo "Building version ${env.VERSION}"
         env.VERSION= {{ grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \' }}
         echo "Building version ${env.VERSION}"
