@@ -35,12 +35,12 @@ jobs:
     
     - name: Tag docker images
       run: |
-        docker tag ivct/logsink:$VERSION ivct/logsink:$TRAVIS_BRANCH-latest
-        docker tag ivct/runtime-config:$VERSION ivct/runtime-config:$TRAVIS_BRANCH-latest
-        docker tag ivct/gui:$VERSION ivct/gui:$TRAVIS_BRANCH-latest
-        docker tag ivct/tc-runner:pi-skeleton-$VERSION ivct/tc-runner:pi-skeleton-$TRAVIS_BRANCH-latest
-        docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-$TRAVIS_BRANCH-latest
-        docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$TRAVIS_BRANCH-latest
+        docker tag ivct/logsink:$VERSION ivct/logsink:$GITHUB_REF-latest
+        docker tag ivct/runtime-config:$VERSION ivct/runtime-config:$GITHUB_REF-latest
+        docker tag ivct/gui:$VERSION ivct/gui:$GITHUB_REF-latest
+        docker tag ivct/tc-runner:pi-skeleton-$VERSION ivct/tc-runner:pi-skeleton-$GITHUB_REF-latest
+        docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-$GITHUB_REF-latest
+        docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-$GITHUB_REF-latest
     
     - name: Log into DockerHub
       run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
