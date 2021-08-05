@@ -16,7 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      VERSION: ${{grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \' }}
       PossrhUsername: ${{ secrets.PossrhUsername }}
       PossrhPassword: ${{ secrets.PossrhPassword }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -38,11 +37,13 @@ jobs:
 
     - name: Read IVCT Version tag
       run: |
-        # VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
+        export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
         echo "Building version ${VERSION}"
     
     - name: Build with Gradle
-      run: ./gradlew -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
+      run: |
+        echo "Building version ${VERSION}"
+        ./gradlew -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
     
     - name: Tag docker images
       run: |
