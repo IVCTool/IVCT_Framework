@@ -9,6 +9,8 @@ on:
       - development
       - master
 
+  workflow_dispatch:
+    
 jobs:
   build:
     runs-on: ubuntu-latest
