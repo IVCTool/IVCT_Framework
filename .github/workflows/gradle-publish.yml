@@ -46,14 +46,13 @@ jobs:
     
     - name: Tag docker images
       run: |
-        # export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
-        echo "Building version ${env.VERSION} for branch ${GITHUB_REF:11}"
-        docker tag ivct/logsink:${env.VERSION} ivct/logsink:${GITHUB_REF:11}-latest
-        docker tag ivct/runtime-config:${env.VERSION} ivct/runtime-config:${GITHUB_REF:11}-latest
-        docker tag ivct/gui:${env.VERSION} ivct/gui:${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:pi-skeleton-${env.VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:po-${env.VERSION} ivct/tc-runner:po-${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:ma-${env.VERSION} ivct/tc-runner:ma-${GITHUB_REF:11}-latest
+        echo "Building version ${VERSION} for branch ${GITHUB_REF:11}"
+        docker tag ivct/logsink:${VERSION} ivct/logsink:${GITHUB_REF:11}-latest
+        docker tag ivct/runtime-config:${VERSION} ivct/runtime-config:${GITHUB_REF:11}-latest
+        docker tag ivct/gui:${VERSION} ivct/gui:${GITHUB_REF:11}-latest
+        docker tag ivct/tc-runner:pi-skeleton-${VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
+        docker tag ivct/tc-runner:po-${VERSION} ivct/tc-runner:po-${GITHUB_REF:11}-latest
+        docker tag ivct/tc-runner:ma-${VERSION} ivct/tc-runner:ma-${GITHUB_REF:11}-latest
     
     - name: Log into DockerHub
       run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -61,10 +60,10 @@ jobs:
     - name: Push images to DockerHub
       run: |
         docker image ls
-        docker push ivct/logsink:${env.VERSION}
-        docker push ivct/runtime-config:${env.VERSION}
-        docker push ivct/gui:${env.VERSION}
-        docker push ivct/tc-runner:pi-skeleton-${env.VERSION}
-        docker push ivct/tc-runner:po-${env.VERSION}
-        docker push ivct/tc-runner:ma-${env.VERSION}
+        docker push ivct/logsink:${VERSION}
+        docker push ivct/runtime-config:${VERSION}
+        docker push ivct/gui:${VERSION}
+        docker push ivct/tc-runner:pi-skeleton-${VERSION}
+        docker push ivct/tc-runner:po-${VERSION}
+        docker push ivct/tc-runner:ma-${VERSION}
 
