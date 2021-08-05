@@ -40,17 +40,14 @@ jobs:
       run: |
         VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
         echo "Building version ${VERSION}"
-        echo "Building version ${env.VERSION}"
-        env.VERSION= {{ grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \' }}
-        echo "Building version ${env.VERSION}"
     
     - name: Build with Gradle
       run: ./gradlew -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
     
     - name: Tag docker images
       run: |
-        echo "Building version ${env.VERSION} for branch ${GITHUB_REF:11}"
-        docker tag ivct/logsink:${env.VERSION} ivct/logsink:${GITHUB_REF:11}-latest
+        echo "Building version ${VERSION} for branch ${GITHUB_REF:11}"
+        docker tag ivct/logsink:${VERSION} ivct/logsink:${GITHUB_REF:11}-latest
         docker tag ivct/runtime-config:${env.VERSION} ivct/runtime-config:${GITHUB_REF:11}-latest
         docker tag ivct/gui:${env.VERSION} ivct/gui:${GITHUB_REF:11}-latest
         docker tag ivct/tc-runner:pi-skeleton-${env.VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
