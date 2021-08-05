@@ -60,8 +60,10 @@ jobs:
     
     - name: Push images to DockerHub
       run: |
-        docker push ivct/logsink
-        docker push ivct/tc-runner
-        docker push ivct/gui
-        docker push ivct/runtime-config
+        docker push ivct/logsink:${VERSION}
+        docker push ivct/runtime-config:${VERSION}
+        docker push ivct/gui:${VERSION}
+        docker push ivct/tc-runner:pi-skeleton-${VERSION}
+        docker push ivct/tc-runner:po-${VERSION}
+        docker push ivct/tc-runner:ma-${VERSION}
 
