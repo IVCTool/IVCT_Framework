@@ -15,8 +15,8 @@ jobs:
     
     env:
       VERSION: undefined
-#      PossrhUsername: ${{ secrets.PossrhUsername }}
-#      PossrhPassword: ${{ secrets.PossrhPassword }}
+      PossrhUsername: ${{ secrets.PossrhUsername }}
+      PossrhPassword: ${{ secrets.PossrhPassword }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       
@@ -35,7 +35,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Gradle
-      run: ./gradlew install dockerBuildImage
+      run: ./gradlew -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
     
     - name: Read IVCT Version tag
       run: export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
