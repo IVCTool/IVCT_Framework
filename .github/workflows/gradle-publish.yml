@@ -42,11 +42,13 @@ jobs:
     
     - name: Build with Gradle
       run: |
+        export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
         echo "Building version ${VERSION}"
         ./gradlew -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage
     
     - name: Tag docker images
       run: |
+        export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
         echo "Building version ${VERSION} for branch ${GITHUB_REF:11}"
         docker tag ivct/logsink:${VERSION} ivct/logsink:${GITHUB_REF:11}-latest
         docker tag ivct/runtime-config:${env.VERSION} ivct/runtime-config:${GITHUB_REF:11}-latest
@@ -60,6 +62,7 @@ jobs:
     
     - name: Push images to DockerHub
       run: |
+        export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
         docker image ls
         docker push ivct/logsink:${VERSION}
         docker push ivct/runtime-config:${VERSION}
