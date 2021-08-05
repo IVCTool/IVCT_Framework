@@ -48,12 +48,12 @@ jobs:
       run: |
         export VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')
         echo "Building version $VERSION for branch ${GITHUB_REF:11}"
-        docker tag ivct/logsink:$VERSION ivct/logsink:${GITHUB_REF:11}-latest
-        docker tag ivct/runtime-config:$VERSION ivct/runtime-config:${GITHUB_REF:11}-latest
-        docker tag ivct/gui:$VERSION ivct/gui:${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:pi-skeleton-$VERSION ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:po-$VERSION ivct/tc-runner:po-${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:ma-$VERSION ivct/tc-runner:ma-${GITHUB_REF:11}-latest
+        docker tag ivct/logsink:${VERSION} ivct/logsink:${GITHUB_REF:11}-latest
+        docker tag ivct/runtime-config:${VERSION} ivct/runtime-config:${GITHUB_REF:11}-latest
+        docker tag ivct/gui:${VERSION} ivct/gui:${GITHUB_REF:11}-latest
+        docker tag ivct/tc-runner:pi-skeleton-${VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
+        docker tag ivct/tc-runner:po-${VERSION} ivct/tc-runner:po-${GITHUB_REF:11}-latest
+        docker tag ivct/tc-runner:ma-${VERSION} ivct/tc-runner:ma-${GITHUB_REF:11}-latest
     
     - name: Log into DockerHub
       run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
