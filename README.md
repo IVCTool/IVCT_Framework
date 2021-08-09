@@ -1,8 +1,4 @@
-[![Build Status](https://travis-ci.com/IVCTool/IVCT_Framework.svg?branch=master)](https://travis-ci.com/IVCTool/IVCT_Framework) Master
-
-[![Build Status](https://travis-ci.com/IVCTool/IVCT_Framework.svg?branch=development)](https://travis-ci.com/IVCTool/IVCT_Framework) Development
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e7de55a30f049fc917533292a2d35d4)](https://www.codacy.com/gh/IVCTool/IVCT_Framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IVCTool/IVCT_Framework&amp;utm_campaign=Badge_Grade)
+[![gradle-publish](https://github.com/IVCTool/IVCT_TestSuiteDevelopment/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/IVCTool/IVCT_TestSuiteDevelopment/actions/workflows/gradle-publish.yml) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e7de55a30f049fc917533292a2d35d4)](https://www.codacy.com/gh/IVCTool/IVCT_Framework?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IVCTool/IVCT_Framework&amp;utm_campaign=Badge_Grade)
 
 # IVCT README
 
