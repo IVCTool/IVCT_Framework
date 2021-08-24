@@ -4,6 +4,7 @@ plugins {
 
 import com.github.jk1.license.render.*
 import com.github.jk1.license.filter.*
+
 licenseReport {
   renderers = [new InventoryHtmlReportRenderer(), new InventoryMarkdownReportRenderer()]
   filters = [new LicenseBundleNormalizer(bundlePath: "$projectDir/.shared/license-normalizer-bundle.json")]
