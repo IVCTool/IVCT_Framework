@@ -1,10 +1,10 @@
 {
 	"id"             : "TS-HLA-Designator-2020",
-	"version"        : "1.0.0",
+	"version"        : "1.0.1-SNAPSHOT",
 	"name"           : "HLA RPR-FOM Desigator Test Suite",
 	"description"    : "This is a test suite to verify if the RPR-FOM Designator is used correctly.",
-	"tsRunTimeFolder": "TS_Designator-1.0.0/bin",
-	"tsLibTimeFolder": "TS_Designator-1.0.0/lib",
+	"tsRunTimeFolder": "TS_Designator-1.0.1-SNAPSHOT/bin",
+	"tsLibTimeFolder": "TS_Designator-1.0.1-SNAPSHOT/lib",
 	"testcases" : [
 		{
 			"TC"         : "nl.tno.msg.tc_designator.TC0001_Lifecycle",
