@@ -80,7 +80,7 @@ dependencies {
 }
 
 javadoc {
-			exclude "**/*.java"
-			options.addStringOption('XDoclint:none', '-quiet')
-			failOnError = false
-		}
+    exclude "**/*.java"
+    options.addStringOption('XDoclint:none', '-quiet')
+    failOnError = false
+}
