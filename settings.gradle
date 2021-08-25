@@ -19,11 +19,11 @@ include 'GUI:nato.ivct.gui.ui.html'
 include 'GUI:nato.ivct.gui.ui.html.app.dev'
 include 'GUI:nato.ivct.gui.ui.html.app.war'
 
+// By default the name of our Gradle project is the name of the directory the project is created in.
+// Note that the name field is only mutable in the settings.gradle file.
+
 rootProject.children.each { project ->
     project.buildFileName = "${project.name}.gradle"
     assert project.projectDir.isDirectory()
     assert project.buildFile.isFile()
 }
-
-// By default the name of our Gradle project is the name of the directory the project is created in.
-// Note that the name field is only mutable in the settings.gradle file.
