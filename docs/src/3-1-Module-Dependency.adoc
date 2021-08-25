@@ -1,0 +1,42 @@
+== Project Structure and Dependencies
+
+The IVCTool software is organized in a set of sub-projects, which are depending on each other. The dependencies of projects are defined with the gradle build scripts. Gradle is making a difference between _consumers_ and _producers_. Some of the projects are libraries, which is considered as a _producer_ projects, and others are _consuming_ these libraries in order to creating applications. 
+
+=== The IVCT Framework Projects
+
+with the gradle _.\gradlew projects_ task shows the current project structure:
+
+----
+Root project 'IVCT_Framework'
++--- Project ':Command'
++--- Project ':docs'
++--- Project ':GUI'
+|    +--- Project ':GUI:nato.ivct.gui.client' - IVCT Client
+|    +--- Project ':GUI:nato.ivct.gui.server' - IVCT Server
+|    +--- Project ':GUI:nato.ivct.gui.server.app.dev' - IVCT HTML UI WAR Development
+|    +--- Project ':GUI:nato.ivct.gui.server.app.war' - IVCT Server WAR
+|    +--- Project ':GUI:nato.ivct.gui.shared' - IVCT Shared
+|    +--- Project ':GUI:nato.ivct.gui.ui.html' - IVCT HTML UI
+|    +--- Project ':GUI:nato.ivct.gui.ui.html.app.dev' - IVCT HTML UI Server Development
+|    \--- Project ':GUI:nato.ivct.gui.ui.html.app.war' - IVCT HTML UI WAR
++--- Project ':IEEE1516e'
++--- Project ':LogSink'
++--- Project ':LogSink.webApp'
++--- Project ':MessagingHelpers'
++--- Project ':RuntimeConfig'
++--- Project ':TC.exec'
++--- Project ':TC.lib'
++--- Project ':TC.webApp'
+\--- Project ':UI'
+----
+
+The main dependencies between these projects is a follows: 
+
+- [(IEEE1516e -> TC.lib), (MessagingHelpers -> Command )] -> TC.exec -> TC.webApp
+- Command -> LogSink -> LogSink.webApp
+- Command -> UI
+- Command -> GUI:nato.ivct.gui.server -> (GUI:nato.ivct.gui.server.app.dev, GUI:nato.ivct.gui.server.app.war)
+- GUI:nato.ivct.gui.shared -> (GUI:nato.ivct.gui.server, GUI:nato.ivct.gui.client)
+- GUI:nato.ivct.gui.client -> GUI:nato.ivct.gui.ui.html -> (GUI:nato.ivct.gui.ui.html.app.dev, GUI:nato.ivct.gui.ui.html.app.wa)
+
+
