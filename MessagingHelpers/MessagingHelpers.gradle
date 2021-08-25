@@ -1,16 +1,26 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'io.github.ivctool'
+            artifactId = 'MessagingHelpers'
+            version = "${ivctVersion}"
+
+            from components.java
+        }
+    }
 }
 
 dependencies {
 	api 	libraries.actimemqClient
 	api 	libraries.logback_classic
-	api     libraries.slf4j_api
 
 	implementation		libraries.logback_classic
 	implementation		libraries.logback_core
 
 	testImplementation	libraries.junit_jupiter_engine
-	// testRuntime libraries.junit
-	// testRuntime libraries.hamcrest_core
 }
