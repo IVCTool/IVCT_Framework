@@ -18,6 +18,10 @@ allprojects {
 		maven {
 			url 'https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/'
 		}
+		maven {
+            // required if snapshots libraries shall be tested
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+		}
 	}
 
     ext {
