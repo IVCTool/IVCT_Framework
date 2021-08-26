@@ -26,6 +26,8 @@ An important resource for building the IVCT tool is the [HLA Container](https://
 
 The general concepts of [HLA Certification is explained by the NATO Modelling & Simulation Centre of Excellence](https://www.mscoe.org/nato-hla-certification-home/).
 
+[IVCTool Release Notes](docs/src/0-1-ReleaseNotes.adoc)
+
 ## LICENCE
 
 Copyright 2019 NATO/OTAN

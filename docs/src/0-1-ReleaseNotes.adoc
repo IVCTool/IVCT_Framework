@@ -1,0 +1,26 @@
+= IVCTool Release Notes
+
+== Version 4.0.1-SNAPSHOT
+
+NOTE: This release is located in the development branch only and is still work in progress. 
+
+=== Builder
+- The gradle scripts have been updated to be compliant with the current gradle version 7.2. Deprecated features have been removed and replaced by newly introduced concepts. This effects the maven publication plugin and the source code build set dependencies. 
+- The docker image build for Java application is now done with the [Google Container Tool Jib](https://github.com/GoogleContainerTools/jib). No-Java images are build with the _docker build_ command from dockerfiles. 
+- Replace Travis continuous build system by Github actions, because Travis ended free support for open source projects. 
+
+
+== Version 4.0.0
+
+- Support for multi-TC.exec deployments #235. A TC.exec (tc-runner) needs to be linked to a specific RTI. In order to run test cases against SuT within different RTIs, the IVCTool deployment needs at least one TC.exec for each RTI. That requires to add a RTI type information to the SuT conformance statement, along with the settings designator. The run test case command needs to be extended with the RTI-specific address, in order to be send to the correct RTI-specific TC.exec instance
+- The user settings (Log-Level, TestEngine), which are set via the user interface, are not updated correctly.
+- CI: Publish to Maven Central #161. The IVCT framework is now made available as compiled and signed artifacts within maven central. This is required to build test suites independently from the framework.
+- For each param, add a description field. The text in this field can be shown in the UI.
+- IVCT_RTIambassador::destroyFederationExecution exception on "Federates Currently Joined" is now reported as warning instead of error #292
+- Conformance Report Generation #244. The results of an conformance test need are compiled into a pdf documented. 
+- End test case command #84. The test operator is now able to end a test case gracefully (as opposed to an abort test case). An aborted test case is finish with a inconclusive verdict.
+- Logfile download function #290. A test case log file can now be downloaded via the user interface.
+- Tooltips are added for additional information as pop-up windows.
+- Test Reports can be downloaded #287
+- badge description with test case specific library path variable #91. The badge description has been extended to allow the combination of test cases from different test suites, by extending the requirement list by an additional test library variable.
+- badge description with test case specific parameter files #92. The badge description has been extended to allow the usage of test case specific parameter files, by extending the requirement list by an additional parameter variable. The usage of this parameter is optional. Default is the standard name "TcParam.json" within the badge folder.
