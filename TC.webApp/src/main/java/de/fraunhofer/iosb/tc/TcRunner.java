@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.testrunner.TestEngine;
-import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
 import nato.ivct.commander.Factory;
 
 /**
@@ -50,7 +49,6 @@ public class TcRunner extends HttpServlet {
 	 * 
 	 */
 	public void init(ServletConfig config) throws ServletException {
-		LogConfigurationHelper.configureLogging();
 		runner = new TestEngine();
 		initialized = true;
 		LOGGER.info("TcRunner initialized");
