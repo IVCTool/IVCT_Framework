@@ -4,6 +4,7 @@ mainClassName = 'de.fraunhofer.iosb.ivct.CmdLineTool'
 
 dependencies {
 	implementation     project(':Command')
+    implementation     project(':MessagingHelpers')
 	implementation     libraries.slf4j_api
 	implementation     libraries.jsonSimple
 

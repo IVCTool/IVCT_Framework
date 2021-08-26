@@ -98,6 +98,7 @@ tasks.register ("dockerBuildImage") {
 dependencies {
 	// local project dependencies
     implementation project(':Command')
+    implementation project(':MessagingHelpers')
 	implementation project(':TC.lib')
     
 	// external project dependencies
