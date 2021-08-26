@@ -28,7 +28,7 @@ you an overview on tools and the development environment.
 
 == Building the Software / Creating Docker Images
 The primary deployment typ for the IVCTool is the containerization with docker images. Building is 
-done by using the [Gradle](https://gradle.org/) build system.
+done by using the https://gradle.org[Gradle] build system.
 The underlying concept and configurations are explained below.
 
 * <<3-1-Module-Dependency.adoc#, Project Structure and Dependencies>>

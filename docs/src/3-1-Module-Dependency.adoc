@@ -1,6 +1,30 @@
 == Project Structure and Dependencies
 
-The IVCTool software is organized in a set of sub-projects, which are depending on each other. The dependencies of projects are defined with the gradle build scripts. Gradle is making a difference between _consumers_ and _producers_. Some of the projects are libraries, which is considered as a _producer_ projects, and others are _consuming_ these libraries in order to creating applications. 
+The IVCTool software is organized in a set of sub-projects, which are depending on each other. The dependencies of projects are defined with the gradle build scripts. Gradle is making a difference between _consumers_ and _producers_. Some of the projects are libraries, which is considered as a _producer_ projects, and others are _consuming_ these libraries in order to creating applications. Two gradle plugin are used to support this concepts for Java code.
+
+https://docs.gradle.org/current/userguide/java_library_plugin.html[The Java Library Plugin] is used for modules which are consumed by other. Examples are the _IEEE1516e_ library interface, and the _Command_ library used as wrapper for internal JMS communication. 
+
+.The Java Library Plugin
+----
+plugins {
+    id 'java-library'
+}
+----
+
+It is important to know, that all Java classes within a library module will be exposed to consumers. In many cases a library are also consumers of other modules. In these cases the dependencies must be declared carefully wether they are only used internally, or if they are also exposed because they are required inside the API definitions. An example is the _Command_ module, which is using a JSON and Java-Logging-API library, which is also exposed to _Command_ module consumers. These dependencies are declared as:
+
+-  *api*: dependencies which are transitively exported to consumers, for compile time and runtime.
+- *implementation*: dependencies which are purely internal and not meant to be exposed to consumers (they are still exposed to consumers at runtime).
+
+https://docs.gradle.org/current/userguide/application_plugin.html[The Application Plugin] is used for modules executable JMS applications, like the TC.exec, or the LogSink. Applications are only using the _implementation_ dependency declarations.
+
+.The Application Plugin
+----
+plugins {
+    id 'application'
+}
+----
+
 
 === The IVCT Framework Projects
 
