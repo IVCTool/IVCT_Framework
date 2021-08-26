@@ -15,7 +15,7 @@ NOTE: This release is located in the development branch only and is still work i
 - Support for multi-TC.exec deployments #235. A TC.exec (tc-runner) needs to be linked to a specific RTI. In order to run test cases against SuT within different RTIs, the IVCTool deployment needs at least one TC.exec for each RTI. That requires to add a RTI type information to the SuT conformance statement, along with the settings designator. The run test case command needs to be extended with the RTI-specific address, in order to be send to the correct RTI-specific TC.exec instance
 - The user settings (Log-Level, TestEngine), which are set via the user interface, are not updated correctly.
 - CI: Publish to Maven Central #161. The IVCT framework is now made available as compiled and signed artifacts within maven central. This is required to build test suites independently from the framework.
-- For each param, add a description field. The text in this field can be shown in the UI.
+- For each parameter a description field is available. The text is be shown in the GUI.
 - IVCT_RTIambassador::destroyFederationExecution exception on "Federates Currently Joined" is now reported as warning instead of error #292
 - Conformance Report Generation #244. The results of an conformance test need are compiled into a pdf documented. 
 - End test case command #84. The test operator is now able to end a test case gracefully (as opposed to an abort test case). An aborted test case is finish with a inconclusive verdict.
