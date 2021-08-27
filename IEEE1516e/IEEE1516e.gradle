@@ -4,9 +4,9 @@ plugins {
     id 'signing'
 }
 
-artifacts {
-    archives javadocJar
-    archives sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 group = 'io.github.msg134'
@@ -18,8 +18,6 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId = 'IEEE1516e'
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
 
             pom {
                 name = "IEEE1516e"

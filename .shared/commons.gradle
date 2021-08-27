@@ -52,7 +52,8 @@ subprojects { subProject ->
         specificationVersion = version
     }
 
-    if ( ! subProject.name.startsWith( 'misc' )  && ! subProject.name.startsWith( 'documentation' ) ) {
+    if ( !subProject.name.startsWith( 'RuntimeConfig' )  && !subProject.name.startsWith( 'docs' ) ) {
+        println "apply java to " + subProject.name
         apply plugin: 'java'
         compileJava {
             sourceCompatibility = 1.8
@@ -73,26 +74,6 @@ subprojects { subProject ->
 			options.encoding = "UTF-8"
 			options.tags = [ "noinspection" ]
 		}
-
-		apply plugin: 'maven-publish'
-
-        // custom tasks for creating source/javadoc jars
-        // TODO: check if this can be removed
-        task sourcesJar(type: Jar) {
-            classifier = 'sources'
-            from sourceSets.main.allSource
-        }
-
-        task javadocJar(type: Jar, dependsOn:javadoc) {
-            classifier = 'javadoc'
-            from javadoc.destinationDir
-        }
-
-        // add javadoc/source jar tasks as artifacts
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
-        }
     }
 }
 

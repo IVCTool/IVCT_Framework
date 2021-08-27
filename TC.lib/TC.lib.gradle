@@ -4,9 +4,9 @@ plugins {
     id 'signing'
 }
 
-artifacts {
-    archives javadocJar
-    archives sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 group = 'io.github.msg134'
@@ -18,8 +18,6 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId = 'TC.lib'
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
 
             pom {
                 name = "IVCT Test Case Library"
