@@ -4,14 +4,14 @@ plugins {
     id 'signing'
 }
 
+group = 'io.github.msg134'
+archivesBaseName = "IEEE1516e"
+version = ivctVersion
+
 java {
     withJavadocJar()
     withSourcesJar()
 }
-
-group = 'io.github.msg134'
-archivesBaseName = "IEEE1516e"
-version = ivctVersion
 
 publishing {
     publications {
