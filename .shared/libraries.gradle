@@ -1,10 +1,6 @@
 // Provides a map of the dependency artifacts to use.
 // Allows centralized definition of the version of artifacts to use.
 ext {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Gradle Build Environment
-    gradleVersion = '5.6.4'
-    gradleWrapperVersion = "${gradleVersion}"
-
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
     ivctVersion = '4.0.1-SNAPSHOT'
     compatibleVersions = ['4.0.0':'compatible', '3.1.0-SNAPSHOT':'compatible','3.0.0':'compatible','2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
