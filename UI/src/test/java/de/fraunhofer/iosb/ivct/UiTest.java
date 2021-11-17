@@ -1,6 +1,7 @@
 package de.fraunhofer.iosb.ivct;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -100,9 +101,9 @@ public class UiTest {
     	ivctCommander.rtp.resetSut();
     	ivctCommander.resetSUT();
 		String tc = ivctCommander.rtp.getTestCaseName();
-		assertNotNull(tc, "Testcase name is not a null pointer");
+		assertNull("Testcase name is a null pointer", tc);
 		String ts = ivctCommander.rtp.getTestScheduleName();
-		assertNotNull(ts, "Testschedule name is not a null pointer");
+		assertNull("Testschedule name is a null pointer", tc);
 
 		log.info("testResetSUTvariables leave");
 	}
