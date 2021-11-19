@@ -35,6 +35,7 @@ import nato.ivct.commander.CmdOperatorRequestListener.OnOperatorRequestListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
 import nato.ivct.commander.CmdSetLogLevelListener.OnSetLogLevelListener;
+import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdTcStatusListener.OnTcStatusListener;
 
@@ -504,6 +505,11 @@ public class Factory {
     public static CmdOperatorRequestListener createCmdStartOperatorRequestListener(OnOperatorRequestListener listener) {
         initialize();
         return new CmdOperatorRequestListener(listener);
+    }
+
+    public static CmdStartTcListener createCmdStartTcListener (OnStartTestCaseListener listener) {
+        initialize();
+        return new CmdStartTcListener(listener);
     }
 
 
