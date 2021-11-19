@@ -280,6 +280,7 @@ public final class PropertyBasedClientSetup {
         final ActiveMQTopic top = new ActiveMQTopic(topic);
         MessageConsumer consumer;
         try {
+            LOGGER.debug("create consumer for {}", topic);
             consumer = this.session.createConsumer(top);
             consumer.setMessageListener(listener);
         }
