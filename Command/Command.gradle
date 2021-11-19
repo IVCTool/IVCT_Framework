@@ -9,7 +9,6 @@ publishing {
             groupId = 'io.github.ivctool'
             artifactId = 'Command'
             version = "${ivctVersion}"
-
             from components.java
         }
     }
@@ -18,7 +17,6 @@ publishing {
 task writeVersion {
     group = "Build"
     description = "Creates a properties file with version information"
-
     doLast {
         def prop = new Properties()
         prop.version = ivctVersion
@@ -34,11 +32,11 @@ processResources.dependsOn writeVersion
 dependencies {
 	// local project dependencies
 	implementation	project(':MessagingHelpers')
-    
 	// external project dependencies
 	api	libraries.slf4j_api
 	api	libraries.jsonSimple
 	implementation libraries.apacheCommonsIO
+    // for testing with embedded broker    
 	testImplementation libraries.junit_jupiter_engine
 	testImplementation libraries.activemqEmbedded
 }
@@ -49,6 +47,6 @@ test {
 }
 
 javadoc {
-			options.addStringOption('XDoclint:none', '-quiet')
-			failOnError = false
-		}
+    options.addStringOption('XDoclint:none', '-quiet')
+    failOnError = false
+}
