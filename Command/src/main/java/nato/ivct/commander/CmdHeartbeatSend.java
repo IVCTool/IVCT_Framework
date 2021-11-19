@@ -29,6 +29,9 @@ import java.util.TimerTask;
 
 
 public class CmdHeartbeatSend  implements Command {
+
+    private Timer timer;
+    private TimerTask task;
     
     // ----  Organize communication  mechanism (the client has to implement this interface.)
     public interface OnCmdHeartbeatSend { 
@@ -71,25 +74,23 @@ public class CmdHeartbeatSend  implements Command {
         
 
     /*
-     *  this execute method is started by a application which instanciate this class  
+     *  this execute method is started by a application which instantiate this class  
      *  we fetch all xy seconds some variables from that application,
-     *  build a json-object with this Informations and other Values 
+     *  build a json-object with this Information and other Values 
      *  and send this to ActiveMQ
      *  
      *  if the application change the variables, the values in the json will be changed
      */
     
     @SuppressWarnings("unchecked")
-    public void execute()  throws Exception   {    
+    public void execute() throws Exception {    
         
-        // we try to get Informations about our  Client        
+        // we try to get Information about our  Client        
         if (sender != null) {
             this.health = sender.getMyHealth();
-            this.heartbeatSenderName= sender.getMyClassName();
-
+            this.heartbeatSenderName = sender.getMyClassName();
             this.testEngineLabel = sender.getMyTestEngineLabel();
-            
-            } else {
+        } else {
             logger.warn("In CmdHeartbeatSend sender  is null !!!!");
         }
         
@@ -98,20 +99,15 @@ public class CmdHeartbeatSend  implements Command {
         heartbeatjson.put(HB_SENDER, this.heartbeatSenderName);
         heartbeatjson.put(HB_LASTSENDINGPERIOD, 5000L);         
         heartbeatjson.put(HB_IVCTVERSION, Factory.getVersion() );
-        
         heartbeatjson.put(HB_TESTENGINELABEL, testEngineLabel );
        
         // Scheduler run all 5 Seconds  till the parent-thread ist stopped
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-          public void run() {
-              
-                   health=sender.getMyHealth();                                
-              
+        timer = new Timer();
+        task = new TimerTask() {
+            public void run() {
+                health=sender.getMyHealth();                                
                 try {
-
                     Date datum = new java.util.Date();
-
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
                     String dateString = df.format(datum);
 
@@ -119,20 +115,33 @@ public class CmdHeartbeatSend  implements Command {
                     heartbeatjson.put(HB_SENDERHEALTHSTATE, health);                    
                     sendMessage(heartbeatjson.toString());
                     
-                    //logger.info("### CmdHeartbeatSend.execute is sending: "+heartbeatjson.toString()); // Debug                    
-                    
+                    logger.info("### CmdHeartbeatSend.execute is sending: {}", heartbeatjson.toString());
                 } catch (Exception exc) {
                     logger.error("could not send command: ", exc);
                 }
+            };
+            @Override
+            public boolean cancel() {
+                // TODO Auto-generated method stub
+                return super.cancel();
             }
-        }, 0, 5000);
+        };
+        timer.schedule(task, 0, 5000);
+    }
+    
+    public void sendMessage(String healthtxt ) throws Exception {
+        Message message = Factory.jmsHelper.createTextMessage(healthtxt);                
+        logger.debug("heartbeatClient Test message is: {}", message);
+        logProducer.send(message);        
+    }
 
+    public void cancel() {
+        timer.cancel();
+        int n = timer.purge();
+        timer = null;
+        logger.debug("purging {} tasks from heartbeat timer", n);
+        boolean taskCancelStatus = task.cancel();
+        task = null;
+        logger.debug("cancel task with status {}", taskCancelStatus);
     }
-    
-    public void sendMessage(String healthtxt ) throws Exception{
-         Message message = Factory.jmsHelper.createTextMessage(healthtxt);                
-        //logger.info("heartbeatClient Test message ist: " + message);  // Debug          
-         logProducer.send(message);        
-    }
-    
 }
