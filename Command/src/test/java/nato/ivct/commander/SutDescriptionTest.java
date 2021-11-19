@@ -14,40 +14,25 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import org.apache.activemq.broker.BrokerService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.slf4j.Logger;
 
-public class SutDescriptionTest {
-	private static BrokerService broker = new BrokerService();
+public class SutDescriptionTest extends EmbeddedBrokerTest {
+    static final private Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SutDescriptionTest.class);
 
-	@BeforeAll
-	public static void startBroker() throws Exception {
-		// configure the broker
-		broker.addConnector("tcp://localhost:61616"); 
-		broker.setPersistent(false);
-
-		broker.start();
-	}
-
-	@AfterAll
-	public static void stopBroker() throws Exception {
-		try {
-			broker.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
-    @Test
-    public void testExecute() {
+    // due to broker synchronization issues between unit tests, this test will be
+    // called within the Factory test class
+    // @Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
+    public void testSutDescriptionTest() {
+		LOGGER.info("Starting testSutDescriptionTest");
         CmdListSuT listSuT = Factory.createCmdListSuT();
         assertNotNull(listSuT, "CmdListSuT should be created");
-        listSuT.execute();        
+        listSuT.execute();
+        assertTrue("SuT list shall not be empty", !listSuT.sutMap.isEmpty());
     }
 
 }

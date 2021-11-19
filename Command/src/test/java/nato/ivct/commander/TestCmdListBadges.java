@@ -16,55 +16,23 @@ package nato.ivct.commander;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.activemq.broker.BrokerService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
+public class TestCmdListBadges extends EmbeddedBrokerTest {
 
-public class TestCmdListBadges {
-	private static BrokerService broker = new BrokerService();
-
-	@BeforeAll
-	public static void startBroker() throws Exception {
-		// configure the broker
-		broker.addConnector("tcp://localhost:61616"); 
-		broker.setPersistent(false);
-
-		broker.start();
-	}
-
-	@AfterAll
-	public static void stopBroker() throws Exception {
-		try {
-			broker.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+    public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TestCmdListBadges.class);
     CmdListBadges lb;
-
-    @BeforeEach 
-    public void setUp()  {
+    
+    @Test
+    public void testCmdListBadges()  {
+        LOGGER.info("Starting test testCmdListBadges");
         this.lb = Factory.createCmdListBadges();
-        assertNotNull(this.lb, "Factory Test createCmdListBadges should return CmdListBadges");
         this.lb.execute();
-    }
-
-    @Test
-    public void testCreateCmdListBadgesMethod() {
+        assertNotNull(this.lb, "Factory Test createCmdListBadges should return CmdListBadges");
         assertTrue(this.lb.badgeMap.size() > 0, "badge list should not be empty");
-    }
-
-    @Test
-    public void testCollectIrForCs() {
-
         Set<String> irSet = new HashSet<>();
         Set<String> cs = new HashSet<>();
         cs.add("HelloWorld-2019");
@@ -72,6 +40,4 @@ public class TestCmdListBadges {
         this.lb.collectIrForCs(irSet, cs);
         assertTrue(irSet.size() > 0, "interoperability set should not be empty");
     }
-
-
 }

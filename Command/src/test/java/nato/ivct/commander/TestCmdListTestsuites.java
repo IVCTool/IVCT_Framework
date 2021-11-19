@@ -16,60 +16,30 @@ package nato.ivct.commander;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.activemq.broker.BrokerService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
 
-public class TestCmdListTestsuites {
-	private static BrokerService broker = new BrokerService();
+public class TestCmdListTestsuites extends EmbeddedBrokerTest {
 
-	@BeforeAll
-	public static void startBroker() throws Exception {
-		// configure the broker
-		broker.addConnector("tcp://localhost:61616"); 
-		broker.setPersistent(false);
+    public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TestCmdListTestsuites.class);
 
-		broker.start();
-	}
+    // due to broker synchronization issues between unit tests, this test will be
+    // called within the Factory test class
+    // @Test
+    public void testCmdListTestSuites() throws Exception {
+        LOGGER.info("Starting test testCmdListTestSuites");
+        CmdListTestSuites cmd = Factory.createCmdListTestSuites();
+        cmd.execute();
+        
+        assertTrue(cmd.testsuites.size() > 0, "Some test suites's should be found");
 
-	@AfterAll
-	public static void stopBroker() throws Exception {
-		try {
-			broker.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        Factory.initialize();
-    }
-
-    @Test
-    public void test() {
-        CmdListTestSuites cmd = new CmdListTestSuites();
-
-        try {
-            cmd.execute();
-        } catch (Exception e) {
-            fail("exception during execute");
-            e.printStackTrace();
-        }
-        assertTrue(cmd.testsuites.size() > 0, "Some Testsuites's should be found");
-
-        // all testsuites should be well formed
+        // all test suites should be well formed
         for (CmdListTestSuites.TestSuiteDescription value : cmd.testsuites.values()) {
             assertNotNull(value.id, "Test case has a name");
             assertNotNull(value.description, "Test case has a name");
@@ -96,7 +66,7 @@ public class TestCmdListTestsuites {
         irSet.add("IR-SOM-0017");
         irSet.add("IR-SOM-0018");
         Set<String> tsSet = cmd.getTsForIr(irSet);
-        assertTrue(tsSet.size() == 1, "Testsuite Set should be not empty");
+        assertTrue(tsSet.size() == 1, "Test suite Set should be not empty");
         
         irSet.add("IR-SOM-0001");
         irSet.add("IR-SOM-0002");
@@ -104,8 +74,6 @@ public class TestCmdListTestsuites {
         irSet.add("IR-SOM-0015");
 
     	Map<String, TestSuiteDescription> fts = cmd.filterForIr (irSet);
-    	assertTrue(fts.size() > 0, "filtered Testsuite list shall not be empty");
-
+    	assertTrue(fts.size() > 0, "filtered Test suite list shall not be empty");
     }
-
 }

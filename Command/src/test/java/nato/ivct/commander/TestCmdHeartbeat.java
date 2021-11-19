@@ -14,114 +14,87 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-//import static org.junit.Assert.assertTrue;
-//import static org.junit.jupiter.api.Assertions.fail;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.activemq.broker.BrokerService;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.Semaphore;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.json.simple.JSONObject;
 
+public class TestCmdHeartbeat extends EmbeddedBrokerTest {
 
-public class TestCmdHeartbeat {
-	private static BrokerService broker = new BrokerService();
-
-	@BeforeAll
-	public static void startBroker() throws Exception {
-		// configure the broker
-		broker.addConnector("tcp://localhost:61616"); 
-		broker.setPersistent(false);
-
-		broker.start();
-        Factory.initialize();
-	}
-
-	@AfterAll
-	public static void stopBroker() throws Exception {
-		try {
-			broker.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-    
-    static Logger logger = LoggerFactory.getLogger(Use_CmdHeartbeatSend.class);
+    static Logger LOGGER = LoggerFactory.getLogger(Use_CmdHeartbeatSend.class);
 
     public class Use_CmdHeartbeatListen implements CmdHeartbeatListen.OnCmdHeartbeatListen {
         public String heartbeatSender = "undefined";
         public String timestamp = "undefined";
-        public boolean healthstatus = false;
+        public boolean healthStatus = false;
         public Semaphore semaphore = new Semaphore(0);
 
-        //  work with a Json Object as return
+        // work with a Json Object as return
         public void hearHeartbeat(JSONObject jsonObject) {
+            LOGGER.info("receiving heartbeat message {}", jsonObject.toString());
             assertNotNull(jsonObject, "heartbeat message must not be null");
-            logger.info(jsonObject.toString());
             try {
                 heartbeatSender = (String) jsonObject.get("HeartbeatSender");
                 timestamp = (String) jsonObject.get("LastSendingTime");
-                Object healthstatusRaw = jsonObject.get("SenderHealthState");
-                if (healthstatusRaw != null) {
-                    healthstatus = (boolean) healthstatusRaw;
+                Object healthStatusRaw = jsonObject.get("SenderHealthState");
+                if (healthStatusRaw != null) {
+                    healthStatus = (boolean) healthStatusRaw;
                 }
-                logger.debug("HeartbeatSender: {}", heartbeatSender); 
-                logger.debug("LastSendingTime: {}", timestamp);
-                logger.debug("SenderHealthState: {}", healthstatus);
+                LOGGER.debug("HeartbeatSender: {}", heartbeatSender);
+                LOGGER.debug("LastSendingTime: {}", timestamp);
+                LOGGER.debug("SenderHealthState: {}", healthStatus);
             } catch (final Exception e) {
                 fail("Use_CmdHeartbeatListen.hearHearbeat has problems with with the delivered String", e);
-            } 
+            }
             semaphore.release(1);
-        }    
+        }
     }
 
-    public class Use_CmdHeartbeatSend implements CmdHeartbeatSend.OnCmdHeartbeatSend{
-	
+    public class Use_CmdHeartbeatSend implements CmdHeartbeatSend.OnCmdHeartbeatSend {
+
         private boolean health = true;
         private String myClassName = Use_CmdHeartbeatSend.this.getMyClassName();
-        private String testEngineLabel= "JTestUnitLabel";
+        private String testEngineLabel = "JTestUnitLabel";
 
-        public  boolean getMyHealth() {
+        public boolean getMyHealth() {
             return health;
         }
-        
+
         public String getMyClassName() {
             return myClassName;
         }
 
-          public String getMyTestEngineLabel() {
+        public String getMyTestEngineLabel() {
             return testEngineLabel;
         }
-    }    
+    }
 
-	@Test
-	public void testStartListener() throws Exception {
+    // due to broker synchronization issues between unit tests, this test will be
+    // called within the Factory test class
+    // @Test
+    public void testCmdHeartbeat() throws Exception {
+        LOGGER.info("Starting test testCmdHeartbeat");
         Use_CmdHeartbeatListen queryClient = new Use_CmdHeartbeatListen();
         CmdHeartbeatListen heartbeatListener = new CmdHeartbeatListen(queryClient);
         heartbeatListener.execute();
 
-		Use_CmdHeartbeatSend testHeartbeatSender = new  Use_CmdHeartbeatSend();
-		CmdHeartbeatSend cmdHeartbeatSend = new CmdHeartbeatSend(testHeartbeatSender);
+        Use_CmdHeartbeatSend testHeartbeatSender = new Use_CmdHeartbeatSend();
+        CmdHeartbeatSend cmdHeartbeatSend = new CmdHeartbeatSend(testHeartbeatSender);
 
-		testHeartbeatSender.health=true;
+        testHeartbeatSender.health = true;
         cmdHeartbeatSend.execute();
-        try {
-        	queryClient.semaphore.acquire(1);
-
-        } catch (InterruptedException e) {
-        	e.printStackTrace();
+        for (int i = 0; (i < 10 && !queryClient.healthStatus); i++) {
+            queryClient.semaphore.acquire(1);
+            LOGGER.info("testCmdHeartbeat received with status {}", queryClient.healthStatus);
         }
-        Thread.sleep(7000);
-        assertTrue("health status was set to true", queryClient.healthstatus);
+        assertTrue("health status was set to true", queryClient.healthStatus);
+        heartbeatListener.timer.cancel();
+        cmdHeartbeatSend.cancel();
+        LOGGER.info("Done with test testCmdHeartbeat");
     }
 }

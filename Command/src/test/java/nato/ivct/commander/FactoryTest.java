@@ -14,44 +14,29 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
-
 import java.util.concurrent.Semaphore;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import org.apache.activemq.broker.BrokerService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.slf4j.Logger;
 
 import nato.ivct.commander.CmdSetLogLevel.LogLevel;
+import nato.ivct.commander.CmdStartTcListener.OnStartTestCaseListener;
+import nato.ivct.commander.CmdStartTcListener.TcInfo;
 import nato.ivct.commander.CmdStartTestResultListener.OnResultListener;
 import nato.ivct.commander.CmdStartTestResultListener.TcResult;
 
-public class FactoryTest {
-	private static BrokerService broker = new BrokerService();
-
-	@BeforeAll
-	public static void startBroker() throws Exception {
-		// configure the broker
-		broker.addConnector("tcp://localhost:61616"); 
-		broker.setPersistent(false);
-		broker.start();
-	}
-
-	@AfterAll
-	public static void stopBroker() throws Exception {
-		try {
-			broker.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+public class FactoryTest extends EmbeddedBrokerTest {
+	static final private Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FactoryTest.class);
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCreateCmdListBadgesMethod() {
+		LOGGER.info("Starting test testCreateCmdListBadgesMethod");
 		CmdListBadges lb = Factory.createCmdListBadges();
 		assertNotNull(lb, "Factory Test createCmdListBadges should return CmdListBadges");
 		lb.execute();
@@ -60,12 +45,15 @@ public class FactoryTest {
 
 	@Test
 	public void testReadVersion() {
-	    Factory.readVersion();
+		LOGGER.info("Starting test testReadVersion");
+		Factory.readVersion();
 		assertNotNull(Factory.getVersion());
 	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCreateCmdListSutMethod() {
+		LOGGER.info("Starting test testCreateCmdListSutMethod");
 		CmdListSuT cl = Factory.createCmdListSut();
 		assertNotNull(cl, "Factory Test createCmdListSut should return CmdListSut");
 		cl.execute();
@@ -73,8 +61,11 @@ public class FactoryTest {
 	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCreateCmdQuitMethod() {
+		LOGGER.info("Starting test testCreateCmdQuitMethod");
 		Semaphore semaphore = new Semaphore(0);
+
 		class OnQuitListenerTest implements CmdQuitListener.OnQuitListener {
 			@Override
 			public void onQuit() {
@@ -89,26 +80,30 @@ public class FactoryTest {
 		resultListener.execute();
 		// create and send the quit cmd
 		CmdQuit qc = Factory.createCmdQuit();
-		assertNotNull(qc,"Factory Test createCmdQuit should return CmdQuit {}");
+		assertNotNull(qc, "Factory Test createCmdQuit should return CmdQuit {}");
 		qc.execute();
 		// wait until quit cmd is received
-        try {
-        	semaphore.acquire(1);
+		try {
+			semaphore.acquire(1);
 
-        } catch (InterruptedException e) {
-        	e.printStackTrace();
-        }	}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCmdSendTcStatus() {
+		LOGGER.info("Starting test testCmdSendTcStatus");
 		Semaphore semaphore = new Semaphore(0);
+
 		class OnTcStatusListenerTest implements CmdTcStatusListener.OnTcStatusListener {
 			@Override
 			public void onTcStatus(CmdTcStatusListener.TcStatus status) {
-			semaphore.release(1);
+				semaphore.release(1);
 			}
 		}
-		
+
 		// setup the result listener
 		OnTcStatusListenerTest statusListener = new OnTcStatusListenerTest();
 		CmdTcStatusListener resultListener = Factory.createCmdTcStatusListener(statusListener);
@@ -119,25 +114,29 @@ public class FactoryTest {
 		assertNotNull(cmd);
 		cmd.execute();
 		// wait until result is received
-        try {
-        	semaphore.acquire(1);
+		try {
+			semaphore.acquire(1);
 
-        } catch (InterruptedException e) {
-        	e.printStackTrace();
-        }
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCreateCmdSetLogLevelMethod() {
+		LOGGER.info("Starting test testCreateCmdSetLogLevelMethod");
 		Semaphore semaphore = new Semaphore(0);
+
 		class OnSetLogLevelListenerTest implements CmdSetLogLevelListener.OnSetLogLevelListener {
 			protected LogLevel logMsg = null;
+
 			@Override
 			public void onSetLogLevel(LogLevel msg) {
 				logMsg = msg;
 				semaphore.release(1);
 			}
-		}		
+		}
 		// setup the result listener
 		OnSetLogLevelListenerTest logMsgListener = new OnSetLogLevelListenerTest();
 		CmdSetLogLevelListener resultListener = Factory.createCmdSetLogLevelListener(logMsgListener);
@@ -172,30 +171,57 @@ public class FactoryTest {
 			sll.execute();
 			semaphore.acquire(1);
 			assertEquals(LogLevel.ERROR, logMsgListener.logMsg);
-        } catch (InterruptedException e) {
-        	e.printStackTrace();
-        }
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	public void testCreateCmdStartTcMethod() {
-		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "HelloWorld-2019", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate", "broadcast");
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
+	public void testCreateCmdStartTcMethod() throws InterruptedException {
+		LOGGER.info("Starting test testCreateCmdStartTcMethod");
+		Semaphore semaphore = new Semaphore(0);
+
+		class OnStartTestCaseListenerTest implements OnStartTestCaseListener {
+			@Override
+			public void onStartTestCase(TcInfo info) {
+				LOGGER.info("receiving StartTestCase Command {}", info);
+				assertEquals("hw_iosb", info.sutName);
+				assertEquals("TS-HelloWorld-2019", info.testSuiteId);
+				semaphore.release(1);
+			}
+		}
+
+		// setup StartTestCase Listener
+		OnStartTestCaseListenerTest testListener = new OnStartTestCaseListenerTest();
+		CmdStartTcListener resultListener = Factory.createCmdStartTcListener(testListener);
+		assertNotNull(resultListener, "createCmdStartTcListener should return valid command object");
+		resultListener.execute();
+
+		// create StartTestCase command
+		CmdStartTc stc = Factory.createCmdStartTc("hw_iosb", "TS-HelloWorld-2019", "some.test.case",
+				"crcAddress=localhost:8989", "TheWorld", "TheFederate", "broadcast");
 		assertNotNull(stc, "Factory Test createCmdStartTc should return CmdStartTc");
-		stc.execute();
 		assertEquals("hw_iosb", stc.getSut());
-		assertEquals("HelloWorld-2019", stc.getSuiteName());
-		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld", "TheFederate", "broadcast");
-		assertNotNull(stc, "Factory Test createCmdStartTc should return CmdStartTc");
+		assertEquals("TS-HelloWorld-2019", stc.getSuiteName());
 		stc.execute();
+		semaphore.acquire(1);
+
+		stc = Factory.createCmdStartTc("xyz", "xyz-1.0.0", "some.test.case", "crcAddress=localhost:8989", "TheWorld",
+				"TheFederate", "broadcast");
+		assertNotNull(stc, "Factory Test createCmdStartTc should return CmdStartTc");
 		assertNotNull(stc.getSut(), "Get SuT name");
 		assertNotNull(stc.getSuiteName(), "Get Badge name");
+		stc.execute();
 	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCreateCmdStartTestResultListenerMethod() {
+		LOGGER.info("Starting test testCreateCmdStartTestResultListenerMethod");
 		Semaphore semaphore = new Semaphore(0);
-		class OnResultListenerTest implements OnResultListener {
 
+		class OnResultListenerTest implements OnResultListener {
 			@Override
 			public void onResult(TcResult result) {
 				assertEquals("hw_iosb", result.sutName);
@@ -212,23 +238,27 @@ public class FactoryTest {
 		// setup the result listener
 		OnResultListener testListener = new OnResultListenerTest();
 		CmdStartTestResultListener resultListener = Factory.createCmdStartTestResultListener(testListener);
-		assertNotNull(resultListener, "Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener");
+		assertNotNull(resultListener,
+				"Factory Test createCmdStartTestResultListener should return CmdStartTestResultListener");
 		resultListener.execute();
 		// send the test result
-		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2019", "some.test.case", "verdict", "verdictText");
-        assertNotNull(stc, "Factory Test CmdSendTcVerdict should return some value");
-        stc.execute();
+		CmdSendTcVerdict stc = new CmdSendTcVerdict("hw_iosb", "tcDir", "HelloWorld-2019", "some.test.case", "verdict",
+				"verdictText");
+		assertNotNull(stc, "Factory Test CmdSendTcVerdict should return some value");
+		stc.execute();
 		// wait until result is received
-        try {
-        	semaphore.acquire(1);
+		try {
+			semaphore.acquire(1);
 
-        } catch (InterruptedException e) {
-        	e.printStackTrace();
-        }
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testCreateCmdUpdateSUTMethod() throws Exception {
+		LOGGER.info("Starting test testCreateCmdUpdateSUTMethod");
 
 		Factory.initialize();
 		// If property is not set, do not have any access to any SUTs
@@ -243,7 +273,8 @@ public class FactoryTest {
 		sutDescription.badges.add("RPR-Encoding-2.0");
 		CmdUpdateSUT cus = Factory.createCmdUpdateSUT(sutDescription);
 		cus.execute();
-		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.ID + "/" + "CS.json";
+		String csJsonFilename = Factory.props.getProperty(Factory.IVCT_SUT_HOME_ID) + "/" + sutDescription.ID + "/"
+				+ "CS.json";
 		// The parameters should be the same. Thus expected false.
 		assertFalse(cus.compareCSdata(csJsonFilename, sutDescription), "CS.json values should be equal");
 		SutDescription tmpSutDescription = new SutDescription();
@@ -256,7 +287,8 @@ public class FactoryTest {
 		copySUT(tmpSutDescription, sutDescription);
 		tmpSutDescription.description = "dummy";
 		// The description is changed. Thus expected true.
-		assertTrue(cus.compareCSdata(csJsonFilename, tmpSutDescription), "CS.json sut description change should be detected");
+		assertTrue(cus.compareCSdata(csJsonFilename, tmpSutDescription),
+				"CS.json sut description change should be detected");
 
 		copySUT(tmpSutDescription, sutDescription);
 		tmpSutDescription.vendor = "dummy";
@@ -285,7 +317,9 @@ public class FactoryTest {
 	}
 
 	@Test
+	@EnabledIfEnvironmentVariable(named = "IVCT_CONF", matches = ".+")
 	public void testHelloWorldFederate() {
+		LOGGER.info("Starting test testHelloWorldFederate");
 		CmdListSuT cmd = Factory.createCmdListSut();
 		cmd.execute();
 		assertNotNull(cmd.sutMap, "should have a list of SuTs");
@@ -293,4 +327,24 @@ public class FactoryTest {
 		SutDescription hw = cmd.sutMap.get("hw_iosb");
 		assertEquals("Fraunhofer IOSB", hw.vendor);
 	}
+
+	// ****************************************************************************
+	// the remaining test methods are executed within the scope of this FactoryTest
+	// class, because of synchronization issues between brokers within different
+	// test classes
+
+	@Test
+	public void testCmdHeartbeat() throws Exception {
+		(new TestCmdHeartbeat()).testCmdHeartbeat();
+	}
+
+	@Test
+	public void testSutDescriptionTest() {
+		(new SutDescriptionTest()).testSutDescriptionTest();
+	}
+
+	public void testCmdListTestSuites() throws Exception {
+		(new TestCmdListTestsuites()).testCmdListTestSuites();
+	}
+
 }
