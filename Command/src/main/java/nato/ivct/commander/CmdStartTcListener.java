@@ -45,17 +45,16 @@ public class CmdStartTcListener implements MessageListener, Command {
         public void onStartTestCase(TcInfo info);
     }
 
+
     public CmdStartTcListener(OnStartTestCaseListener listener) {
         this.listener = listener;
     }
 
-
     @Override
     public void execute() {
-        Factory.LOGGER.trace("subsribing the commands listener");
+        Factory.LOGGER.trace("subscribing the commands listener");
         Factory.jmsHelper.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
     }
-
 
     @Override
     public void onMessage(Message message) {

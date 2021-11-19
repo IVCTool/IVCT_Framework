@@ -107,16 +107,14 @@ public class CmdStartTc implements Command {
 			startCmd.put(FEDERATE, sutFederateName);
 			// for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
 			startCmd.put(TESTENGINE_LABEL, testEngineLabel);
-			
-			
-			LOGGER.info("StartTc Command: {}", startCmd);
+			LOGGER.debug("StartTc Command: {}", startCmd);
 
 			String paramFileContentString = Factory.readWholeFile(paramFileName);
 			if (paramFileContentString != null) {
 				JSONObject jsonParam = (JSONObject) parser.parse(paramFileContentString);
 				startCmd.put(TC_PARAM, jsonParam);
 			} else {
-				LOGGER.error("File not found: {}", paramFileName);
+				LOGGER.error("File not found: {}. No test case start command sent!", paramFileName);
 				return;
 			}
 

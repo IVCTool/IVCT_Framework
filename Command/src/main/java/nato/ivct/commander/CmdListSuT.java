@@ -92,7 +92,7 @@ public class CmdListSuT implements Command {
                         Factory.LOGGER.error("name is undefined");
                     }
                     if (sut.version == null) {
-                        Factory.LOGGER.warn("version is undefined");
+                        Factory.LOGGER.warn("sut version is undefined");
                     }
                     if (sut.description == null) {
                         Factory.LOGGER.warn("description is undefined");
@@ -174,7 +174,7 @@ public class CmdListSuT implements Command {
                 Factory.LOGGER.error("name is undefined");
             }
             if (sut.version == null) {
-                Factory.LOGGER.warn("version is undefined");
+                Factory.LOGGER.warn("sut version is undefined");
             }
             if (sut.description == null) {
                 Factory.LOGGER.warn("description is undefined");
