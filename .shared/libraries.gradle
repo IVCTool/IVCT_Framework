@@ -12,7 +12,7 @@ ext {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
     logbackVersion = '1.2.3'
     slf4jVersion = '1.7.10'
-    activemqVersion = '5.14.5'
+    activemqVersion = '5.16.3'
     antlrVersion = '2.7.7'
     hamcrestVersion = '1.1'
     scoutVersion = '9.0.0.025_Simrel_2019_09'
@@ -23,7 +23,7 @@ ext {
     jsonIoVersion = '4.10.1'
     jasperReportsVersion = '6.17.0'
     javaxannotationVersion = '1.3.2'
-    jupiterVersion = '5.6.2'
+    jupiterVersion = '5.8.1'
 	apacheCommonsIOVersion = '2.6'
 
 
