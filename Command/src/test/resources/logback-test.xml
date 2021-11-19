@@ -12,10 +12,9 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="nato.ivct.commander.Factory" level="INFO">
-		<appender-ref ref="console" />
-	</logger>
 	<logger name="de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup" level="DEBUG" />
+	<logger name="nato.ivct.commander.CmdHeartbeatSend" level="DEBUG" />
+	<logger name="nato.ivct.commander.TestCmdHeartbeat" level="DEBUG" />
 	
 
 </configuration>
