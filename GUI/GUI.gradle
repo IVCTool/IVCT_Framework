@@ -1,47 +1,10 @@
-plugins {
-	// using the Java war core core plugin
-	id 'war'
-    // using JIB Container Support for Java applications
-    id 'com.google.cloud.tools.jib' version '3.1.2'
-}
 
-jib {
-	from {
-		// image = 'tomcat:jre8-slim'
-		image = 'tomcat:jdk8-openjdk'
-	}
-	to {
-		image = "ivct/gui:${ivctVersion}"
-	}
-	extraDirectories {
-		paths {
-			path {
-				from = file('docker')
-				into = '/usr/local/tomcat/conf'
-			}
-			path {
-				from = file("nato.ivct.gui.server.app.war/build/libs")
-				includes = ['*.war']
-				into = '/usr/local/tomcat/webapps/'
-			}
-			path {
-				from = file("nato.ivct.gui.ui.html.app.war/build/libs")
-				includes = ['*.war']
-				into = '/usr/local/tomcat/webapps/'
-			}
-		}
-	}
-	container {
-		creationTime = 'USE_CURRENT_TIMESTAMP'
-	}
+task dockerBuildImage (type: Exec) {
+	group = 'Docker'
+	description = 'command line task to create docker image'
+	executable 'docker'
+	args 'build', '-t', "ivct/gui:${ivctVersion}", '--build-arg', "version=${ivctVersion}", '.'
+	dependsOn(':GUI:nato.ivct.gui.server.app.war:war')
+	dependsOn(':GUI:nato.ivct.gui.ui.html.app.war:war')
 }
-
-tasks.register ("dockerBuildImage") {
-    group = 'Docker'
-    description = 'Creates docker images for RTIs'
-    dependsOn 'jibDockerBuild'
-}
-
-jibDockerBuild.dependsOn (':GUI:nato.ivct.gui.server.app.war:war')
-jibDockerBuild.dependsOn (':GUI:nato.ivct.gui.ui.html.app.war:war')
 
