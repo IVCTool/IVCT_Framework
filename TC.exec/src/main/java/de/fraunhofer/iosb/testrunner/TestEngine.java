@@ -16,10 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
-import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
-import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
-import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
-import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import de.fraunhofer.iosb.tc_lib_if.AbstractTestCaseIf;
+import de.fraunhofer.iosb.tc_lib_if.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib_if.IVCTVersionCheckException;
+import de.fraunhofer.iosb.tc_lib_if.IVCT_Verdict;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
@@ -51,7 +51,7 @@ import nato.ivct.commander.TcLoggerData;
 public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnAbortTestCaseListener,
 		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
 
-	private AbstractTestCase testCase = null;
+	private AbstractTestCaseIf testCase = null;
 
 	private CmdListTestSuites testSuites;
 	private Map<String, URLClassLoader> classLoaders = new HashMap<>();
@@ -230,7 +230,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 			for (final String classname : testcases) {
 				testCase = null;
 				try {
-					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
+					testCase = (AbstractTestCaseIf) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
 					tcLogger.error("Could not instantiate " + classname + " !", ex);
@@ -250,14 +250,14 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);		
-
+				testCase.setOperatorService(new OperatorServiceImpl(testEngineLabel));
 				/*
-				 * Check the compability of IVCT-Version which had this testCase at
+				 * Check the compatibility of IVCT-Version which had this testCase at
 				 * building-time against the IVCT-Version at Runtime
 				 */
 
 				try {
-					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase {} is: {}", testCase, testCase.getIVCTVersion());
+					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of test case {} is: {}", testCase, testCase.getIVCTVersion());
 
 					new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
 

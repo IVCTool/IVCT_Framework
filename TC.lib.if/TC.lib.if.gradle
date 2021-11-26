@@ -1,0 +1,12 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation project(':Command')
+
+	compileOnly libraries.slf4j_api
+	compileOnly libraries.jsonSimple
+	compileOnly libraries.logback_classic
+	compileOnly libraries.logback_core
+}

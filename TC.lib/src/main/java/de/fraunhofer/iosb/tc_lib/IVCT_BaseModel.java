@@ -16,6 +16,8 @@ limitations under the License.
 
 package de.fraunhofer.iosb.tc_lib;
 
+import de.fraunhofer.iosb.tc_lib_if.IVCT_BaseModelIf;
+
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.FederateAmbassador;
 import hla.rti1516e.FederateHandle;
@@ -48,7 +50,7 @@ import org.slf4j.Logger;
 /**
  * @author mul (Fraunhofer IOSB)
  */
-public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
+public class IVCT_BaseModel extends IVCT_NullFederateAmbassador implements IVCT_BaseModelIf {
 
     private IVCT_RTIambassador ivct_rti;
     private Logger logger;
@@ -70,6 +72,14 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
         this.ivct_TcParam = ivct_TcParam;
     }
 
+    @Override
+    public void startup() {
+    }
+
+    @Override
+    public void shutdown() {
+        terminateRti();
+    }
 
     /**
      * @param federateName federate name

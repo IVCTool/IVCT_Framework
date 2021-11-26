@@ -17,8 +17,8 @@ package de.fraunhofer.iosb.testrunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
-import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import de.fraunhofer.iosb.tc_lib_if.AbstractTestCaseIf;
+import de.fraunhofer.iosb.tc_lib_if.IVCT_Verdict;
 
 /**
  * Simple test environment. The TestRunner takes the classnames of the tests as
@@ -63,9 +63,9 @@ public class TestRunner {
 		int i = 0;
 
 		for (final String classname : classnames) {
-			AbstractTestCase testCase = null;
+			AbstractTestCaseIf testCase = null;
 			try {
-				testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
+				testCase = (AbstractTestCaseIf) Thread.currentThread().getContextClassLoader().loadClass(classname)
 						.newInstance();
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
 				logger.error("Could not instantiate " + classname + " !", ex);

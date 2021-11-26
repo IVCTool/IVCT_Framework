@@ -74,6 +74,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 
 dependencies {
+    implementation project(':TC.lib.if')
     implementation project(':Command')
     api project(':IEEE1516e')
 
