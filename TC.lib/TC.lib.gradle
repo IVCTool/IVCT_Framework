@@ -74,8 +74,8 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 
 dependencies {
-    implementation project(':TC.lib.if')
     implementation project(':Command')
+    api project(':TC.lib.if')
     api project(':IEEE1516e')
 
 	compileOnly libraries.slf4j_api

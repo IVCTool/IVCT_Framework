@@ -13,5 +13,7 @@ package de.fraunhofer.iosb.tc_lib_if;
 
 public interface OperatorService {
 
-    public void sendOperatorMsgAndWaitConfirmation(String sutName, String testSuiteId, String tc, String text) throws TcInconclusive;
+    public OperatorService initialize (String sutName, String testSuiteId, String tc, String tcLabel); // must be called before anything else
+    public void sendOperatorMsgAndWaitConfirmation(String text) throws TcInconclusive;
+    public void sendTcStatus(String status, int percent);
 }

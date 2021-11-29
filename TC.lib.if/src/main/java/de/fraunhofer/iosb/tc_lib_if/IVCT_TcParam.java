@@ -14,29 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
+package de.fraunhofer.iosb.tc_lib_if;
 
-public class IVCT_Verdict {
-	public enum Verdict {
-		PASSED, FAILED, INCONCLUSIVE;
-	}
+import java.net.URL;
 
-	public Verdict verdict;
-	public String text = "ok";
-	
 
-	public String toString() {
-		String result;
-		switch (this.verdict) {
-		case PASSED:
-			result = "PASSED";
-		case FAILED:
-			result = "FAILED";
-		case INCONCLUSIVE:
-			result = "INCONCLUSIVE";
-		default:
-			result = "UNDEFINED";
-		}
-		return result + ": " + text;
-	}
+public interface IVCT_TcParam {
+
+    /**
+     * @return urls
+     */
+    public URL[] getUrls();
+
 }

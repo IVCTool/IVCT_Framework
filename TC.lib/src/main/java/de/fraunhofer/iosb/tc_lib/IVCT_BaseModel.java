@@ -17,7 +17,7 @@ limitations under the License.
 package de.fraunhofer.iosb.tc_lib;
 
 import de.fraunhofer.iosb.tc_lib_if.IVCT_BaseModelIf;
-
+import de.fraunhofer.iosb.tc_lib_if.IVCT_TcParam;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.FederateAmbassador;
 import hla.rti1516e.FederateHandle;

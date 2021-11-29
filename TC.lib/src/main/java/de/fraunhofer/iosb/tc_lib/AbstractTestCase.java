@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, Reinhard Herzog (Fraunhofer IOSB) Licensed under the Apache
+ * Copyright 2015, Johannes Mulder (Fraunhofer IOSB) Licensed under the Apache
  * License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
@@ -9,7 +9,7 @@
  * governing permissions and limitations under the License.
  */
 
-package de.fraunhofer.iosb.tc_lib_if;
+package de.fraunhofer.iosb.tc_lib;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +18,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 
 import nato.ivct.commander.Factory;
+import de.fraunhofer.iosb.tc_lib_if.*;
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the three
@@ -25,41 +26,14 @@ import nato.ivct.commander.Factory;
  * implemented as they will be called by the execute method of this abstract
  * class. Empty implementations of these classes are also valid.
  *
- * @author Reinhard Herzog (Fraunhofer IOSB)
+ * @author sen (Fraunhofer IOSB)
  */
-public abstract class AbstractTestCaseIf {
+public abstract class AbstractTestCase extends AbstractTestCaseIf {
 
-    protected Logger defaultLogger = null;
-
-    protected String testSuiteId = null;
-    protected String tcName  = null;
-    protected String sutName = null;
-    protected String settingsDesignator;
-    protected String federationName;
-    protected String sutFederateName;
+    public void sendTcStatus(String status, int percent) {
+        operator().sendTcStatus(status, percent);
+    }
     
-	private boolean skipOperatorMsg;
-
-    protected OperatorService myOperator;
-    
-    public void setOperatorService(OperatorService aOperator) {
-        myOperator = aOperator;
-    }
-
-    public OperatorService operator () {
-        return myOperator;
-    }
-
-    public void sendOperatorRequest(String text) throws TcInconclusive {
-		if (skipOperatorMsg) return;
-    	if (text == null) {
-    		// Make an empty string
-    		text = new String();
-    	}
-    	myOperator.sendOperatorMsgAndWaitConfirmation(text);
-    }
-
-
 
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
@@ -67,7 +41,7 @@ public abstract class AbstractTestCaseIf {
      * @return the IVCT base model to use in the test cases
      * @throws TcInconclusive if test is inconclusive
      */
-    protected abstract IVCT_BaseModelIf getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
+    protected abstract IVCT_BaseModel getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
 
 
     /**
@@ -96,17 +70,8 @@ public abstract class AbstractTestCaseIf {
      * @throws TcInconclusive if test is inconclusive
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
-
     
-
-	public void setSkipOperatorMsg (boolean value) {
-		skipOperatorMsg = value;
-	}
-
-    public void setDefaultLogger(final Logger logger) {
-    	this.defaultLogger = logger;
-    }
-
+    
     /**
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
@@ -114,7 +79,7 @@ public abstract class AbstractTestCaseIf {
      */
     public IVCT_Verdict execute(final String tcParamJson, final Logger logger) {
 
-        IVCT_BaseModelIf ivct_BaseModel = null;
+        IVCT_BaseModel ivct_BaseModel = null;
         final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
 
         // A one-time start message
@@ -163,7 +128,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("initiated", 0);
+        sendTcStatus("initiated", 0);
 
         logTestPurpose(logger);
 
@@ -179,7 +144,7 @@ public abstract class AbstractTestCaseIf {
         }
         catch (final TcInconclusive ex) {
             if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
+                ivct_BaseModel.terminateRti();
             }
             logger.info("TC INCONCLUSIVE " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
@@ -187,7 +152,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("started", 0);
+        sendTcStatus("started", 0);
 
         //test body block
         try {
@@ -200,7 +165,7 @@ public abstract class AbstractTestCaseIf {
         }
         catch (final TcInconclusive ex) {
             if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
+                ivct_BaseModel.terminateRti();
             }
             logger.warn("TC INCONCLUSIVE " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
@@ -209,7 +174,7 @@ public abstract class AbstractTestCaseIf {
         }
         catch (final TcFailed ex) {
             if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
+                ivct_BaseModel.terminateRti();
             }
             logger.warn("TC FAILED " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.FAILED;
@@ -217,7 +182,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("done", 99);
+        sendTcStatus("done", 99);
 
         // postamble block
         try {
@@ -228,7 +193,7 @@ public abstract class AbstractTestCaseIf {
         }
         catch (final TcInconclusive ex) {
             if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
+                ivct_BaseModel.terminateRti();
             }
             logger.warn("TC INCONCLUSIVE " + ex.getMessage());
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
@@ -236,7 +201,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("finished", 100);
+        sendTcStatus("finished", 100);
         logger.info("TEST CASE FINISHED");
 
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
@@ -334,8 +299,8 @@ public abstract class AbstractTestCaseIf {
     
     
     /**
-     * Returns the IVCT-Version String, created at compile time within the test suite-this
-     * for testing  against the IVCT-Version of at Runtime deployment
+     * Returns the IVCT-Version which has this TestCase at building-time for
+     * checking against the IVCT-Version of at Runtime
      *  
      * @throws IVCTVersionCheckException of version id can not be resolved
      * @return IVCT version id

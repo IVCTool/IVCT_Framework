@@ -24,9 +24,6 @@ import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
-import nato.ivct.commander.CmdOperatorConfirmationListener;
-import nato.ivct.commander.CmdOperatorConfirmationListener.OnOperatorConfirmationListener;
-import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -43,13 +40,13 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.TcLoggerData;
 
 /**
- * Testrunner that listens for certain commands to start and stop test cases.
+ * Test runner that listens for certain commands to start and stop test cases.
  *
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnAbortTestCaseListener,
-		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
+		OnCmdHeartbeatSend {
 
 	private AbstractTestCaseIf testCase = null;
 
@@ -115,7 +112,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				System.out.println("Could not start HeartbeatSend: " + e1.toString());
 			}
 		}
-		(new CmdOperatorConfirmationListener(this)).execute();
+//		(new CmdOperatorConfirmationListener(this)).execute();
 
 		// get the test suite descriptions
 		testSuites = new CmdListTestSuites();
@@ -250,7 +247,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
 				testCase.setSutFederateName(info.sutFederateName);		
-				testCase.setOperatorService(new OperatorServiceImpl(testEngineLabel));
+				testCase.setOperatorService(new OperatorServiceImpl().initialize(info.sutName, info.testCaseId, classname, testEngineLabel));
 				/*
 				 * Check the compatibility of IVCT-Version which had this testCase at
 				 * building-time against the IVCT-Version at Runtime
@@ -338,7 +335,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		}
     }
 
-	@Override
+/* 	@Override
 	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
 	  
         // for enhanced RTI-Type-Information brf 07.12.2020              
@@ -352,8 +349,8 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
             }
         }
     
-		testCase.onOperatorConfirmation(operatorConfirmationInfo);
-	}
+		testCase._onOperatorConfirmation(operatorConfirmationInfo);
+	} */
 	
 
     //for enhanced RTI-Type-Information brf 07.12.2020

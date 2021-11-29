@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.tc_lib_if.OperatorService;
 import de.fraunhofer.iosb.tc_lib_if.TcInconclusive;
-import nato.ivct.commander.CmdOperatorConfirmation;
 import nato.ivct.commander.CmdOperatorConfirmationListener;
 import nato.ivct.commander.CmdOperatorRequest;
+import nato.ivct.commander.CmdSendTcStatus;
 import nato.ivct.commander.Factory;
 import nato.ivct.commander.CmdOperatorConfirmationListener.OnOperatorConfirmationListener;
 import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
@@ -31,6 +31,9 @@ public class OperatorServiceImpl implements OperatorService {
     private Semaphore semOperatorRequest = new Semaphore(0);
     OperatorConfirmationInfo confirmation = null;
     private String testEngineLabel;
+    private String sutName;
+    private String testSuiteId;
+    private String tcName;
 
     class TcOnOperatorConfirmationListener implements OnOperatorConfirmationListener {
         @Override
@@ -39,7 +42,7 @@ public class OperatorServiceImpl implements OperatorService {
             Logger tcLogger = LoggerFactory.getLogger(operatorConfirmationInfo.testCaseId);
 
             if (operatorConfirmationInfo.testEngineLabel != null) {
-                tcLogger.info("Testengine.onOperatorConfirmation get OperatorConfirmationInfo.testEngineLabel: " + operatorConfirmationInfo.testEngineLabel);
+                tcLogger.info("onOperatorConfirmationInfo.testEngineLabel: " + operatorConfirmationInfo.testEngineLabel);
         
                 if (!verifyTestEngineLabel("onOperatorConfirmation", tcLogger, operatorConfirmationInfo.testEngineLabel)) {
                     return;
@@ -59,12 +62,12 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
     @Override
-    public void sendOperatorMsgAndWaitConfirmation(String sutName, String testSuiteId, String tc, String text) throws TcInconclusive {
+    public void sendOperatorMsgAndWaitConfirmation(String text) throws TcInconclusive {
         // create listener before sending operator message
         TcOnOperatorConfirmationListener operatorListener = new TcOnOperatorConfirmationListener();
 		(new CmdOperatorConfirmationListener(operatorListener)).execute();
 
-    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(sutName, testSuiteId, tc, text);
+    	CmdOperatorRequest operatorRequestCmd = Factory.createCmdOperatorRequest(sutName, testSuiteId, tcName, text);
     	operatorRequestCmd.execute();
     	
         try {
@@ -83,7 +86,30 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
 
-    public OperatorServiceImpl (String myLabel) {
+    public OperatorServiceImpl () {
+    }
+    
+    private CmdSendTcStatus statusCmd = null;
+    
+    @Override
+    public void sendTcStatus(String status, int percent) {
+        if (statusCmd == null) {
+            statusCmd = Factory.createCmdSendTcStatus();
+        }
+        statusCmd.setStatus(status);
+        statusCmd.setPercentFinshed(percent);
+        statusCmd.setTcName(tcName);
+        statusCmd.setSutName(sutName);
+        statusCmd.execute();
+    }
+    
+    
+    @Override
+    public OperatorServiceImpl initialize(String mySutName, String myTestSuiteId, String myTc, String myLabel) {
+        sutName = mySutName;
+        testSuiteId = myTestSuiteId;
+        tcName = myTc;
         testEngineLabel = myLabel;
+        return this;
     }
 }

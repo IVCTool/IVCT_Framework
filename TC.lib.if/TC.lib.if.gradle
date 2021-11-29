@@ -1,6 +1,77 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
+    id 'signing'
 }
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+group = 'io.github.msg134'
+archivesBaseName = "TC.lib.if"
+version = ivctVersion
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'TC.lib.if'
+            from components.java
+
+            pom {
+                name = "IVCT Test Case Library Interface"
+                description = "Library Interface to be implemented for run time implementation"
+                url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib.if"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "rhzg"
+                        name = "Reinhard Herzog"
+                        email = "reinhard.herzog@iosb.fraunhofer.de"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.if.git"
+                    developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.if.git"
+                    url = "https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.if"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
+}
+
+signing
+{
+    sign publishing.publications.mavenJava
+}
+
+
+gradle.taskGraph.whenReady { taskGraph ->
+    // Do not sign archives by default (a local build without gpg keyring should succeed)
+    if (taskGraph.allTasks.any {  it.name == 'install' || it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' || it.name == 'signSourcesJar' }.each { task ->
+            task.enabled = false
+        }
+    }
+}
+
 
 dependencies {
     implementation project(':Command')

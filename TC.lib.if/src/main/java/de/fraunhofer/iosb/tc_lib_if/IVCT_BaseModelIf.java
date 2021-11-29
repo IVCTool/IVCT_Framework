@@ -16,9 +16,6 @@ limitations under the License.
 
 package de.fraunhofer.iosb.tc_lib_if;
 
-import org.slf4j.Logger;
-
-
 /**
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
