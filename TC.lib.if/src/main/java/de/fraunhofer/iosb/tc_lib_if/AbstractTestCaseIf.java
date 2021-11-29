@@ -29,37 +29,14 @@ import nato.ivct.commander.Factory;
  */
 public abstract class AbstractTestCaseIf {
 
-    protected Logger defaultLogger = null;
-
-    protected String testSuiteId = null;
-    protected String tcName  = null;
-    protected String sutName = null;
-    protected String settingsDesignator;
-    protected String federationName;
-    protected String sutFederateName;
-    
-	private boolean skipOperatorMsg;
-
-    protected OperatorService myOperator;
-    
-    public void setOperatorService(OperatorService aOperator) {
-        myOperator = aOperator;
-    }
-
-    public OperatorService operator () {
-        return myOperator;
-    }
-
-    public void sendOperatorRequest(String text) throws TcInconclusive {
-		if (skipOperatorMsg) return;
-    	if (text == null) {
-    		// Make an empty string
-    		text = new String();
-    	}
-    	myOperator.sendOperatorMsgAndWaitConfirmation(text);
-    }
 
 
+    /********************************************************************************************
+     * The class AbstractTestCaseIf is generic the Interface Declaration to be implemented by any
+     * communication layer, like HLA or DIS. It may be implemented in each test case or in a 
+     * dedicated library. The following abstract methods must be implemented. 
+     * 
+     */
 
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
@@ -69,12 +46,10 @@ public abstract class AbstractTestCaseIf {
      */
     protected abstract IVCT_BaseModelIf getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
 
-
     /**
      * @param logger The {@link Logger} to use
      */
     protected abstract void logTestPurpose(final Logger logger);
-
 
     /**
      * @param logger The {@link Logger} to use
@@ -82,7 +57,6 @@ public abstract class AbstractTestCaseIf {
      * @throws TcFailed if test case failed
      */
     protected abstract void performTest(final Logger logger) throws TcInconclusive, TcFailed;
-
 
     /**
      * @param logger The {@link Logger} to use
@@ -97,17 +71,74 @@ public abstract class AbstractTestCaseIf {
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
 
+
+
+    /*************************************************************************
+     * The remaining methods are generic implementations of standard behavior. 
+     * It is not recommended to change any of these methods.
+     */
+
+    protected Logger defaultLogger = null;
+    protected String testSuiteId = null;
+    protected String tcName  = null;
+    protected String sutName = null;
+    protected String settingsDesignator;
+    protected String federationName;
+    protected String sutFederateName;
     
 
+    /** 
+     * OperatorService registration 
+     * 
+     * A Test Case may want to notify the IVCT-operator about any specific events in the test 
+     * procedure. A typical usage is the operator request to start the system under test when
+     * the test case is ready to react.
+     * 
+     */
+    protected OperatorService myOperator;
+
+    public void setOperatorService(OperatorService aOperator) {
+        myOperator = aOperator;
+    }
+
+    public OperatorService operator () {
+        return myOperator;
+    }
+    
+    private boolean skipOperatorMsg;
+    public void sendOperatorRequest(String text) throws TcInconclusive {
+		if (skipOperatorMsg) return;
+    	if (text == null) {
+    		// Make an empty string
+    		text = new String();
+    	}
+    	myOperator.sendOperatorMsgAndWaitConfirmation(text);
+    }
+    
+    /**
+     * Set the SkipOperatorMsg flag to true. This will cause operator instructions to be ignored.
+     * This feature is intended to test purpose only.
+     * 
+     * @param value
+     */
 	public void setSkipOperatorMsg (boolean value) {
 		skipOperatorMsg = value;
 	}
 
+
+    /**
+     * Assign a default logger.
+     * 
+     * @param logger
+     */
     public void setDefaultLogger(final Logger logger) {
     	this.defaultLogger = logger;
     }
 
+
     /**
+     * The execute method is used to perform the test, including preamble and postamble.
+     * 
      * @param tcParamJson test case parameters
      * @param logger The {@link Logger} to use
      * @return the verdict
@@ -254,6 +285,11 @@ public abstract class AbstractTestCaseIf {
     }
 
 
+    /**
+     * Set the test suite name
+     * 
+     * @param testSuiteId
+     */
     public void setTsName(String testSuiteId) {
         this.testSuiteId = testSuiteId;
     }
@@ -269,6 +305,10 @@ public abstract class AbstractTestCaseIf {
     }
 
 
+    /**
+     * Set the test case name.
+     * @param tcName
+     */
     public void setTcName(String tcName) {
         this.tcName = tcName;
     }
@@ -305,6 +345,11 @@ public abstract class AbstractTestCaseIf {
     }
 
 
+    /**
+     * Set the federation name.
+     * 
+     * @param federationName
+     */
     public void setFederationName(String federationName) {
         this.federationName = federationName;
     }
@@ -330,7 +375,6 @@ public abstract class AbstractTestCaseIf {
     public String getSutFederateName() {
         return sutFederateName;
     }
-    
     
     
     /**
@@ -360,13 +404,4 @@ public abstract class AbstractTestCaseIf {
       }
       return infoIVCTVersion;
     }
-
-
-    
-    
-    
-    
-    
-    
-    
 }
