@@ -96,16 +96,32 @@ public abstract class AbstractTestCaseIf {
      * 
      */
     protected OperatorService myOperator;
+    private boolean skipOperatorMsg;
 
+    /**
+     * assign the OperatorService so the test case can interact with the IVCT operator
+     * 
+     * @param aOperator
+     */
     public void setOperatorService(OperatorService aOperator) {
         myOperator = aOperator;
     }
 
+    /**
+     * access method to the assigned operator
+     * 
+     * @return
+     */
     public OperatorService operator () {
         return myOperator;
     }
     
-    private boolean skipOperatorMsg;
+    /**
+     * Send a text message to the IVCT operator and wait for confirmation
+     * 
+     * @param text
+     * @throws TcInconclusive
+     */
     public void sendOperatorRequest(String text) throws TcInconclusive {
 		if (skipOperatorMsg) return;
     	if (text == null) {
@@ -125,16 +141,14 @@ public abstract class AbstractTestCaseIf {
 		skipOperatorMsg = value;
 	}
 
-
     /**
-     * Assign a default logger.
+     * Assign the logger object to be used as default for all test case logging messages.
      * 
      * @param logger
      */
     public void setDefaultLogger(final Logger logger) {
     	this.defaultLogger = logger;
     }
-
 
     /**
      * The execute method is used to perform the test, including preamble and postamble.
