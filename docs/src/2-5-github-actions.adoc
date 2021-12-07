@@ -1,0 +1,36 @@
+== Github Actions
+
+Github Actions is a free Continuous Integration Framework for testing and deploying open source projects automatically. Github Actions has been configured to automatically build and test the IVCT after each commit, and to build and deploy the corresponding [Docker Images](https://hub.docker.com/u/ivct) for the IVCT Components.
+
+=== Build Step 1: Environment
+
+The build script [gradle-publish-yml](https://github.com/IVCTool/IVCT_Framework/.github/workflows/gradle-publish.yml) defines the build process. It runs within a virtual ubuntu container, triggered by _push_ actions within the _development_ and _master_ branches. The build process is initialized with some user credentials for the Maven and Docker repositories, which are defined in the github _Secrets_ settings. 
+
+|===
+| Environment Variable Name  | Description
+
+| DOCKER_USERNAME | User to push images to the Dockerhub image registry
+| DOCKER_PASSWORD | Password for Docker Username
+| PossrhUsername | User to pull publish libraries to Maven Central
+| PossrhPassword | Password for Maven Username
+|===
+
+==== Build Step 2: IVCT Version Number Environment Variable
+
+The IVCT version defined in the _.shared/libraries.gradle_ script. To retrieve that value, the following shell script is used:
+
+`VERSION=$(grep "ivctVersion" ./.shared/libraries.gradle | awk '{print $3}' | tr -d \')`
+
+==== Build Step 3: Gradle dockerBuildImage
+
+The IVCT software is build with the gradle wrapper command, by using the build task _dockerBuildImage_. 
+
+`./gradlew -PossrhUsername=${ossrhUsername} -PossrhPassword=${ossrhPassword} install dockerBuildImage`
+
+==== Build Step 4: Tagging the Container and pushing to DockerHub
+
+The created docker containers are tagged with the IVCT version and also with the current branch label. These labels are used for pushing the containers to the DockerHub registry.
+
+`docker tag ivct/gui:${VERSION} ivct/gui:${GITHUB_REF:11}-latest`
+
+`docker push ivct/gui:${VERSION}`

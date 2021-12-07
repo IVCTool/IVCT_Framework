@@ -25,7 +25,7 @@ include::{includedir}/2-1-build-overview.adoc[]
 include::{includedir}/2-2-prerequisites.adoc[]
 include::{includedir}/2-3-Branching-and-Merging.adoc[]
 include::{includedir}/2-4-gradleDoc.adoc[]
-include::{includedir}/2-5-travis.adoc[]
+include::{includedir}/2-5-github-actions.adoc[]
 include::{includedir}/2-6-3rdpartyRti.adoc[]
 include::{includedir}/2-8-IVCT_Configuration.adoc[]
 
