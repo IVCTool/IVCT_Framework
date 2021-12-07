@@ -22,7 +22,7 @@ you an overview on tools and the development environment.
 * <<2-2-prerequisites.adoc#,Prerequisites for participating in IVCT_Framework development>>
 * <<2-3-Branching-and-Merging.adoc#,Guidelines for branching and merging>>
 * <<2-4-gradleDoc.adoc#,Building the IVCT_Framework with gradle>>
-* <<2-5-travis.adoc#,Automatic testing, building, docker image building and deployment using Travis-CI>>
+* <<2-5-github-actions.adoc#,Continuous Integration with Github Actions>>
 * <<2-6-3rdpartyRti.adoc#,Using the framework with a 3rd-party RTI Implementation>>
 * <<2-8-IVCT_Configuration.adoc#,Configuration of the IVCTool>>
 
