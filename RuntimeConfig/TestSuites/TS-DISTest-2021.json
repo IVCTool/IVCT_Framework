@@ -1,0 +1,25 @@
+{
+    "id": "TS-DISTest-2021",
+    "version": "0.1",
+    "name": "DIS Test Badge",
+    "description": "This is a Test Suite to test the correct transmission of Entity State, Fire and Detonation PDUs.",
+    "tsRunTimeFolder": "TS_DISTest-0.1/bin",
+    "tsLibTimeFolder": "TS_DISTest-0.1/lib",
+    "testcases": [{
+            "TC": "dis.tc_distest.TC_DISTest_001",
+            "IR": ["IR-DT-0001"],
+            "description": "Test correct transmission of Entity State PDU"
+        },
+        {
+            "TC": "dis.tc_distestTC_DISTest_002",
+            "IR": ["IR-DT-0002"],
+            "description": "Test correct transmission of simulator specific data"
+        }
+    ],
+	"parameters":[
+		{
+			"name": "numberOfCycles",
+			"description": "number of Entity State PDUs that should be received from the SuT"
+		}
+	]
+}

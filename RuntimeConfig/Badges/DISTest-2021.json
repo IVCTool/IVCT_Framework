@@ -1,0 +1,18 @@
+{
+	"id" 			: 	"DISTest-2021",
+	"version"		:	"0.0.1",
+	"name" 			: 	"DIS Test Badge",
+	"description"	:	"This is a simple example for capability badge to test the compliance of an federate to the hello world federation.",
+	"graphics"		:	"DISTest-2021.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-DT-0001",
+			"description"	:	"Test correct transmission of Entity State PDU"
+		},
+		{
+			"id"			:	"IR-DT-0002",
+			"description"	:	"Test correct reaction to receipt of a Fire and Detonation PDU"
+		}
+	]
+}
