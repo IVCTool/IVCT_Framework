@@ -1,0 +1,83 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+group = 'io.github.msg134'
+archivesBaseName = "TC.lib.OpenDIS"
+version = ivctVersion
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'TC.lib.OpenDIS'
+            from components.java
+
+            pom {
+                name = "IVCT Test Case Library"
+                description = "DIS Test Case Library to be used by IVCT test case developers"
+                url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib.OpenDIS"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "rhzg"
+                        name = "Reinhard Herzog"
+                        email = "reinhard.herzog@iosb.fraunhofer.de"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.OpenDIS.git"
+                    developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.OpenDIS-git"
+                    url = "https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.OpenDIS"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
+}
+
+signing
+{
+    sign publishing.publications.mavenJava
+}
+
+
+gradle.taskGraph.whenReady { taskGraph ->
+    // Do not sign archives by default (a local build without gpg keyring should succeed)
+    if (taskGraph.allTasks.any {  it.name == 'install' || it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' || it.name == 'signSourcesJar' }.each { task ->
+            task.enabled = false
+        }
+    }
+}
+
+
+dependencies {
+    api project(':TC.lib.if')
+
+	compileOnly libraries.slf4j_api
+	compileOnly libraries.jsonSimple
+	compileOnly libraries.logback_classic
+	compileOnly libraries.logback_core
+}
