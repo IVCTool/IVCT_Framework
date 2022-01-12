@@ -3,6 +3,17 @@ task dockerBuildImage (type: Exec) {
 	group = 'Docker'
 	description = 'command line task to create docker image'
 	executable 'docker'
-	args 'build', '-t', "ivct/runtime_mirror:${ivctVersion}", '--build-arg', "version=${ivctVersion}", '--build-arg', 'https_proxy=http://vip-proxy-ka.iosb.fraunhofer.de:3128', '.'
+	def varProxy = ""
+	def varProxyHost = System.getProperty("https.proxyHost")
+	def varProxyPort = System.getProperty("https.proxyPort")
+	if (varProxyHost != null) { 
+		varProxy = "http://${varProxyHost}:${varProxyPort}"
+	}
+	println "using proxy setting: ${varProxy}"
+
+	args 'build', '-t', "ivct/runtime_mirror:${ivctVersion}", 
+		'--build-arg', "version=${ivctVersion}", 
+		'--build-arg', "https_proxy=${varProxy}", 
+		'.'
 }
 
