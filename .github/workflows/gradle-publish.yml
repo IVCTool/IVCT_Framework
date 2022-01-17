@@ -69,5 +69,5 @@ jobs:
         docker push ivct/tc-runner:pi-skeleton-${VERSION}
         docker push ivct/tc-runner:po-${VERSION}
         docker push ivct/tc-runner:ma-${VERSION}
-        docker push ivct/tc-runtime_mirror:${VERSION}
+        docker push ivct/runtime_mirror:${VERSION}
 
