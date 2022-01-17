@@ -55,6 +55,7 @@ jobs:
         docker tag ivct/tc-runner:pi-skeleton-${VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
         docker tag ivct/tc-runner:po-${VERSION} ivct/tc-runner:po-${GITHUB_REF:11}-latest
         docker tag ivct/tc-runner:ma-${VERSION} ivct/tc-runner:ma-${GITHUB_REF:11}-latest
+        docker tag ivct/runtime_mirror:${VERSION} ivct/runtime_mirror:${GITHUB_REF:11}-latest
     
     - name: Log into DockerHub
       run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -68,4 +69,5 @@ jobs:
         docker push ivct/tc-runner:pi-skeleton-${VERSION}
         docker push ivct/tc-runner:po-${VERSION}
         docker push ivct/tc-runner:ma-${VERSION}
+        docker push ivct/tc-runtime_mirror:${VERSION}
 
