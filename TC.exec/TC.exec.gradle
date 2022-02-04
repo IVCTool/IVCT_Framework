@@ -103,10 +103,21 @@ dependencies {
     
 	// external project dependencies
 	implementation libraries.slf4j_api
-	implementation libraries.jsonSimple
-	implementation libraries.actimemqClient
+    //implementation libraries.log4j_api
+
+    // bridges for logging framework
+//    implementation libraries.log4j_slf4j_impl
+    implementation libraries.slf4j_jcl_over_slf4j
+    implementation libraries.slf4j_jul_to_slf4j
+    implementation libraries.slf4j_log4j_over_slf4j
+    implementation libraries.log4j_to_slf4j
+
 	implementation libraries.logback_classic
 	implementation libraries.logback_core
+
+	implementation libraries.jsonSimple
+	implementation libraries.actimemqClient
+
     // include explicit dependency to local RTI installation only for debugging
     // implementation files('C:/MAK/makRti4.6/lib/hla.jar')
     // implementation files('C:\\Program Files\\prti1516e\\lib\\prti.jar')
