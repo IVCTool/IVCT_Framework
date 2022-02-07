@@ -20,18 +20,18 @@ package de.fraunhofer.iosb.tc_lib_if;
  *
  * @author mul (Fraunhofer IOSB)
  */
-public class TcInconclusive  extends Exception {
+public class TcFailedIf  extends Exception {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TcInconclusive(String msg)
+	public TcFailedIf(String msg)
     {
        super(msg);
     }
 
-    public TcInconclusive(String message, Throwable cause)
+    public TcFailedIf(String message, Throwable cause)
     {
        super(message, cause);
     }

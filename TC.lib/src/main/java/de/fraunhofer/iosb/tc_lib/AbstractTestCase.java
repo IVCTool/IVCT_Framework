@@ -29,11 +29,6 @@ import de.fraunhofer.iosb.tc_lib_if.*;
  */
 public abstract class AbstractTestCase extends AbstractTestCaseIf {
 
-    public void sendTcStatus(String status, int percent) {
-        operator().sendTcStatus(status, percent);
-    }
-    
-
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
      * @param logger The {@link Logger} to use
@@ -158,7 +153,19 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
         return sutFederateName;
     }
     
-    
+     /**
+     * Send a text message to the IVCT operator and wait for confirmation
+     * 
+     * @param text
+     * @throws TcInconclusive
+     */
+    public void sendOperatorRequest(String text) throws TcInconclusive {
+        try {
+            super.sendOperatorRequest(text);
+        } catch (TcInconclusiveIf e) {
+            throw new TcInconclusive(e.getMessage());
+        }
+    }
     
     /**
      * Returns the IVCT-Version which has this TestCase at building-time for

@@ -42,9 +42,9 @@ public abstract class AbstractTestCaseIf {
      * @param tcParamJson a JSON string containing values to use in the testcase
      * @param logger The {@link Logger} to use
      * @return the IVCT base model to use in the test cases
-     * @throws TcInconclusive if test is inconclusive
+     * @throws TcInconclusiveIf if test is inconclusive
      */
-    protected abstract IVCT_BaseModelIf getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusive;
+    protected abstract IVCT_BaseModelIf getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusiveIf;
 
     /**
      * @param logger The {@link Logger} to use
@@ -53,23 +53,23 @@ public abstract class AbstractTestCaseIf {
 
     /**
      * @param logger The {@link Logger} to use
-     * @throws TcInconclusive if test is inconclusive
-     * @throws TcFailed if test case failed
+     * @throws TcInconclusiveIf if test is inconclusive
+     * @throws TcFailedIf if test case failed
      */
-    protected abstract void performTest(final Logger logger) throws TcInconclusive, TcFailed;
+    protected abstract void performTest(final Logger logger) throws TcInconclusiveIf, TcFailedIf;
 
     /**
      * @param logger The {@link Logger} to use
-     * @throws TcInconclusive if test is inconclusive
+     * @throws TcInconclusiveIf if test is inconclusive
      */
-    protected abstract void preambleAction(final Logger logger) throws TcInconclusive;
+    protected abstract void preambleAction(final Logger logger) throws TcInconclusiveIf;
 
 
     /**
      * @param logger The {@link Logger} to use
-     * @throws TcInconclusive if test is inconclusive
+     * @throws TcInconclusiveIf if test is inconclusive
      */
-    protected abstract void postambleAction(final Logger logger) throws TcInconclusive;
+    protected abstract void postambleAction(final Logger logger) throws TcInconclusiveIf;
 
 
 
@@ -120,9 +120,9 @@ public abstract class AbstractTestCaseIf {
      * Send a text message to the IVCT operator and wait for confirmation
      * 
      * @param text
-     * @throws TcInconclusive
+     * @throws TcInconclusiveIf
      */
-    public void sendOperatorRequest(String text) throws TcInconclusive {
+    public void sendOperatorRequest(String text) throws TcInconclusiveIf {
 		if (skipOperatorMsg) return;
     	if (text == null) {
     		// Make an empty string
@@ -130,6 +130,12 @@ public abstract class AbstractTestCaseIf {
     	}
     	myOperator.sendOperatorMsgAndWaitConfirmation(text);
     }
+
+    public void sendTcStatus(String status, int percent) {
+		if (skipOperatorMsg) return;
+        myOperator.sendTcStatus(status, percent);
+    }
+
     
     /**
      * Set the SkipOperatorMsg flag to true. This will cause operator instructions to be ignored.
@@ -200,7 +206,7 @@ public abstract class AbstractTestCaseIf {
             ivct_BaseModel.setFederationName(federationName);
             ivct_BaseModel.setSettingsDesignator(settingsDesignator);
         }
-        catch (final TcInconclusive e) {
+        catch (final TcInconclusiveIf e) {
             final String verdictText = "getIVCT_BaseModel unsuccessful";
             logger.warn("TC INCONCLUSIVE Initialization Error <{}>: {}", verdictText, e);
             ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
@@ -208,7 +214,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("initiated", 0);
+        sendTcStatus("initiated", 0);
 
         logTestPurpose(logger);
 
@@ -222,7 +228,7 @@ public abstract class AbstractTestCaseIf {
 
             preambleAction(logger);
         }
-        catch (final TcInconclusive ex) {
+        catch (final TcInconclusiveIf ex) {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.shutdown();
             }
@@ -232,7 +238,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("started", 0);
+        sendTcStatus("started", 0);
 
         //test body block
         try {
@@ -243,7 +249,7 @@ public abstract class AbstractTestCaseIf {
             performTest(logger);
 
         }
-        catch (final TcInconclusive ex) {
+        catch (final TcInconclusiveIf ex) {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.shutdown();
             }
@@ -252,7 +258,7 @@ public abstract class AbstractTestCaseIf {
             ivct_Verdict.text = ex.getMessage();
             return ivct_Verdict;
         }
-        catch (final TcFailed ex) {
+        catch (final TcFailedIf ex) {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.shutdown();
             }
@@ -262,7 +268,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("done", 99);
+        sendTcStatus("done", 99);
 
         // postamble block
         try {
@@ -271,7 +277,7 @@ public abstract class AbstractTestCaseIf {
             postambleAction(logger);
             logger.info("TC PASSED");
         }
-        catch (final TcInconclusive ex) {
+        catch (final TcInconclusiveIf ex) {
             if (ivct_BaseModel != null) {
                 ivct_BaseModel.shutdown();
             }
@@ -281,7 +287,7 @@ public abstract class AbstractTestCaseIf {
             return ivct_Verdict;
         }
 
-        myOperator.sendTcStatus("finished", 100);
+        sendTcStatus("finished", 100);
         logger.info("TEST CASE FINISHED");
 
         ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;

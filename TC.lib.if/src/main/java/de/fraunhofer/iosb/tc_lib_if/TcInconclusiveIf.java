@@ -16,14 +16,23 @@ limitations under the License.
 
 package de.fraunhofer.iosb.tc_lib_if;
 
-import java.net.URL;
-
-
-public interface IVCT_TcParam {
-
+/**
+ *
+ * @author mul (Fraunhofer IOSB)
+ */
+public class TcInconclusiveIf  extends Exception {
     /**
-     * @return urls
-     */
-    public URL[] getUrls();
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
+	public TcInconclusiveIf(String msg)
+    {
+       super(msg);
+    }
+
+    public TcInconclusiveIf(String message, Throwable cause)
+    {
+       super(message, cause);
+    }
 }

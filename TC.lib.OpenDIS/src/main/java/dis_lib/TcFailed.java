@@ -14,13 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib_if;
+package dis_lib;
+
+import de.fraunhofer.iosb.tc_lib_if.TcFailedIf;
 
 /**
  *
  * @author mul (Fraunhofer IOSB)
  */
-public class TcFailed  extends Exception {
+public class TcFailed  extends TcFailedIf {
+
+    private final static String KEY = "DIS Test Case Failed: "; 
+
     /**
 	 * 
 	 */
@@ -28,11 +33,11 @@ public class TcFailed  extends Exception {
 
 	public TcFailed(String msg)
     {
-       super(msg);
+       super(KEY + msg);
     }
 
     public TcFailed(String message, Throwable cause)
     {
-       super(message, cause);
+       super(KEY + message, cause);
     }
 }

@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.tc_lib_if.OperatorService;
-import de.fraunhofer.iosb.tc_lib_if.TcInconclusive;
+import de.fraunhofer.iosb.tc_lib_if.TcInconclusiveIf;
 import nato.ivct.commander.CmdOperatorConfirmationListener;
 import nato.ivct.commander.CmdOperatorRequest;
 import nato.ivct.commander.CmdSendTcStatus;
@@ -62,7 +62,7 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
     @Override
-    public void sendOperatorMsgAndWaitConfirmation(String text) throws TcInconclusive {
+    public void sendOperatorMsgAndWaitConfirmation(String text) throws TcInconclusiveIf {
         // create listener before sending operator message
         TcOnOperatorConfirmationListener operatorListener = new TcOnOperatorConfirmationListener();
 		(new CmdOperatorConfirmationListener(operatorListener)).execute();
@@ -73,14 +73,14 @@ public class OperatorServiceImpl implements OperatorService {
         try {
             semOperatorRequest.acquire();
         } catch (InterruptedException interrupt) {
-            throw new TcInconclusive("Test case aborted", interrupt);
+            throw new TcInconclusiveIf("Test case aborted", interrupt);
         }
         
     	if (confirmation.confirmationBool == false) {
     		if (confirmation.text != null) {
-                throw new TcInconclusive("Operator reject message: " + confirmation.text);
+                throw new TcInconclusiveIf("Operator reject message: " + confirmation.text);
     		} else {
-                throw new TcInconclusive("Operator reject message: - no reject text -");
+                throw new TcInconclusiveIf("Operator reject message: - no reject text -");
     		}
     	} 
     }
