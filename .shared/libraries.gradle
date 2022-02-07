@@ -10,8 +10,9 @@ ext {
     targetCompatibility = 1.8
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-    logbackVersion = '1.2.3'
+    logbackVersion = '1.2.10'
     slf4jVersion = '1.7.10'
+    log4jVersion = '2.17.1'
     activemqVersion = '5.16.3'
     antlrVersion = '2.7.7'
     hamcrestVersion = '1.1'
@@ -30,18 +31,21 @@ ext {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~  now create libraries with the versions from above
     libraries = [
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
-        // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+        // logback is used as log implementation
         logback_classic:                "ch.qos.logback:logback-classic:${logbackVersion}",
-        // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
         logback_core:                   "ch.qos.logback:logback-core:${logbackVersion}",
-        // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
         logback_contrib:                "ch.qos.logback.contrib:logback-json-classic:0.1.5",
-        // https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
         logback_json_classic:            "ch.qos.logback.contrib:logback-json-classic:0.1.5",
         slf4j_api:                      "org.slf4j:slf4j-api:${slf4jVersion}",
         slf4j_jcl_over_slf4j:           "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
         slf4j_jul_to_slf4j:             "org.slf4j:jul-to-slf4j:${slf4jVersion}",
         slf4j_log4j_over_slf4j:         "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
+        log4j_api:                      "org.apache.logging.log4j:log4j-api:${log4jVersion}",
+        log4j_to_slf4j:                 "org.apache.logging.log4j:log4j-to-slf4j:${log4jVersion}",
+        //log4j_slf4j_impl:               "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}",
+
+
+
         actimemqClient:					"org.apache.activemq:activemq-client:${activemqVersion}",
         activemqEmbedded: 				"org.apache.activemq:activemq-broker:${activemqVersion}",
 		apacheCommonsIO:				"commons-io:commons-io:${apacheCommonsIOVersion}",
