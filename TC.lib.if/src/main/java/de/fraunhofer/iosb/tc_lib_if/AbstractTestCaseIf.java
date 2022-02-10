@@ -17,89 +17,136 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 
-import nato.ivct.commander.Factory;
 
 /**
- * Abstract base class for test cases. In the concrete test cases, the three
- * methods preambleAction, performTest and postambleAction have to be
+ * The class AbstractTestCaseIf is a generic the Interface Declaration to be implemented 
+ * by any communication layer, like HLA or DIS. It may be implemented in each test case 
+ * or in a dedicated library. In the concrete test cases, the  methods -logTestPurpose,
+ *  -preambleAction, -performTest and -postambleAction have to be
  * implemented as they will be called by the execute method of this abstract
- * class. Empty implementations of these classes are also valid.
+ * class.
  *
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public abstract class AbstractTestCaseIf {
 
-
-
-    /********************************************************************************************
-     * The class AbstractTestCaseIf is generic the Interface Declaration to be implemented by any
-     * communication layer, like HLA or DIS. It may be implemented in each test case or in a 
-     * dedicated library. The following abstract methods must be implemented. 
+    /**
+     * The logTestPurpose method shall provide information of the intended 
+     * purpose of this specific test case. This information shall be reported to 
+     * the logger object.
      * 
-     */
-
-    /**
-     * @param tcParamJson a JSON string containing values to use in the testcase
-     * @param logger The {@link Logger} to use
-     * @return the IVCT base model to use in the test cases
-     * @throws TcInconclusiveIf if test is inconclusive
-     */
-    protected abstract IVCT_BaseModelIf getIVCT_BaseModel(final String tcParamJson, final Logger logger) throws TcInconclusiveIf;
-
-    /**
      * @param logger The {@link Logger} to use
      */
     protected abstract void logTestPurpose(final Logger logger);
 
     /**
-     * @param logger The {@link Logger} to use
-     * @throws TcInconclusiveIf if test is inconclusive
-     * @throws TcFailedIf if test case failed
-     */
-    protected abstract void performTest(final Logger logger) throws TcInconclusiveIf, TcFailedIf;
-
-    /**
+     * The preambleAction method shall prepare and validate the start conditions for
+     * the test case. If the required initial conditions can not be established, the 
+     * method shall raise the {@link TcInconclusiveIf} exception. This will end the 
+     * test execution. 
+     *  
      * @param logger The {@link Logger} to use
      * @throws TcInconclusiveIf if test is inconclusive
      */
     protected abstract void preambleAction(final Logger logger) throws TcInconclusiveIf;
 
+    /**
+     * The performTest method contains the code for actual test. If the test passed all
+     * required conditions, the method shall end normally. If the test case detects a 
+     * condition where the system under test can not be tested, the method shall raise 
+     * a {@link TcInconclusiveIf} exception. If the test case detects a invalid behavior
+     * of the specified test case, it shall raise a {@link TcFailedIf} exception. 
+     * <p>
+     * During the test execution it is recommended to provide sufficient log information
+     * in order to give the IVCT operator sufficient feedback to understand whats going
+     * on while performing the test. It is also recommended to use the 
+     * {@link OperatorService#sendTcStatus} function to inform the operator about the 
+     * test case progress.
+     * 
+     * @param logger The {@link Logger} to use
+     * @throws TcInconclusiveIf if test is inconclusive
+     * @throws TcFailedIf if test case failed
+     */ 
+    protected abstract void performTest(final Logger logger) throws TcInconclusiveIf, TcFailedIf;
 
     /**
+     * The postambleAction method will be called as the final part of the test case. 
+     * The purpose of this function is to leave the test environment, specifically the system
+     * under test, in a defined condition. If the postambleAction method is not able to close
+     * the test case, the {@link TcInconclusiveIf} exception shall be raised. This may overwrite
+     * a earlier "passed" verdict from the {@link AbstractTestCaseIf#performTest} execution.  
+     * 
      * @param logger The {@link Logger} to use
      * @throws TcInconclusiveIf if test is inconclusive
      */
     protected abstract void postambleAction(final Logger logger) throws TcInconclusiveIf;
 
-
-
+    
+    
     /*************************************************************************
      * The remaining methods are generic implementations of standard behavior. 
      * It is not recommended to change any of these methods.
      */
-
+    
+    private boolean skipOperatorMsg;
     protected Logger defaultLogger = null;
     protected String testSuiteId = null;
     protected String tcName  = null;
+    protected String tcParam = null;
     protected String sutName = null;
     protected String settingsDesignator;
     protected String federationName;
     protected String sutFederateName;
+    protected OperatorService myOperator;
     
 
-    /** 
-     * OperatorService registration 
+    /**
+     * The execute method is used to perform the test, including the initializing preamble 
+     * and the closing postamble. It implements the standard behavior of a normal test case.
+     * This method may be overwritten by run-time library adapters to include special behavior. 
      * 
+     * 
+     * @param logger The {@link Logger} to be used by the test case. 
+     * @return the verdict
+     */
+    public IVCT_Verdict execute(final Logger logger) {
+        final IVCT_Verdict verdict = new IVCT_Verdict();
+        sendTcStatus("begin test case executing", 0);
+
+        logger.info("<<<<<< Test Case Started >>>>>>");
+        logger.info("Test Suite ID       : {}", testSuiteId);
+        logger.info("Test Case Name      : {}", tcName);
+        logger.info("SuT Name            : {}", sutName);
+        logger.info("Test Case Parameter : {}", tcParam);
+        logger.info("Settings Designator : {}", settingsDesignator);
+        logger.info("Federation Name     : {}", federationName);
+        logger.info("Federate Name       : {}", sutFederateName);
+
+        logTestPurpose(logger);
+        try {
+			preambleAction(logger);
+            performTest(logger);
+            postambleAction(logger);
+        } catch (TcInconclusiveIf exInconclusiveIf) {
+            logger.warn("TC INCONCLUSIVE " + exInconclusiveIf.getMessage());
+            verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            verdict.text = exInconclusiveIf.getMessage();
+            return verdict;
+        } catch (TcFailedIf exFailedIf) {
+            logger.info("TC INCONCLUSIVE " + exFailedIf.getMessage());
+            verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            verdict.text = exFailedIf.getMessage();
+            return verdict;
+        }
+        sendTcStatus("end test case executing", 100);
+        return verdict;
+    }
+
+
+    /**
      * A Test Case may want to notify the IVCT-operator about any specific events in the test 
      * procedure. A typical usage is the operator request to start the system under test when
      * the test case is ready to react.
-     * 
-     */
-    protected OperatorService myOperator;
-    private boolean skipOperatorMsg;
-
-    /**
-     * assign the OperatorService so the test case can interact with the IVCT operator
      * 
      * @param aOperator
      */
@@ -108,7 +155,7 @@ public abstract class AbstractTestCaseIf {
     }
 
     /**
-     * access method to the assigned operator
+     * Access method to the assigned operator.
      * 
      * @return
      */
@@ -117,7 +164,7 @@ public abstract class AbstractTestCaseIf {
     }
     
     /**
-     * Send a text message to the IVCT operator and wait for confirmation
+     * Send a text message to the IVCT operator and wait for confirmation.
      * 
      * @param text
      * @throws TcInconclusiveIf
@@ -138,8 +185,8 @@ public abstract class AbstractTestCaseIf {
 
     
     /**
-     * Set the SkipOperatorMsg flag to true. This will cause operator instructions to be ignored.
-     * This feature is intended to test purpose only.
+     * The SkipOperatorMsg flag can be set to true, if shall be skipped. This is useful during
+     * unit test without a IVCT operator interface. 
      * 
      * @param value
      */
@@ -155,145 +202,6 @@ public abstract class AbstractTestCaseIf {
     public void setDefaultLogger(final Logger logger) {
     	this.defaultLogger = logger;
     }
-
-    /**
-     * The execute method is used to perform the test, including preamble and postamble.
-     * 
-     * @param tcParamJson test case parameters
-     * @param logger The {@link Logger} to use
-     * @return the verdict
-     */
-    public IVCT_Verdict execute(final String tcParamJson, final Logger logger) {
-
-        IVCT_BaseModelIf ivct_BaseModel = null;
-        final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
-
-        // A one-time start message
-        logger.info("Test Case Started");
-
-        final StringBuilder tcGlobalVariables = new StringBuilder();
-        tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- BEGIN");
-        if (sutName != null) {
-            tcGlobalVariables.append("\nSUT Name: ");
-            tcGlobalVariables.append(sutName);
-        }
-        if (sutFederateName != null) {
-            tcGlobalVariables.append("\nSUT Federate Name: ");
-            tcGlobalVariables.append(sutFederateName);
-        }
-        if (federationName != null) {
-            tcGlobalVariables.append("\nSUT Federation Name: ");
-            tcGlobalVariables.append(federationName);
-        }
-        if (Factory.props.getProperty("TESTENGINE_LABEL") != null) {
-            tcGlobalVariables.append("\nEngine Label: ");
-            tcGlobalVariables.append(Factory.props.getProperty("TESTENGINE_LABEL"));
-        }
-        if (settingsDesignator != null) {
-            tcGlobalVariables.append("\nSettings Designator: ");
-            tcGlobalVariables.append(settingsDesignator);
-        }
-        tcGlobalVariables.append("\nTEST CASE GLOBAL VARIABLES -------------------------------------- END");
-        logger.info(tcGlobalVariables.toString());
-
-        String tcParam = new String();
-        tcParam = "\n" + "TEST CASE PARAMETERS -------------------------------------- BEGIN\n" + tcParamJson + "\nTEST CASE PARAMETERS -------------------------------------- END";
-
-        logger.info(tcParam);
-
-        try {
-            ivct_BaseModel = getIVCT_BaseModel(tcParamJson, logger);
-            ivct_BaseModel.setFederationName(federationName);
-            ivct_BaseModel.setSettingsDesignator(settingsDesignator);
-        }
-        catch (final TcInconclusiveIf e) {
-            final String verdictText = "getIVCT_BaseModel unsuccessful";
-            logger.warn("TC INCONCLUSIVE Initialization Error <{}>: {}", verdictText, e);
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = verdictText;
-            return ivct_Verdict;
-        }
-
-        sendTcStatus("initiated", 0);
-
-        logTestPurpose(logger);
-
-        // preamble block
-        try {
-            // Test case phase
-            logger.info("TEST CASE PREAMBLE");
-
-            // Publish interaction / object classes
-            // Subscribe interaction / object classes
-
-            preambleAction(logger);
-        }
-        catch (final TcInconclusiveIf ex) {
-            if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
-            }
-            logger.info("TC INCONCLUSIVE " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
-        }
-
-        sendTcStatus("started", 0);
-
-        //test body block
-        try {
-            // Test case phase
-            logger.info("TEST CASE BODY");
-
-            // PERFORM TEST
-            performTest(logger);
-
-        }
-        catch (final TcInconclusiveIf ex) {
-            if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
-            }
-            logger.warn("TC INCONCLUSIVE " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
-        }
-        catch (final TcFailedIf ex) {
-            if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
-            }
-            logger.warn("TC FAILED " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.FAILED;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
-        }
-
-        sendTcStatus("done", 99);
-
-        // postamble block
-        try {
-            // Test case phase
-            logger.info("TEST CASE POSTAMBLE");
-            postambleAction(logger);
-            logger.info("TC PASSED");
-        }
-        catch (final TcInconclusiveIf ex) {
-            if (ivct_BaseModel != null) {
-                ivct_BaseModel.shutdown();
-            }
-            logger.warn("TC INCONCLUSIVE " + ex.getMessage());
-            ivct_Verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
-            ivct_Verdict.text = ex.getMessage();
-            return ivct_Verdict;
-        }
-
-        sendTcStatus("finished", 100);
-        logger.info("TEST CASE FINISHED");
-
-        ivct_Verdict.verdict = IVCT_Verdict.Verdict.PASSED;
-        return ivct_Verdict;
-    }
-
 
     /**
      * Returns the name test suite
@@ -327,6 +235,7 @@ public abstract class AbstractTestCaseIf {
 
     /**
      * Set the test case name.
+     * 
      * @param tcName
      */
     public void setTcName(String tcName) {
@@ -335,8 +244,7 @@ public abstract class AbstractTestCaseIf {
 
 
     /**
-     * Returns the name of the System under Test. This may be different from the
-     * federate name.
+     * Returns the name of the System under Test.
      * 
      * @return SutName
      */
@@ -395,27 +303,40 @@ public abstract class AbstractTestCaseIf {
     public String getSutFederateName() {
         return sutFederateName;
     }
-    
+
+
+    /**
+     * Assign the test case parameter string. This is typically a JSON string.
+     * 
+     * @param param
+     */
+    public void setTcParam (String param) {
+        this.tcParam = param;
+    }
+
+    /**
+     * Returns the assigned test case parameter string.
+     * 
+     * @return the test case parameter string.
+     */
+    public String getTcParam () {
+        return this.tcParam;
+    }
     
     /**
-     * Returns the IVCT-Version String, created at compile time within the test suite-this
-     * for testing  against the IVCT-Version of at Runtime deployment
+     * Returns the IVCT-version string, created at compile time within the test suite. This
+     * is required to be checked for compliance against the IVCT-version at runtime.
      *  
      * @throws IVCTVersionCheckException of version id can not be resolved
      * @return IVCT version id
      */
-    public String getIVCTVersion()  throws IVCTVersionCheckException {
-      
+    public String getIVCTVersion()  throws IVCTVersionCheckException {      
       String infoIVCTVersion;  
       InputStream in = this.getClass().getResourceAsStream("/testCaseBuild.properties");
-      
-      
       if (in == null) {
         throw new IVCTVersionCheckException("/testCaseBuild.properties could not be read ");
       }   
-      
       Properties versionProperties = new Properties();
-      
       try {
         versionProperties.load(in);
         infoIVCTVersion = versionProperties.getProperty("ivctVersion");

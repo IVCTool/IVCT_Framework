@@ -246,7 +246,8 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
-				testCase.setSutFederateName(info.sutFederateName);		
+				testCase.setSutFederateName(info.sutFederateName);
+				testCase.setTcParam(info.testCaseParam);
 				testCase.setOperatorService(new OperatorServiceImpl().initialize(info.sutName, info.testCaseId, classname, testEngineLabel));
 				/*
 				 * Check the compatibility of IVCT-Version which had this testCase at
@@ -267,7 +268,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					continue;
 				}
 				
-				verdicts[i] = testCase.execute(info.testCaseParam, tcLogger);
+				verdicts[i] = testCase.execute(tcLogger);
 				tcLogger.info("Test Case Ended");
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
 						verdicts[i].verdict.name(), verdicts[i].text).execute();

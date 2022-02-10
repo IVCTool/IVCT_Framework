@@ -78,9 +78,10 @@ public class TestRunner {
 				continue;
 			}
 			testCase.setSutName(sutName);
+			testCase.setTcName(paramJson);
 			testCase.setTcName(classname);
 
-			verdicts[i++] = testCase.execute(paramJson, logger);
+			verdicts[i++] = testCase.execute(logger);
 		}
 	}
 
