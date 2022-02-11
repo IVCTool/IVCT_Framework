@@ -19,13 +19,61 @@ import org.slf4j.Logger;
 
 
 /**
- * The class AbstractTestCaseIf is a generic the Interface Declaration to be implemented 
- * by any communication layer, like HLA or DIS. It may be implemented in each test case 
- * or in a dedicated library. In the concrete test cases, the  methods -logTestPurpose,
- *  -preambleAction, -performTest and -postambleAction have to be
- * implemented as they will be called by the execute method of this abstract
- * class.
- *
+ * The class AbstractTestCaseIf is a generic Interface Declaration to connect a simulation runtime
+ * infrastructure, like HLA or DIS to the test case engine. It may be implemented in each test case 
+ * individually or in a dedicated library. 
+ * 
+ * The standard workflow for a test case execution starts with the instantiation of the
+ * test case within the test engine. The engine will verify that the test case version is compliant
+ * to the test framework version. The compliance levels are defined in the IVCT_Framework configuration.
+ * After a successfully compliance check, the engine continue to initialize the test case by setting
+ * up the context information for the test case, by calling the setter methods
+ * <p>
+ * <ul>
+ *   <li>{@link #setDefaultLogger}
+ *   <li>{@link #setSutName}
+ *   <li>{@link #setTsName}
+ *   <li>{@link #setTcName}
+ *   <li>{@link #setSettingsDesignator}
+ *   <li>{@link #setFederationName}
+ *   <li>{@link #setSutFederateName}
+ *   <li>{@link #setTcParam}
+ *   <li>{@link #setOperatorService}
+ * </ul>
+ * <p>
+ * The actual test execution is implemented in the {@link #execute(Logger)} method. This method  
+ * will be called by the test case engine and it implements the default behavior in the 
+ * {@link #AbstractTestCaseIf} class. It may be overwritten if a specific run-time adapter requires 
+ * a different behavior. However, the standard elements of a test case are the following methods:
+ * <p>
+ * <ul>
+ *   <li>{@link #logTestPurpose}: request information about the test purpose
+ *   <li>{@link #preambleAction}: Setting up the preconditions for the test case
+ *   <li>{@link #performTest}: Perform the test 
+ *   <li>{@link #postambleAction}: Cleaning up remaining test artifacts 
+ * </ul>
+ * <p>
+ * The purpose of a test case is to provide a statement about the test result. This is called
+ * the test verdict. A verdict can be either PASSED, FAILED, or INCONCLUSIVE. 
+ * If the methods above are executed without any exceptions, the test case is considered as PASSED.
+ * Any failures during the preambleAction or postambleAction may cause a test case to be inconclusive.
+ * Only a failure during the performTest method may cause a test case to be FAILED. If anything goes wrong
+ * during the preamble or postamble phase, this is not considered as test relevant and may only
+ * cause a inconclusive verdict. 
+ * <p>
+ * A very important requirement for any test case is, that is is understandable to the test operator. 
+ * For that reason the test case shall make generous use of the logging interface. All significant 
+ * steps and findings within the test case execution shall be documented with the use of the 
+ * provided loggers. The test case shall only use the loggers provided by the test engine, in order
+ * guarantee a consistent handling of the log messages. All available log levels are supported and
+ * shall be used to differentiate the relevance of the messages. 
+ * <p>
+ * Interactions with the test operator are enabled via the {@link #myOperator} reference. This allows
+ * the test case to synchronize with operator and it can be uses to provide information about the 
+ * execution progress. See also {@link OperatorService} 
+ * 
+ * 
+ * @since 4.2.0
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public abstract class AbstractTestCaseIf {
@@ -33,7 +81,12 @@ public abstract class AbstractTestCaseIf {
     /**
      * The logTestPurpose method shall provide information of the intended 
      * purpose of this specific test case. This information shall be reported to 
-     * the logger object.
+     * the logger object. It is recommended to use the {@code logger.info} method 
+     * to inform the operation in a compact format about the test case purpose, as 
+     * this is the typical log level for standard information about the test execution. 
+     * It is possible to give addition information on other levels, 
+     * like {@code warn}, {@code trace} or {@code debug}, in order to provide additional
+     * information for more detailed analysis. 
      * 
      * @param logger The {@link Logger} to use
      */
@@ -138,6 +191,7 @@ public abstract class AbstractTestCaseIf {
             verdict.text = exFailedIf.getMessage();
             return verdict;
         }
+        verdict.verdict = IVCT_Verdict.Verdict.PASSED;
         sendTcStatus("end test case executing", 100);
         return verdict;
     }
