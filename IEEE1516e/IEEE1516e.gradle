@@ -77,8 +77,4 @@ dependencies {
 	// emtpy
 }
 
-javadoc {
-    exclude "**/*.java"
-    options.addStringOption('XDoclint:none', '-quiet')
-    failOnError = false
-}
+

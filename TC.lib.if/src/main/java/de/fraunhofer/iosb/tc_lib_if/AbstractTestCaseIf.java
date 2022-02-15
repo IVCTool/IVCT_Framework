@@ -24,7 +24,6 @@ import org.slf4j.Logger;
  * individually or in a dedicated library. 
  * 
  * The standard workflow for a test case execution starts with the instantiation of the
- * test case within the test engine. The engine will verify that the test case version is compliant
  * to the test framework version. The compliance levels are defined in the IVCT_Framework configuration.
  * After a successfully compliance check, the engine continue to initialize the test case by setting
  * up the context information for the test case, by calling the setter methods
@@ -44,13 +43,14 @@ import org.slf4j.Logger;
  * The actual test execution is implemented in the {@link #execute(Logger)} method. This method  
  * will be called by the test case engine and it implements the default behavior in the 
  * {@link #AbstractTestCaseIf} class. It may be overwritten if a specific run-time adapter requires 
- * a different behavior. However, the standard elements of a test case are the following methods:
+ * a different behavior. The individual test logic must bei implemented in the following abstract
+ * methods:
  * <p>
  * <ul>
- *   <li>{@link #logTestPurpose}: request information about the test purpose
- *   <li>{@link #preambleAction}: Setting up the preconditions for the test case
- *   <li>{@link #performTest}: Perform the test 
- *   <li>{@link #postambleAction}: Cleaning up remaining test artifacts 
+ *   <li>{@link #logTestPurpose}
+ *   <li>{@link #preambleAction}
+ *   <li>{@link #performTest}
+ *   <li>{@link #postambleAction}
  * </ul>
  * <p>
  * The purpose of a test case is to provide a statement about the test result. This is called
@@ -61,7 +61,7 @@ import org.slf4j.Logger;
  * during the preamble or postamble phase, this is not considered as test relevant and may only
  * cause a inconclusive verdict. 
  * <p>
- * A very important requirement for any test case is, that is is understandable to the test operator. 
+ * A very important requirement for any test case is the understandable to the test operator. 
  * For that reason the test case shall make generous use of the logging interface. All significant 
  * steps and findings within the test case execution shall be documented with the use of the 
  * provided loggers. The test case shall only use the loggers provided by the test engine, in order
@@ -69,8 +69,8 @@ import org.slf4j.Logger;
  * shall be used to differentiate the relevance of the messages. 
  * <p>
  * Interactions with the test operator are enabled via the {@link #myOperator} reference. This allows
- * the test case to synchronize with operator and it can be uses to provide information about the 
- * execution progress. See also {@link OperatorService} 
+ * the test case to synchronize with operator and it can be used to provide information about the 
+ * execution progress. See also {@link OperatorService}.
  * 
  * 
  * @since 4.2.0
