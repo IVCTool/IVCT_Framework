@@ -30,6 +30,8 @@ import nato.ivct.commander.Factory;
  */
 public abstract class AbstractTestCase extends AbstractTestCaseIf {
 
+    IVCT_BaseModel ivct_BaseModel = null;
+
     /**
      * @param tcParamJson a JSON string containing values to use in the testcase
      * @param logger The {@link Logger} to use
@@ -64,8 +66,7 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
     @Override
     public IVCT_Verdict execute(final Logger logger) {
 
-        IVCT_BaseModel ivct_BaseModel = null;
-        final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
+            final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
 
         // A one-time start message
         logger.info("Test Case Started");
