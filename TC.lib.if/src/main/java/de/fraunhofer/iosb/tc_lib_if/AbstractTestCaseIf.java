@@ -22,12 +22,15 @@ import org.slf4j.Logger;
  * The class AbstractTestCaseIf is a generic Interface Declaration to connect a simulation runtime
  * infrastructure, like HLA or DIS to the test case engine. It may be implemented in each test case 
  * individually or in a dedicated library. 
- * 
- * The standard workflow for a test case execution starts with the instantiation of the
- * to the test framework version. The compliance levels are defined in the IVCT_Framework configuration.
- * After a successfully compliance check, the engine continue to initialize the test case by setting
- * up the context information for the test case, by calling the setter methods
  * <p>
+ * The standard workflow for a test case execution starts with the instantiation of the requested 
+ * test case class and a interoperability check of the test case code against the framework version. 
+ * The version compatibilities between the test framework version and the test cases are defined in 
+ * the IVCT_Framework configuration. Only test cases which are compatible with the current test case
+ * interface version can be executed. 
+ * <p>
+ * After a successfully compliance check, the engine continue to initialize the test case by setting
+ * up the context information for the test case. This is done by calling the setter methods:
  * <ul>
  *   <li>{@link #setDefaultLogger}
  *   <li>{@link #setSutName}
@@ -43,9 +46,8 @@ import org.slf4j.Logger;
  * The actual test execution is implemented in the {@link #execute(Logger)} method. This method  
  * will be called by the test case engine and it implements the default behavior in the 
  * {@link #AbstractTestCaseIf} class. It may be overwritten if a specific run-time adapter requires 
- * a different behavior. The individual test logic must bei implemented in the following abstract
+ * a different behavior. The individual test logic is typically implemented in the following abstract
  * methods:
- * <p>
  * <ul>
  *   <li>{@link #logTestPurpose}
  *   <li>{@link #preambleAction}
@@ -202,7 +204,7 @@ public abstract class AbstractTestCaseIf {
      * procedure. A typical usage is the operator request to start the system under test when
      * the test case is ready to react.
      * 
-     * @param aOperator
+     * @param aOperator The operator interface to be used by the test case
      */
     public void setOperatorService(OperatorService aOperator) {
         myOperator = aOperator;
@@ -211,7 +213,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Access method to the assigned operator.
      * 
-     * @return
+     * @return the assigned operator
      */
     public OperatorService operator () {
         return myOperator;
@@ -220,8 +222,8 @@ public abstract class AbstractTestCaseIf {
     /**
      * Send a text message to the IVCT operator and wait for confirmation.
      * 
-     * @param text
-     * @throws TcInconclusiveIf
+     * @param text  message to be send to the IVCT operator. 
+     * @throws TcInconclusiveIf if anything goes wrong of if the operator cancels the message
      */
     public void sendOperatorRequest(String text) throws TcInconclusiveIf {
 		if (skipOperatorMsg) return;
@@ -242,7 +244,7 @@ public abstract class AbstractTestCaseIf {
      * The SkipOperatorMsg flag can be set to true, if shall be skipped. This is useful during
      * unit test without a IVCT operator interface. 
      * 
-     * @param value
+     * @param value true if messages shall be skipped, false otherwise
      */
 	public void setSkipOperatorMsg (boolean value) {
 		skipOperatorMsg = value;
@@ -251,7 +253,9 @@ public abstract class AbstractTestCaseIf {
     /**
      * Assign the logger object to be used as default for all test case logging messages.
      * 
-     * @param logger
+     * @param logger default logger reference if no logger
+     * 
+     * @deprecated is a default logger required? Are specific loggers of the test phases required? 
      */
     public void setDefaultLogger(final Logger logger) {
     	this.defaultLogger = logger;
@@ -270,7 +274,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Set the test suite name
      * 
-     * @param testSuiteId
+     * @param testSuiteId Identification of the test suite
      */
     public void setTsName(String testSuiteId) {
         this.testSuiteId = testSuiteId;
@@ -280,6 +284,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Returns the name of the fully qualified class name of the test case
      *
+     * @deprecated is the test case name ever required inside the test case?
      * @return Test Case Name
      */
     public String getTcName() {
@@ -290,7 +295,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Set the test case name.
      * 
-     * @param tcName
+     * @param tcName the name of the test case class, assigned by the test engine
      */
     public void setTcName(String tcName) {
         this.tcName = tcName;
@@ -300,7 +305,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Returns the name of the System under Test.
      * 
-     * @return SutName
+     * @return SutName name of the system under test
      */
     public String getSutName() {
         return sutName;
@@ -330,7 +335,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Set the federation name.
      * 
-     * @param federationName
+     * @param federationName name of the federation with the system under test
      */
     public void setFederationName(String federationName) {
         this.federationName = federationName;
@@ -362,7 +367,7 @@ public abstract class AbstractTestCaseIf {
     /**
      * Assign the test case parameter string. This is typically a JSON string.
      * 
-     * @param param
+     * @param param test case parameter JSON string
      */
     public void setTcParam (String param) {
         this.tcParam = param;
