@@ -103,7 +103,6 @@ dependencies {
     
 	// external project dependencies
 	implementation libraries.slf4j_api
-    //implementation libraries.log4j_api
 
     // bridges for logging framework
 //    implementation libraries.log4j_slf4j_impl
