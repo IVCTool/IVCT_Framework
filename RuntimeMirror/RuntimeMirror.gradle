@@ -12,7 +12,6 @@ task dockerBuildImage (type: Exec) {
 	println "using proxy setting: ${varProxy}"
 
 	args 'build', '-t', "ivct/runtime_mirror:${ivctVersion}", 
-		'--build-arg', "version=${ivctVersion}", 
 		'--build-arg', "https_proxy=${varProxy}", 
 		'.'
 }

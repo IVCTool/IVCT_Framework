@@ -1,4 +1,4 @@
-FROM busybox:1.31.1
+FROM busybox:latest
 
 COPY IVCT.properties /root/conf/IVCT.properties
 COPY IVCTsut /root/conf/IVCTsut
