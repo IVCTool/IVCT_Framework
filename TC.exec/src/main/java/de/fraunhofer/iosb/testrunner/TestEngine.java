@@ -83,18 +83,18 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	 * public constructor.
 	 */
 	public TestEngine() {
-
+		
 		// set heartbeat identifier
 		myClassName = this.getClass().getSimpleName();
-
+		
 		// initialize the IVCT Commander Factory
 		Factory.initialize();		
 		
-		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-		testEngineLabel = Factory.props.getProperty("TESTENGINE_LABEL") ;		
-
 		// Configure the logger
 		LogConfigurationHelper.configureLogging();
+
+		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+		testEngineLabel = Factory.props.getProperty("TESTENGINE_LABEL") ;		
 
 		// start command listeners
 		new CmdSetLogLevelListener(this).execute();
@@ -229,8 +229,8 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				try {
 					testCase = (AbstractTestCaseIf) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
-				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-					tcLogger.error("Could not instantiate " + classname + " !", ex);
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoClassDefFoundError ex) {
+					tcLogger.error("Error loading class {}. Reason: {}", classname, ex.getMessage());
 					continue;
 				}
 				if (testCase == null) {
