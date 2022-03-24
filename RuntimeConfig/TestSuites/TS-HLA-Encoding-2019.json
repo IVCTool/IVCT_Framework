@@ -3,8 +3,8 @@
 	"version"		:	"2.1.1-SNAPSHOT",
 	"name" 			: 	"HLA Encoding Rules Test Suite 2019",
 	"description"	:	"This is a test to verify whether the HLA encoding rules are being used correctly.",
-	"tsRunTimeFolder":	"TS_HLA_EncodingRulesTester-2.1.1-SNAPSHOT/bin",
-	"tsLibTimeFolder":	"TS_HLA_EncodingRulesTester-2.1.1-SNAPSHOT/lib",
+	"tsRunTimeFolder":	"TS_HLA_EncodingRulesTester-2.1.2-SNAPSHOT/bin",
+	"tsLibTimeFolder":	"TS_HLA_EncodingRulesTester-2.1.2-SNAPSHOT/lib",
 	"testcases"	:	[
 		{
 			"TC"			:	"de.fraunhofer.iosb.tc_encodingrulestester.TC0001",
