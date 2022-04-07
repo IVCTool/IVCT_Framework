@@ -16,17 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.iosb.messaginghelpers.LogConfigurationHelper;
-import de.fraunhofer.iosb.tc_lib.AbstractTestCase;
-import de.fraunhofer.iosb.tc_lib.IVCTVersionCheck;
-import de.fraunhofer.iosb.tc_lib.IVCTVersionCheckException;
-import de.fraunhofer.iosb.tc_lib.IVCT_Verdict;
+import de.fraunhofer.iosb.tc_lib_if.AbstractTestCaseIf;
+import de.fraunhofer.iosb.tc_lib_if.IVCTVersionCheck;
+import de.fraunhofer.iosb.tc_lib_if.IVCTVersionCheckException;
+import de.fraunhofer.iosb.tc_lib_if.IVCT_Verdict;
 import nato.ivct.commander.CmdHeartbeatSend;
 import nato.ivct.commander.CmdHeartbeatSend.OnCmdHeartbeatSend;
 import nato.ivct.commander.CmdListTestSuites;
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;
-import nato.ivct.commander.CmdOperatorConfirmationListener;
-import nato.ivct.commander.CmdOperatorConfirmationListener.OnOperatorConfirmationListener;
-import nato.ivct.commander.CmdOperatorConfirmationListener.OperatorConfirmationInfo;
 import nato.ivct.commander.CmdQuitListener;
 import nato.ivct.commander.CmdQuitListener.OnQuitListener;
 import nato.ivct.commander.CmdSendTcVerdict;
@@ -43,15 +40,15 @@ import nato.ivct.commander.Factory;
 import nato.ivct.commander.TcLoggerData;
 
 /**
- * Testrunner that listens for certain commands to start and stop test cases.
+ * Test runner that listens for certain commands to start and stop test cases.
  *
  * @author Manfred Schenk (Fraunhofer IOSB)
  * @author Reinhard Herzog (Fraunhofer IOSB)
  */
 public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQuitListener, OnStartTestCaseListener, OnAbortTestCaseListener,
-		OnCmdHeartbeatSend, OnOperatorConfirmationListener {
+		OnCmdHeartbeatSend {
 
-	private AbstractTestCase testCase = null;
+	private AbstractTestCaseIf testCase = null;
 
 	private CmdListTestSuites testSuites;
 	private Map<String, URLClassLoader> classLoaders = new HashMap<>();
@@ -86,18 +83,18 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 	 * public constructor.
 	 */
 	public TestEngine() {
-
+		
 		// set heartbeat identifier
 		myClassName = this.getClass().getSimpleName();
-
+		
 		// initialize the IVCT Commander Factory
 		Factory.initialize();		
 		
-		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
-		testEngineLabel = Factory.props.getProperty("TESTENGINE_LABEL") ;		
-
 		// Configure the logger
 		LogConfigurationHelper.configureLogging();
+
+		// for enhanced heartbeat with RTI-Type-Information brf 22.10.2020
+		testEngineLabel = Factory.props.getProperty("TESTENGINE_LABEL") ;		
 
 		// start command listeners
 		new CmdSetLogLevelListener(this).execute();
@@ -115,7 +112,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				System.out.println("Could not start HeartbeatSend: " + e1.toString());
 			}
 		}
-		(new CmdOperatorConfirmationListener(this)).execute();
+//		(new CmdOperatorConfirmationListener(this)).execute();
 
 		// get the test suite descriptions
 		testSuites = new CmdListTestSuites();
@@ -230,10 +227,10 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 			for (final String classname : testcases) {
 				testCase = null;
 				try {
-					testCase = (AbstractTestCase) Thread.currentThread().getContextClassLoader().loadClass(classname)
+					testCase = (AbstractTestCaseIf) Thread.currentThread().getContextClassLoader().loadClass(classname)
 							.newInstance();
-				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-					tcLogger.error("Could not instantiate " + classname + " !", ex);
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoClassDefFoundError ex) {
+					tcLogger.error("Error loading class {}. Reason: {}", classname, ex.getMessage());
 					continue;
 				}
 				if (testCase == null) {
@@ -249,15 +246,16 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setTcName(classname);
 				testCase.setSettingsDesignator(info.settingsDesignator);
 				testCase.setFederationName(info.federationName);
-				testCase.setSutFederateName(info.sutFederateName);		
-
+				testCase.setSutFederateName(info.sutFederateName);
+				testCase.setTcParam(info.testCaseParam);
+				testCase.setOperatorService(new OperatorServiceImpl().initialize(info.sutName, info.testCaseId, classname, testEngineLabel));
 				/*
-				 * Check the compability of IVCT-Version which had this testCase at
+				 * Check the compatibility of IVCT-Version which had this testCase at
 				 * building-time against the IVCT-Version at Runtime
 				 */
 
 				try {
-					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of testcase {} is: {}", testCase, testCase.getIVCTVersion());
+					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of test case {} is: {}", testCase, testCase.getIVCTVersion());
 
 					new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
 
@@ -270,7 +268,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 					continue;
 				}
 				
-				verdicts[i] = testCase.execute(info.testCaseParam, tcLogger);
+				verdicts[i] = testCase.execute(tcLogger);
 				tcLogger.info("Test Case Ended");
 				new CmdSendTcVerdict(info.sutName, info.sutDir, info.testSuiteId, testcases[i],
 						verdicts[i].verdict.name(), verdicts[i].text).execute();
@@ -338,7 +336,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 		}
     }
 
-	@Override
+/* 	@Override
 	public void onOperatorConfirmation(OperatorConfirmationInfo operatorConfirmationInfo) {
 	  
         // for enhanced RTI-Type-Information brf 07.12.2020              
@@ -352,8 +350,8 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
             }
         }
     
-		testCase.onOperatorConfirmation(operatorConfirmationInfo);
-	}
+		testCase._onOperatorConfirmation(operatorConfirmationInfo);
+	} */
 	
 
     //for enhanced RTI-Type-Information brf 07.12.2020

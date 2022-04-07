@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import nato.ivct.commander.CmdListTestSuites.TestSuiteDescription;

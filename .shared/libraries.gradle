@@ -2,8 +2,9 @@
 // Allows centralized definition of the version of artifacts to use.
 ext {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
-    ivctVersion = '4.0.1-SNAPSHOT'
-    compatibleVersions = ['4.0.0':'compatible', '3.1.0-SNAPSHOT':'compatible','3.0.0':'compatible','2.2.2-SNAPSHOT':'compatible', '2.1.1':'compatible', '2.1.0':'incompatible']
+    ivctVersion = '4.1.0-SNAPSHOT'
+    compatibleVersions = ['4.1.0':'compatible', 
+        '4.0.0':'incompatible', '3.1.0-SNAPSHOT':'incompatible','3.0.0':'incompatible','2.2.2-SNAPSHOT':'incompatible', '2.1.1':'incompatible', '2.1.0':'incompatible']
 
     // JDK Version Compatibility
     sourceCompatibility = 1.8

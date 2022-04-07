@@ -15,24 +15,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
-
+package de.fraunhofer.iosb.tc_lib_if;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import nato.ivct.commander.Factory;
 
 
 /**
  * Tests for verifying if the IVCT-Version of the components are compatible
  */
-
 public class IVCTVersionCheck {
 
   String testCaseIVCTVersion;

@@ -1,5 +1,7 @@
+
 /*
-Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
+Copyright 2019, brf (Fraunhofer IOSB)
+(v  05.12.2019)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,31 +16,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
-
-import de.fraunhofer.iosb.tc_lib_if.TcFailedIf;
 
 
-/**
- *
- * @author mul (Fraunhofer IOSB)
- */
-public class TcFailed  extends TcFailedIf {
+package de.fraunhofer.iosb.tc_lib_if;
 
-    private final static String KEY = "HLA Test Case Failed: "; 
+public class IVCTVersionCheckException extends Exception {
+ 
+  
+  private static final long serialVersionUID = 1L;
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  public IVCTVersionCheckException() {
+    super("IVCTVersionCheck without exception text");
+  }
 
-	public TcFailed(String msg)
-    {
-       super(KEY + msg);
-    }
+  public IVCTVersionCheckException(String exceptionText) {
+    super(exceptionText);
+  }
+  
+  public IVCTVersionCheckException(String exceptionText, Throwable cause) {
+    super(exceptionText, cause);
+}
 
-    public TcFailed(String message, Throwable cause)
-    {
-       super(KEY + message, cause);
-    }
+  
 }

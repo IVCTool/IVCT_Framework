@@ -1,6 +1,5 @@
 FROM alpine:latest
 
-ARG http_proxy
 ARG https_proxy
 
 LABEL maintainer="Reinhard.Herzog@iosb.fraunhofer.de"

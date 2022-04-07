@@ -206,7 +206,7 @@ public class SuTService implements ISuTService {
     }
 
     private SuTFormData loadCapabilityStatus(final SuTFormData fd) {
-
+        LOG.trace("loadCapabilityStatus {}", fd);
         sutMap.get(fd.getSutId()).badges.stream().sorted().forEachOrdered(badgeId -> {
             final SutCapabilityStatusTableRowData row = fd.getSutCapabilityStatusTable().addRow();
             row.setCbBadgeID(badgeId);

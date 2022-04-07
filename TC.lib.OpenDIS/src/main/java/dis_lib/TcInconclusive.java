@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
+package dis_lib;
 
 import de.fraunhofer.iosb.tc_lib_if.TcInconclusiveIf;
 
@@ -24,7 +24,7 @@ import de.fraunhofer.iosb.tc_lib_if.TcInconclusiveIf;
  */
 public class TcInconclusive  extends TcInconclusiveIf {
 
-    private final static String KEY = "HLA Test Case Inconclusive: "; 
+    private final static String KEY = "DIS Test Case Inconclusive: "; 
 
     /**
 	 * 

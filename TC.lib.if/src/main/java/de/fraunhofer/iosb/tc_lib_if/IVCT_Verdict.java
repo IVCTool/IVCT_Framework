@@ -14,30 +14,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
+package de.fraunhofer.iosb.tc_lib_if;
 
-import de.fraunhofer.iosb.tc_lib_if.TcInconclusiveIf;
+public class IVCT_Verdict {
+	public enum Verdict {
+		PASSED, FAILED, INCONCLUSIVE;
+	}
 
-/**
- *
- * @author mul (Fraunhofer IOSB)
- */
-public class TcInconclusive  extends TcInconclusiveIf {
+	public Verdict verdict;
+	public String text = "ok";
+	
 
-    private final static String KEY = "HLA Test Case Inconclusive: "; 
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public TcInconclusive(String msg)
-    {
-       super(KEY + msg);
-    }
-
-    public TcInconclusive(String message, Throwable cause)
-    {
-       super(KEY + message, cause);
-    }
+	public String toString() {
+		String result;
+		switch (this.verdict) {
+		case PASSED:
+			result = "PASSED";
+		case FAILED:
+			result = "FAILED";
+		case INCONCLUSIVE:
+			result = "INCONCLUSIVE";
+		default:
+			result = "UNDEFINED";
+		}
+		return result + ": " + text;
+	}
 }

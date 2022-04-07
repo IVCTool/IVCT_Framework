@@ -20,6 +20,7 @@ import hla.rti1516e.CallbackModel;
 import hla.rti1516e.FederateAmbassador;
 import hla.rti1516e.FederateHandle;
 import hla.rti1516e.ResignAction;
+import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.exceptions.AlreadyConnected;
 import hla.rti1516e.exceptions.CallNotAllowedFromWithinCallback;
 import hla.rti1516e.exceptions.ConnectionFailed;
@@ -50,7 +51,8 @@ import org.slf4j.Logger;
  */
 public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
-    private IVCT_RTIambassador ivct_rti;
+    protected IVCT_RTIambassador ivct_rti;
+    protected EncoderFactory _encoderFactory;
     private Logger logger;
     private IVCT_TcParam ivct_TcParam;
     private String settingsDesignator;
@@ -59,17 +61,23 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
 
 
     /**
-     * @param ivct_rti ivct rti
      * @param logger logger
      * @param ivct_TcParam ivct_TcParam
      */
-    public IVCT_BaseModel(final IVCT_RTIambassador ivct_rti, final Logger logger, final IVCT_TcParam ivct_TcParam) {
+    public IVCT_BaseModel(final Logger logger, final IVCT_TcParam ivct_TcParam) {
         super(logger);
-        this.ivct_rti = ivct_rti;
         this.logger = logger;
+        ivct_rti = IVCT_RTI_Factory.getIVCT_RTI(logger);
+        _encoderFactory = ivct_rti.getEncoderFactory();
         this.ivct_TcParam = ivct_TcParam;
     }
 
+    public void startup() {
+    }
+
+    public void shutdown() {
+        terminateRti();
+    }
 
     /**
      * @param federateName federate name
@@ -77,7 +85,6 @@ public class IVCT_BaseModel extends IVCT_NullFederateAmbassador {
      * @return federate handle
      */
     public FederateHandle initiateRti(final String federateName, final FederateAmbassador federateReference) {
-    	
         // Connect to rti
         try {
             if ((this.settingsDesignator == null) || this.settingsDesignator.equals("")) {

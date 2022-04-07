@@ -14,30 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package de.fraunhofer.iosb.tc_lib;
-
-import de.fraunhofer.iosb.tc_lib_if.TcInconclusiveIf;
+package de.fraunhofer.iosb.tc_lib_if;
 
 /**
  *
  * @author mul (Fraunhofer IOSB)
  */
-public class TcInconclusive  extends TcInconclusiveIf {
-
-    private final static String KEY = "HLA Test Case Inconclusive: "; 
-
+public class TcInconclusiveIf  extends Exception {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TcInconclusive(String msg)
+	public TcInconclusiveIf(String msg)
     {
-       super(KEY + msg);
+       super(msg);
     }
 
-    public TcInconclusive(String message, Throwable cause)
+    public TcInconclusiveIf(String message, Throwable cause)
     {
-       super(KEY + message, cause);
+       super(message, cause);
     }
 }

@@ -99,11 +99,10 @@ dependencies {
 	// local project dependencies
     implementation project(':Command')
     implementation project(':MessagingHelpers')
-	implementation project(':TC.lib')
+	implementation project(':TC.lib.if')
     
 	// external project dependencies
 	implementation libraries.slf4j_api
-    //implementation libraries.log4j_api
 
     // bridges for logging framework
 //    implementation libraries.log4j_slf4j_impl

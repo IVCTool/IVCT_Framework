@@ -10,19 +10,19 @@ java {
 }
 
 group = 'io.github.msg134'
-archivesBaseName = "TC.lib"
+archivesBaseName = "TC.lib.OpenDIS"
 version = ivctVersion
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = 'TC.lib'
+            artifactId = 'TC.lib.OpenDIS'
             from components.java
 
             pom {
                 name = "IVCT Test Case Library"
-                description = "Library to be used by IVCT test case developers"
-                url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib"
+                description = "DIS Test Case Library to be used by IVCT test case developers"
+                url = "https://github.com/MSG134/IVCT_Framework/tree/master/TC.lib.OpenDIS"
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
@@ -37,9 +37,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.git"
-                    developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib-git"
-                    url = "https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib"
+                    connection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.OpenDIS.git"
+                    developerConnection = "scm:git:https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.OpenDIS-git"
+                    url = "https://github.com/MSG134/IVCT_Framework/tree/development/TC.lib.OpenDIS"
                 }
             }
         }
@@ -74,9 +74,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 
 dependencies {
-    implementation project(':Command')
     api project(':TC.lib.if')
-    api project(':IEEE1516e')
 
 	compileOnly libraries.slf4j_api
 	compileOnly libraries.jsonSimple
