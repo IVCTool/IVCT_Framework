@@ -7,7 +7,6 @@
         <listEntry value="4"/>
     </listAttribute>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.buildship.core.classpathprovider"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.scout.dev.jetty.JettyServer"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="nato.ivct.gui.ui.html.app.dev"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dscout.jetty.port=80&#13;&#10;-Djandex.rebuild=true"/>
