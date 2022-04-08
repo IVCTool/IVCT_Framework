@@ -1,10 +1,10 @@
 {
     "id": "TS-HLA-Declaration-2019",
-    "version": "2.1.1-SNAPSHOT",
+    "version": "2.1.2-SNAPSHOT",
     "name": "HLA Declaration Test Suite 2019",
     "description": "This test suite verifies that the federate only publishes and subscribes objects, interactions and attributes specified in its SOM.",
-    "tsRunTimeFolder": "TS_HLA_Declaration-2.1.1-SNAPSHOT/bin",
-    "tsLibTimeFolder": "TS_HLA_Declaration-2.1.1-SNAPSHOT/lib",
+    "tsRunTimeFolder": "TS_HLA_Declaration-2.1.2-SNAPSHOT/bin",
+    "tsLibTimeFolder": "TS_HLA_Declaration-2.1.2-SNAPSHOT/lib",
     "testcases": [
         {
             "TC": "nato.ivct.etc.fr.tc_hla_declaration.TC_001_Publish_Subscribe_Check",

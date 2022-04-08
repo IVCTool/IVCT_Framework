@@ -1,10 +1,10 @@
 {
     "id": "TS-HelloWorld-2019",
-    "version": "2.1.1",
+    "version": "2.1.3-SNAPSHOT",
     "name": "HelloWorld Tutorial Badge",
     "description": "This is a simple example for a testsuite to test the compliance of an federate to the hello world federation.",
-    "tsRunTimeFolder": "TS_HelloWorld-2.1.2-SNAPSHOT/bin",
-    "tsLibTimeFolder": "TS_HelloWorld-2.1.2-SNAPSHOT/lib",
+    "tsRunTimeFolder": "TS_HelloWorld-2.1.3-SNAPSHOT/bin",
+    "tsLibTimeFolder": "TS_HelloWorld-2.1.3-SNAPSHOT/lib",
     "testcases": [{
             "TC": "de.fraunhofer.iosb.tc_helloworld.TC0001",
             "IR": ["IR-HW-0001"],
