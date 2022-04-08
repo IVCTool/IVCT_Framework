@@ -1,18 +1,7 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'io.github.ivctool'
-            artifactId = 'Command'
-            version = "${ivctVersion}"
-            from components.java
-        }
-    }
-}
 
 task writeVersion {
     group = "Build"
