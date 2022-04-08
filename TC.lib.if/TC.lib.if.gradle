@@ -74,7 +74,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 
 dependencies {
-    implementation project(':Command')
+    compileOnly project(':Command')
 
 	compileOnly libraries.slf4j_api
 	compileOnly libraries.jsonSimple
