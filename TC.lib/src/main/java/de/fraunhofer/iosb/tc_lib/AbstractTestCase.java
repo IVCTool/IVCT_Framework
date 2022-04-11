@@ -18,7 +18,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 
 import de.fraunhofer.iosb.tc_lib_if.*;
-import nato.ivct.commander.Factory;
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the four
@@ -84,10 +83,6 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
         if (federationName != null) {
             tcGlobalVariables.append("\nSUT Federation Name: ");
             tcGlobalVariables.append(federationName);
-        }
-        if (Factory.props.getProperty("TESTENGINE_LABEL") != null) {
-            tcGlobalVariables.append("\nEngine Label: ");
-            tcGlobalVariables.append(Factory.props.getProperty("TESTENGINE_LABEL"));
         }
         if (settingsDesignator != null) {
             tcGlobalVariables.append("\nSettings Designator: ");
