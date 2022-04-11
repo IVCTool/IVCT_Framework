@@ -1,0 +1,22 @@
+{
+	"id" 			: 	"NETN-4.0-ETR",
+	"version"		:	"4.0.0",
+	"name" 			: 	"NETN-4.0 ETR",
+	"description"	:	"Interface for sending simulation tasks to entities represented in a federated distributed simulation.",
+	"graphics"		:	"NETN-4.0-ETR.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"NETN-ETR-0001",
+			"description"	:	"Abstract test case description"
+		},
+		{
+			"id"			:	"NETN-ETR-0002",
+			"description"	:	"Abstract test case description"
+		},
+		{
+			"id"			:	"NETN-ETR-0003",
+			"description"	:	"Abstract test case description"
+		}
+	]
+}
