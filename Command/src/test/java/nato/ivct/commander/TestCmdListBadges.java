@@ -39,5 +39,10 @@ public class TestCmdListBadges extends EmbeddedBrokerTest {
         cs.add("HLA-BASE-2019");
         this.lb.collectIrForCs(irSet, cs);
         assertTrue(irSet.size() > 0, "interoperability set should not be empty");
+        cs.clear();
+        irSet.clear();
+        cs.add("NETN-4.0");
+        lb.collectIrForCs(irSet, cs);
+        assertTrue(irSet.size() > 0, "interoperability set for NETN badge should not be empty");
     }
 }
