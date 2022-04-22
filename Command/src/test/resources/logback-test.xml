@@ -13,8 +13,6 @@
 	</root>
 
 	<logger name="de.fraunhofer.iosb.messaginghelpers.PropertyBasedClientSetup" level="DEBUG" />
-	<logger name="nato.ivct.commander.CmdHeartbeatSend" level="DEBUG" />
-	<logger name="nato.ivct.commander.TestCmdHeartbeat" level="DEBUG" />
-	
+	<logger name="nato.ivct.commander.TestCmdListTestsuites" level="DEBUG" />
 
 </configuration>

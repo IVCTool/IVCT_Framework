@@ -14,13 +14,19 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import de.fraunhofer.iosb.tc_lib_if.TestSuite;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.ServiceLoader;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,15 +37,26 @@ import org.json.simple.parser.ParseException;
 /**
  * The CmdListTestsuites implements the loading of test suite description files
  * and provides access methods to process the content. A test suite is defined
- * by a json file, similar to the following example: { "id":
- * "TS_HelloWorld-2017", "version": "2.0.0", "name": "HelloWorld Tutorial
- * Badge", "description": "This is a simple example for a testsuite to test the
- * compliance of an federate to the hello world federation.", "tsRunTimeFolder":
- * "TS_HelloWorld-2.0.0/bin", "tsLibTimeFolder": "TS_HelloWorld-2.0.0/lib",
- * "testcases": [{ { "TC": "de.fraunhofer.iosb.tc_helloworld.TC0001" "IR":
- * ["IR-HW-0001"], "description": "Test population growing rate", }, { "TC":
- * "de.fraunhofer.iosb.tc_helloworld.TC0002" "IR": ["IP-HW-0002"],
- * "description": "Test inter-country communication", } ] }
+ * by a json file, similar to the following example: 
+ * { 
+ *   "id": "TS_HelloWorld-2017", 
+ *   "version": "2.0.0", 
+ *   "name": "HelloWorld Tutorial Badge", 
+ *   "description": "This is a simple example for a testsuite to test the compliance of an federate to the hello world federation.", 
+ *   "tsRunTimeFolder": "TS_HelloWorld-2.0.0/bin", 
+ *   "tsLibTimeFolder": "TS_HelloWorld-2.0.0/lib",
+ *   "testcases": [
+ *     {  
+ *       "TC": "de.fraunhofer.iosb.tc_helloworld.TC0001" 
+ *       "IR": ["IR-HW-0001"], 
+ *       "description": "Test population growing rate"
+ *     }, { 
+ *       "TC": "de.fraunhofer.iosb.tc_helloworld.TC0002",
+ *       "IR": ["IP-HW-0002"], 
+ *       "description": "Test inter-country communication" 
+ *     } 
+ *   ] 
+ * }
  *
  * @author hzg
  */
@@ -71,6 +88,7 @@ public class CmdListTestSuites implements Command {
     };
 
     public Map<String, TestSuiteDescription> testsuites = new HashMap<>();
+    // public HashMap<String, TestSuite> tsMap = new HashMap<>();    // key TestSuiteId
 
     @Override
     public void execute() throws Exception {
@@ -83,6 +101,7 @@ public class CmdListTestSuites implements Command {
 
         // allow re-execution of the command
         testsuites.clear();
+        ArrayList<URL> jarFiles = new ArrayList<>();
 
         if (dir.isDirectory()) {
             Factory.LOGGER.trace("Read Testsuite descriptions from {}", dir.getAbsolutePath());
@@ -148,14 +167,41 @@ public class CmdListTestSuites implements Command {
                     catch (IOException | ParseException exc) {
                         Factory.LOGGER.error("error reading file", exc);
                     }
+                } 
+                else if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+                    Factory.LOGGER.trace("reading testsuite description: {}", file.getAbsolutePath());
+                    jarFiles.add(file.toURI().toURL());
+
 
                 }
+
             }
         }
         else {
             Factory.LOGGER.error("value = {} is not a folder", dir.getAbsolutePath());
         }
-    };
+
+        // add the jar files found in TestSuites folder to the current thread class loader
+        URLClassLoader child = new URLClassLoader(jarFiles.toArray(new URL[0]), this.getClass().getClassLoader());
+        Thread.currentThread().setContextClassLoader(child);
+        // load test suites via ServiceLoader
+        ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
+        for (TestSuite factory : loader) {
+            String label = factory.getTestSuiteId();
+            TestSuiteDescription testSuite = new TestSuiteDescription();
+            testSuite.id = label;
+            testSuite.name = label;
+            testSuite.version = "";
+            testSuite.name = "";
+            testSuite.description = "";
+            testSuite.tsRunTimeFolder = "";
+            testSuite.tsLibTimeFolder = "";
+            testSuite.testcases = new HashMap<>();
+            testSuite.parameters = new HashMap<>();
+            this.testsuites.put(label, testSuite);
+            Factory.LOGGER.trace("found {} test suite", label);
+        }
+};
 
 
     public TestSuiteDescription getTestSuiteForTc(String tcId) {

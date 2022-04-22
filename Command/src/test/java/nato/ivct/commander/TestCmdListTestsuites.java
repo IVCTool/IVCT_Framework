@@ -58,6 +58,7 @@ public class TestCmdListTestsuites extends EmbeddedBrokerTest {
         assertTrue(cmd.testsuites.size() > 0, "Some test suites's should be found");
         // all test suites should be well formed
         for (CmdListTestSuites.TestSuiteDescription value : cmd.testsuites.values()) {
+            LOGGER.debug("found {}", value.id);
             assertNotNull(value.id, "Test suite  has no id");
             assertNotNull(value.description, "Test suite missing description");
             assertNotNull(value.name, "Test suite missing name");
