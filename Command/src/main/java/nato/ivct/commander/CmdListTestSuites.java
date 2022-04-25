@@ -62,6 +62,16 @@ import org.json.simple.parser.ParseException;
  */
 public class CmdListTestSuites implements Command {
 
+    public static final String TS_ID = "id";
+    public static final String TS_NAME = "name";
+    public static final String TS_VERSION = "version";
+    public static final String TS_DESCR = "description";
+    public static final String TS_RUN_FOLDER = "tsRunTimeFolder";
+    public static final String TS_LIB_FOLDER = "tsLibTimeFolder";
+    public static final String TS_TESTCASES = "testcases";
+    public static final String TS_TC = "TC";
+    public static final String TS_IR = "IR";
+
     public class TestCaseDesc {
 
         public String      tc;          // fully qualified class name for test case
@@ -113,53 +123,10 @@ public class CmdListTestSuites implements Command {
                     Factory.LOGGER.trace("reading testsuite description: {}", file.getAbsolutePath());
                     FileReader fr = null;
                     try {
-                        TestSuiteDescription testSuite = new TestSuiteDescription();
                         fr = new FileReader(file);
                         obj = parser.parse(fr);
                         JSONObject jsonObj = (JSONObject) obj;
-                        testSuite.id = (String) jsonObj.get("id");
-                        testSuite.version = (String) jsonObj.get("version");
-                        testSuite.name = (String) jsonObj.get("name");
-                        testSuite.description = (String) jsonObj.get("description");
-                        testSuite.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
-                        testSuite.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
-
-                        JSONArray testcases = (JSONArray) jsonObj.get("testcases");
-                        if (testcases != null) {
-                            testSuite.testcases = new HashMap<String, TestCaseDesc>();
-                            for (int i = 0; i < testcases.size(); i++) {
-                                JSONObject req = (JSONObject) testcases.get(i);
-                                TestCaseDesc testCaseDesc = new TestCaseDesc();
-                                testCaseDesc.tc = (String) req.get("TC");
-                                testCaseDesc.description = (String) req.get("description");
-
-                                JSONArray ir = (JSONArray) req.get("IR");
-                                testCaseDesc.IR = new HashSet<String>();
-                                for (int j = 0; j < ir.size(); j++) {
-                                    testCaseDesc.IR.add((String) ir.get(j));
-                                }
-                                testSuite.testcases.put(testCaseDesc.tc, testCaseDesc);
-                            }
-                        }
-                        else {
-                            testSuite.testcases = null;
-                        }
-
-                        JSONArray parameters = (JSONArray) jsonObj.get("parameters");
-                        if (parameters != null) {
-                            testSuite.parameters = new HashMap<>();
-                            for (int i = 0; i < parameters.size(); i++) {
-                                JSONObject req = (JSONObject) parameters.get(i);
-                                TSParameters tsParameters = new TSParameters();
-                                tsParameters.name = (String) req.get("name");
-                                tsParameters.description = (String) req.get("description");
-                                testSuite.parameters.put(tsParameters.name, tsParameters);
-                            }
-                        }
-                        else {
-                            testSuite.parameters = null;
-                        }
-
+                        TestSuiteDescription testSuite = createTestSuiteDescription(jsonObj);
                         this.testsuites.put(testSuite.id, testSuite);
                         fr.close();
                         fr = null;
@@ -187,21 +154,61 @@ public class CmdListTestSuites implements Command {
         // load test suites via ServiceLoader
         ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
         for (TestSuite factory : loader) {
-            String label = factory.getTestSuiteId();
-            TestSuiteDescription testSuite = new TestSuiteDescription();
-            testSuite.id = label;
-            testSuite.name = label;
-            testSuite.version = "";
-            testSuite.name = "";
-            testSuite.description = "";
-            testSuite.tsRunTimeFolder = "";
-            testSuite.tsLibTimeFolder = "";
-            testSuite.testcases = new HashMap<>();
-            testSuite.parameters = new HashMap<>();
+            String label = factory.getId();
+            TestSuiteDescription testSuite = createTestSuiteDescription(factory.getJSONDescriptionObject());
             this.testsuites.put(label, testSuite);
             Factory.LOGGER.trace("found {} test suite", label);
         }
-};
+    };
+
+    private TestSuiteDescription createTestSuiteDescription (JSONObject description) {
+        TestSuiteDescription testSuite = new TestSuiteDescription();
+
+        testSuite.id = (String) description.get(TS_ID);
+        testSuite.version = (String) description.get(TS_VERSION);
+        testSuite.name = (String) description.get(TS_NAME);
+        testSuite.description = (String) description.get(TS_DESCR);
+        testSuite.tsRunTimeFolder = (String) description.get(TS_RUN_FOLDER);
+        testSuite.tsLibTimeFolder = (String) description.get(TS_LIB_FOLDER);
+
+        JSONArray testcases = (JSONArray) description.get(TS_TESTCASES);
+        if (testcases != null) {
+            testSuite.testcases = new HashMap<String, TestCaseDesc>();
+            for (int i = 0; i < testcases.size(); i++) {
+                JSONObject req = (JSONObject) testcases.get(i);
+                TestCaseDesc testCaseDesc = new TestCaseDesc();
+                testCaseDesc.tc = (String) req.get(TS_TC);
+                testCaseDesc.description = (String) req.get(TS_DESCR);
+
+                JSONArray ir = (JSONArray) req.get(TS_IR);
+                testCaseDesc.IR = new HashSet<String>();
+                for (int j = 0; j < ir.size(); j++) {
+                    testCaseDesc.IR.add((String) ir.get(j));
+                }
+                testSuite.testcases.put(testCaseDesc.tc, testCaseDesc);
+            }
+        }
+        else {
+            testSuite.testcases = null;
+        }
+
+        JSONArray parameters = (JSONArray) description.get("parameters");
+        if (parameters != null) {
+            testSuite.parameters = new HashMap<>();
+            for (int i = 0; i < parameters.size(); i++) {
+                JSONObject req = (JSONObject) parameters.get(i);
+                TSParameters tsParameters = new TSParameters();
+                tsParameters.name = (String) req.get(TS_NAME);
+                tsParameters.description = (String) req.get(TS_DESCR);
+                testSuite.parameters.put(tsParameters.name, tsParameters);
+            }
+        }
+        else {
+            testSuite.parameters = null;
+        }
+
+        return testSuite;
+    }
 
 
     public TestSuiteDescription getTestSuiteForTc(String tcId) {

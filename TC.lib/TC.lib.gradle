@@ -82,4 +82,7 @@ dependencies {
 	compileOnly libraries.jsonSimple
 	compileOnly libraries.logback_classic
 	compileOnly libraries.logback_core
+
+	testImplementation libraries.slf4j_api
+    testImplementation libraries.junit_jupiter_engine
 }

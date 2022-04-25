@@ -34,7 +34,7 @@ class TestSuiteLoaderTest {
          for (TestSuite factory : loader) {
              tc = factory.getTestCase("org.nato.netn.ais.TC_AIS_0001");
              if (tc != null) break;
-            }
+        }
         assertNull("in this test context there will be not test suite to be found", tc);
     }
 }

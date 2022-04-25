@@ -10,8 +10,17 @@
  */
 
 package de.fraunhofer.iosb.tc_lib_if;
+import org.json.simple.JSONObject;
 
 public interface TestSuite {
-    String getTestSuiteId ();
+    String getId();
+    JSONObject getJSONDescriptionObject();
     AbstractTestCaseIf getTestCase (String TestCaseId);
+    
+    String getName();
+    String getVersion();
+    String getDescription();
+    String getRunTimeFolder();
+    String getLibFolder ();
+    JSONObject getParameterTemplate() throws Exception;
 }
