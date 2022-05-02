@@ -1,9 +1,9 @@
 {
 	"id" 			: 	"NETN-4.0",
-	"version"		:	"4.0.0",
+	"version"		:	"4.0",
 	"name" 			: 	"NETN-4.0",
 	"description"	:	"NATO Education and Training Network (NETN) Federation Object Model (FOM)",
 	"graphics"		:	"NETN-4.0.png",
-	"dependency"	:	["NETN-4.0-AIS", "NETN-4.0-ETR", "NETN-4.0-ORG"],
+	"dependency"	:	["NETN-4.0-AIS", "NETN-4.0-BASE", "NETN-4.0-COM", "NETN-4.0-ORG", "NETN-4.0-Physical"],
 	"requirements"	:	[	]
 }

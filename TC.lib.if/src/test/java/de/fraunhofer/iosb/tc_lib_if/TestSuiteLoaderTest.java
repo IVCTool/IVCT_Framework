@@ -11,8 +11,7 @@
 
 package de.fraunhofer.iosb.tc_lib_if;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,6 @@ class TestSuiteLoaderTest {
              tc = factory.getTestCase("org.nato.netn.ais.TC_AIS_0001");
              if (tc != null) break;
         }
-        assertNull("in this test context there will be not test suite to be found", tc);
+        assertNull(tc, "in this test context there will be not test suite to be found");
     }
 }

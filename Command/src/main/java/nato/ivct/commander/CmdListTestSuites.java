@@ -136,12 +136,19 @@ public class CmdListTestSuites implements Command {
                     }
                 } 
                 else if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+                    // found unpacked ServiceLoader 
                     Factory.LOGGER.trace("reading testsuite description: {}", file.getAbsolutePath());
                     jarFiles.add(file.toURI().toURL());
-
-
+                } else if (file.isDirectory()) {
+                    // scan test suite folders for ServiceLoader jars
+                    File[] tsFiles = file.listFiles();
+                    for (File tsContent: tsFiles) {
+                        if (tsContent.isFile() && tsContent.getName().toLowerCase().endsWith(".jar")) {
+                            Factory.LOGGER.trace("reading testsuite description: {}", tsContent.getAbsolutePath());
+                            jarFiles.add(tsContent.toURI().toURL());
+                        }        
+                    }        
                 }
-
             }
         }
         else {
@@ -155,6 +162,7 @@ public class CmdListTestSuites implements Command {
         ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
         for (TestSuite factory : loader) {
             String label = factory.getId();
+            JSONObject p = factory.getParameterTemplate();
             TestSuiteDescription testSuite = createTestSuiteDescription(factory.getJSONDescriptionObject());
             this.testsuites.put(label, testSuite);
             Factory.LOGGER.trace("found {} test suite", label);

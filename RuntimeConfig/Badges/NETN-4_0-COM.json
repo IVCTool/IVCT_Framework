@@ -1,0 +1,22 @@
+{
+	"id" 			: 	"NETN-4.0-COM",
+	"version"		:	"4.0",
+	"name" 			: 	"NETN-4.0 COM",
+	"description"	:	"Representation of Communication Networks and the status of communication links.",
+	"graphics"		:	"NETN-4.0-COM.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"NETN-COM-0001",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-COM-0002",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-COM-0003",
+			"description"	:	"Interoperability requirement description"
+		}
+	]
+}

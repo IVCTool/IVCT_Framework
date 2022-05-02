@@ -1,6 +1,6 @@
 {
 	"id" 			: 	"NETN-4.0-ORG",
-	"version"		:	"4.0.0",
+	"version"		:	"4.0",
 	"name" 			: 	"NETN-4.0 ORG",
 	"description"	:	"Representation of the state of units including command structure and relationship between organizations.",
 	"graphics"		:	"NETN-4.0-ORG.png",

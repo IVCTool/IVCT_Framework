@@ -100,6 +100,7 @@ dependencies {
     implementation project(':Command')
     implementation project(':MessagingHelpers')
 	implementation project(':TC.lib.if')
+	implementation project(':TC.lib')
     
 	// external project dependencies
 	implementation libraries.slf4j_api

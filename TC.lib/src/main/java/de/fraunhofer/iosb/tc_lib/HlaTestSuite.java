@@ -1,8 +1,20 @@
+/*
+ * Copyright 2022, Reinhard Herzog (Fraunhofer IOSB) Licensed under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 package de.fraunhofer.iosb.tc_lib;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -32,9 +44,9 @@ public class HlaTestSuite implements TestSuite {
     public HlaTestSuite () throws FileNotFoundException, IOException, ParseException {
         log.trace("Test Suite {} loading", this.getClass());
         String resourceFileName = "/" + this.getClass().getSimpleName() + ".json";
-        java.net.URL url = this.getClass().getResource(resourceFileName);
+        InputStream inputStream = this.getClass().getResourceAsStream(resourceFileName);
         JSONParser parser = new JSONParser();
-        description = (JSONObject) parser.parse (new FileReader(url.getFile()));
+        description = (JSONObject) parser.parse (new InputStreamReader(inputStream));
     }
 
     @Override
@@ -83,9 +95,9 @@ public class HlaTestSuite implements TestSuite {
         JSONObject parameter;
         log.trace("Parameter Template for class {} loading", this.getClass());
         String resourceFileName = "/" + TS_PARAMS_FILE + ".json";
-        java.net.URL url = this.getClass().getResource(resourceFileName);
+        InputStream inputStream = this.getClass().getResourceAsStream(resourceFileName);
         JSONParser parser = new JSONParser();
-        parameter = (JSONObject) parser.parse (new FileReader(url.getFile()));
+        parameter = (JSONObject) parser.parse (new InputStreamReader(inputStream));
         return parameter;
     }
     
