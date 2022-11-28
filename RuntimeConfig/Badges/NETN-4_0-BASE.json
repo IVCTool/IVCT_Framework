@@ -1,0 +1,22 @@
+{
+	"id" 			: 	"NETN-4.0-BASE",
+	"version"		:	"4.0",
+	"name" 			: 	"NETN-4.0 BASE",
+	"description"	:	"Common definitions of datatypes and extends the RPR-BASE FOM Module.",
+	"graphics"		:	"NETN-4.0-BASE.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"NETN-BASE-0001",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-BASE-0002",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-BASE-0003",
+			"description"	:	"Interoperability requirement description"
+		}
+	]
+}

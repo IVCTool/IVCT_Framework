@@ -14,13 +14,19 @@ limitations under the License. */
 
 package nato.ivct.commander;
 
+import de.fraunhofer.iosb.tc_lib_if.TestSuite;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.ServiceLoader;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,19 +37,40 @@ import org.json.simple.parser.ParseException;
 /**
  * The CmdListTestsuites implements the loading of test suite description files
  * and provides access methods to process the content. A test suite is defined
- * by a json file, similar to the following example: { "id":
- * "TS_HelloWorld-2017", "version": "2.0.0", "name": "HelloWorld Tutorial
- * Badge", "description": "This is a simple example for a testsuite to test the
- * compliance of an federate to the hello world federation.", "tsRunTimeFolder":
- * "TS_HelloWorld-2.0.0/bin", "tsLibTimeFolder": "TS_HelloWorld-2.0.0/lib",
- * "testcases": [{ { "TC": "de.fraunhofer.iosb.tc_helloworld.TC0001" "IR":
- * ["IR-HW-0001"], "description": "Test population growing rate", }, { "TC":
- * "de.fraunhofer.iosb.tc_helloworld.TC0002" "IR": ["IP-HW-0002"],
- * "description": "Test inter-country communication", } ] }
+ * by a json file, similar to the following example: 
+ * { 
+ *   "id": "TS_HelloWorld-2017", 
+ *   "version": "2.0.0", 
+ *   "name": "HelloWorld Tutorial Badge", 
+ *   "description": "This is a simple example for a testsuite to test the compliance of an federate to the hello world federation.", 
+ *   "tsRunTimeFolder": "TS_HelloWorld-2.0.0/bin", 
+ *   "tsLibTimeFolder": "TS_HelloWorld-2.0.0/lib",
+ *   "testcases": [
+ *     {  
+ *       "TC": "de.fraunhofer.iosb.tc_helloworld.TC0001" 
+ *       "IR": ["IR-HW-0001"], 
+ *       "description": "Test population growing rate"
+ *     }, { 
+ *       "TC": "de.fraunhofer.iosb.tc_helloworld.TC0002",
+ *       "IR": ["IP-HW-0002"], 
+ *       "description": "Test inter-country communication" 
+ *     } 
+ *   ] 
+ * }
  *
  * @author hzg
  */
 public class CmdListTestSuites implements Command {
+
+    public static final String TS_ID = "id";
+    public static final String TS_NAME = "name";
+    public static final String TS_VERSION = "version";
+    public static final String TS_DESCR = "description";
+    public static final String TS_RUN_FOLDER = "tsRunTimeFolder";
+    public static final String TS_LIB_FOLDER = "tsLibTimeFolder";
+    public static final String TS_TESTCASES = "testcases";
+    public static final String TS_TC = "TC";
+    public static final String TS_IR = "IR";
 
     public class TestCaseDesc {
 
@@ -71,6 +98,7 @@ public class CmdListTestSuites implements Command {
     };
 
     public Map<String, TestSuiteDescription> testsuites = new HashMap<>();
+    // public HashMap<String, TestSuite> tsMap = new HashMap<>();    // key TestSuiteId
 
     @Override
     public void execute() throws Exception {
@@ -83,6 +111,7 @@ public class CmdListTestSuites implements Command {
 
         // allow re-execution of the command
         testsuites.clear();
+        ArrayList<URL> jarFiles = new ArrayList<>();
 
         if (dir.isDirectory()) {
             Factory.LOGGER.trace("Read Testsuite descriptions from {}", dir.getAbsolutePath());
@@ -94,53 +123,10 @@ public class CmdListTestSuites implements Command {
                     Factory.LOGGER.trace("reading testsuite description: {}", file.getAbsolutePath());
                     FileReader fr = null;
                     try {
-                        TestSuiteDescription testSuite = new TestSuiteDescription();
                         fr = new FileReader(file);
                         obj = parser.parse(fr);
                         JSONObject jsonObj = (JSONObject) obj;
-                        testSuite.id = (String) jsonObj.get("id");
-                        testSuite.version = (String) jsonObj.get("version");
-                        testSuite.name = (String) jsonObj.get("name");
-                        testSuite.description = (String) jsonObj.get("description");
-                        testSuite.tsRunTimeFolder = (String) jsonObj.get("tsRunTimeFolder");
-                        testSuite.tsLibTimeFolder = (String) jsonObj.get("tsLibTimeFolder");
-
-                        JSONArray testcases = (JSONArray) jsonObj.get("testcases");
-                        if (testcases != null) {
-                            testSuite.testcases = new HashMap<String, TestCaseDesc>();
-                            for (int i = 0; i < testcases.size(); i++) {
-                                JSONObject req = (JSONObject) testcases.get(i);
-                                TestCaseDesc testCaseDesc = new TestCaseDesc();
-                                testCaseDesc.tc = (String) req.get("TC");
-                                testCaseDesc.description = (String) req.get("description");
-
-                                JSONArray ir = (JSONArray) req.get("IR");
-                                testCaseDesc.IR = new HashSet<String>();
-                                for (int j = 0; j < ir.size(); j++) {
-                                    testCaseDesc.IR.add((String) ir.get(j));
-                                }
-                                testSuite.testcases.put(testCaseDesc.tc, testCaseDesc);
-                            }
-                        }
-                        else {
-                            testSuite.testcases = null;
-                        }
-
-                        JSONArray parameters = (JSONArray) jsonObj.get("parameters");
-                        if (parameters != null) {
-                            testSuite.parameters = new HashMap<>();
-                            for (int i = 0; i < parameters.size(); i++) {
-                                JSONObject req = (JSONObject) parameters.get(i);
-                                TSParameters tsParameters = new TSParameters();
-                                tsParameters.name = (String) req.get("name");
-                                tsParameters.description = (String) req.get("description");
-                                testSuite.parameters.put(tsParameters.name, tsParameters);
-                            }
-                        }
-                        else {
-                            testSuite.parameters = null;
-                        }
-
+                        TestSuiteDescription testSuite = createTestSuiteDescription(jsonObj);
                         this.testsuites.put(testSuite.id, testSuite);
                         fr.close();
                         fr = null;
@@ -148,14 +134,89 @@ public class CmdListTestSuites implements Command {
                     catch (IOException | ParseException exc) {
                         Factory.LOGGER.error("error reading file", exc);
                     }
-
+                } 
+                else if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+                    // found unpacked ServiceLoader 
+                    Factory.LOGGER.trace("reading testsuite description: {}", file.getAbsolutePath());
+                    jarFiles.add(file.toURI().toURL());
+                } else if (file.isDirectory()) {
+                    // scan test suite folders for ServiceLoader jars
+                    File[] tsFiles = file.listFiles();
+                    for (File tsContent: tsFiles) {
+                        if (tsContent.isFile() && tsContent.getName().toLowerCase().endsWith(".jar")) {
+                            Factory.LOGGER.trace("reading testsuite description: {}", tsContent.getAbsolutePath());
+                            jarFiles.add(tsContent.toURI().toURL());
+                        }        
+                    }        
                 }
             }
         }
         else {
             Factory.LOGGER.error("value = {} is not a folder", dir.getAbsolutePath());
         }
+
+        // add the jar files found in TestSuites folder to the current thread class loader
+        URLClassLoader child = new URLClassLoader(jarFiles.toArray(new URL[0]), this.getClass().getClassLoader());
+        Thread.currentThread().setContextClassLoader(child);
+        // load test suites via ServiceLoader
+        ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
+        for (TestSuite factory : loader) {
+            String label = factory.getId();
+            JSONObject p = factory.getParameterTemplate();
+            TestSuiteDescription testSuite = createTestSuiteDescription(factory.getJSONDescriptionObject());
+            this.testsuites.put(label, testSuite);
+            Factory.LOGGER.trace("found {} test suite", label);
+        }
     };
+
+    private TestSuiteDescription createTestSuiteDescription (JSONObject description) {
+        TestSuiteDescription testSuite = new TestSuiteDescription();
+
+        testSuite.id = (String) description.get(TS_ID);
+        testSuite.version = (String) description.get(TS_VERSION);
+        testSuite.name = (String) description.get(TS_NAME);
+        testSuite.description = (String) description.get(TS_DESCR);
+        testSuite.tsRunTimeFolder = (String) description.get(TS_RUN_FOLDER);
+        testSuite.tsLibTimeFolder = (String) description.get(TS_LIB_FOLDER);
+
+        JSONArray testcases = (JSONArray) description.get(TS_TESTCASES);
+        if (testcases != null) {
+            testSuite.testcases = new HashMap<String, TestCaseDesc>();
+            for (int i = 0; i < testcases.size(); i++) {
+                JSONObject req = (JSONObject) testcases.get(i);
+                TestCaseDesc testCaseDesc = new TestCaseDesc();
+                testCaseDesc.tc = (String) req.get(TS_TC);
+                testCaseDesc.description = (String) req.get(TS_DESCR);
+
+                JSONArray ir = (JSONArray) req.get(TS_IR);
+                testCaseDesc.IR = new HashSet<String>();
+                for (int j = 0; j < ir.size(); j++) {
+                    testCaseDesc.IR.add((String) ir.get(j));
+                }
+                testSuite.testcases.put(testCaseDesc.tc, testCaseDesc);
+            }
+        }
+        else {
+            testSuite.testcases = null;
+        }
+
+        JSONArray parameters = (JSONArray) description.get("parameters");
+        if (parameters != null) {
+            testSuite.parameters = new HashMap<>();
+            for (int i = 0; i < parameters.size(); i++) {
+                JSONObject req = (JSONObject) parameters.get(i);
+                TSParameters tsParameters = new TSParameters();
+                tsParameters.name = (String) req.get(TS_NAME);
+                tsParameters.description = (String) req.get(TS_DESCR);
+                testSuite.parameters.put(tsParameters.name, tsParameters);
+            }
+        }
+        else {
+            testSuite.parameters = null;
+        }
+
+        return testSuite;
+    }
 
 
     public TestSuiteDescription getTestSuiteForTc(String tcId) {

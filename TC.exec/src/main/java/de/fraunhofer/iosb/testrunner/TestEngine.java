@@ -257,7 +257,7 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				try {
 					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of test case {} is: {}", testCase, testCase.getIVCTVersion());
 
-					new IVCTVersionCheck(testCase.getIVCTVersion()).compare();
+					new IVCTVersionCheck(testCase.getIVCTVersion(),Factory.getVersion()).compare();
 
 				} catch (IVCTVersionCheckException cf) {
 					tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ", cf);

@@ -277,16 +277,19 @@ public class CmdUpdateSUT {
                     logger.trace(libPath);
                     File dir = new File(libPath);
                     File[] filesList = dir.listFiles();
+                    URL[] urls;
                     if (filesList == null) {
-                        throw new IOException("getTestsuiteUrls: no testsuites found in: " + libPath);
-                    }
-                    URL[] urls = new URL[filesList.length];
-                    for (int i = 0; i < filesList.length; i++) {
-                        try {
-                            urls[i] = filesList[i].toURI().toURL();
-                        }
-                        catch (MalformedURLException exc) {
-                            logger.error("", exc);
+                        logger.warn("getTestsuiteUrls: no testsuites found in: " + libPath);
+                        urls = new URL[0];
+                    } else {
+                        urls = new URL[filesList.length];
+                        for (int i = 0; i < filesList.length; i++) {
+                            try {
+                                urls[i] = filesList[i].toURI().toURL();
+                            }
+                            catch (MalformedURLException exc) {
+                                logger.error("", exc);
+                            }
                         }
                     }
                     testsuiteURLs.put(ts, urls);

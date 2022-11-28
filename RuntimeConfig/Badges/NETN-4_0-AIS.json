@@ -1,0 +1,22 @@
+{
+	"id" 			: 	"NETN-4.0-AIS",
+	"version"		:	"4.0",
+	"name" 			: 	"NETN-4.0 AIS",
+	"description"	:	"Represent vessel traffic in a simulation using AIS messages.",
+	"graphics"		:	"NETN-4.0-AIS.png",
+	"dependency"	:	["NETN-4.0-ETR", "NETN-4.0-ORG"],
+	"requirements"	:	[
+		{
+			"id"			:	"NETN-AIS-0001",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-AIS-0002",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-AIS-0003",
+			"description"	:	"Interoperability requirement description"
+		}
+	]
+}
