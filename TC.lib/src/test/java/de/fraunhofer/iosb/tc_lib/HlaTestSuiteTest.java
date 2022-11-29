@@ -44,7 +44,6 @@ public class HlaTestSuiteTest {
          for (TestSuite factory : loader) {
              String id = factory.getId();
              testNETNbasicAttributes(factory);
-             assertNotNull(id);
         }
     }
 
