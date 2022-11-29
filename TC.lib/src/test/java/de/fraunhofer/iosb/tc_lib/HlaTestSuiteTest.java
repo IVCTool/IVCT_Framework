@@ -42,7 +42,6 @@ public class HlaTestSuiteTest {
         ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
 
          for (TestSuite factory : loader) {
-             String id = factory.getId();
              testNETNbasicAttributes(factory);
         }
     }
