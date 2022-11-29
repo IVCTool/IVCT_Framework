@@ -52,7 +52,7 @@ jobs:
         docker tag ivct/logsink:${VERSION} ivct/logsink:${GITHUB_REF:11}-latest
         docker tag ivct/runtime-config:${VERSION} ivct/runtime-config:${GITHUB_REF:11}-latest
         docker tag ivct/gui:${VERSION} ivct/gui:${GITHUB_REF:11}-latest
-        docker tag ivct/tc-runner:pi-skeleton-${VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
+        # docker tag ivct/tc-runner:pi-skeleton-${VERSION} ivct/tc-runner:pi-skeleton-${GITHUB_REF:11}-latest
         docker tag ivct/tc-runner:po-${VERSION} ivct/tc-runner:po-${GITHUB_REF:11}-latest
         docker tag ivct/tc-runner:ma-${VERSION} ivct/tc-runner:ma-${GITHUB_REF:11}-latest
         docker tag ivct/runtime_mirror:${VERSION} ivct/runtime_mirror:${GITHUB_REF:11}-latest
@@ -66,7 +66,7 @@ jobs:
         docker push ivct/logsink:${VERSION}
         docker push ivct/runtime-config:${VERSION}
         docker push ivct/gui:${VERSION}
-        docker push ivct/tc-runner:pi-skeleton-${VERSION}
+        # docker push ivct/tc-runner:pi-skeleton-${VERSION}
         docker push ivct/tc-runner:po-${VERSION}
         docker push ivct/tc-runner:ma-${VERSION}
         docker push ivct/runtime_mirror:${VERSION}
