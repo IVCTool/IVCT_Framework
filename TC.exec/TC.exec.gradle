@@ -61,7 +61,7 @@ task jibPortico (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
     doFirst {
         jib {
             from {
-                image = 'hlacontainers/lrc:portico-nightly-2016.05.28-alpine'
+                image = 'hlacontainers/lrc:portico-nightly-2016.05.28-centos7-jdk11'
             }
             to {
                 image = "ivct/tc-runner:po-${ivctVersion}"
@@ -78,7 +78,7 @@ task jibMak (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
     doFirst {
         jib {
             from {
-                image = 'hlacontainers/lrc:vtmak-4.5f-centos7'
+                image = 'hlacontainers/lrc:vtmak-4.5j-centos7-jdk11'
             }
             to {
                 image = "ivct/tc-runner:ma-${ivctVersion}"
@@ -90,7 +90,7 @@ task jibMak (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
 tasks.register ("dockerBuildImage") {
     group = 'Docker'
     description = 'Creates docker images for RTIs'
-    dependsOn 'jibPitch'
+    // dependsOn 'jibPitch' // hlacontainers no longer supports pitch image
     dependsOn 'jibPortico'
     dependsOn 'jibMak'
 }
