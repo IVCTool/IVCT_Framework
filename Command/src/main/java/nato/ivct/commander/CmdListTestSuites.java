@@ -162,7 +162,6 @@ public class CmdListTestSuites implements Command {
         ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
         for (TestSuite factory : loader) {
             String label = factory.getId();
-            JSONObject p = factory.getParameterTemplate();
             TestSuiteDescription testSuite = createTestSuiteDescription(factory.getJSONDescriptionObject());
             this.testsuites.put(label, testSuite);
             Factory.LOGGER.trace("found {} test suite", label);

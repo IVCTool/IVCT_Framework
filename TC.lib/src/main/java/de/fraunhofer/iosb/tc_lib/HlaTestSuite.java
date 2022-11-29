@@ -61,7 +61,7 @@ public class HlaTestSuite implements TestSuite {
 
     @Override
     public AbstractTestCaseIf getTestCase(String TestCaseId) {
-        // TODO Auto-generated method stub
+        log.warn("calling unimplemented getTestCase method for class {}", this.getClass());
         return null;
     }
 
