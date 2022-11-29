@@ -249,16 +249,14 @@ public class TestEngine extends TestRunner implements OnSetLogLevelListener, OnQ
 				testCase.setSutFederateName(info.sutFederateName);
 				testCase.setTcParam(info.testCaseParam);
 				testCase.setOperatorService(new OperatorServiceImpl().initialize(info.sutName, info.testCaseId, classname, testEngineLabel));
+
 				/*
 				 * Check the compatibility of IVCT-Version which had this testCase at
 				 * building-time against the IVCT-Version at Runtime
 				 */
-
 				try {
 					tcLogger.debug("TestEngine.run.compabilityCheck: the IVCTVersion of test case {} is: {}", testCase, testCase.getIVCTVersion());
-
 					new IVCTVersionCheck(testCase.getIVCTVersion(),Factory.getVersion()).compare();
-
 				} catch (IVCTVersionCheckException cf) {
 					tcLogger.error("TestEngine: IVCTVersionCheck shows problems with IVCTVersion-Check ", cf);
 					verdicts[i] = new IVCT_Verdict();
