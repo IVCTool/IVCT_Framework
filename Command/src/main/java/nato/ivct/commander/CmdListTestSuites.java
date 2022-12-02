@@ -71,6 +71,10 @@ public class CmdListTestSuites implements Command {
     public static final String TS_TESTCASES = "testcases";
     public static final String TS_TC = "TC";
     public static final String TS_IR = "IR";
+    
+    public HashMap<String, TestSuite> tsServiceLoaders = new HashMap<>();
+    public Map<String, TestSuiteDescription> testsuites = new HashMap<>();
+    // public HashMap<String, TestSuite> tsMap = new HashMap<>();    // key TestSuiteId
 
     public class TestCaseDesc {
 
@@ -97,8 +101,6 @@ public class CmdListTestSuites implements Command {
         public Map<String, TSParameters> parameters;
     };
 
-    public Map<String, TestSuiteDescription> testsuites = new HashMap<>();
-    // public HashMap<String, TestSuite> tsMap = new HashMap<>();    // key TestSuiteId
 
     @Override
     public void execute() throws Exception {
@@ -161,6 +163,7 @@ public class CmdListTestSuites implements Command {
         // load test suites via ServiceLoader
         ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
         for (TestSuite factory : loader) {
+            this.tsServiceLoaders.put(factory.getId(), factory);
             String label = factory.getId();
             TestSuiteDescription testSuite = createTestSuiteDescription(factory.getJSONDescriptionObject());
             this.testsuites.put(label, testSuite);
