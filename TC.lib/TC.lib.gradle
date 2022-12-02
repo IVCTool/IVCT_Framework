@@ -13,6 +13,16 @@ group = 'io.github.msg134'
 archivesBaseName = "TC.lib"
 version = ivctVersion
 
+dependencies {
+    compileOnly project(':IEEE1516e')
+    api project(':TC.lib.if')
+	api libraries.slf4j_api
+	implementation libraries.jsonSimple
+
+	testImplementation libraries.slf4j_api
+    testImplementation libraries.junit_jupiter_engine
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -62,7 +72,6 @@ signing
     sign publishing.publications.mavenJava
 }
 
-
 gradle.taskGraph.whenReady { taskGraph ->
     // Do not sign archives by default (a local build without gpg keyring should succeed)
     if (taskGraph.allTasks.any {  it.name == 'install' || it.name == 'build' || it.name == 'assemble' }) {
@@ -70,19 +79,4 @@ gradle.taskGraph.whenReady { taskGraph ->
             task.enabled = false
         }
     }
-}
-
-
-dependencies {
-    compileOnly project(':Command')
-    api project(':TC.lib.if')
-    api project(':IEEE1516e')
-
-	compileOnly libraries.slf4j_api
-	implementation libraries.jsonSimple
-	compileOnly libraries.logback_classic
-	compileOnly libraries.logback_core
-
-	testImplementation libraries.slf4j_api
-    testImplementation libraries.junit_jupiter_engine
 }
