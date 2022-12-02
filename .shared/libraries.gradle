@@ -7,8 +7,8 @@ ext {
         '4.0.0':'incompatible', '3.1.0-SNAPSHOT':'incompatible','3.0.0':'incompatible','2.2.2-SNAPSHOT':'incompatible', '2.1.1':'incompatible', '2.1.0':'incompatible']
 
     // JDK Version Compatibility
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    setToSourceCompatibility = '1.8'
+    setToTargetCompatibility = '1.8'
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~ thirdparty
     logbackVersion = '1.2.10'
