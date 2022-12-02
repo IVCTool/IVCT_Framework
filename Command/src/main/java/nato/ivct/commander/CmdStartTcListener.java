@@ -28,7 +28,7 @@ public class CmdStartTcListener implements MessageListener, Command {
 
     private OnStartTestCaseListener listener;
 
-    public class TcInfo {
+    public static class TcInfo {
         public String sutName;
         public String sutDir;
         public String testSuiteId;
@@ -37,7 +37,6 @@ public class CmdStartTcListener implements MessageListener, Command {
         public String settingsDesignator;
         public String federationName;
         public String sutFederateName;
-        // for enhanced heartbeat with RTI-Type-Information brf 06.11.2020
         public String testEngineLabel;
     }
 
