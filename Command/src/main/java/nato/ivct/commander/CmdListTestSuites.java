@@ -148,7 +148,15 @@ public class CmdListTestSuites implements Command {
                         if (tsContent.isFile() && tsContent.getName().toLowerCase().endsWith(".jar")) {
                             Factory.LOGGER.trace("reading testsuite description: {}", tsContent.getAbsolutePath());
                             jarFiles.add(tsContent.toURI().toURL());
-                        }        
+                        } else if (tsContent.isDirectory()) {
+                            Factory.LOGGER.trace("add testsuite folder: {}", tsContent.getAbsolutePath());
+                            // jarFiles.add(tsContent.toURI().toURL());
+                            // the following should not be necessary, because the above directory should be loaded recursively,
+                            // and the line above should be sufficient. However, it does not work as specified
+                            for (File libContent: tsContent.listFiles()) {
+                                jarFiles.add(libContent.toURI().toURL());
+                            }
+                        }
                     }        
                 }
             }
@@ -158,10 +166,10 @@ public class CmdListTestSuites implements Command {
         }
 
         // add the jar files found in TestSuites folder to the current thread class loader
-        URLClassLoader child = new URLClassLoader(jarFiles.toArray(new URL[0]), this.getClass().getClassLoader());
-        Thread.currentThread().setContextClassLoader(child);
+        URLClassLoader child = new URLClassLoader(jarFiles.toArray(new URL[jarFiles.size()]), this.getClass().getClassLoader());
+        // Thread.currentThread().setContextClassLoader(child);
         // load test suites via ServiceLoader
-        ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class);
+        ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class, child);
         for (TestSuite factory : loader) {
             this.tsServiceLoaders.put(factory.getId(), factory);
             String label = factory.getId();

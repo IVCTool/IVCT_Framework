@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -276,7 +277,13 @@ public class CmdUpdateSUT {
                     String libPath = tsPath + "/" + tsd.tsLibTimeFolder;
                     logger.trace(libPath);
                     File dir = new File(libPath);
-                    File[] filesList = dir.listFiles();
+                    File[] filesList = null;
+                    if (dir.isDirectory()) {
+                        filesList = dir.listFiles();
+                    } else if (dir.isFile()) {
+                        filesList = new File[1];
+                        filesList[0] = dir;
+                    }
                     URL[] urls;
                     if (filesList == null) {
                         logger.warn("getTestsuiteUrls: no testsuites found in: " + libPath);

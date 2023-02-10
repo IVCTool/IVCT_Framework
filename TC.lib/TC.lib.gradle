@@ -14,7 +14,7 @@ archivesBaseName = "TC.lib"
 version = ivctVersion
 
 dependencies {
-    compileOnly project(':IEEE1516e')
+    compileOnlyApi project(':IEEE1516e')
     api project(':TC.lib.if')
 	api libraries.slf4j_api
 	implementation libraries.jsonSimple
