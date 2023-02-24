@@ -1,0 +1,9 @@
+{
+	"id" 			: 	"Bw-Lw-1.0",
+	"version"		:	"1.0",
+	"name" 			: 	"Bundeswehr Luftwaffe",
+	"description"	:	"Interoperabilitätsdefinition für HLA-Simulationen in die Luftwaffe der Bundeswehr",
+	"graphics"		:	"Bw-Lw-1.0.png",
+	"dependency"	:	["RPR-ENTITY-2.0", "RPR-WARFARE-2.0", "RPR-PHY-2.0", "RPR-DER-2.0", "RPR-COM-2.0"],
+	"requirements"	:	[	]
+}

@@ -1,0 +1,42 @@
+{
+	"id" 			: 	"RPR-PHY-2.0",
+	"version"		:	"0.1",
+	"name" 			: 	"RPR-PHY-2.0",
+	"description"	:	"Basic Handling of the RPR FOM Physical Module. The Physical module provides object class definitions for representing physical entities including aircraft, ground vehicles, ships, life forms, ammunition, etc. In addition it provides interaction classes to signal collisions between physical entities. The object classes derive from the BaseEntity class defined in the Base module. The majority of the datatypes used in the object and interaction classes are defined in the Base module, with the enumerations being defined in the Enumerations module.",
+	"graphics"		:	"RPR-PHY-2.0.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-RPR-PHY-0001",
+			"description"	:	"All of the PhysicalEntity attributes shall be treated as optional fields for federates updating instance attributes of this object class or its subclasses."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-0002",
+			"description"	:	"SuT federates updating instance attributes of one of the PhysicalEntity object classes shall limit use to those object classes indicated by a «Yes» in Table 7 in [SISO-STD-001-2015], when indicated restricted to the enumerators listed."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-0003",
+			"description"	:	"All of the Plattform attributes shown in Table 8 in [SISO-STD-001-2015] shall be treated as optional fields for federates updating instance attributes of this object class or its subclasses."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-0004",
+			"description"	:	"SuT federates updating instance attributes of one of these object classes shall limit use to those object classes indicated by a «yes» in Table 9, when indicated restricted to the enumerators listed."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-1001",
+			"description"	:	"There shall be a collision interaction issued for each object instance involved in a collision."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-1002",
+			"description"	:	"If a SuT detects that one of its entities has struck another entity, it shall issue a collision interaction."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-1003",
+			"description"	:	"If a SuT receives a collision interaction indicating that one of its entities has been struck, it shall issue a response collision interaction, as long as it has not already issued one for the same collision event."
+		},
+		{
+			"id"			:	"IR-RPR-PHY-1004",
+			"description"	:	"Senders of this interaction class shall provide values for all parameters; there are no optional fields."
+		}
+	]
+}
