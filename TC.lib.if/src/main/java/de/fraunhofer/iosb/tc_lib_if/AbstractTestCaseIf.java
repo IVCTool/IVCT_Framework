@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 
 
@@ -147,7 +150,7 @@ public abstract class AbstractTestCaseIf {
     protected Logger defaultLogger = null;
     protected String testSuiteId = null;
     protected String tcName  = null;
-    protected String tcParam = null;
+    protected JSONObject tcParam = null;
     protected String sutName = null;
     protected String settingsDesignator;
     protected String federationName;
@@ -188,8 +191,8 @@ public abstract class AbstractTestCaseIf {
             verdict.text = exInconclusiveIf.getMessage();
             return verdict;
         } catch (TcFailedIf exFailedIf) {
-            logger.info("TC INCONCLUSIVE " + exFailedIf.getMessage());
-            verdict.verdict = IVCT_Verdict.Verdict.INCONCLUSIVE;
+            logger.info("TC FAILED " + exFailedIf.getMessage());
+            verdict.verdict = IVCT_Verdict.Verdict.FAILED;
             verdict.text = exFailedIf.getMessage();
             return verdict;
         }
@@ -370,6 +373,15 @@ public abstract class AbstractTestCaseIf {
      * @param param test case parameter JSON string
      */
     public void setTcParam (String param) {
+        try {
+            this.tcParam = (JSONObject) new JSONParser().parse(param);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void setTcParam(JSONObject param) {
         this.tcParam = param;
     }
 
@@ -379,7 +391,11 @@ public abstract class AbstractTestCaseIf {
      * @return the test case parameter string.
      */
     public String getTcParam () {
-        return this.tcParam;
+        return this.tcParam.toJSONString();
+    }
+
+    public String getTcParam(String key) {
+        return this.tcParam.get(key).toString();
     }
     
     /**

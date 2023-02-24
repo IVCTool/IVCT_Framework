@@ -93,7 +93,7 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
         logger.info(tcParamTmp);
 
         try {
-            ivct_BaseModel = getIVCT_BaseModel(tcParam, logger);
+            ivct_BaseModel = getIVCT_BaseModel(getTcParam(), logger);
             ivct_BaseModel.setFederationName(federationName);
             ivct_BaseModel.setSettingsDesignator(settingsDesignator);
         }
