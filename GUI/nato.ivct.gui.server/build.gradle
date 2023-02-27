@@ -4,8 +4,6 @@ description = """IVCT Server"""
 
 dependencies {
 	implementation project(':Command')
-	implementation project(':TC.lib.if')
-	implementation project(':TC.lib')
 	implementation project(':GUI:nato.ivct.gui.shared')
 	
 	// external project dependencies

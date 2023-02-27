@@ -1,0 +1,74 @@
+{
+	"id" 			: 	"RPR-COM-2.0",
+	"version"		:	"0.1",
+	"name" 			: 	"RPR-COM-2.0",
+	"description"	:	"Basic Handling of the RPR FOM Communication Module. The Communication module is used to simulate radio communications. It defines classes that simulate radio transmitters and receivers as well as the radio signals that are transmitted between them. These classes support the simulation of both audio and data transmission by radio and Tactical Data Links (TDLs). The content of a radio transmission may be conveyed in its entirety in real-time, or may be conveyed by reference to a prerecorded database. The RadioTransmitter and RadioReceiver classes both derive from the EmbeddedSystem class of the Base module. The Communication module also depends on the Base module for datatypes.",
+	"graphics"		:	"RPR-COM-2.0.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-RPR-COM-0001",
+			"description"	:	"Each SuT updating instance attributes of the RadioTransmitter class or its subclasses shall provide the state/identification fields RadioIndex, RadioSystemType, and TransmitterOperationalStatus."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0002",
+			"description"	:	"Each SuT updating instance attributes of the RadioTransmitter class or its subclasses shall guarantee that a unique RadioIndex / HostObjectIdentifier combination is provided for each radio instance. The one remaining state/identification field, RadioInputSource, shall be treated as an optional field."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0003",
+			"description"	:	"All of the electromagnetic characteristics shall be provided by each SuT updating instance attributes of the RadioTransmitter class or its subclasses except AntennaPatternData, which is only required for non-OmniDirectional pattern types."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0004",
+			"description"	:	"The attributes Frequency and FrequencyBandwidth shall be updated together."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0005",
+			"description"	:	"All of the modulation, and cryptography attributes shall be treated as optional fields by SuTs updating instance attributes of the RadioTransmitter class or its subclasses."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0006",
+			"description"	:	"The StreamTag identifies a real-time audio stream. When this stream is transmitted using a series of EncodedAudioRadioSignal interactions, they shall all use the same StreamTag. Conversely all signal interactions with the same StreamTag compose the same stream. This StreamTag shall be different from all other StreamTags in use at that time. A real-time audio stream shall be associated with one or more RadioTransmitter instance objects. The StreamTag attribute of the RadioTransmitter object class shall identify its associated real-time audio stream."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0007",
+			"description"	:	"StreamTag shall be unique across the federation execution."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0008",
+			"description"	:	"If the associated RadioTransmitter Object is On and Transmitting and there are no associated EncodedAudioRadioSignal interactions, then the receiver shall be receiving an unmodulated carrier."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0009",
+			"description"	:	"A single stream should be used to represent identical audio signals transmitted simultaneously by multiple transmitters. This single stream shall be identified by the use of the same StreamTag value in each RadioTransmitter Object."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0010",
+			"description"	:	"As per the DIS standard, the site, application, entity (SAE) triplet of numbers shall identify a valid host vehicle (DIS Entity State PDU) to which this radio is attached."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0011",
+			"description"	:	"Each SuT updating instance attributes of the RadioReceiver class or its subclasses shall always provide the RadioIndex and ReceiverOperationalStatus."
+		},
+		{
+			"id"			:	"IR-RPR-COM-0012",
+			"description"	:	"Each SuT updating instance attributes of the RadioReceiver class or its subclasses shall guarantee that a unique RadioIndex / HostObjectIdentifier combination is provided for each radio instance. The remaining parameters shall also be provided whenever the radio is in a receiving state."
+		},
+		{
+			"id"			:	"IR-RPR-COM-1001",
+			"description"	:	"The RadioSignal interaction does not contain any state information however. Instead the RadioSignal interaction shall point back to the RadioTransmitter object."
+		},
+		{
+			"id"			:	"IR-RPR-COM-1002",
+			"description"	:	"HostRadioIndex and StreamTags, shall be globally unique."
+		},
+		{
+			"id"			:	"IR-RPR-COM-1003",
+			"description"	:	"Senders of RadioSignal Intraction interaction class shall provide values for all parameters; there are no optional fields."
+		},
+		{
+			"id"			:	"IR-RPR-COM-1004",
+			"description"	:	"The values for TacticalDataLinkType and TDLMessageCount shall default to “other” and “zero” respectively. The sender shall provide all other parameters."
+		}
+	]
+}
