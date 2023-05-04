@@ -35,8 +35,7 @@ dependencies {
 
     // include explicit dependency to local RTI installation only for debugging
     // implementation files('C:/MAK/makRti4.6/lib/hla.jar')
-    // implementation files('C:\\Program Files\\prti1516e\\lib\\prti.jar')
-    // implementation files('C:/Program Files/prti1516e/lib/prti.jar')
+    implementation files('C:/Program Files/prti1516e/lib/prti.jar')
 
     // JAX-B dependencies for JDK 9+
     // implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
