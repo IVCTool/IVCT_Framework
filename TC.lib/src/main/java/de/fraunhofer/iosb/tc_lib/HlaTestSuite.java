@@ -60,6 +60,11 @@ public class HlaTestSuite implements TestSuite {
         return (String) description.get(TS_ID);
     }
 
+    /**
+     * Generic implementation only valid if the fully qualified test case class name
+     * is used as test case id. Test Suites which are using a different naming 
+     * convention need to overwrite this method.
+     */
     @Override
     public AbstractTestCaseIf getTestCase(String TestCaseId) {
         AbstractTestCaseIf tc = null;
