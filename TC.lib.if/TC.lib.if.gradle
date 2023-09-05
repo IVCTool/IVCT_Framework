@@ -76,6 +76,7 @@ dependencies {
 	compileOnly libraries.slf4j_api
 	compileOnly libraries.jsonSimple
 
+    testImplementation project(':Command')
 	testImplementation libraries.logback_classic
 	testImplementation libraries.logback_core
 	testImplementation libraries.slf4j_api
