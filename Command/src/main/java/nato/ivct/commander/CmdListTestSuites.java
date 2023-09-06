@@ -167,7 +167,7 @@ public class CmdListTestSuites implements Command {
 
         // add the jar files found in TestSuites folder to the current thread class loader
         URLClassLoader child = new URLClassLoader(jarFiles.toArray(new URL[jarFiles.size()]), this.getClass().getClassLoader());
-        // Thread.currentThread().setContextClassLoader(child);
+        Thread.currentThread().setContextClassLoader(child);
         // load test suites via ServiceLoader
         ServiceLoader<TestSuite> loader = ServiceLoader.load(TestSuite.class, child);
         for (TestSuite factory : loader) {

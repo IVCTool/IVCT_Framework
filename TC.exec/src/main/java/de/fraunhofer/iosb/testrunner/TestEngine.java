@@ -227,6 +227,7 @@ public class TestEngine extends TestRunner implements
 				// try to find test case from known service loaders
 				TestSuite tsLoader = testSuites.tsServiceLoaders.get(info.testSuiteId);
 				if (tsLoader != null) {
+					tcLogger.debug("test suite {} with class {} found", tsLoader.getId(), tsLoader.getClass());
 					testCase = tsLoader.getTestCase(info.testCaseId);
 				}
 				// if not found by service loaders, try to extend the classpath
