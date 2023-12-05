@@ -8,6 +8,41 @@ plugins {
 
 mainClassName = 'de.fraunhofer.iosb.testrunner.TestEngine'
 
+dependencies {
+	// local project dependencies
+    implementation project(':Command')
+    implementation project(':MessagingHelpers')
+	implementation project(':TC.lib.if')
+	implementation project(':TC.lib')
+    
+	// external project dependencies
+	implementation libraries.slf4j_api
+
+    // bridges for logging framework
+    implementation libraries.slf4j_jcl_over_slf4j
+    implementation libraries.slf4j_jul_to_slf4j
+    implementation libraries.slf4j_log4j_over_slf4j
+    implementation libraries.log4j_to_slf4j
+
+	implementation libraries.logback_classic
+	implementation libraries.logback_core
+
+	implementation libraries.jsonSimple
+	implementation libraries.actimemqClient
+    // for testing with embedded broker    
+    testImplementation libraries.junit_jupiter_engine
+	testImplementation libraries.activemqEmbedded
+
+    // include explicit dependency to local RTI installation only for debugging
+    // implementation files('C:/MAK/makRti4.6/lib/hla.jar')
+    implementation files('C:/Program Files/prti1516e/lib/prti.jar')
+
+    // JAX-B dependencies for JDK 9+
+    // implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    // implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+}
+
+
 // setup the common jib configuration
 task jibApplication () {
     doFirst {
@@ -61,7 +96,7 @@ task jibPortico (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
     doFirst {
         jib {
             from {
-                image = 'hlacontainers/lrc:portico-nightly-2016.05.28-alpine'
+                image = 'hlacontainers/lrc:portico-nightly-2016.05.28-centos7-jdk11'
             }
             to {
                 image = "ivct/tc-runner:po-${ivctVersion}"
@@ -78,7 +113,7 @@ task jibMak (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
     doFirst {
         jib {
             from {
-                image = 'hlacontainers/lrc:vtmak-4.5f-centos7'
+                image = 'hlacontainers/lrc:vtmak-4.5j-centos7-jdk11'
             }
             to {
                 image = "ivct/tc-runner:ma-${ivctVersion}"
@@ -90,40 +125,15 @@ task jibMak (type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
 tasks.register ("dockerBuildImage") {
     group = 'Docker'
     description = 'Creates docker images for RTIs'
-    dependsOn 'jibPitch'
+    // dependsOn 'jibPitch' // hlacontainers no longer supports pitch image
     dependsOn 'jibPortico'
     dependsOn 'jibMak'
 }
 
-dependencies {
-	// local project dependencies
-    implementation project(':Command')
-    implementation project(':MessagingHelpers')
-	implementation project(':TC.lib.if')
-    
-	// external project dependencies
-	implementation libraries.slf4j_api
-
-    // bridges for logging framework
-//    implementation libraries.log4j_slf4j_impl
-    implementation libraries.slf4j_jcl_over_slf4j
-    implementation libraries.slf4j_jul_to_slf4j
-    implementation libraries.slf4j_log4j_over_slf4j
-    implementation libraries.log4j_to_slf4j
-
-	implementation libraries.logback_classic
-	implementation libraries.logback_core
-
-	implementation libraries.jsonSimple
-	implementation libraries.actimemqClient
-
-    // include explicit dependency to local RTI installation only for debugging
-    // implementation files('C:/MAK/makRti4.6/lib/hla.jar')
-    // implementation files('C:\\Program Files\\prti1516e\\lib\\prti.jar')
-
-    // JAX-B dependencies for JDK 9+
-    // implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
-    // implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+test {
+    // Enable JUnit 5 (Gradle 4.6+).
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }
 
 distributions {

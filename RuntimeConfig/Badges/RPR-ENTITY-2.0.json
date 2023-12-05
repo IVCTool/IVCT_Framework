@@ -1,0 +1,46 @@
+{
+	"id" 			: 	"RPR-ENTITY-2.0",
+	"version"		:	"0.1",
+	"name" 			: 	"RPR-ENTITY-2.0",
+	"description"	:	"BaseEntity Handling of the RPR FOM Base Module. The Base module provides a common base for RPR based FOM Modules. It contains common datatypes and the BaseEntity and EmbeddedSystem object class definitions. Publication of object instances of these classes is not allowed. Instead they form the basis for specialized classes, such as the physical entity representations found in the Physical module and the different kinds of systems found in the Distributed Emission Regeneration module. Hence, although technically this module does not depend on any of the functional area modules, the Base module is of no use within a federation without modules that depend on it.",
+	"graphics"		:	"RPR-ENTITY-2.0.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-RPR2-0008",
+			"description"	:	"SuT shall define at least one leaf object class of BaseEntity.PhysicalEntity as published and/or subscribed in CS/SOM."
+		},
+		{
+			"id"			:	"IR-RPR2-0009",
+			"description"	:	"SuT shall in CS specify the use of Articulated Parts for all published and subscribedBaseEntity.PhysicalEntity and subclasses."
+		},
+		{
+			"id"			:	"IR-RPR2-0010",
+			"description"	:	"SuT shall in CS specify the use of Dead-Reckoning algorithms for all published and subscribed BaseEntity.PhysicalEntity and subclasses."
+		},
+		{
+			"id"			:	"IR-RPR2-0011",
+			"description"	:	"SuT shall update the following required attributes for PhysicalEntity subclass object instances registered by SuT: EntityIdentifier, EntityType, Spatial."
+		},
+		{
+			"id"			:	"IR-RPR2-0012",
+			"description"	:	"SuT shall not update non-applicable PhysicalEntity Attributes as specified in Domain Appropriateness table in SISO-STD-001-2015."
+		},
+		{
+			"id"			:	"IR-RPR2-0013",
+			"description"	:	"SuT updates of instance attributes shall, for BaseEntity.PhysicalEntity and subclasses, be valid according to SISO-STD-001-2015 and SISO-STD-001.1-2015."
+		},
+		{
+			"id"			:	"IR-RPR2-0014",
+			"description"	:	"SuT updates of instance attribute Spatial shall, for BaseEntity.PhysicalEntity and subclasses, include valid Dead-Reckoning parameters for supported algorithms as specified in CS."
+		},
+		{
+			"id"			:	"IR-RPR2-0015",
+			"description"	:	"SuT shall assume default values for optional attributes on instances of BaseEntity.PhysicalEntity and subclasses according to SISO-STD-001-2015."
+		},
+		{
+			"id"			:	"IR-RPR2-0016",
+			"description"	:	"SuT shall not rely on updates of optional attributes on instances of BaseEntity.PhysicalEntity and subclasses."
+		}
+	]
+}

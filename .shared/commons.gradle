@@ -33,8 +33,9 @@ allprojects {
         buildNumber = System.getProperty("buildNumber", "SNAPSHOT")
         repositoryBranchName = System.getProperty("repositoryBranchName", "UNKNOWN")
         revisionNumber = System.getProperty("revisionNumber", "SNAPSHOT")
-  }
+    }
 }
+
 
 // -----------------------------------------------------------------------------
 // subprojects
@@ -56,9 +57,6 @@ subprojects { subProject ->
         println "apply java to " + subProject.name
         apply plugin: 'java'
         compileJava {
-            sourceCompatibility = 1.8
-            targetCompatibility = 1.8
-
             options.compilerArgs << '-Xlint:unchecked'
 			//options.warnings = true	// defaults to true
 			options.warnings = false
@@ -68,6 +66,11 @@ subprojects { subProject ->
             //options.bootClasspath = bootClasspath
             options.debug(debugLevel : 'lines,vars,source')
             options.deprecation = true
+        }
+
+        java {
+            sourceCompatibility = "1.8"
+            targetCompatibility = "1.8"
         }
 
 		javadoc {

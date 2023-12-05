@@ -1,18 +1,7 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'io.github.ivctool'
-            artifactId = 'Command'
-            version = "${ivctVersion}"
-            from components.java
-        }
-    }
-}
 
 task writeVersion {
     group = "Build"
@@ -31,19 +20,25 @@ processResources.dependsOn writeVersion
 
 dependencies {
 	// local project dependencies
+	api project(':TC.lib.if')
 	implementation	project(':MessagingHelpers')
 	// external project dependencies
 	api	libraries.slf4j_api
 	api	libraries.jsonSimple
 	implementation libraries.apacheCommonsIO
+
+	testImplementation project(':TC.lib.if')
+	testImplementation project(':TC.lib')
     // for testing with embedded broker    
 	testImplementation libraries.junit_jupiter_engine
 	testImplementation libraries.activemqEmbedded
+
 }
 
 test {
     // Enable JUnit 5 (Gradle 4.6+).
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }
 
 javadoc {

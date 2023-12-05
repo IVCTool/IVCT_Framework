@@ -105,7 +105,7 @@ public class SuTCbForm extends AbstractForm {
     public static final String FAILED_VERDICT       = "FAILED";
     public static final String NOT_RUN_VERDICT      = "NOT_RUN";
     
-    private final Supplier<CmdListTestSuites> testSuitesSupplier = Suppliers.memoize(() -> {
+    private static final Supplier<CmdListTestSuites> testSuitesSupplier = Suppliers.memoize(() -> {
         CmdListTestSuites testSuites = Factory.createCmdListTestSuites();
         try {
             testSuites.execute();

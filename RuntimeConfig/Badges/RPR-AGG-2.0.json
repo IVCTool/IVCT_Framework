@@ -1,0 +1,38 @@
+{
+	"id" 			: 	"RPR-AGG-2.0",
+	"version"		:	"0.1",
+	"name" 			: 	"RPR-AGG-2.0",
+	"description"	:	"Basic Handling of the RPR FOM Aggregate Module. The Aggregate module provides the object class definition for representing aggregates of entities. The AggregateEntity class derives from the BaseEntity class defined in the Base module. The Aggregate module also depends on the Base module for datatypes.",
+	"graphics"		:	"RPR-AGG-2.0.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"IR-RPR2-0001",
+			"description"	:	"SuT shall comply with SISO-STD-001-2015, Standard for Guidance, Rationale, and Interoperability Modalities for the Real-time Platform Reference Federation Object Model, Version 2.0, 10 August 2015"
+		},
+		{
+			"id"			:	"IR-RPR2-0002",
+			"description"	:	"SuT shall define BaseEntity.AggregateEntity as published or define a subclass of BaseEntity.AggregateEntity as published and/or define BaseEntity.AggregateEntity as subscribed in CS/SOM."
+		},
+		{
+			"id"			:	"IR-RPR2-0003",
+			"description"	:	"SuT shall update the following required attributes for AggregateEntity object instances registered by SuT: AggregateState, Dimensions, EntityIdentifier, EntityType, Spatial."
+		},
+		{
+			"id"			:	"IR-RPR2-0004",
+			"description"	:	"SuT shall assume default values for optional attributes on instances of AggregateEntity object class."
+		},
+		{
+			"id"			:	"IR-RPR2-0005",
+			"description"	:	"SuT shall assume default values for optional attributes on instances of AggregateEntity object class."
+		},
+		{
+			"id"			:	"IR-RPR2-0006",
+			"description"	:	"SuT shall not rely on updates of optional attributes on instances of AggregateEntity object class."
+		},
+		{
+			"id"			:	"IR-RPR2-0007",
+			"description"	:	"SuT shall be configurable for the following parameters: SiteID, ApplicationID."
+		}
+	]
+}

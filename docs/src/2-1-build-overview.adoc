@@ -19,13 +19,9 @@ The gradle build tool is a generic framework for many different software build r
 * ``gradlew dockerPushImage``: This task builds the docker images in the local docker engine and pushes the images to the public dockerhub repository.
 * ``gradlew asciidoctor``: Creates pdf and html files for the documentation chapters.
 
-=== Travis Continuous Integration
+=== Continuous Integration
 
-In software engineering, link:https://en.wikipedia.org/wiki/Continuous_integration[continuous integration] is a practice to continuously merge the developers work into a shared integrated version.  For the IVCTools this means, whenever a developer commits a change in the development or in the master branch, the github service will trigger a travis build process to compile and to publish the updated branch.
-
-The travis build service requires some credentials in order to pull docker images from private repositories, or to write images into a public repository. These credentials are configured as encrypted environment variables inside the travis account.
-
-WARNING: In the current version the travis account is bound to personal developer account. This will be replaced by an integration user.
+In software engineering, link:https://en.wikipedia.org/wiki/Continuous_integration[continuous integration] is a practice to continuously merge the developers work into a shared integrated version.  For the IVCTools this means, whenever a developer commits a change in the development or in the master branch, a github actionwill trigger a build process to compile and to publish the updated branch. See <<2-5-github-actions.adoc#, Github Actions>> for more information.
 
 === The Maven Repository
 
@@ -42,7 +38,7 @@ Both libraries are build, signed and published by the gradle Maven Publish plugi
 
   gradlew publish
 
-Included in the ``publish`` task is the ``signing`` task, to digitally sign the library artifacts. That task requires a private key in the build environment, and registered public key.
+Included in the ``publish`` task is the ``signing`` task, to digitally sign the library artifacts. That task requires a private key in the build environment, and registered public key. See link:https://docs.gradle.org/current/userguide/signing_plugin.html[the gradle signing plugin] for more information. 
 
 The publish task will uploaded the libraries into the link:https://oss.sonatype.org/#stagingRepositories[nexus repository manager system]. With this manager the content need to be released. See link:https://central.sonatype.org/pages/releasing-the-deployment.html[Releasing the Deployment] for more details. The release process includes several automated tests, like checking Javadoc content, POM and Signature validation, insecure path test and others. If all tests are passed, the library can be releases. That again will be done with the _release_ feature in nexus repository manager.  
 

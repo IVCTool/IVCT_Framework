@@ -276,17 +276,26 @@ public class CmdUpdateSUT {
                     String libPath = tsPath + "/" + tsd.tsLibTimeFolder;
                     logger.trace(libPath);
                     File dir = new File(libPath);
-                    File[] filesList = dir.listFiles();
-                    if (filesList == null) {
-                        throw new IOException("getTestsuiteUrls: no testsuites found in: " + libPath);
+                    File[] filesList = null;
+                    if (dir.isDirectory()) {
+                        filesList = dir.listFiles();
+                    } else if (dir.isFile()) {
+                        filesList = new File[1];
+                        filesList[0] = dir;
                     }
-                    URL[] urls = new URL[filesList.length];
-                    for (int i = 0; i < filesList.length; i++) {
-                        try {
-                            urls[i] = filesList[i].toURI().toURL();
-                        }
-                        catch (MalformedURLException exc) {
-                            logger.error("", exc);
+                    URL[] urls;
+                    if (filesList == null) {
+                        logger.warn("getTestsuiteUrls: no testsuites found in: " + libPath);
+                        urls = new URL[0];
+                    } else {
+                        urls = new URL[filesList.length];
+                        for (int i = 0; i < filesList.length; i++) {
+                            try {
+                                urls[i] = filesList[i].toURI().toURL();
+                            }
+                            catch (MalformedURLException exc) {
+                                logger.error("", exc);
+                            }
                         }
                     }
                     testsuiteURLs.put(ts, urls);

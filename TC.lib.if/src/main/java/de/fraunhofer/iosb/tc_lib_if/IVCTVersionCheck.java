@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import nato.ivct.commander.Factory;
 
 
 /**
@@ -32,15 +31,16 @@ import nato.ivct.commander.Factory;
 public class IVCTVersionCheck {
 
   String testCaseIVCTVersion;
-  String FactoryIVCtVersion = Factory.getVersion();
+  String FactoryIVCtVersion;
   String compatibleListKey;
   String compatibleListValue;
 
   private static Logger logger = LoggerFactory.getLogger(IVCTVersionCheck.class);
 
   // Constructor
-  public IVCTVersionCheck(String _testCaseIVCTVersion) throws IVCTVersionCheckException {
+  public IVCTVersionCheck(String _testCaseIVCTVersion, String _factoryIVCtVersion) throws IVCTVersionCheckException {
     this.testCaseIVCTVersion = _testCaseIVCTVersion;
+    this.FactoryIVCtVersion = _factoryIVCtVersion;
   }
 
   public void compare() throws IVCTVersionCheckException {

@@ -1,0 +1,22 @@
+{
+	"id" 			: 	"NETN-4.0-Physical",
+	"version"		:	"4.0",
+	"name" 			: 	"NETN-4.0 Physical",
+	"description"	:	"Representation of CBRN release, detection, effects, and protective measures in a federated distributed simulation.",
+	"graphics"		:	"NETN-4.0-Physical.png",
+	"dependency"	:	[],
+	"requirements"	:	[
+		{
+			"id"			:	"NETN-PHYSICAL-0001",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-PHYSICAL-0002",
+			"description"	:	"Interoperability requirement description"
+		},
+		{
+			"id"			:	"NETN-PHYSICAL-0003",
+			"description"	:	"Interoperability requirement description"
+		}
+	]
+}

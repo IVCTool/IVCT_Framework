@@ -3,8 +3,8 @@ apply plugin: 'java'
 description = """IVCT Client"""
 
 dependencies {
-    implementation project(':GUI:nato.ivct.gui.shared')
     implementation project(':Command')
+    implementation project(':GUI:nato.ivct.gui.shared')
 	implementation libraries.gson
     implementation libraries.scout_rt_client
     testImplementation libraries.scout_rt_client_test

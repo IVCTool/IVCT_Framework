@@ -27,22 +27,22 @@ public interface ParameterHandleValueMap
 
    /**
     * Returns a reference to the value to which this map maps the specified key.
-    * Returns <tt>null</tt> if the map contains no mapping for this key.
+    * Returns null if the map contains no mapping for this key.
     *
     * @param key key whose associated value is to be returned.
     * @return a reference to the value to which this map maps the specified key, or
-    *         <tt>null</tt> if the map contains no mapping for this key.
+    *         null if the map contains no mapping for this key.
     */
    ByteWrapper getValueReference(ParameterHandle key);
 
    /**
     * Returns the specified reference updated to the value to which this map
     * maps the specified key.
-    * Returns <tt>null</tt> if the map contains no mapping for this key.
+    * Returns null if the map contains no mapping for this key.
     *
     * @param key key whose associated value is to be returned.
     * @return the specified reference updated to the value to which this map maps the
-    *         specified key, or <tt>null</tt> if the map contains no mapping for this key.
+    *         specified key, or null if the map contains no mapping for this key.
     */
    ByteWrapper getValueReference(ParameterHandle key, ByteWrapper byteWrapper);
 }

@@ -44,7 +44,7 @@ public class CmdAbortTcListener implements MessageListener, Command {
 
     @Override
     public void execute() {
-        Factory.LOGGER.trace("subsribing the commands listener");
+        Factory.LOGGER.trace("subscribing the commands listener");
         Factory.jmsHelper.setupTopicListener(Factory.props.getProperty(Factory.PROPERTY_IVCTCOMMANDER_QUEUE, "commands"), this);
     }
 

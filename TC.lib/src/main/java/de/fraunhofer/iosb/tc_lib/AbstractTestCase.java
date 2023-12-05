@@ -11,14 +11,8 @@
 
 package de.fraunhofer.iosb.tc_lib;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.slf4j.Logger;
-
 import de.fraunhofer.iosb.tc_lib_if.*;
-import nato.ivct.commander.Factory;
 
 /**
  * Abstract base class for test cases. In the concrete test cases, the four
@@ -49,6 +43,7 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
      * @param text String zu be sent to the ivct operator
      * @throws TcInconclusive Exception thrown if operator cancels confirmation
      */
+    @Override
     public void sendOperatorRequest(String text) throws TcInconclusive {
         try {
             super.sendOperatorRequest(text);
@@ -66,7 +61,7 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
     @Override
     public IVCT_Verdict execute(final Logger logger) {
 
-            final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
+        final IVCT_Verdict ivct_Verdict = new IVCT_Verdict();
 
         // A one-time start message
         logger.info("Test Case Started");
@@ -85,10 +80,6 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
             tcGlobalVariables.append("\nSUT Federation Name: ");
             tcGlobalVariables.append(federationName);
         }
-        if (Factory.props.getProperty("TESTENGINE_LABEL") != null) {
-            tcGlobalVariables.append("\nEngine Label: ");
-            tcGlobalVariables.append(Factory.props.getProperty("TESTENGINE_LABEL"));
-        }
         if (settingsDesignator != null) {
             tcGlobalVariables.append("\nSettings Designator: ");
             tcGlobalVariables.append(settingsDesignator);
@@ -102,7 +93,7 @@ public abstract class AbstractTestCase extends AbstractTestCaseIf {
         logger.info(tcParamTmp);
 
         try {
-            ivct_BaseModel = getIVCT_BaseModel(tcParam, logger);
+            ivct_BaseModel = getIVCT_BaseModel(getTcParam(), logger);
             ivct_BaseModel.setFederationName(federationName);
             ivct_BaseModel.setSettingsDesignator(settingsDesignator);
         }

@@ -1,0 +1,21 @@
+{
+    "id": "TS-NETN-BASE-4_0",
+    "version": "0.0.1-SNAPSHOT",
+    "name": "NETN-BASE 4.0 Test Suite",
+    "description": "Collection of NETN-BASE test cases",
+    "tsRunTimeFolder": "TS-NETN-4_0-0.0.1-SNAPSHOT/bin",
+    "tsLibTimeFolder": "TS-NETN-4_0-0.0.1-SNAPSHOT/lib",
+    "testcases": [
+        {
+            "TC": "org.nato.netn.base.TC_BASE_0001",
+            "IR": ["NETN-BASE-0001"],
+            "description": "Abstract test case description"
+        }
+    ],
+	"parameters":[
+		{
+			"name": "p1",
+			"description": "placeholder for future use"
+		}
+	]
+}

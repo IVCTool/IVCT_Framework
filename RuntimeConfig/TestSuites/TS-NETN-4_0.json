@@ -1,0 +1,71 @@
+{
+    "id": "TS-NETN-4_0",
+    "version": "0.0.1-SNAPSHOT",
+    "name": "NETN 4.0 Test Suite",
+    "description": "Collection of NETN test cases",
+    "tsRunTimeFolder": "TS-NETN-4_0-0.0.1-SNAPSHOT/bin",
+    "tsLibTimeFolder": "TS-NETN-4_0-0.0.1-SNAPSHOT/lib",
+    "testcases": [
+        {
+            "TC": "org.nato.netn.ais.TC_AIS_0001",
+            "IR": ["NETN-AIS-0001"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.ais.TC_AIS_0002",
+            "IR": ["NETN-AIS-0002"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.ais.TC_AIS0003",
+            "IR": ["NETN-AIS-0003"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.etr.TC_ETR_0001",
+            "IR": ["NETN-ETR-0001"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.etr.TC_ETR_0002",
+            "IR": ["NETN-ETR-0002"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.etr.TC_ETR_0003",
+            "IR": ["NETN-ETR-0003"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.org.TC_ORG0001",
+            "IR": ["NETN-ORG-0001"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.org.TC_ORG_0002",
+            "IR": ["NETN-ORG-0002"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.org.TC_ORG_0003",
+            "IR": ["NETN-ORG-0003"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.org.TC_ORG_0004",
+            "IR": ["NETN-ORG-0004"],
+            "description": "Abstract test case description"
+        },
+        {
+            "TC": "org.nato.netn.org.TC_ORG_0005",
+            "IR": ["NETN-ORG-0005"],
+            "description": "Abstract test case description"
+        }
+    ],
+	"parameters":[
+		{
+			"name": "growthRate",
+			"description": "expected growth rate for SuT federate within HelloWorld federation"
+		}
+	]
+}
