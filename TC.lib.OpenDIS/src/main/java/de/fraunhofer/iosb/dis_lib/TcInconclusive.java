@@ -1,5 +1,5 @@
 /*
-Copyright 2015, Johannes Mulder (Fraunhofer IOSB)
+Copyright 2023, Reinhard Herzog (Fraunhofer IOSB)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,29 +14,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package dis_lib;
+package de.fraunhofer.iosb.dis_lib;
 
-import de.fraunhofer.iosb.tc_lib_if.TcFailedIf;
+import de.fraunhofer.iosb.tc_lib_if.TcInconclusiveIf;
 
 /**
  *
  * @author mul (Fraunhofer IOSB)
  */
-public class TcFailed  extends TcFailedIf {
+public class TcInconclusive  extends TcInconclusiveIf {
 
-    private final static String KEY = "DIS Test Case Failed: "; 
+    private final static String KEY = "DIS Test Case Inconclusive: "; 
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TcFailed(String msg)
+	public TcInconclusive(String msg)
     {
        super(KEY + msg);
     }
 
-    public TcFailed(String message, Throwable cause)
+    public TcInconclusive(String message, Throwable cause)
     {
        super(KEY + message, cause);
     }

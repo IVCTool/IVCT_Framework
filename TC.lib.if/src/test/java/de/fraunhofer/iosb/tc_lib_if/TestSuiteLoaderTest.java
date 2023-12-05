@@ -11,8 +11,13 @@
 
 package de.fraunhofer.iosb.tc_lib_if;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import nato.ivct.commander.Factory;
+import nato.ivct.commander.CmdListTestSuites;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +29,20 @@ import java.util.ServiceLoader;
 class TestSuiteLoaderTest {
 
     public static final org.slf4j.Logger log = LoggerFactory.getLogger(TestSuiteLoaderTest.class);
-    
+    protected CmdListTestSuites cmd = null;
+
+    @BeforeEach
+    public void init() {
+        if (cmd == null) {
+            cmd = Factory.createCmdListTestSuites();
+            try {
+                cmd.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail("running the ListTestSuites command failed!");
+            }    
+        }
+    }    
     @Test 
     void testServiceLoader() {
         log.trace("ServiceLoader test");
@@ -35,5 +53,14 @@ class TestSuiteLoaderTest {
              if (tc != null) break;
         }
         assertNull(tc, "in this test context there will be not test suite to be found");
+    }
+
+    @Test 
+    void testDISWarfareServiceLoader() {
+        log.trace("ServiceLoader test");
+        AbstractTestCaseIf tc = null;
+        TestSuite factory = cmd.tsServiceLoaders.get("DIS-WARFARE-6_0");
+        tc = factory.getTestCase("org.nato.ivct.dis.warfare.TC_WarfareBasic");
+        assertNotNull(tc, "Test suite DIS-WARFARE-6_0 shall be located in TestSuites run-time folder");
     }
 }

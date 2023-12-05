@@ -1,11 +1,9 @@
-package dis_lib;
+package de.fraunhofer.iosb.dis_lib;
 
 import org.slf4j.Logger;
 import de.fraunhofer.iosb.tc_lib_if.*;
 
 public abstract class AbstractDisTestCase extends AbstractTestCaseIf {
-
-    protected abstract IVCT_BaseModel getIVCT_BaseModel(final Logger logger) throws TcInconclusive;
 
     @Override
     public IVCT_Verdict execute(Logger logger) {

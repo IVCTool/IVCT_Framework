@@ -46,7 +46,7 @@
 		<appender-ref ref="reporter" />
 	</root>
 	<!--  configure special settings for own packages -->
-	<logger name="de.fraunhofer.iosb" level="INFO" />
+	<logger name="de.fraunhofer.iosb" level="TRACE" />
 	<!-- Thirdparty Configuration, i.e. various common base packages -->
 
 
