@@ -9,17 +9,18 @@
  * governing permissions and limitations under the License.
  */
 
-package de.fraunhofer.iosb.tc_lib_if;
+package nato.ivct.commander;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import nato.ivct.commander.Factory;
-import nato.ivct.commander.CmdListTestSuites;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+
+import de.fraunhofer.iosb.tc_lib_if.AbstractTestCaseIf;
+import de.fraunhofer.iosb.tc_lib_if.TestSuite;
 
 import java.util.ServiceLoader;
 
