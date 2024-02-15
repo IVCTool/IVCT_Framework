@@ -1,7 +1,7 @@
 // Provides a map of the dependency artifacts to use.
 // Allows centralized definition of the version of artifacts to use.
 ext {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~ IVCT settings (here to change Version-Number )
     ivctVersion = '4.1.0-SNAPSHOT'
     compatibleVersions = ['4.1.0-SNAPSHOT':'compatible', 
         '4.0.0':'incompatible', '3.1.0-SNAPSHOT':'incompatible','3.0.0':'incompatible','2.2.2-SNAPSHOT':'incompatible', '2.1.1':'incompatible', '2.1.0':'incompatible']
