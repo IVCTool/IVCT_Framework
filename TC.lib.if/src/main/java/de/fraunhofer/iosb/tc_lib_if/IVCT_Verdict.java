@@ -30,12 +30,16 @@ public class IVCT_Verdict {
 		switch (this.verdict) {
 		case PASSED:
 			result = "PASSED";
+			break;
 		case FAILED:
 			result = "FAILED";
+			break;
 		case INCONCLUSIVE:
 			result = "INCONCLUSIVE";
+			break;
 		default:
 			result = "UNDEFINED";
+			break;
 		}
 		return result + ": " + text;
 	}
