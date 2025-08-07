@@ -23,8 +23,8 @@ java {
 }
 
 group = 'io.github.brfkar'
-archivesBaseName = "TC.lib"
-version = "4.1.0"
+//archivesBaseName = "TC.lib"
+version = "4.1.0-1"
 
 dependencies {
     compileOnly project(':IEEE1516e')
@@ -39,13 +39,14 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            groupId='io.github.brfkar'
             artifactId = 'TC.lib'
             from components.java
 
             pom {
                 name = "IVCT Test Case Library"
                 description = "Library to be used by IVCT test case developers"
-                url = "https://github.com/brfkar/TC.lib/tree/main/4.1.0"
+                url = "https://github.com/brfkar/TC.lib"
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
@@ -60,29 +61,29 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:https://github.com/brfkar/TC.lib/tree/main/4.1.0"
-                    developerConnection = "scm:git:https://github.com/brfkar/TC.lib/tree/main/4.1.0"
-                    url = "https://github.com/brfkar/TC.lib/tree/main/4.1.0"
+                    connection = "scm:git:https://github.com/brfkar/TC.lib.git"
+                    developerConnection = "scm:git:https://github.com/brfkar/TC.lib.git"
+                    url = "https://github.com/brfkar/TC.lib"
                 }
             }
         }
     }
     repositories {
         maven {
-            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials {
-                username ossrhUsername
-                password ossrhPassword
-            }
+            url = layout.buildDirectory.dir('staging-deploy')
+            //def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            //def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            //url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            //credentials {
+            //    username ossrhUsername
+            //    password ossrhPassword
+            //}
         }
     }
 }
 
-//                username 'brfkar'
-//                password 'Fah-fahr-away'
 
+/*
 signing
 {
     sign publishing.publications.mavenJava
@@ -96,3 +97,28 @@ gradle.taskGraph.whenReady { taskGraph ->
         }
     }
 }
+*/
+
+jreleaser {
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    snapshotSupported = true
+                    sign = true
+                    checksums = true
+                    verifyPom = true
+                    applyMavenCentralRules = true
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
+}
+
